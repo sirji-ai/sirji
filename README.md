@@ -36,6 +36,8 @@ The sequence diagram below shows how the user initiates Sirji by giving a proble
 
 The dogfood version of Sirji is under development. The current ETA is Friday, March 22 2024.
 
+- [Setup steps and examples](./docs/setup-steps.md)
+
 ## Supported AI Models<a name="supported-ai-models"></a>
 
 We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. But the package will be designed to be composable for supporting other AI models too.
