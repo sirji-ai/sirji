@@ -97,3 +97,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         return self.client.beta.assistants.files.create(
             assistant_id=self.assistant_id, file_id=file_id)
+
+    def retrieve_context(self, problem_statement):
+        """
+        Retrieve context using embeddings match for a problem statement.
+        For OpenAI Assistants API, this step is not needed.
+        To re-use the assistant_is, pass it in the retrieved context.
+        """
+        return self.assistant_id
