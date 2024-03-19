@@ -1,4 +1,5 @@
 import os
+import time
 from urllib.parse import urlparse
 
 class BaseContentHandler:
@@ -10,7 +11,8 @@ class BaseContentHandler:
         parsed_url = urlparse(url)
         filename = os.path.basename(parsed_url.path)
         if not filename:
-            filename = "index"
+            unix_timestamp = int(time.time())
+            filename = "index_" + unix_timestamp.__str__()
         filename = f"{filename}.{extension}"
         output_path = os.path.join(output_dir, "external_resources", filename)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
