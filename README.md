@@ -2,27 +2,27 @@
 
 > “Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.
 
-Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues. 
+Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.
 
-Sirji is being built using Python. It currently uses OpenAI chat completions API, and OpenAI assistants API. 
+Sirji is being built using Python. It currently uses OpenAI chat completions API, and OpenAI assistants API.
 
 To begin with, it will be equipped with:
 
-* **Chat Terminal**: To give problem statements and continuously interact with Sirji.
+- **Chat Terminal**: To give problem statements and continuously interact with Sirji.
 
-* **Shell**: To create, modify, and execute files and install packages.
+- **Shell**: To create, modify, and execute files and install packages.
 
-* **Browser**: To research different topics to solve the problem.
+- **Browser**: To research different topics to solve the problem.
 
 ## How It Works<a name="how-it-works"></a>
 
 In the dogfood version of Sirji, we are planning to have 4 layers in its architecture as shown in the high-level architecture diagram below.
 
-* User Interaction Layer, i.e. Sirji>, will be the front-facing layer interacting with the user. Users can give the problem statement, and give suggestions or modification requests through this layer. Here, users can also see the progress made by Sirji. A command line chat terminal will be used to take user inputs.
+- User Interaction Layer, i.e. Sirji>, will be the front-facing layer interacting with the user. Users can give the problem statement, and give suggestions or modification requests through this layer. Here, users can also see the progress made by Sirji. A command line chat terminal will be used to take user inputs.
 
-* The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Solver, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
+- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Solver, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
 
-* The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
+- The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
 
 ![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/8b5d846b-168c-4499-ba2a-d0226946a0a6)
 
@@ -36,6 +36,8 @@ The sequence diagram below shows how the user initiates Sirji by giving a proble
 
 The dogfood version of Sirji is under development. The current ETA is Friday, March 22 2024.
 
+- [Setup steps and examples](./docs/setup-steps.md)
+
 ## Supported AI Models<a name="supported-ai-models"></a>
 
 We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. But the package will be designed to be composable for supporting other AI models too.
@@ -45,3 +47,4 @@ We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. 
 We welcome more helping hands to make Sirji better. Feel free to report issues, and raise PRs for fixes & enhancements.
 
 <p align="left">Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a></p>
+>>>>>>> main
