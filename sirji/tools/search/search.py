@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+from config.config_loader import load_config
 
 # Load environment variables from .env file
 load_dotenv()
@@ -8,14 +9,17 @@ load_dotenv()
 # Now you can access the environment variables using os.getenv
 GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
 GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
+google_config = load_config("google_config.json")
 
-def get_search_result_urls(query, num_results=10):
-    search_url = "https://www.googleapis.com/customsearch/v1"
+print("google_config: ", google_config)
+
+def get_search_result_urls(query):
+    search_url = google_config['google_search_url']
     params = {
         'q': query,
         'key': GOOGLE_SEARCH_API_KEY,
         'cx': GOOGLE_SEARCH_ENGINE_ID,
-        'num': min(num_results, 10)  # API allows up to 10 results at a time
+        'num': google_config['search_results_per_page']
     }
 
     response = requests.get(search_url, params=params)
