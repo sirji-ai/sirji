@@ -1,4 +1,4 @@
-# Local Setup Steps
+# Setup Steps
 
 ## Install Dependencies
 
@@ -8,7 +8,9 @@ pip install -r requirements.txt
 
 ## Setup Environment Variables
 
-- `SIRJI_OPENAI_API_KEY`: OpenAI API Key.
+```zsh
+export SIRJI_OPENAI_API_KEY='YOUR OPENAI API KEY'
+```
 
 ## Example Usages
 

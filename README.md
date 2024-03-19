@@ -47,4 +47,3 @@ We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. 
 We welcome more helping hands to make Sirji better. Feel free to report issues, and raise PRs for fixes & enhancements.
 
 <p align="left">Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a></p>
->>>>>>> main
