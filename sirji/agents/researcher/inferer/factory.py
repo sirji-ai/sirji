@@ -1,7 +1,7 @@
 from .openai_assistant import OpenAIAssistantInferer
 
 
-class EmbeddingsFactory:
+class InfererFactory:
     @classmethod
     def get_instance(cls, inferer_type):
         if inferer_type == "openai_assistant":
@@ -11,4 +11,4 @@ class EmbeddingsFactory:
                 "Unsupported embeddings_type. Please provide a valid embeddings_type.")
 
 # Example usage:
-# embeddings = EmbeddingsFactory.get_instance("openai_assistant")
+# embeddings = InfererFactory.get_instance("openai_assistant")

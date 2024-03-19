@@ -1,5 +1,4 @@
 import os
-import requests
 import json
 from openai import OpenAI
 from .base import BaseEmbeddings
@@ -9,11 +8,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self):
         # Fetch OpenAI API key from environment variable
-        self.api_key = os.environ.get(
+        api_key = os.environ.get(
             "SIRJI_OPENAI_API_KEY", "<your OpenAI API key if not set as env var>")
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=self.api_key)
+        self.client = OpenAI(api_key=api_key)
 
         # Create assistant and preserve assistant_id
         self.assistant_id = self._create_assistant()
