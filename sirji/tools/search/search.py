@@ -11,9 +11,10 @@ GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
 GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
 google_config = load_config("google_config.json")
 
-print("google_config: ", google_config)
-
 def get_search_result_urls(query):
+    if (query == ''):
+        return KeyError("Query is empty")
+
     search_url = google_config['google_search_url']
     params = {
         'q': query,
@@ -30,7 +31,7 @@ def get_search_result_urls(query):
     return urls
 
 # Example usage:
-# search_term = 'OpenAI'
+# search_term = ''
 # urls = get_search_result_urls(search_term)
 # print(urls)
 
