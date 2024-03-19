@@ -8,8 +8,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self):
         # Fetch OpenAI API key from environment variable
-        api_key = os.environ.get(
-            "SIRJI_OPENAI_API_KEY", "<your OpenAI API key if not set as env var>")
+        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
         self.client = OpenAI(api_key=api_key)

@@ -13,12 +13,15 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         with the API key obtained from environment variables.
         """
         # Fetch OpenAI API key from an environment variable
-        api_key = os.environ.get(
-            "SIRJI_OPENAI_API_KEY", "<your OpenAI API key if not set as env var>")
+        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
         self.client = OpenAI(api_key=api_key)
-        
+
         # Placeholder for the OpenAI Assistant object
         self.assistant = None
         # Placeholder for storing the current assistant's ID
