@@ -1,26 +1,52 @@
 import os
 import logging
 
-class LoggerSingleton:
-    _instances = {}
+# Mapping of log level strings to constants
+_log_level_str_to_const = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL
+}
+# Set default log level to DEBUG
+_default_log_level = _log_level_str_to_const.get(os.environ.get("SIRJI_LOG_LEVEL", 'debug').lower())
 
-    def __new__(cls, file_name, log_level=logging.INFO):
-        if file_name not in cls._instances:
-            cls._instances[file_name] = super().__new__(cls)
-            cls._instances[file_name]._setup_logger(file_name, log_level)
-        return cls._instances[file_name]
+# Singleton class to create loggers
+class LoggerSingleton:
+    def __init__(self, file_name, log_level):
+        self.logger = self._setup_logger(file_name, log_level)
 
     def _setup_logger(self, file_name, log_level):
-        # Create a folder named "log" if it doesn't exist
+        # Create a folder named "logs" if it doesn't exist
         log_folder = os.path.join("workspace", "logs")
         if not os.path.exists(log_folder):
             os.makedirs(log_folder)
 
         # Set up logging
         log_file_path = os.path.join(log_folder, file_name)
-        logging.basicConfig(filename=log_file_path, level=log_level,
-                            format='%(asctime)s - %(levelname)s - %(message)s')
-        self.logger = logging.getLogger()
+        logger = logging.getLogger(file_name)
+        logger.setLevel(log_level)
+        if not logger.handlers:
+            # Ensure no duplicate handlers
+            file_handler = logging.FileHandler(log_file_path)
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+        return logger
 
-def get_logger(file_name, log_level=logging.INFO):
-    return LoggerSingleton(file_name, log_level).logger
+# Manager class to create and manage loggers
+class LoggerManager:
+    def __init__(self):
+        self._coder = LoggerSingleton('coder.log', _default_log_level).logger
+        self._researcher = LoggerSingleton('researcher.log', _default_log_level).logger
+
+    @property
+    def coder(self):
+        return self._coder
+
+    @property
+    def researcher(self):
+        return self._researcher
+
+logger = LoggerManager()
