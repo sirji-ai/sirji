@@ -4,7 +4,7 @@
 
 Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.
 
-Sirji is being built using Python. It currently uses OpenAI chat completions API, and OpenAI assistants API.
+Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API.
 
 To begin with, it will be equipped with:
 
@@ -20,11 +20,12 @@ In the dogfood version of Sirji, we are planning to have 4 layers in its archite
 
 - User Interaction Layer, i.e. Sirji>, will be the front-facing layer interacting with the user. Users can give the problem statement, and give suggestions or modification requests through this layer. Here, users can also see the progress made by Sirji. A command line chat terminal will be used to take user inputs.
 
-- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Solver, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
+- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Coder, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
 
 - The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
 
-![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/8b5d846b-168c-4499-ba2a-d0226946a0a6)
+![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/4204d366-ccbc-473a-8a0b-233333ce1fdc)
+
 
 ## Sequence Diagram<a name="sequence-diagram"></a>
 
