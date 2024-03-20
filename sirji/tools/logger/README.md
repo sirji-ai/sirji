@@ -36,3 +36,21 @@ logger.info("Log line here")
 from .tools.logger import researcher as logger
 logger.info("Log line here")
 ```
+
+### Sample Usage of Logger specific to planner:
+```python
+from .tools.logger import planner as logger
+logger.info("Log line here")
+```
+
+### Sample Usage of Logger specific to executor:
+```python
+from .tools.logger import executor as logger
+logger.info("Log line here")
+```
+
+### Sample Usage of Logger specific to sirji:
+```python
+from .tools.logger import sirji as logger
+logger.info("Log line here")
+```
