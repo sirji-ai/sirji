@@ -9,6 +9,7 @@ _log_level_str_to_const = {
     'error': logging.ERROR,
     'critical': logging.CRITICAL
 }
+
 # Set default log level to DEBUG
 _default_log_level = _log_level_str_to_const.get(os.environ.get("SIRJI_LOG_LEVEL", 'debug').lower())
 
