@@ -1,5 +1,5 @@
 from .openai_assistant import OpenAIAssistantEmbeddings
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 class EmbeddingsFactory:
     @classmethod

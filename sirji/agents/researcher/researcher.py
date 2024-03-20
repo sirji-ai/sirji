@@ -4,7 +4,7 @@ from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
 from sirji.tools.crawler import crawl_urls
 from sirji.tools.search import search_for
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 class Researcher:
     def __init__(self, embeddings_type, inferer_type):

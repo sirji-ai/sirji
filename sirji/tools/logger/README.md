@@ -27,12 +27,12 @@ export SIRJI_LOG_LEVEL=info
 
 ### Sample Usage of Logger specific to coder:
 ```python
-from tools.logger import coder as logger
+from .tools.logger import coder as logger
 logger.info("Log line here")
 ```
 
 ### Sample Usage of Logger specific to researcher:
 ```python
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 logger.info("Log line here")
 ```

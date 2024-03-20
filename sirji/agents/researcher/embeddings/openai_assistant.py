@@ -2,7 +2,7 @@ import os
 import json
 from openai import OpenAI
 from .base import BaseEmbeddings
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 

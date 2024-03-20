@@ -3,7 +3,7 @@ import os
 import subprocess
 import shutil
 from urllib.parse import urlparse
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 class GitHubHandler(BaseContentHandler):
     def handle(self, url, output_dir):

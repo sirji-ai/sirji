@@ -1,5 +1,5 @@
 from .factory import ContentHandlerFactory
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 def crawl_urls(urls, output_dir):
     """

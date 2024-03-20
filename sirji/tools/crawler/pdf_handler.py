@@ -3,7 +3,7 @@ import os
 import requests
 import PyPDF2
 from markdownify import markdownify as md
-from tools.logger import researcher as logger
+from .tools.logger import researcher as logger
 
 class PDFHandler(BaseContentHandler):
     def handle(self, url, output_dir):
