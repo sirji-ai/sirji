@@ -20,7 +20,7 @@ In the dogfood version of Sirji, we are planning to have 4 layers in its archite
 
 - User Interaction Layer, i.e. Sirji>, will be the front-facing layer interacting with the user. Users can give the problem statement, and give suggestions or modification requests through this layer. Here, users can also see the progress made by Sirji. A command line chat terminal will be used to take user inputs.
 
-- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Solver, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
+- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Coder, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
 
 - The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
 
