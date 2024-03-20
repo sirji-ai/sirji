@@ -25,13 +25,13 @@ The default log level can be adjusted by setting the `SIRJI_LOG_LEVEL` environme
 export SIRJI_LOG_LEVEL=info
 ```
 
-### Example Usage of Logger specific to coder:
+### Sample Usage of Logger specific to coder:
 ```python
 from tools.logger import coder as logger
 logger.info("Log line here")
 ```
 
-### Example Usage of Logger specific to researcher:
+### Sample Usage of Logger specific to researcher:
 ```python
 from tools.logger import researcher as logger
 logger.info("Log line here")
