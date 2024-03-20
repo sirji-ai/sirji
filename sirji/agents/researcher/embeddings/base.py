@@ -9,3 +9,10 @@ class BaseEmbeddings(ABC):
         Index files in the specified folder.
         """
         pass
+
+    @abstractmethod
+    def retrieve_context(self, problem_statement):
+        """
+        Retrieve context using embeddings match for a problem statement. 
+        """
+        pass
