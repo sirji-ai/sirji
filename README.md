@@ -4,7 +4,7 @@
 
 Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.
 
-Sirji is being built using Python. It currently uses OpenAI chat completions API, and OpenAI assistants API.
+Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API.
 
 To begin with, it will be equipped with:
 
@@ -24,7 +24,8 @@ In the dogfood version of Sirji, we are planning to have 4 layers in its archite
 
 - The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
 
-![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/8b5d846b-168c-4499-ba2a-d0226946a0a6)
+![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/4204d366-ccbc-473a-8a0b-233333ce1fdc)
+
 
 ## Sequence Diagram<a name="sequence-diagram"></a>
 
@@ -37,6 +38,7 @@ The sequence diagram below shows how the user initiates Sirji by giving a proble
 The dogfood version of Sirji is under development. The current ETA is Friday, March 22 2024.
 
 - [Setup steps and examples](./docs/setup-steps.md)
+- [Researcher Module](./sirji/agents/researcher/README.md)
 
 ## Supported AI Models<a name="supported-ai-models"></a>
 
