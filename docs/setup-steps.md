@@ -18,7 +18,9 @@ pip install -r requirements.txt
 ## Setup Environment Variables
 
 ```zsh
-export SIRJI_OPENAI_API_KEY='YOUR OPENAI API KEY'
+export SIRJI_OPENAI_API_KEY='OPENAI API KEY'
+export SIRJI_GOOGLE_SEARCH_API_KEY='GOOGLE SEARCH API KEY'
+export SIRJI_GOOGLE_SEARCH_ENGINE_ID='GOOGLE SEARCH ENGINE ID'
 ```
 
 ## Example Usages

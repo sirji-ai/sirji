@@ -7,8 +7,8 @@ from config.config_loader import load_config
 load_dotenv()
 
 # Now you can access the environment variables using os.getenv
-GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
-GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
+GOOGLE_SEARCH_API_KEY = os.getenv("SIRJI_GOOGLE_SEARCH_API_KEY")
+GOOGLE_SEARCH_ENGINE_ID = os.getenv("SIRJI_GOOGLE_SEARCH_ENGINE_ID")
 google_config = load_config("google_config.json")
 
 
