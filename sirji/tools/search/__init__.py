@@ -1,3 +1,3 @@
-from .search import get_search_result_urls
+from .search import search_for
 
-__all__ = ['get_search_result_urls']
+__all__ = ['search_for']

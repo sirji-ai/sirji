@@ -1,5 +1,14 @@
 # Setup Steps
 
+# Virtual Environment
+
+Create a virtual environment to separate Python dependencies, allowing for project-specific packages without interfering with system-wide installations.
+
+```zsh
+python3 -m venv venv
+source venv/bin/activate
+```
+
 ## Install Dependencies
 
 ```zsh
@@ -14,7 +23,8 @@ export SIRJI_OPENAI_API_KEY='YOUR OPENAI API KEY'
 
 ## Example Usages
 
-### Research Agent
+TODO: remove the following section later when main process is ready.
+### Researcher
 
 ```python
 from sirji.agents.researcher import Researcher

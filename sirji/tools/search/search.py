@@ -11,7 +11,8 @@ GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
 GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
 google_config = load_config("google_config.json")
 
-def get_search_result_urls(query):
+
+def search_for(query):
     if (query == ''):
         return KeyError("Query is empty")
 
@@ -26,12 +27,11 @@ def get_search_result_urls(query):
     response = requests.get(search_url, params=params)
     response.raise_for_status()  # Raises an exception for HTTP errors
     search_results = response.json()
-    
+
     urls = [item['link'] for item in search_results.get('items', [])]
     return urls
 
 # Example usage:
 # search_term = ''
-# urls = get_search_result_urls(search_term)
+# urls = search_for(search_term)
 # print(urls)
-
