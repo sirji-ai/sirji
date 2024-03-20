@@ -1,14 +1,15 @@
 import os
 import requests
-from dotenv import load_dotenv
-from config.config_loader import load_config
+# from dotenv import load_dotenv
+from sirji.config.config_loader import load_config
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 
 # Now you can access the environment variables using os.getenv
-GOOGLE_SEARCH_API_KEY = os.getenv("SIRJI_GOOGLE_SEARCH_API_KEY")
-GOOGLE_SEARCH_ENGINE_ID = os.getenv("SIRJI_GOOGLE_SEARCH_ENGINE_ID")
+GOOGLE_SEARCH_API_KEY = os.environ.get("SIRJI_GOOGLE_SEARCH_API_KEY")
+GOOGLE_SEARCH_ENGINE_ID = os.environ.get("SIRJI_GOOGLE_SEARCH_ENGINE_ID")
+
 google_config = load_config("google_config.json")
 
 

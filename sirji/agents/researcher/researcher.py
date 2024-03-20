@@ -22,8 +22,8 @@ class Researcher:
         self._reindex()
 
     def search_and_index(self, query):
-        search_for(query)
-        self._reindex()
+        urls = search_for(query)
+        self.index(urls)
 
     def infer(self, problem_statement):
         retrieved_context = self.embeddings_manager.retrieve_context(
