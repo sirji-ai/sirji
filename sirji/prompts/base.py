@@ -108,7 +108,7 @@ class PromptGeneratorBase(ABC):
     def other_agents_interaction_message_prompt(self):
         interaction_message_prompt = ""
         if self.interact_with():
-            interaction_message_prompt += "Allowed message formats are described below.\n\n"
+            interaction_message_prompt += "Allowed message formats are described below. Ensure you don't give additional details/explanations/comments in the message outside of ``` delimiter. Ensure to be concise with your messages."
             for instance in self.interact_with():
                 interaction_message_prompt += f"The allowed messages that you can send to {instance.short_name()} are:\n\n"
                 incoming_message_display_count = 1
@@ -129,7 +129,7 @@ class PromptGeneratorBase(ABC):
     def caller_agent_interaction_message_prompt(self):
         interaction_message_prompt = ""
         if self.incoming_message_instances() or self.outgoing_message_instances():
-            interaction_message_prompt += "Allowed message formats are described below.\n\n"
+            interaction_message_prompt += "Allowed message formats are described below. Ensure you don't give additional details/explanations/comments in the message outside of ``` delimiter. Ensure to be concise with your messages.\n\n"
             interaction_message_prompt += f"The allowed messages from {self.caller_short_name} to you are:\n\n"
             incoming_message_display_count = 1
             incoming_message_instances = self.incoming_message_instances()

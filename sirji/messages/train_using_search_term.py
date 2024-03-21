@@ -21,7 +21,7 @@ class TrainUsingSearchTermMessage(BaseMessages):
         })
 
     def description(self):
-        return "Train RA on a search term:"
+        return "Train using a search term."
 
     @staticmethod
     def properties():

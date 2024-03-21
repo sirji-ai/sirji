@@ -28,11 +28,19 @@ class CoderPrompt(PromptGeneratorBase):
         return textwrap.dedent(f"""
           - Pay close attention to PS and try to achieve programmatically whatever is asked.
           - Follow secure software development practices in the generated code.
-          - Identify URLs or terms (outside of your knowledge) in the PS, which need to be researched. Ask questions on the researched data.
+          - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched.
+          - Infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
           - Use Python, if the programming language cannot be inferred from PS.
           - Ensure to never use the example APIs in the code. Research if required.
-          - Generate a list of non-technical steps before code generation. Keep updating the progress in terms of step start and end.
-          - Write code, install required dependencies, and execute required code.
+          - Generate a list of non-technical steps before code generation.
+          - Before starting the work for a step, inform about the step start.
+          - After a step is complete, inform about the step completion.
+          - Send only one step status at a time.
+          - Generate code to solve the problem. Ensure that your code is not commented.
+          - Generate README markdown file explaining the generated code\.
+          - Install required packages, libraries and dependencies to execute the generated code.
+          - Execute the generated code and analyze the output. If any errors, try to fix them.
+          - Ensure the files are always created in "workspace/code" folder.
           - Import/require already created files. Try to be as modular as possible.
           - Ensure your code returns the required response apart from printing it to the console.
           - Ensure you end the conversation if you find that the PS cannot be solved programmatically or your solution is complete.

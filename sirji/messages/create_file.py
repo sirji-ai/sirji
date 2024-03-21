@@ -12,14 +12,15 @@ class CreateFileMessage(BaseMessages):
           TO: {implementor}
           ACTION: create-file
           FILENAME: {file_name}
-          CONTENT: {content}
+          CONTENT:
+          {content}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "file_name": "Name of the file to create",
-            "content": "Multiline file content here."
+            "file_name": "Name of the file to create along with workspace folder path.",
+            "content": "Multiline file content here. It should start from a new line."
         })
 
     def description(self):

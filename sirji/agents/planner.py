@@ -39,8 +39,6 @@ class Planner(metaclass=SingletonMeta):
         # Append user's input message to the conversation
         self.conversation.append({'role': 'user', 'content': input_message})
 
-        print()
-
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
             model="gpt-4-turbo-preview",

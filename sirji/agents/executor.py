@@ -4,6 +4,7 @@ from sirji.messages.output import OutputMessage
 from sirji.tools.logger import executor as logger
 from sirji.messages.parser import MessageParser
 
+
 class SingletonMeta(type):
     """
     This is a metaclass that will be used to create a Singleton class.
@@ -17,6 +18,7 @@ class SingletonMeta(type):
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
+
 class Executor(metaclass=SingletonMeta):
     def __init__(self):
         pass
@@ -27,14 +29,15 @@ class Executor(metaclass=SingletonMeta):
     def create_file(self, parsedMessage):
         # Create code directory if it does not exist
         if not os.path.exists(self._code_folder()):
-            logger.info("Executor: Code directory not present. Creating directory")
+            logger.info(
+                "Executor: Code directory not present. Creating directory")
             os.makedirs(self._code_folder())
 
-        filename = parsedMessage.get("FILENAME")
+        filename = parsedMessage.get("FILENAME").strip()
         content = parsedMessage.get("CONTENT")
 
         # Construct the full path where the file should be created
-        file_path = os.path.join(self._code_folder(), filename)
+        file_path = filename  # os.path.join(self._code_folder(), filename)
 
         logger.info(f"Executor: Creating file: {file_path}")
 
@@ -43,17 +46,18 @@ class Executor(metaclass=SingletonMeta):
                 file.write(content)
                 return "Done"
         except Exception as e:
-            raise IOError(f"Failed to create or write to the file '{file_path}'. Error: {e}")
+            raise IOError(
+                f"Failed to create or write to the file '{file_path}'. Error: {e}")
 
     # Execute a file
     def execute_file(self, input_message):
-        command = input_message.get("COMMAND")
+        command = input_message.get("COMMAND").strip()
         logger.info(f"Executor: Execute file command: {command}")
         return self.execute_command(command)
 
     # Install a package
     def install_package(self, input_message):
-        command = input_message.get("COMMAND")
+        command = input_message.get("COMMAND").strip()
         logger.info(f"Executor: Install package command: {command}")
         return self.execute_command(command)
 
@@ -63,25 +67,25 @@ class Executor(metaclass=SingletonMeta):
             # Run the command and capture the output and error, if any.
             # shell=True can be a security hazard if command is constructed from external input.
             logger.info(f"Executor: Executing command: {command}")
-            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
+            result = subprocess.run(command, shell=True, check=True,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
             # If the command was successful, return the output.
             return result.stdout
 
         except subprocess.CalledProcessError as e:
             # If an error occurred while executing the command, return the error.
-            raise subprocess.CalledProcessError(e.returncode, e.cmd, f"Error occurred while executing the command: {e.output}\n{e.stderr}") from e
+            return e.stderr
 
     def message(self, input_message):
         parsedMessage = MessageParser.parse(input_message)
-
-        print("Parsed:", parsedMessage)
 
         action = parsedMessage.get("ACTION")
         messageFrom = parsedMessage.get("FROM")
         messageTo = parsedMessage.get("TO")
 
-        logger.info(f"Executor: Received message from {messageFrom} with action: {action}")
+        logger.info(
+            f"Executor: Received message from {messageFrom} with action: {action}")
 
         if action == "create-file":
             details = self.create_file(parsedMessage)
@@ -96,7 +100,7 @@ class Executor(metaclass=SingletonMeta):
         logger.info("Executor: Preparing output message")
 
         output_instance = OutputMessage(messageTo)
-        output_message = output_instance.generate(messageFrom, { "details": details })
+        output_message = output_instance.generate(
+            messageFrom, {"details": details})
 
-        return output_message;
-
+        return output_message

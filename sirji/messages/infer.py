@@ -17,11 +17,11 @@ class InferMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Question to extract answers from the trained data."
+            "details": "Question to extract answers from the trained content."
         })
 
     def description(self):
-        return "Ask questions to RA on the trained data:"
+        return "Ask questions on the trained content."
 
     @staticmethod
     def properties():

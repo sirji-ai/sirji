@@ -3,6 +3,7 @@ import sys
 from sirji.messages.problem_statement import ProblemStatementMessage
 from sirji.messages.acknowledge import AcknowledgeMessage
 from sirji.prompts.user import UserPrompt
+from sirji.messages.parser import MessageParser
 
 from sirji.messages.parser import MessageParser
 

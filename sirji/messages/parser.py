@@ -45,15 +45,15 @@ class MessageParser:
             if ":" in line:
                 key, value = line.split(":", 1)
                 key = key.strip()
-                value = value.strip()
+                value = value
 
                 if key in available_properties:
                     payload_dict[key] = value
                     last_key = key
                 elif last_key:
-                    payload_dict[last_key] += "\n" + line.strip()
+                    payload_dict[last_key] += "\n" + line
             elif last_key:
-                payload_dict[last_key] += "\n" + line.strip()
+                payload_dict[last_key] += "\n" + line
         input_text_obj = {
             "FROM": from_user,
             "TO": to_user,
@@ -62,8 +62,6 @@ class MessageParser:
         # Merge the payload_dict with input_text_obj
 
         output = {**input_text_obj, **payload_dict}
-
-        print(output)
 
         return output
 

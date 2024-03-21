@@ -27,6 +27,8 @@ class PlannerPrompt(PromptGeneratorBase):
         return textwrap.dedent(f"""
           - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
           - Don't explain the steps further using sub-steps.
+          - Don't be granular with the step generation. Generate high-level steps.
+          - Have a step to create README for the generated code.
           - Respond with a list of steps.
           """)
 

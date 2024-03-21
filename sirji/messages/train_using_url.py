@@ -21,7 +21,7 @@ class TrainUsingUrlMessage(BaseMessages):
         })
 
     def description(self):
-        return "Train RA using a URL:"
+        return "Train using a URL."
 
     @staticmethod
     def properties():
