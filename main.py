@@ -2,6 +2,7 @@ import argparse
 import sys
 import uuid
 import os
+import shutil
 import textwrap
 import re
 
@@ -26,7 +27,9 @@ from sirji.messages.problem_statement import ProblemStatementMessage
 class Main():
     def __init__(self):
         self.problem_statement = None  # Placeholder
+        self.empty_workspace()
         self.initialize_logs()
+
         self.coder = Coder()
         self.planner = Planner()
         self.researcher = Researcher('openai_assistant', 'openai_assistant')
@@ -50,13 +53,53 @@ class Main():
             print("No problem statement was provided. Exiting.")
             sys.exit(1)
 
+    def empty_workspace(self):
+        workspace_dir = "workspace"
+        
+        # List all files and directories in the workspace directory
+        for item in os.listdir(workspace_dir):
+            if (item == "logs"):
+                continue  # Skip the code directory
+
+            item_path = os.path.join(workspace_dir, item)
+
+            try:
+                # If it's a directory, remove it along with its contents
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                # If it's a file, remove it
+                else:
+                    os.remove(item_path)
+            except Exception as e:
+                print(f"Error removing {item_path}: {e}")
+
+    def truncate_logs(self):
+        # List of loggers
+        loggers = [cLogger, rLogger, pLogger, eLogger, sLogger]
+
+        for logger in loggers:
+            # Check if logger is present
+            if logger is not None:
+                try:
+                    # Check if the file exists at the given location
+                    if os.path.exists(logger.filepath):
+                        # File exists, so open it in 'w' mode to clear or create it, then immediately close it
+                        open(logger.filepath, 'w').close()
+                    else:
+                        # If the file does not exist, handle accordingly (e.g., log this situation or take other actions)
+                        print(f"File does not exist at {logger.filepath}.")
+
+                except AttributeError:
+                    # Handle the case where the logger doesn't have a 'filepath' attribute
+                    print(f"Logger {logger} does not have a 'filepath' attribute.")
+
+                except IOError as e:
+                    # Handle other I/O errors, such as permission errors
+                    print(f"Failed to open file for logger {logger} at {logger.filepath}: {e}")
+        
     def initialize_logs(self):
-        # Empty the files
-        open(cLogger.filepath, 'w').close()
-        open(rLogger.filepath, 'w').close()
-        open(pLogger.filepath, 'w').close()
-        open(eLogger.filepath, 'w').close()
-        open(sLogger.filepath, 'w').close()
+        # Truncate the logs
+        self.truncate_logs()
 
         # Initialize the logs
         cLogger.info("****** Coder: Specializing in generating and modifying code, this agent is skilled in various programming languages and is equipped to handle tasks ranging from quick fixes to developing complex algorithms.\n\n\n")
