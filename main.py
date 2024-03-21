@@ -1,14 +1,21 @@
 import argparse
 import sys
 import uuid
+import os
 
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
+from sirji.tools.logger import coder as cLogger
+from sirji.tools.logger import researcher as rLogger
+from sirji.tools.logger import planner as pLogger
+from sirji.tools.logger import executor as eLogger
+from sirji.tools.logger import sirji as sLogger
 
 
 class Main():
     def __init__(self):
         self.problem_statement = None  # Placeholder
+        self.initialize_logs()
 
     def read_arguments(self):
         # Create ArgumentParser object
@@ -28,6 +35,21 @@ class Main():
             print("No problem statement was provided. Exiting.")
             sys.exit(1)
 
+    def initialize_logs(self):
+        # Empty the files
+        open(cLogger.filepath, 'w').close()
+        open(rLogger.filepath, 'w').close()
+        open(pLogger.filepath, 'w').close()
+        open(eLogger.filepath, 'w').close()
+        open(sLogger.filepath, 'w').close()
+        
+        # Initialize the logs
+        cLogger.info("Initializing logs")
+        rLogger.info("Initializing logs")
+        pLogger.info("Initializing logs")
+        eLogger.info("Initializing logs")
+        sLogger.info("Initializing logs")
+    
     def open_views(self):
         screen_width, screen_height = get_screen_resolution()
         margin = 5  # Margin size in pixels
@@ -35,13 +57,18 @@ class Main():
         window_height = (screen_height - 22 - 4 * margin) // 3
 
         command_title_pairs = [
-            ("echo Welcome to Sirji;tail -f log/sirji.log", "Sirji Chat"),
-            ("tail -f logs/sirji.log", "Sirji Logs"),
-            ("tail -f logs/planner.log", "Planner Logs"),
-            ("tail -f logs/researcher.log", "Researcher Logs"),
-            ("tail -f logs/coder.log", "Coder Logs"),
-            ("tail -f logs/executor.log", "Executor Logs")
+            (f"echo Welcome to Sirji;tail -f {sLogger.filepath}", "Sirji Chat"),
+            (f"tail -f {sLogger.filepath}", "Sirji Logs"),
+            (f"tail -f {pLogger.filepath}", "Planner Logs"),
+            (f"tail -f {rLogger.filepath}", "Researcher Logs"),
+            (f"tail -f {cLogger.filepath}", "Coder Logs"),
+            (f"tail -f {eLogger.filepath}", "Executor Logs")
         ]
+        
+        current_directory = os.getcwd()
+        
+        # Prepend `cd {current_directory} &&` to each command to ensure it runs in the desired directory
+        command_title_pairs = [(f"cd {current_directory} && {command}", title) for command, title in command_title_pairs]
 
         for i, (command, title) in enumerate(command_title_pairs):
             open_terminal_and_run_command(
