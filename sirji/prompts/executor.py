@@ -1,6 +1,6 @@
 import textwrap
 
-from .planner import Planner
+from .planner import PlannerPrompt
 
 from .base import PromptGeneratorBase
 
@@ -9,7 +9,7 @@ from sirji.messages.execute_file import ExecuteFile
 from sirji.messages.install_package import InstallPackage
 from sirji.messages.output import Output
 
-class Executor(PromptGeneratorBase):
+class ExecutorPrompt(PromptGeneratorBase):
   
   def __init__(self, caller_name, caller_short_name):
     super().__init__(caller_name, caller_short_name)
@@ -36,7 +36,7 @@ class Executor(PromptGeneratorBase):
       """)
                            
   def interact_with(self):
-    return [Planner(self.name(), self.short_name())] 
+    return [PlannerPrompt(self.name(), self.short_name())] 
   
   def incoming_message_instances(self):
     return [

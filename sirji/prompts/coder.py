@@ -1,13 +1,13 @@
 import textwrap
 
-from .planner import Planner
-from .researcher import Researcher
-from .executor import Executor
-from .user import User
+from .planner import PlannerPrompt
+from .researcher import ResearcherPrompt
+from .executor import ExecutorPrompt
+from .user import UserPrompt
 
 from .base import PromptGeneratorBase
 
-class Coder(PromptGeneratorBase):
+class CoderPrompt(PromptGeneratorBase):
   
   def __init__(self):
     super().__init__(None, None)
@@ -35,10 +35,10 @@ class Coder(PromptGeneratorBase):
                            
   def interact_with(self):
     return [
-      Planner(self.name(), self.short_name()),
-      Researcher(self.name(), self.short_name()),
-      Executor(self.name(), self.short_name()),
-      User(self.name(), self.short_name())
+      PlannerPrompt(self.name(), self.short_name()),
+      ResearcherPrompt(self.name(), self.short_name()),
+      ExecutorPrompt(self.name(), self.short_name()),
+      UserPrompt(self.name(), self.short_name())
       ] 
   
   def incoming_message_instances(self):

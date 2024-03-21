@@ -5,7 +5,7 @@ from sirji.messages.steps import Steps
 
 from .base import PromptGeneratorBase
 
-class Planner(PromptGeneratorBase):
+class PlannerPrompt(PromptGeneratorBase):
   
   def __init__(self, caller_name, caller_short_name):
     super().__init__(caller_name, caller_short_name)

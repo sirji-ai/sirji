@@ -1,6 +1,6 @@
 import textwrap
 
-from .planner import Planner
+from .planner import PlannerPrompt
 
 from .base import PromptGeneratorBase
 
@@ -12,7 +12,7 @@ from sirji.messages.step_completed import StepCompleted
 from sirji.messages.step_started import StepStarted
 from sirji.messages.solution_complete import SolutionComplete
 
-class User(PromptGeneratorBase):
+class UserPrompt(PromptGeneratorBase):
   
   def __init__(self, caller_name, caller_short_name):
     super().__init__(caller_name, caller_short_name)
@@ -39,7 +39,7 @@ class User(PromptGeneratorBase):
       """)
                            
   def interact_with(self):
-    return [Planner(self.name(), self.short_name())] 
+    return [PlannerPrompt(self.name(), self.short_name())] 
   
   def incoming_message_instances(self):
     return [

@@ -9,7 +9,7 @@ from sirji.messages.train_using_url import TrainUsingUrl
 from sirji.messages.response import Response
 from sirji.messages.output import Output
 
-class Researcher(PromptGeneratorBase):
+class ResearcherPrompt(PromptGeneratorBase):
   def __init__(self, caller_name, caller_short_name):
     super().__init__(caller_name, caller_short_name)
 
