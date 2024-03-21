@@ -2,7 +2,7 @@ import textwrap
 
 from sirji.messages.base import BaseMessages 
 
-class Infer(BaseMessages):
+class InferMessage(BaseMessages):
 	
 	def template(self):
 		return textwrap.dedent("""

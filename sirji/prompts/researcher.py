@@ -2,12 +2,12 @@ import textwrap
 
 from .base import PromptGeneratorBase
 
-from sirji.messages.infer import Infer
-from sirji.messages.train_using_search_term import TrainUsingSearchTerm
-from sirji.messages.train_using_url import TrainUsingUrl
+from sirji.messages.infer import InferMessage
+from sirji.messages.train_using_search_term import TrainUsingSearchTermMessage
+from sirji.messages.train_using_url import TrainUsingUrlMessage
 
-from sirji.messages.response import Response
-from sirji.messages.output import Output
+from sirji.messages.response import ResponseMessage
+from sirji.messages.output import OutputMessage
 
 class ResearcherPrompt(PromptGeneratorBase):
   def __init__(self, caller_name, caller_short_name):
@@ -43,7 +43,7 @@ class ResearcherPrompt(PromptGeneratorBase):
     return []
   
   def incoming_message_instances(self):
-    return [TrainUsingSearchTerm(self.short_name()), TrainUsingUrl(self.short_name()), Infer(self.short_name())]
+    return [TrainUsingSearchTermMessage(self.short_name()), TrainUsingUrlMessage(self.short_name()), InferMessage(self.short_name())]
 
   def outgoing_message_instances(self):
-    return [Response(self.short_name()), Output(self.short_name())] 
+    return [ResponseMessage(self.short_name()), OutputMessage(self.short_name())] 

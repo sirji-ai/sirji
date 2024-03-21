@@ -2,7 +2,7 @@ import textwrap
 
 from sirji.messages.base import BaseMessages 
 
-class InstallPackage(BaseMessages):
+class InstallPackageMessage(BaseMessages):
 	
 	def template(self):
 		return textwrap.dedent("""

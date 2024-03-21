@@ -2,7 +2,7 @@ import textwrap
 
 from sirji.messages.base import BaseMessages 
 
-class StepCompleted(BaseMessages):
+class StepCompletedMessage(BaseMessages):
 	
 	def template(self):
 		return textwrap.dedent("""

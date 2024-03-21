@@ -4,10 +4,10 @@ from .planner import PlannerPrompt
 
 from .base import PromptGeneratorBase
 
-from sirji.messages.create_file import CreateFile
-from sirji.messages.execute_file import ExecuteFile
-from sirji.messages.install_package import InstallPackage
-from sirji.messages.output import Output
+from sirji.messages.create_file import CreateFileMessage
+from sirji.messages.execute_file import ExecuteFileMessage
+from sirji.messages.install_package import InstallPackageMessage
+from sirji.messages.output import OutputMessage
 
 class ExecutorPrompt(PromptGeneratorBase):
   
@@ -40,14 +40,14 @@ class ExecutorPrompt(PromptGeneratorBase):
   
   def incoming_message_instances(self):
     return [
-      CreateFile(self.short_name()),
-      ExecuteFile(self.short_name()), 
-      InstallPackage(self.short_name())
+      CreateFileMessage(self.short_name()),
+      ExecuteFileMessage(self.short_name()), 
+      InstallPackageMessage(self.short_name())
     ]
 
   def outgoing_message_instances(self):
     return [
-      Output(self.short_name())
+      OutputMessage(self.short_name())
     ]
   
   def ending_prompt(self):

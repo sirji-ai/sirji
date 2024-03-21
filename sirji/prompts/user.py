@@ -4,13 +4,13 @@ from .planner import PlannerPrompt
 
 from .base import PromptGeneratorBase
 
-from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatement
-from sirji.messages.answer import Answer
-from sirji.messages.acknowledge import Acknowledge
-from sirji.messages.question import Question
-from sirji.messages.step_completed import StepCompleted
-from sirji.messages.step_started import StepStarted
-from sirji.messages.solution_complete import SolutionComplete
+from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
+from sirji.messages.answer import AnswerMessage
+from sirji.messages.acknowledge import AcknowledgeMessage
+from sirji.messages.question import QuestionMessage
+from sirji.messages.step_completed import StepCompletedMessage
+from sirji.messages.step_started import StepStartedMessage
+from sirji.messages.solution_complete import SolutionCompleteMessage
 
 class UserPrompt(PromptGeneratorBase):
   
@@ -43,17 +43,17 @@ class UserPrompt(PromptGeneratorBase):
   
   def incoming_message_instances(self):
     return [
-      Question(self.short_name()),
-      StepCompleted(self.short_name()), 
-      StepStarted(self.short_name()), 
-      SolutionComplete(self.short_name())
+      QuestionMessage(self.short_name()),
+      StepCompletedMessage(self.short_name()), 
+      StepStartedMessage(self.short_name()), 
+      SolutionCompleteMessage(self.short_name())
       ]
 
   def outgoing_message_instances(self):
     return [
-      ElaboratedProblemStatement(self.short_name()), 
-      Answer(self.short_name()), 
-      Acknowledge(self.short_name())
+      ElaboratedProblemStatementMessage(self.short_name()), 
+      AnswerMessage(self.short_name()), 
+      AcknowledgeMessage(self.short_name())
     ]
   
   def ending_prompt(self):

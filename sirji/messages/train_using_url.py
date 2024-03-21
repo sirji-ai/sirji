@@ -2,7 +2,7 @@ import textwrap
 
 from sirji.messages.base import BaseMessages 
 
-class TrainUsingUrl(BaseMessages):
+class TrainUsingUrlMessage(BaseMessages):
 	
 	def template(self):
 		return textwrap.dedent("""
