@@ -1,4 +1,8 @@
+import sys 
+
 from sirji.messages.problem_statement import ProblemStatementMessage
+from sirji.messages.acknowledge import AcknowledgeMessage
+from sirji.prompts.user import UserPrompt
 
 
 class SingletonMeta(type):
@@ -16,11 +20,14 @@ class SingletonMeta(type):
 
 
 class User(metaclass=SingletonMeta):
-    def generate_problem_statement_message(self, problem_statement):
-        pass
+    def generate_problem_statement_message(self, problem_statement, for_user):
+        user = UserPrompt(for_user, '')
+        problem_statement_message = ProblemStatementMessage(for_user)
 
-    def generate_ack_message(self, ack):
-        pass
-
-    def generate_answer_message(self, answer):
-        pass
+        return problem_statement_message.generate(user.name(), {
+            "details": problem_statement
+        })   
+    
+    def message(self, input_message):     
+        pass  
+   

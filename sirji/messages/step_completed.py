@@ -20,4 +20,7 @@ class StepCompletedMessage(BaseMessages):
         })
 	
 	def description(self):
-		return "Inform when a step is complete, before moving to the next step:"    
+		return "Inform when a step is complete, before moving to the next step:"   
+
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS'] 

@@ -21,3 +21,6 @@ class ResponseMessage(BaseMessages):
 	
 	def description(self):
 		return "The response output:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

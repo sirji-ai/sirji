@@ -19,3 +19,7 @@ class AcknowledgeMessage(BaseMessages):
 	
 	def description(self):
 		return "The message acknowledgement:"
+	
+	@staticmethod
+	def properties():
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

@@ -28,6 +28,13 @@ class BaseMessages(ABC):
     Description of the message.
     """
     pass
+
+  @abstractmethod 
+  def properties(self):
+    """
+    List of available properties of the message.
+    """
+    pass
   
   def generate(self, interactor, obj):
     obj["implementor"] = self.implementor

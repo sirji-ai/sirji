@@ -21,3 +21,6 @@ class InferMessage(BaseMessages):
 	
 	def description(self):
 		return "Ask questions to RA on the trained data:"    
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

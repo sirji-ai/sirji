@@ -21,3 +21,6 @@ class SolutionCompleteMessage(BaseMessages):
 	
 	def description(self):
 		return "To inform that the solution to the problem is complete:"    
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

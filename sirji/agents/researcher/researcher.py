@@ -22,6 +22,47 @@ class Researcher:
 
         logger.info("Researcher: Completed initializing")
 
+    def message(self, input_message):
+        
+        input_message_dict = self.parse_input_message(input_message)
+
+        if input_message_dict.action == "step-started":
+            return AcknowledgeMessage(input_message_dict.to_user).generate(input_message_dict.from_user, {})
+        elif input_message_dict.action == "step-completed":
+            return AcknowledgeMessage(input_message_dict.to_user).generate(input_message_dict.from_user, {})
+        elif input_message_dict.action == "solution-complete":
+            sys.exit(0)
+                        
+    def parse_input_message(self, input_message):
+        
+        lines = input_message.strip().split("\n")
+        
+        input_message_dict = {}
+
+        for line in lines:
+            key, value = line.split(":", 1)
+            key = key.strip()
+            value = value.strip()
+            
+            if key == "FROM":
+                input_message_dict["from_user"] = value
+            elif key == "TO":
+                input_message_dict["to_user"] = value
+            elif key == "ACTION":
+                input_message_dict["action"] = value
+            elif key == "DETAILS":
+                start_index = lines.index(line) + 1
+                while start_index < len(lines) and not lines[start_index].strip():
+                    start_index += 1
+                
+                # Extract all lines from start_index until the end
+                details_lines = lines[start_index:]
+                # Join the lines to form the details text
+                details = "\n".join(details_lines)
+                input_message_dict["details"] = details
+
+        return input_message_dict
+
     def index(self, urls):
         logger.info("Researcher: Started indexing the URLs")
         crawl_urls(urls, self.research_folder)

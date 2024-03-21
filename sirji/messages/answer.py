@@ -21,3 +21,6 @@ class AnswerMessage(BaseMessages):
 	
 	def description(self):
 		return "The answer of the asked question:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

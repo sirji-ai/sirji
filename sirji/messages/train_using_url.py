@@ -21,3 +21,6 @@ class TrainUsingUrlMessage(BaseMessages):
 	
 	def description(self):
 		return "Train RA using a URL:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'URL']

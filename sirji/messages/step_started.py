@@ -21,3 +21,6 @@ class StepStartedMessage(BaseMessages):
 	
 	def description(self):
 		return "Inform the step you are about to start on:"    
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

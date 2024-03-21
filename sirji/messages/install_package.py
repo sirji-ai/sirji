@@ -21,3 +21,6 @@ class InstallPackageMessage(BaseMessages):
 	
 	def description(self):
 		return "To install a package or library:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'COMMAND']

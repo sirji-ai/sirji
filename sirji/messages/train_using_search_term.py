@@ -21,3 +21,6 @@ class TrainUsingSearchTermMessage(BaseMessages):
 	
 	def description(self):
 		return "Train RA on a search term:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'TERM']

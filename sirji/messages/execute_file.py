@@ -21,3 +21,6 @@ class ExecuteFileMessage(BaseMessages):
 	
 	def description(self):
 		return "To execute a file:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'COMMAND']

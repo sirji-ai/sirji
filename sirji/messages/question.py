@@ -21,3 +21,6 @@ class QuestionMessage(BaseMessages):
 	
 	def description(self):
 		return "Ask questions to understand the problem statement better:"    
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']

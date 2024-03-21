@@ -23,3 +23,6 @@ class CreateFileMessage(BaseMessages):
 	
 	def description(self):
 		return "To create a file (with content):"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'FILENAME', 'CONTENT']

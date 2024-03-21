@@ -22,4 +22,7 @@ class StepsMessage(BaseMessages):
         })
 	
 	def description(self):
-		return "List of steps required to solve the problem:"    
+		return "List of steps required to solve the problem:"   
+
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'SUMMARY', 'DETAILS'] 

@@ -21,3 +21,6 @@ class ProblemStatementMessage(BaseMessages):
 	
 	def description(self):
 		return "The problem statement (PS) that needs to be solved programmatically:"
+	
+	def properties(self):
+		return ['FROM', 'TO', 'ACTION', 'DETAILS']
