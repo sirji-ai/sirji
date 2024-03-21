@@ -1,7 +1,7 @@
 import os
 import requests
-from config.config_loader import load_config
-from .tools.logger import researcher as logger
+from sirji.config.config_loader import load_config
+from sirji.tools.logger import researcher as logger
 
 # Now you can access the environment variables using os.getenv
 GOOGLE_SEARCH_API_KEY = os.environ.get("SIRJI_GOOGLE_SEARCH_API_KEY")

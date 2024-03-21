@@ -1,7 +1,7 @@
 import os
 import time
 from openai import OpenAI
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 # Assuming .base contains your ResearcherInfererBase
 from .base import ResearcherInfererBase

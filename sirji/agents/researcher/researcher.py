@@ -4,12 +4,13 @@ from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
 from sirji.tools.crawler import crawl_urls
 from sirji.tools.search import search_for
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
+
 
 class Researcher:
     def __init__(self, embeddings_type, inferer_type):
         logger.info("Researcher: Initializing...")
-        
+
         # Initialize the embeddings manager
         self.embeddings_manager = EmbeddingsFactory.get_instance(
             embeddings_type)
@@ -18,7 +19,7 @@ class Researcher:
         self.inferer = InfererFactory.get_instance(inferer_type)
 
         self.research_folder = 'workspace/researcher'
-        
+
         logger.info("Researcher: Completed initializing")
 
     def index(self, urls):
@@ -31,7 +32,6 @@ class Researcher:
         logger.info("Researcher: Started searching for the query")
         urls = search_for(query)
         self.index(urls)
-        
 
     def infer(self, problem_statement):
         retrieved_context = self.embeddings_manager.retrieve_context(
@@ -51,5 +51,6 @@ class Researcher:
                 # Call embeddings_manager.index on each folder
                 response = self.embeddings_manager.index(folder_path)
                 # Optional: You may want to do something with the response
-        
-        logger.info("Researcher: Completed recursively indexing the research folder")
+
+        logger.info(
+            "Researcher: Completed recursively indexing the research folder")

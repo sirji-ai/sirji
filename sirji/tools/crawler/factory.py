@@ -2,7 +2,7 @@ import re
 from .web_page_handler import WebPageHandler
 from .pdf_handler import PDFHandler
 from .github_handler import GitHubHandler
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 class ContentHandlerFactory:
     @classmethod

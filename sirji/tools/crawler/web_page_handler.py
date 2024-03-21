@@ -2,7 +2,7 @@ from .base import BaseContentHandler
 import requests
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 class WebPageHandler(BaseContentHandler):
     def handle(self, url, output_dir):

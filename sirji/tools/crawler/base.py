@@ -1,7 +1,7 @@
 import os
 import time
 from urllib.parse import urlparse
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 class BaseContentHandler:
     def handle(self, url, output_dir):

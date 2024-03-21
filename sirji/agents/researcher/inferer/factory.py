@@ -1,5 +1,5 @@
 from .openai_assistant import OpenAIAssistantInferer
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 class InfererFactory:
     @classmethod

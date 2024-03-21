@@ -3,15 +3,23 @@ import sys
 import uuid
 import os
 import textwrap
+import re
 
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
+
 from sirji.tools.logger import coder as cLogger
 from sirji.tools.logger import researcher as rLogger
 from sirji.tools.logger import planner as pLogger
 from sirji.tools.logger import executor as eLogger
 from sirji.tools.logger import sirji as sLogger
+
 from sirji.agents.coder import Coder
+from sirji.agents.planner import Planner
+from sirji.agents.researcher import Researcher
+from sirji.agents.executor import Executor
+
+
 from sirji.messages.problem_statement import ProblemStatementMessage
 
 
@@ -20,6 +28,9 @@ class Main():
         self.problem_statement = None  # Placeholder
         self.initialize_logs()
         self.coder = Coder()
+        self.planner = Planner()
+        self.researcher = Researcher('openai_assistant', 'openai_assistant')
+        self.executor = Executor()
 
     def read_arguments(self):
         # Create ArgumentParser object
@@ -57,7 +68,7 @@ class Main():
         eLogger.info("****** Executor: responsible for running code or scripts in a controlled environment, allowing for executing and testing activities. Executor verifies the correctness and efficacy of solutions before they are finalized and implements automated tasks as defined by the Planner.\n\n\n")
 
         sLogger.info("****** Sirji: Sirji will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.\n\n\n")
-    
+
     def open_views(self):
         screen_width, screen_height = get_screen_resolution()
         margin = 5  # Margin size in pixels
@@ -84,22 +95,61 @@ class Main():
             open_terminal_and_run_command(
                 command, title, i, window_width, window_height)
 
-    def pass_user_input_to_coder():
-        pass
+    def _parse_response(self, response_str):
+        """
+        Parses the response string to a dictionary.
+        """
+        response = {}
+        for line in response_str.split('\n'):
+            if line:
+                key, val = line.split(': ')
+                response[key.strip()] = val.strip()
+        return response
+
+    def handle_response(self, response_str):
+        """
+        Recursively passes the response object among different objects.
+        """
+        response = self._parse_response(response_str)
+
+        # Extract the 'TO' field from the response object.
+        recipient = response.get("TO")
+
+        # Pass the response to the appropriate object and update the response object.
+        if recipient == "CR":
+            response_str = self.coder.message(response)
+        elif recipient == "PA":
+            response_str = self.planner.message(response)
+        elif recipient == "ER":
+            response_str = self.executor.message(response)
+        elif recipient == "RA":
+            response_str = self.researcher.message(response)
+        elif recipient == "UR":
+            response_str = self.user.message(response)
+            # Optionally, insert a return or break statement if 'UR' is a terminal condition.
+        else:
+            raise ValueError(f"Unknown recipient type: {recipient}")
+
+        self.handle_response(response_str)
 
     def start(self):
         self.read_arguments()
         # self.open_views()
 
-        response = self.coder.message(self.problem_statement)
+        response_str = self.coder.message(self.problem_statement)
+
+        print(response_str)
+
+        self.handle_response(response_str)
 
         # parse response to get 'to' field
 
-        # if to is coder, call `self.coder.message(response)`
-        # if to is planner, call `self.planner.message(response)`
-        # if to is executor, call `self.executor.message(response)`
-        # if to is researcher, call `self.researcher.message(response)`
-        # if to is user, call `self.user.message(response)`
+        # if to is CR, call `response = self.coder.message(response)`
+        # if to is PA, call `response = self.planner.message(response)`
+        # if to is ER, call `response = self.executor.message(response)`
+        # if to is RA, call `response = self.researcher.message(response)`
+        # if to is UR, call `response = self.user.message(response)`
+
 
 if __name__ == "__main__":
     Main().start()
