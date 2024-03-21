@@ -9,15 +9,14 @@ class PromptGeneratorBase(ABC):
 
     def system_prompt(self):
         system_prompt = ""
-        system_prompt += f"{self.intro_prompt()}"
+        system_prompt += f"{self.intro_prompt()}\n"
+        system_prompt += "Your job is to:"
         system_prompt += f"{self.responsibilities_prompt()}\n"
         system_prompt += f"{self.caller_agent_interaction_message_prompt()}\n"
         system_prompt += f"{self.can_interact_with_other_agents_prompt()}"
         system_prompt += f"{self.other_agents_capability_prompt()}"
         system_prompt += f"{self.other_agents_interaction_message_prompt()}"
         system_prompt += f"{self.ending_prompt()}"
-
-        print(system_prompt)
 
         return system_prompt
 
@@ -107,13 +106,10 @@ class PromptGeneratorBase(ABC):
         return interact_with_prompt
 
     def other_agents_interaction_message_prompt(self):
-        print('other_agents_interaction_message_prompt', self.short_name())
         interaction_message_prompt = ""
         if self.interact_with():
             interaction_message_prompt += "Allowed message formats are described below.\n\n"
             for instance in self.interact_with():
-                print('other_agents_interaction_message_prompt',
-                      instance.short_name())
                 interaction_message_prompt += f"The allowed messages that you can send to {instance.short_name()} are:\n\n"
                 incoming_message_display_count = 1
                 incoming_message_instances = instance.incoming_message_instances()
@@ -131,12 +127,8 @@ class PromptGeneratorBase(ABC):
         return interaction_message_prompt
 
     def caller_agent_interaction_message_prompt(self):
-        print('caller_agent_interaction_message_prompt', self.short_name())
-        print('caller_agent_interaction_message_prompt', self.caller_short_name)
         interaction_message_prompt = ""
         if self.incoming_message_instances() or self.outgoing_message_instances():
-            print(
-                'inside caller_agent_interaction_message_prompt: if self.incoming_message_instances() or self.outgoing_message_instances():')
             interaction_message_prompt += "Allowed message formats are described below.\n\n"
             interaction_message_prompt += f"The allowed messages from {self.caller_short_name} to you are:\n\n"
             incoming_message_display_count = 1
