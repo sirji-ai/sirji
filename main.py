@@ -47,12 +47,16 @@ class Main():
         open(sLogger.filepath, 'w').close()
 
         # Initialize the logs
-        cLogger.info("Initializing logs")
-        rLogger.info("Initializing logs")
-        pLogger.info("Initializing logs")
-        eLogger.info("Initializing logs")
-        sLogger.info("Initializing logs")
+        cLogger.info("****** Coder: Specializing in generating and modifying code, this agent is skilled in various programming languages and is equipped to handle tasks ranging from quick fixes to developing complex algorithms.\n\n\n")
 
+        rLogger.info("****** Researcher: dives into vast pools of information to find answers, evidence, or data that support the task at hand. Whether it's through browsing the web, accessing databases, or consulting academic journals, this agent is adept at gathering and synthesizing relevant information to aid in problem-solving.\n\n\n")
+
+        pLogger.info("****** Planner: planner is tasked with orchestrating the overall strategy for solving user queries. Assesses the problem statement and determines the most effective sequence of actions, delegating tasks to other agents and tools as necessary. This agent ensures that Sirji's workflow is efficient and goal-oriented.\n\n\n")
+
+        eLogger.info("****** Executor: responsible for running code or scripts in a controlled environment, allowing for executing and testing activities. Executor verifies the correctness and efficacy of solutions before they are finalized and implements automated tasks as defined by the Planner.\n\n\n")
+
+        sLogger.info("****** Sirji: Sirji will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.\n\n\n")
+    
     def open_views(self):
         screen_width, screen_height = get_screen_resolution()
         margin = 5  # Margin size in pixels
