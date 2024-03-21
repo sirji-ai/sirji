@@ -74,6 +74,7 @@ class Executor(metaclass=SingletonMeta):
     def message(self, input_message):
         action = input_message.get("ACTION")
         messageFrom = input_message.get("FROM")
+        messageTo = input_message.get("TO")
 
         logger.info(f"Executor: Received message from {messageFrom} with action: {action}")
         if action == "create-file":
@@ -88,7 +89,7 @@ class Executor(metaclass=SingletonMeta):
 
         logger.info("Executor: Preparing output message")
 
-        output_instance = OutputMessage('executor')
+        output_instance = OutputMessage(messageTo)
         output_message = output_instance.generate(messageFrom, { "details": details })
 
         return output_message;
