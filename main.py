@@ -1,56 +1,56 @@
 import argparse
 import sys
+import uuid
 
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
 
 
-def read_arguments():
-    # Create ArgumentParser object
-    parser = argparse.ArgumentParser(description="Process some inputs.")
+class Main():
+    def __init__(self):
+        self.problem_statement = None  # Placeholder
 
-    # Add the 'ps' argument
-    parser.add_argument('--ps', type=str, help='Your problem statement')
+    def read_arguments(self):
+        # Create ArgumentParser object
+        parser = argparse.ArgumentParser(description="Process some inputs.")
 
-    # Parse the arguments
-    args = parser.parse_args()
+        # Add the 'ps' argument
+        parser.add_argument('--ps', type=str, help='Your problem statement')
 
-    return args
+        # Parse the arguments
+        args = parser.parse_args()
 
+        self.problem_statement = args.ps
 
-def open_views():
-    screen_width, screen_height = get_screen_resolution()
-    margin = 5  # Margin size in pixels
-    window_width = (screen_width - 3 * margin) // 2
-    window_height = (screen_height - 22 - 4 * margin) // 3
+        if self.problem_statement:
+            print(f"Problem statement: {self.problem_statement}")
+        else:
+            print("No problem statement was provided. Exiting.")
+            sys.exit(1)
 
-    command_title_pairs = [
-        ("echo Welcome to Sirji;tail -f log/sirji.log", "Sirji Chat"),
-        ("tail -f logs/sirji.log", "Sirji Logs"),
-        ("tail -f logs/planner.log", "Planner Logs"),
-        ("tail -f logs/researcher.log", "Researcher Logs"),
-        ("tail -f logs/coder.log", "Coder Logs"),
-        ("tail -f logs/executor.log", "Executor Logs")
-    ]
+    def open_views(self):
+        screen_width, screen_height = get_screen_resolution()
+        margin = 5  # Margin size in pixels
+        window_width = (screen_width - 3 * margin) // 2
+        window_height = (screen_height - 22 - 4 * margin) // 3
 
-    for i, (command, title) in enumerate(command_title_pairs):
-        open_terminal_and_run_command(
-            command, title, i, window_width, window_height)
+        command_title_pairs = [
+            ("echo Welcome to Sirji;tail -f log/sirji.log", "Sirji Chat"),
+            ("tail -f logs/sirji.log", "Sirji Logs"),
+            ("tail -f logs/planner.log", "Planner Logs"),
+            ("tail -f logs/researcher.log", "Researcher Logs"),
+            ("tail -f logs/coder.log", "Coder Logs"),
+            ("tail -f logs/executor.log", "Executor Logs")
+        ]
 
+        for i, (command, title) in enumerate(command_title_pairs):
+            open_terminal_and_run_command(
+                command, title, i, window_width, window_height)
 
-def main():
-    args = read_arguments()
-
-    problem_statement = args.ps
-
-    if problem_statement:
-        print(f"Problem statement: {problem_statement}")
-    else:
-        print("No problem statement was provided. Exiting.")
-        sys.exit(1)
-
-    open_views()
+    def start(self):
+        self.read_arguments()
+        self.open_views()
 
 
 if __name__ == "__main__":
-    main()
+    Main().start()
