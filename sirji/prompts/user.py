@@ -20,10 +20,10 @@ class UserPrompt(PromptGeneratorBase):
     super().__init__(caller_name, caller_short_name)
 
   def name(self):
-    return "User"
+    return "End User"
   
   def short_name(self):
-    return "UR"
+    return "User"
   
   def intro_prompt(self):
     return textwrap.dedent(f"""

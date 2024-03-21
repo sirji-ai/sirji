@@ -1,11 +1,12 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages 
+from sirji.messages.base import BaseMessages
+
 
 class AnswerMessage(BaseMessages):
-	
-	def template(self):
-		return textwrap.dedent("""
+
+    def template(self):
+        return textwrap.dedent("""
 			```
 			FROM: {implementor}
 			TO: {interactor}
@@ -14,13 +15,14 @@ class AnswerMessage(BaseMessages):
 			```
 			""")
 
-	def sample(self,interactor):
-		return self.generate(interactor, {
-			"details": "Multiline answer of the asked question."
+    def sample(self, interactor):
+        return self.generate(interactor, {
+            "details": "Multiline answer to the asked question."
         })
-	
-	def description(self):
-		return "The answer of the asked question:"
-	
-	def properties(self):
-		return ['FROM', 'TO', 'ACTION', 'DETAILS']
+
+    def description(self):
+        return "The answer to the asked question:"
+
+    @staticmethod
+    def properties():
+        return ['FROM', 'TO', 'ACTION', 'DETAILS']

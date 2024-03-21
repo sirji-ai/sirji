@@ -19,6 +19,9 @@ from sirji.agents.coder import Coder
 from sirji.agents.planner import Planner
 from sirji.agents.researcher import Researcher
 from sirji.agents.executor import Executor
+from sirji.agents.user import User
+
+from sirji.messages.parser import MessageParser
 
 
 from sirji.messages.problem_statement import ProblemStatementMessage
@@ -34,6 +37,7 @@ class Main():
         self.planner = Planner()
         self.researcher = Researcher('openai_assistant', 'openai_assistant')
         self.executor = Executor()
+        self.user = User()
 
     def read_arguments(self):
         # Create ArgumentParser object
@@ -142,56 +146,46 @@ class Main():
         """
         Parses the response string to a dictionary.
         """
-        response = {}
-        for line in response_str.split('\n'):
-            if line:
-                key, val = line.split(': ')
-                response[key.strip()] = val.strip()
+        print(response_str)
+        response = MessageParser.parse(response_str)
         return response
 
-    def handle_response(self, response_str):
+    def handle_response(self, message):
         """
         Recursively passes the response object among different objects.
         """
-        response = self._parse_response(response_str)
-
         # Extract the 'TO' field from the response object.
-        recipient = response.get("TO")
+        recipient = self._parse_response(message).get("TO")
+
+        response_message = ''
 
         # Pass the response to the appropriate object and update the response object.
-        if recipient == "CR":
-            response_str = self.coder.message(response)
-        elif recipient == "PA":
-            response_str = self.planner.message(response)
-        elif recipient == "ER":
-            response_str = self.executor.message(response)
-        elif recipient == "RA":
-            response_str = self.researcher.message(response)
-        elif recipient == "UR":
-            response_str = self.user.message(response)
+        if recipient == "Coder":
+            response_message = self.coder.message(message)
+        elif recipient == "Planner":
+            response_message = self.planner.message(message)
+        elif recipient == "Executor":
+            response_message = self.executor.message(message)
+        elif recipient == "Researcher":
+            response_message = self.researcher.message(message)
+        elif recipient == "User":
+            response_message = self.user.message(message)
             # Optionally, insert a return or break statement if 'UR' is a terminal condition.
         else:
             raise ValueError(f"Unknown recipient type: {recipient}")
 
-        self.handle_response(response_str)
+        self.handle_response(response_message)
 
     def start(self):
         self.read_arguments()
         # self.open_views()
 
-        response_str = self.coder.message(self.problem_statement)
+        ps_message = self.user.generate_problem_statement_message(
+            self.problem_statement, 'Coder')
 
-        print(response_str)
+        response_message = self.coder.message(ps_message)
 
-        self.handle_response(response_str)
-
-        # parse response to get 'to' field
-
-        # if to is CR, call `response = self.coder.message(response)`
-        # if to is PA, call `response = self.planner.message(response)`
-        # if to is ER, call `response = self.executor.message(response)`
-        # if to is RA, call `response = self.researcher.message(response)`
-        # if to is UR, call `response = self.user.message(response)`
+        self.handle_response(response_message)
 
 
 if __name__ == "__main__":

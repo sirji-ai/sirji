@@ -12,10 +12,10 @@ class PlannerPrompt(PromptGeneratorBase):
     super().__init__(caller_name, caller_short_name)
 
   def name(self):
-    return "Planning Assistant"
+    return "Planning Agent"
   
   def short_name(self):
-    return "PA" 
+    return "Planner"
   
   def intro_prompt(self):
     return textwrap.dedent(f"""

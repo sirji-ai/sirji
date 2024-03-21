@@ -15,10 +15,10 @@ class ExecutorPrompt(PromptGeneratorBase):
     super().__init__(caller_name, caller_short_name)
 
   def name(self):
-    return "Executor"
+    return "Execution Agent"
   
   def short_name(self):
-    return "ER"
+    return "Executor"
   
   def intro_prompt(self):
     return textwrap.dedent(f"""

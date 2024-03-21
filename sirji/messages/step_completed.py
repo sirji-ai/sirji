@@ -1,26 +1,28 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages 
+from sirji.messages.base import BaseMessages
+
 
 class StepCompletedMessage(BaseMessages):
-	
-	def template(self):
-		return textwrap.dedent("""
-			```
-			FROM: {interactor}
-			TO: {implementor}
-			ACTION: step-completed
-			DETAILS: {details}
-			```
-			""")
 
-	def sample(self,interactor):
-		return self.generate(interactor, {
-			"details": "Example details 'Step # completed'."
+    def template(self):
+        return textwrap.dedent("""
+          ```
+          FROM: {interactor}
+          TO: {implementor}
+          ACTION: step-completed
+          DETAILS: {details}
+          ```
+          """)
+
+    def sample(self, interactor):
+        return self.generate(interactor, {
+            "details": "Example details 'Step # completed'."
         })
-	
-	def description(self):
-		return "Inform when a step is complete, before moving to the next step:"   
 
-	def properties(self):
-		return ['FROM', 'TO', 'ACTION', 'DETAILS'] 
+    def description(self):
+        return "Inform when a step is complete, before moving to the next step:"
+
+    @staticmethod
+    def properties():
+        return ['FROM', 'TO', 'ACTION', 'DETAILS']

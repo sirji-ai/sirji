@@ -17,7 +17,7 @@ class ResearcherPrompt(PromptGeneratorBase):
     return "Research Agent"
   
   def short_name(self):
-    return "RA"
+    return "Researcher"
   
   def intro_prompt(self):
     return textwrap.dedent("""

@@ -20,24 +20,26 @@ class SingletonMeta(type):
 
 class Planner(metaclass=SingletonMeta):
     def __init__(self):
-        # # Initialize conversation
-        # self.conversation = [
-        #     {'role': 'system', 'content': PlannerPrompt().system_prompt()}]
+        # Initialize conversation
+        self.conversation = [
+            {'role': 'system', 'content': PlannerPrompt('Coding Agent', 'Coder').system_prompt()}]
 
-        # # Fetch OpenAI API key from environment variable
-        # api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        # Fetch OpenAI API key from environment variable
+        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
 
-        # if api_key is None:
-        #     raise ValueError(
-        #         "OpenAI API key is not set as an environment variable")
+        if api_key is None:
+            raise ValueError(
+                "OpenAI API key is not set as an environment variable")
 
-        # # Initialize OpenAI client
-        # self.client = OpenAI(api_key=api_key)
+        # Initialize OpenAI client
+        self.client = OpenAI(api_key=api_key)
         pass
 
     def message(self, input_message):
         # Append user's input message to the conversation
         self.conversation.append({'role': 'user', 'content': input_message})
+
+        print()
 
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
