@@ -2,11 +2,13 @@ import os
 import json
 from openai import OpenAI
 from .base import BaseEmbeddings
-
+from .tools.logger import researcher as logger
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self):
+        logger.info("Researcher: Initializing OpenAI Assistant Embeddings")
+        
         # Fetch OpenAI API key from environment variable
         api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
 
@@ -24,8 +26,12 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
+        
+        logger.info("Researcher: Completed initializing OpenAI Assistant Embeddings")
 
     def index(self, folder_path):
+        logger.info(f"Researcher: Indexing files in the folder: {folder_path}")
+
         """
         Index files in the specified folder.
         """
@@ -41,15 +47,17 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                         # Associate file with assistant
                         associate_response = self._associate_file(file_id)
                         if not associate_response.id:
-                            print(
+                            logger.error(
                                 f"Failed to associate file {filename} with assistant.")
                             continue
                         self.index_data.append(
                             {'local_path': file_path, 'file_id': file_id})
                         self._update_index_file()
                     else:
-                        print(
+                        logger.error(
                             f"Failed to upload file {filename}. Status Code: {response.status_code}")
+        
+        logger.info(f"Researcher: Completed indexing files in the folder: {folder_path}")
 
     def retrieve_context(self, problem_statement):
         """
@@ -60,6 +68,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         return self.assistant_id
 
     def _create_assistant(self):
+        logger.info("Researcher: Creating a new assistant")
         """
         Create a new assistant
         """
@@ -69,9 +78,12 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             tools=[{"type": "retrieval"}],
             model="gpt-4-turbo-preview",
         )
+        
+        logger.info("Researcher: Completed creating a new assistant")
         return assistant.id
 
     def _load_or_initialize_index_file(self):
+        logger.info("Researcher: Initializing the index file")
         """
         Load or initialize the index file.
         """
@@ -82,6 +94,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             return []
 
     def _update_index_file(self):
+        logger.info("Researcher: Updating the index file with current index data")
         """
         Update the index file with current index data.
         """
@@ -89,6 +102,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             json.dump(self.index_data, index_file, indent=4)
 
     def _upload_file(self, file_to_upload):
+        logger.info("Researcher: Uploading file to OpenAI")
         """
         Upload file to OpenAI.
         """
@@ -98,6 +112,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         )
 
     def _associate_file(self, file_id):
+        logger.info("Researcher: Associating file with assistant")
         """
         Associate file with assistant.
         """

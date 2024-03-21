@@ -2,10 +2,13 @@ import re
 from .web_page_handler import WebPageHandler
 from .pdf_handler import PDFHandler
 from .github_handler import GitHubHandler
+from .tools.logger import researcher as logger
 
 class ContentHandlerFactory:
     @classmethod
     def get_handler(cls, url):
+        logger.info(f"Researcher: Getting handler for URL: {url}")
+
         if url.endswith('.pdf'):
             return PDFHandler()
         elif 'github.com' in url:
