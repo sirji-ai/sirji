@@ -1,7 +1,6 @@
-from openai import OpenAI
 import os
-
-
+import subprocess
+from sirji.messages.output import OutputMessage
 class SingletonMeta(type):
     """
     This is a metaclass that will be used to create a Singleton class.
@@ -15,18 +14,72 @@ class SingletonMeta(type):
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
-
 class Executor(metaclass=SingletonMeta):
     def __init__(self):
         pass
 
+    def _code_folder(self):
+        return os.path.join("workspace", "code")
+
+    def create_file(self, input_message):
+        # Create code directory if it does not exist
+        if not os.path.exists(self._code_folder()):
+            os.makedirs(self._code_folder())
+
+        filename = input_message.get("FILENAME")
+        content = input_message.get("CONTENT")
+
+        # Construct the full path where the file should be created
+        file_path = os.path.join(self._code_folder(), filename)
+
+        try:
+            with open(file_path, "w") as file:
+                file.write(content)
+                return "Done"
+        except Exception as e:
+            return str(e)
+
+    # Execute a file
+    def execute_file(self, input_message):
+        command = input_message.get("COMMAND")
+        return self.execute_command(command)
+
+    # Install a package
+    def install_package(self, input_message):
+        command = input_message.get("COMMAND")
+        return self.execute_command(command)
+
+    # Execute a command
+    def execute_command(self, command):
+        try:
+            # Run the command and capture the output and error, if any.
+            # shell=True can be a security hazard if command is constructed from external input.
+            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+            # If the command was successful, return the output.
+            return result.stdout
+
+        except subprocess.CalledProcessError as e:
+            # If an error occurred while executing the command, return the error.
+            return e.stderr
+
     def message(self, input_message):
-        # - outgoing
-        #   - output response - output
-        # - incoming
-        #   - create file
-                # - filename
-                # - content
-        #   - execute file
-        #   - install package
-        pass
+        action = input_message.get("ACTION")
+        messageFrom = input_message.get("FROM")
+        
+        if action == "create-file":
+            details = self.create_file(input_message)
+        elif action == "execute-file":
+            details = self.execute_file(input_message)
+        elif action == "install-package":
+            details = self.install_package(input_message)
+        else:
+            raise ValueError(
+                f"Unknown action: {action}")
+
+        
+        output_instance = OutputMessage('executor')
+        output_message = output_instance.generate(messageFrom, { "details": details })
+
+        return output_message;
+
