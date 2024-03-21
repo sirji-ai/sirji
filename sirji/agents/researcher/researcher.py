@@ -50,7 +50,7 @@ class Researcher:
 
             response = self.infer(parsed_message.get('DETAILS'))
             return ResponseMessage(to_user).generate(from_user, {
-                "DETAILS": response 
+                "details": response 
             })
         
     def index(self, urls):
