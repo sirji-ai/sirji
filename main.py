@@ -14,6 +14,7 @@ from sirji.tools.logger import researcher as rLogger
 from sirji.tools.logger import planner as pLogger
 from sirji.tools.logger import executor as eLogger
 from sirji.tools.logger import sirji as sLogger
+from sirji.tools.logger import user as uLogger
 
 from sirji.agents.coder import Coder
 from sirji.agents.planner import Planner
@@ -79,7 +80,7 @@ class Main():
 
     def truncate_logs(self):
         # List of loggers
-        loggers = [cLogger, rLogger, pLogger, eLogger, sLogger]
+        loggers = [cLogger, rLogger, pLogger, eLogger, sLogger, uLogger]
 
         for logger in loggers:
             # Check if logger is present
@@ -116,6 +117,8 @@ class Main():
 
         sLogger.info("****** Sirji: Sirji will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.\n\n\n")
 
+        uLogger.info("****** User: The user is the person who interacts with Sirji. The user can ask questions, provide problem statements, and receive solutions from Sirji.\n\n\n")
+
     def open_views(self):
         screen_width, screen_height = get_screen_resolution()
         margin = 5  # Margin size in pixels
@@ -129,7 +132,8 @@ class Main():
             (f"tail -f {pLogger.filepath}", "Planner Logs"),
             (f"tail -f {rLogger.filepath}", "Researcher Logs"),
             (f"tail -f {cLogger.filepath}", "Coder Logs"),
-            (f"tail -f {eLogger.filepath}", "Executor Logs")
+            (f"tail -f {eLogger.filepath}", "Executor Logs"),
+            (f"tail -f {uLogger.filepath}", "User Logs"),
         ]
 
         current_directory = os.getcwd()

@@ -51,6 +51,7 @@ class LoggerManager:
         self._planner = LoggerSingleton('planner.log', _default_log_level).logger
         self._executor = LoggerSingleton('executor.log', _default_log_level).logger
         self._sirji = LoggerSingleton('sirji.log', _default_log_level).logger
+        self._user = LoggerSingleton('user.log', _default_log_level).logger
 
     @property
     def coder(self):
@@ -71,5 +72,9 @@ class LoggerManager:
     @property
     def sirji(self):
         return self._sirji
+    
+    @property
+    def user(self):
+        return self._user
 
 logger = LoggerManager()

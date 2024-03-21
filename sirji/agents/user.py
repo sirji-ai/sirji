@@ -4,6 +4,10 @@ from sirji.messages.problem_statement import ProblemStatementMessage
 from sirji.messages.acknowledge import AcknowledgeMessage
 from sirji.prompts.user import UserPrompt
 
+from sirji.messages.parser import MessageParser
+
+from sirji.tools.logger import user as logger
+
 
 class SingletonMeta(type):
     """
@@ -29,5 +33,20 @@ class User(metaclass=SingletonMeta):
         })   
     
     def message(self, input_message):     
-        pass  
+        parsed_message = MessageParser.parse(input_message)
+
+        action = parsed_message.get("ACTION")
+        from_user = parsed_message.get("FROM")
+        to_user = parsed_message.get("TO")
+
+        if action == "step-started":
+            logger.info(f"Step started: {parsed_message.get('DETAILS')}")
+            return AcknowledgeMessage(to_user).generate(from_user, {})
+        elif action == "step-completed":
+            logger.info(f"Step completed: {parsed_message.get('DETAILS')}")
+            return AcknowledgeMessage(to_user).generate(from_user, {})
+        elif action == "solution-complete":
+            logger.info(f"Solution completed: {parsed_message.get('DETAILS')}")
+            logger.info("Exiting.")
+            sys.exit(0)
    
