@@ -2,6 +2,7 @@ import os
 import subprocess
 from sirji.messages.output import OutputMessage
 from sirji.tools.logger import executor as logger
+from sirji.messages.parser import MessageParser
 
 class SingletonMeta(type):
     """
@@ -23,14 +24,14 @@ class Executor(metaclass=SingletonMeta):
     def _code_folder(self):
         return os.path.join("workspace", "code")
 
-    def create_file(self, input_message):
+    def create_file(self, parsedMessage):
         # Create code directory if it does not exist
         if not os.path.exists(self._code_folder()):
             logger.info("Executor: Code directory not present. Creating directory")
             os.makedirs(self._code_folder())
 
-        filename = input_message.get("FILENAME")
-        content = input_message.get("CONTENT")
+        filename = parsedMessage.get("FILENAME")
+        content = parsedMessage.get("CONTENT")
 
         # Construct the full path where the file should be created
         file_path = os.path.join(self._code_folder(), filename)
@@ -72,17 +73,22 @@ class Executor(metaclass=SingletonMeta):
             raise subprocess.CalledProcessError(e.returncode, e.cmd, f"Error occurred while executing the command: {e.output}\n{e.stderr}") from e
 
     def message(self, input_message):
-        action = input_message.get("ACTION")
-        messageFrom = input_message.get("FROM")
-        messageTo = input_message.get("TO")
+        parsedMessage = MessageParser.parse(input_message)
+
+        print("Parsed:", parsedMessage)
+
+        action = parsedMessage.get("ACTION")
+        messageFrom = parsedMessage.get("FROM")
+        messageTo = parsedMessage.get("TO")
 
         logger.info(f"Executor: Received message from {messageFrom} with action: {action}")
+
         if action == "create-file":
-            details = self.create_file(input_message)
+            details = self.create_file(parsedMessage)
         elif action == "execute-file":
-            details = self.execute_file(input_message)
+            details = self.execute_file(parsedMessage)
         elif action == "install-package":
-            details = self.install_package(input_message)
+            details = self.install_package(parsedMessage)
         else:
             raise ValueError(
                 f"Unknown action: {action}")
