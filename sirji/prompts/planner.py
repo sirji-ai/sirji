@@ -1,6 +1,7 @@
 import textwrap
 
-from sirji.messages.problem_statement import ProblemStatementMessage
+from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
+
 from sirji.messages.steps import StepsMessage
 
 from .base import PromptGeneratorBase
@@ -35,7 +36,7 @@ class PlannerPrompt(PromptGeneratorBase):
     return [] 
   
   def incoming_message_instances(self):
-    return [ProblemStatementMessage(self.short_name())]
+    return [ElaboratedProblemStatementMessage(self.short_name())]
 
   def outgoing_message_instances(self):
     return [StepsMessage(self.short_name())]

@@ -4,13 +4,15 @@ from .planner import PlannerPrompt
 
 from .base import PromptGeneratorBase
 
-from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
 from sirji.messages.answer import AnswerMessage
 from sirji.messages.acknowledge import AcknowledgeMessage
 from sirji.messages.question import QuestionMessage
 from sirji.messages.step_completed import StepCompletedMessage
 from sirji.messages.step_started import StepStartedMessage
 from sirji.messages.solution_complete import SolutionCompleteMessage
+
+from sirji.messages.problem_statement import ProblemStatementMessage
+
 
 class UserPrompt(PromptGeneratorBase):
   
@@ -51,7 +53,7 @@ class UserPrompt(PromptGeneratorBase):
 
   def outgoing_message_instances(self):
     return [
-      ElaboratedProblemStatementMessage(self.short_name()), 
+      ProblemStatementMessage(self.short_name()), 
       AnswerMessage(self.short_name()), 
       AcknowledgeMessage(self.short_name())
     ]
