@@ -1,5 +1,7 @@
-from sirji.prompts.coder import CoderPrompt
 from openai import OpenAI
+import os
+
+from sirji.prompts.coder import CoderPrompt
 
 
 class SingletonMeta(type):
@@ -42,4 +44,9 @@ class Coder(metaclass=SingletonMeta):
             max_tokens=4095,
         )
 
-        print(chat_completion)
+        response_message = chat_completion.choices[0].message.content
+
+        self.conversation.append(
+            {'role': 'assistant', 'content': response_message})
+
+        return response_message

@@ -19,6 +19,7 @@ class Main():
     def __init__(self):
         self.problem_statement = None  # Placeholder
         self.initialize_logs()
+        self.coder = Coder()
 
     def read_arguments(self):
         # Create ArgumentParser object
@@ -88,8 +89,17 @@ class Main():
 
     def start(self):
         self.read_arguments()
-        self.open_views()
+        # self.open_views()
 
+        response = self.coder.message(self.problem_statement)
+
+        # parse response to get 'to' field
+
+        # if to is coder, call `self.coder.message(response)`
+        # if to is planner, call `self.planner.message(response)`
+        # if to is executor, call `self.executor.message(response)`
+        # if to is researcher, call `self.researcher.message(response)`
+        # if to is user, call `self.user.message(response)`
 
 if __name__ == "__main__":
     Main().start()

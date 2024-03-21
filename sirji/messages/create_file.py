@@ -9,7 +9,7 @@ class CreateFileMessage(BaseMessages):
 			```
 			FROM: {interactor}
 			TO: {implementor}
-			SUBJECT: create-file
+			ACTION: create-file
 			FILENAME: {file_name}									 
 			CONTENT: {content}
 			```

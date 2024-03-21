@@ -10,7 +10,8 @@ class OutputMessage(BaseMessages):
 			FROM: {implementor}
 			TO: {interactor}
 			ACTION: output
-			DETAILS: {details}
+			DETAILS:
+      {details}
 			```
 			""")
 
