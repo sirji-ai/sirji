@@ -1,8 +1,24 @@
+import argparse
+import sys
+
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
 
 
-def main():
+def read_arguments():
+    # Create ArgumentParser object
+    parser = argparse.ArgumentParser(description="Process some inputs.")
+
+    # Add the 'ps' argument
+    parser.add_argument('--ps', type=str, help='Your problem statement')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    return args
+
+
+def open_views():
     screen_width, screen_height = get_screen_resolution()
     margin = 5  # Margin size in pixels
     window_width = (screen_width - 3 * margin) // 2
@@ -21,7 +37,19 @@ def main():
         open_terminal_and_run_command(
             command, title, i, window_width, window_height)
 
-    print("Terminals opened and arranged in a 3x2 grid with 5px margins.")
+
+def main():
+    args = read_arguments()
+
+    problem_statement = args.ps
+
+    if problem_statement:
+        print(f"Problem statement: {problem_statement}")
+    else:
+        print("No problem statement was provided. Exiting.")
+        sys.exit(1)
+
+    open_views()
 
 
 if __name__ == "__main__":
