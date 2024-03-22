@@ -1,5 +1,6 @@
 import os
 import logging
+import time
 
 # Mapping of log level strings to constants
 _log_level_str_to_const = {
@@ -13,6 +14,10 @@ _log_level_str_to_const = {
 # Set default log level to DEBUG
 _default_log_level = _log_level_str_to_const.get(os.environ.get("SIRJI_LOG_LEVEL", 'debug').lower())
 
+class UnixTimestampFormatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        return f"{int(time.time())}"
+    
 # Singleton class to create loggers
 class LoggerSingleton:
 
@@ -35,7 +40,7 @@ class LoggerSingleton:
         if not logger.handlers:
             # Ensure no duplicate handlers
             file_handler = logging.FileHandler(self._log_file_path(file_name))
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            formatter = UnixTimestampFormatter('[%(asctime)s] %(message)s')
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
         
