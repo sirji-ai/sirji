@@ -29,6 +29,9 @@ class PlannerPrompt(PromptGeneratorBase):
           - Don't explain the steps further using sub-steps.
           - Don't be granular with the step generation. Generate high-level steps enough to solve the problem statement.
           - Respond with a list of steps.
+          - Always notify the step, before starting the work on it.
+          - Always notify the completed step, before moving to the next step. 
+          - Always notify only one step status at a time.
           """)
 
     def capabilities_prompt(self):

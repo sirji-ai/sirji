@@ -47,6 +47,7 @@ class Coder(metaclass=SingletonMeta):
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
             model="gpt-4-turbo-preview",
+            temperature=0,
             max_tokens=4095,
         )
 

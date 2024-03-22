@@ -37,12 +37,11 @@ class CoderPrompt(PromptGeneratorBase):
         return textwrap.dedent(f"""
             - Pay close attention to PS and try to programmatically solve it as asked.
             - Follow secure software development practices while generating code.
-            - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched.
-            - Infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
+            - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched. After training, infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
             - Generate a list of non-technical steps before code generation.
-            - Notify step is about to start, before starting the work for that step.
-            - Notify the completed step, before moving to the next step. 
-            - Notify only one step status at a time.
+            - Always notify the step, before starting the work on it.
+            - Always notify the completed step, before moving to the next step. 
+            - Always notify only one step status at a time.
             - Use Python, if the programming language cannot be inferred from PS.
             - Ensure that you write files inside the "workspace/code" folder.
             - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`

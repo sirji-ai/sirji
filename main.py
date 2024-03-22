@@ -136,7 +136,7 @@ class Main():
 
         command_title_pairs = [
             (f"tail -f {sLogger.filepath}", "Sirji"),
-            (f"tail -f {pLogger.filepath}", "Plan Progress"),
+            (f"watch -n 1 'cat {pLogger.filepath}'", "Plan Progress"),
             (f"tail -f {rLogger.filepath}", "Research Agent"),
             (f"tail -f {cLogger.filepath}", "Coding Agent"),
             (f"tail -f {eLogger.filepath}", "Execution Agent")
@@ -169,9 +169,9 @@ class Main():
 
         try:
             response = self._parse_response(message)
-            recipient = response.get("TO")
-            sender = response.get("FROM")
-            action = response.get("ACTION")
+            recipient = response.get("TO").strip()
+            sender = response.get("FROM").strip()
+            action = response.get("ACTION").strip()
         except Exception as e:
             recipient = last_recipient
             message = textwrap.dedent(f"""
@@ -183,9 +183,9 @@ class Main():
               ```
               """)
             response = self._parse_response(message)
-            recipient = response.get("TO")
-            sender = response.get("FROM")
-            action = response.get("ACTION")
+            recipient = response.get("TO").strip()
+            sender = response.get("FROM").strip()
+            action = response.get("ACTION").strip()
 
         sLogger.info(
             f"Forwarding message from {sender} to {recipient} for action: {action}")
@@ -217,7 +217,7 @@ class Main():
 
     def start(self):
         self.read_arguments()
-        # self.open_views()
+        self.open_views()
 
         ps_message = self.user.generate_problem_statement_message(
             self.problem_statement, 'Coder')
