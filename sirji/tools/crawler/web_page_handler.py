@@ -6,7 +6,7 @@ from sirji.tools.logger import researcher as logger
 
 class WebPageHandler(BaseContentHandler):
     def handle(self, url, output_dir):
-        logger.info(f"Researcher: Handling web page URL: {url}")
+        logger.info(f"Started crawling web page URL: {url}")
 
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -21,4 +21,6 @@ class WebPageHandler(BaseContentHandler):
             markdown_content = md(str(soup), heading_style="ATX")
             self.save_content(markdown_content, url, output_dir, 'md')
         else:
-            logger.error(f"Error fetching {url}: Status code {response.status_code}")
+            logger.error(f"Failed fetching web page {url}. Status code {response.status_code}")
+
+        logger.info(f"Completed crawling web page URL: {url}")

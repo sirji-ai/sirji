@@ -12,7 +12,7 @@ from sirji.messages.output import OutputMessage
 
 class Researcher:
     def __init__(self, embeddings_type, inferer_type):
-        logger.info("Researcher: Initializing...")
+        logger.info("Initializing researcher...")
 
         # Initialize the embeddings manager
         self.embeddings_manager = EmbeddingsFactory.get_instance(
@@ -23,7 +23,7 @@ class Researcher:
 
         self.research_folder = 'workspace/researcher'
 
-        logger.info("Researcher: Completed initializing")
+        logger.info("Completed initializing researcher")
 
     def message(self, input_message):     
         parsed_message = MessageParser.parse(input_message)
@@ -54,13 +54,12 @@ class Researcher:
             })
         
     def index(self, urls):
-        logger.info("Researcher: Started indexing the URLs")
+        logger.info("Started indexing the URLs")
         crawl_urls(urls, self.research_folder)
         self._reindex()
-        logger.info("Researcher: Completed indexing the URLs")
+        logger.info("Completed indexing the URLs")
 
     def search_and_index(self, query):
-        logger.info("Researcher: Started searching for the query")
         urls = search_for(query)
         self.index(urls)
 
@@ -71,7 +70,7 @@ class Researcher:
         return self.inferer.infer(retrieved_context, problem_statement)
 
     def _reindex(self):
-        logger.info("Researcher: Recursively indexing the research folder")
+        logger.info("Recursively indexing the research folder")
 
         # Recursively walk through all folders and sub-folders
         for root, dirs, files in os.walk(self.research_folder):
@@ -84,4 +83,4 @@ class Researcher:
                 # Optional: You may want to do something with the response
 
         logger.info(
-            "Researcher: Completed recursively indexing the research folder")
+            "Completed recursive indexing of the research folder")

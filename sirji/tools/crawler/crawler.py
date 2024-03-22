@@ -8,9 +8,9 @@ def crawl_urls(urls, output_dir):
     - output_dir: The directory where output from the handlers should be stored.
     """
     for url in urls:
-        logger.info(f"Researcher: Started crawling URL: {url}")
+        logger.info(f"Started crawling URL: {url}")
         
         handler = ContentHandlerFactory.get_handler(url)
         handler.handle(url, output_dir)
         
-        logger.info(f"Researcher: Completed crawling URL: {url}")
+        logger.info(f"Completed crawling URL: {url}")

@@ -11,7 +11,7 @@ google_config = load_config("google_config.json")
 
 
 def search_for(query):
-    logger.info(f"Researcher: Searching for query term: {query}")
+    logger.info(f"Started searching for query term: {query}")
 
     if (query == ''):
         return KeyError("Query is empty")
@@ -29,6 +29,9 @@ def search_for(query):
     search_results = response.json()
 
     urls = [item['link'] for item in search_results.get('items', [])]
+
+    logger.info(f"Completed searching for query term: {query}")
+
     return urls
 
 # Example usage:

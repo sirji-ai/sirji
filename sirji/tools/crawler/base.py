@@ -9,7 +9,7 @@ class BaseContentHandler:
 
     @staticmethod
     def save_content(content, url, output_dir, extension):
-        logger.info(f"Researcher: Saving crawled content to file at path: {output_dir}")
+        logger.info(f"Saving crawled content to file at path: {output_dir}")
 
         parsed_url = urlparse(url)
         filename = os.path.basename(parsed_url.path)
@@ -22,4 +22,4 @@ class BaseContentHandler:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        logger.info(f"Researcher: Saved crawled content to file at path: {output_dir}")
+        logger.info(f"Saved crawled content to file at path: {output_dir}")
