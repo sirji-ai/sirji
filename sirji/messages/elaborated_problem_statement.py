@@ -10,7 +10,7 @@ class ElaboratedProblemStatementMessage(BaseMessages):
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: problem-statement
+          ACTION: elaborated_problem_statement
           DETAILS: {details}
           ```
           """)
