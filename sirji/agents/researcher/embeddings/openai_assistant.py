@@ -2,13 +2,14 @@ import os
 import json
 from openai import OpenAI
 from .base import BaseEmbeddings
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
+
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self):
-        logger.info("Researcher: Initializing OpenAI Assistant Embeddings")
-        
+        logger.info("Initializing OpenAI Assistant Embeddings")
+
         # Fetch OpenAI API key from environment variable
         api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
 
@@ -26,11 +27,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
-        
-        logger.info("Researcher: Completed initializing OpenAI Assistant Embeddings")
+
+        logger.info("Completed initializing OpenAI Assistant Embeddings")
 
     def index(self, folder_path):
-        logger.info(f"Researcher: Indexing files in the folder: {folder_path}")
+        logger.info(f"Indexing files in the folder: {folder_path}")
 
         """
         Index files in the specified folder.
@@ -56,8 +57,8 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                     else:
                         logger.error(
                             f"Failed to upload file {filename}. Status Code: {response.status_code}")
-        
-        logger.info(f"Researcher: Completed indexing files in the folder: {folder_path}")
+
+        logger.info(f"Completed indexing files in the folder: {folder_path}")
 
     def retrieve_context(self, problem_statement):
         """
@@ -68,22 +69,22 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         return self.assistant_id
 
     def _create_assistant(self):
-        logger.info("Researcher: Creating a new assistant")
+        logger.info("Creating a new assistant instance")
         """
         Create a new assistant
         """
         assistant = self.client.beta.assistants.create(
             name="Research Assistant",
-            instructions="You are a research assistant who uses the indexed knowledge to answer specific questions based on the knowledge. If you do not know, do not make up facts by yourself.",
+            instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
             tools=[{"type": "retrieval"}],
             model="gpt-4-turbo-preview",
         )
-        
-        logger.info("Researcher: Completed creating a new assistant")
+
+        logger.info("Completed creating a new assistant")
         return assistant.id
 
     def _load_or_initialize_index_file(self):
-        logger.info("Researcher: Initializing the index file")
+        logger.info("Initializing the index file")
         """
         Load or initialize the index file.
         """
@@ -94,7 +95,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             return []
 
     def _update_index_file(self):
-        logger.info("Researcher: Updating the index file with current index data")
+        logger.info("Updating the index file with current index data")
         """
         Update the index file with current index data.
         """
@@ -102,7 +103,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             json.dump(self.index_data, index_file, indent=4)
 
     def _upload_file(self, file_to_upload):
-        logger.info("Researcher: Uploading file to OpenAI")
+        logger.info("Uploading file to OpenAI")
         """
         Upload file to OpenAI.
         """
@@ -112,7 +113,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         )
 
     def _associate_file(self, file_id):
-        logger.info("Researcher: Associating file with assistant")
+        logger.info(f"Associating {file_id} file with assistant")
         """
         Associate file with assistant.
         """

@@ -1,7 +1,7 @@
 import os
 import requests
-from config.config_loader import load_config
-from .tools.logger import researcher as logger
+from sirji.config.config_loader import load_config
+from sirji.tools.logger import researcher as logger
 
 # Now you can access the environment variables using os.getenv
 GOOGLE_SEARCH_API_KEY = os.environ.get("SIRJI_GOOGLE_SEARCH_API_KEY")
@@ -11,7 +11,7 @@ google_config = load_config("google_config.json")
 
 
 def search_for(query):
-    logger.info(f"Researcher: Searching for query term: {query}")
+    logger.info(f"Started searching for query term: {query}")
 
     if (query == ''):
         return KeyError("Query is empty")
@@ -29,6 +29,9 @@ def search_for(query):
     search_results = response.json()
 
     urls = [item['link'] for item in search_results.get('items', [])]
+
+    logger.info(f"Completed searching for query term: {query}")
+
     return urls
 
 # Example usage:

@@ -1,5 +1,6 @@
 from .factory import ContentHandlerFactory
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
+
 
 def crawl_urls(urls, output_dir):
     """
@@ -8,9 +9,12 @@ def crawl_urls(urls, output_dir):
     - output_dir: The directory where output from the handlers should be stored.
     """
     for url in urls:
-        logger.info(f"Researcher: Started crawling URL: {url}")
-        
+        logger.info(f"Started crawling URL: {url}")
+
         handler = ContentHandlerFactory.get_handler(url)
-        handler.handle(url, output_dir)
-        
-        logger.info(f"Researcher: Completed crawling URL: {url}")
+
+        try:
+            handler.handle(url, output_dir)
+            logger.info(f"Completed crawling URL: {url}")
+        except Exception as e:
+            logger.info(f"Crawling failed for URL: {url}")

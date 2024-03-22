@@ -1,7 +1,7 @@
 import os
 import time
 from openai import OpenAI
-from .tools.logger import researcher as logger
+from sirji.tools.logger import researcher as logger
 
 # Assuming .base contains your ResearcherInfererBase
 from .base import ResearcherInfererBase
@@ -9,7 +9,7 @@ from .base import ResearcherInfererBase
 
 class OpenAIAssistantInferer(ResearcherInfererBase):
     def __init__(self):
-        logger.info("Researcher: Initializing OpenAI Assistant Inferer")
+        logger.info("Initializing OpenAI Assistant Inferer")
         """
         Initializes the OpenAIAssistantInferer by setting up the OpenAI client 
         with the API key obtained from environment variables.
@@ -31,10 +31,10 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         # Placeholder for the conversation thread with the assistant
         self.thread = None
         
-        logger.info("Researcher: Completed initializing OpenAI Assistant Inferer")
+        logger.info("Completed initializing OpenAI Assistant Inferer")
 
     def infer(self, retrieved_context, problem_statement):
-        logger.info("Researcher: Inferring using OpenAI Assistant Inferer")
+        logger.info("Started inferring using OpenAI Assistant Inferer")
         
         """
         Infers an answer by calling a chat model using the retrieved context and the problem statement.
@@ -60,7 +60,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             content=prompt,
         )
         
-        logger.info("Researcher: Completed inferring using OpenAI Assistant Inferer")
+        logger.info("Completed inferring using OpenAI Assistant Inferer")
 
         # Fetch and return the assistant's response
         return self._fetch_response()
@@ -78,7 +78,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         return problem_statement
 
     def _set_assistant(self, assistant_id):
-        logger.info("Researcher: Setting up OpenAI Assistant Inferer")
+        logger.info("Setting up OpenAI Assistant Inferer")
         """
         Ensures the assistant object is set up correctly, creating a new assistant 
         and thread if the assistant ID changes or isn't set yet.
@@ -91,10 +91,10 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             # Create a new conversation thread with the assistant
             self.thread = self.client.beta.threads.create()
         
-        logger.info("Researcher: Completed setting up OpenAI Assistant Inferer")
+        logger.info("Completed setting up OpenAI Assistant Inferer")
 
     def _fetch_response(self):
-        logger.info("Researcher: Fetching response using OpenAI Assistant Inferer")
+        logger.info("Fetching response using OpenAI Assistant Inferer")
         
         """
         Initiates a run and waits for the assistant's response, then retrieves and returns the last message.
@@ -109,7 +109,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             tools=[{"type": "retrieval"}]
         )
         
-        logger.info("Researcher: Completed fetching response using OpenAI Assistant Inferer")
+        logger.info("Completed fetching response using OpenAI Assistant Inferer")
 
         # Loop until the run status is 'completed'
         while run.status != "completed":
