@@ -135,14 +135,11 @@ class Main():
         window_height = (screen_height - 22 - 4 * margin) // 3
 
         command_title_pairs = [
-            (f"echo Welcome to Sirji;tail -f {sLogger.filepath}",
-             "Sirji Chat"),
-            (f"tail -f {sLogger.filepath}", "Sirji Logs"),
-            (f"tail -f {pLogger.filepath}", "Planner Logs"),
-            (f"tail -f {rLogger.filepath}", "Researcher Logs"),
-            (f"tail -f {cLogger.filepath}", "Coder Logs"),
-            (f"tail -f {eLogger.filepath}", "Executor Logs"),
-            (f"tail -f {uLogger.filepath}", "User Logs"),
+            (f"tail -f {sLogger.filepath}", "Sirji"),
+            (f"tail -f {pLogger.filepath}", "Plan Progress"),
+            (f"tail -f {rLogger.filepath}", "Research Agent"),
+            (f"tail -f {cLogger.filepath}", "Coding Agent"),
+            (f"tail -f {eLogger.filepath}", "Execution Agent")
         ]
 
         current_directory = os.getcwd()

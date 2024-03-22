@@ -39,11 +39,13 @@ class CoderPrompt(PromptGeneratorBase):
             - Follow secure software development practices while generating code.
             - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched.
             - Infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
-            - Generate a list of non-technical steps before code generation. While generating the steps, elaborate/rephrase the problem statement based on your newly researched content.
+            - Generate a list of non-technical steps before code generation.
             - Notify step is about to start, before starting the work for that step.
             - Notify the completed step, before moving to the next step. 
             - Notify only one step status at a time.
-            - Use "workspace/code" folder as your workspace.
+            - Use Python, if the programming language cannot be inferred from PS.
+            - Ensure that you write files inside the "workspace/code" folder.
+            - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`
             - Always excute the code and evatuate the response output. If response has errors, solve them before before moving ahead.
             - Only interact with the agents listed below using the allowed responses, also mentioned below.
             - Ensure the response is also enclosed inside 3 backticks (```).

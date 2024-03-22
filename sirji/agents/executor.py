@@ -27,17 +27,14 @@ class Executor(metaclass=SingletonMeta):
         return os.path.join("workspace", "code")
 
     def create_file(self, parsedMessage):
-        # Create code directory if it does not exist
-        if not os.path.exists(self._code_folder()):
-            logger.info(
-                "Code directory not present. Creating code directory")
-            os.makedirs(self._code_folder())
-
-        filename = parsedMessage.get("FILENAME").strip()
+        file_path = parsedMessage.get("FILENAME").strip()
         content = parsedMessage.get("CONTENT")
 
-        # Construct the full path where the file should be created
-        file_path = filename  # os.path.join(self._code_folder(), filename)
+        directory_path = os.path.dirname(file_path)
+
+        if not os.path.exists(directory_path):
+            logger.info("Creating directories for the new file.")
+            os.makedirs(directory_path, exist_ok=True)
 
         logger.info(f"Creating file at path: {file_path}")
 
@@ -67,7 +64,7 @@ class Executor(metaclass=SingletonMeta):
             # shell=True can be a security hazard if command is constructed from external input.
             logger.info(f"Executing command: {command}")
             result = subprocess.run(command, shell=True, check=True,
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
 
             # If the command was successful, return the output.
             return result.stdout
@@ -75,6 +72,8 @@ class Executor(metaclass=SingletonMeta):
         except subprocess.CalledProcessError as e:
             # If an error occurred while executing the command, return the error.
             return e.stderr
+        except subprocess.TimeoutExpired as e:
+            return 'Done'
 
     def message(self, input_message):
         parsedMessage = MessageParser.parse(input_message)

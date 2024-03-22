@@ -17,7 +17,7 @@ class InferMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Question to extract answers from the trained content."
+            "details": "Question to extract answers, code examples, GitHub URLs, relevant external URLs from the trained content."
         })
 
     def description(self):

@@ -4,11 +4,12 @@ from openai import OpenAI
 from .base import BaseEmbeddings
 from sirji.tools.logger import researcher as logger
 
+
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self):
         logger.info("Initializing OpenAI Assistant Embeddings")
-        
+
         # Fetch OpenAI API key from environment variable
         api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
 
@@ -26,7 +27,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
-        
+
         logger.info("Completed initializing OpenAI Assistant Embeddings")
 
     def index(self, folder_path):
@@ -56,7 +57,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                     else:
                         logger.error(
                             f"Failed to upload file {filename}. Status Code: {response.status_code}")
-        
+
         logger.info(f"Completed indexing files in the folder: {folder_path}")
 
     def retrieve_context(self, problem_statement):
@@ -74,11 +75,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         assistant = self.client.beta.assistants.create(
             name="Research Assistant",
-            instructions="You are a research assistant who uses the indexed knowledge to answer specific questions based on the knowledge. If you do not know, do not make up facts by yourself.",
+            instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
             tools=[{"type": "retrieval"}],
             model="gpt-4-turbo-preview",
         )
-        
+
         logger.info("Completed creating a new assistant")
         return assistant.id
 
