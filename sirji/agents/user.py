@@ -46,7 +46,6 @@ class User(metaclass=SingletonMeta):
             self.handle_progress(parsed_message)
             return AcknowledgeMessage(to_user).generate(from_user, {})
         elif action == "inform":
-            logger.info(f"Information: {parsed_message.get('DETAILS')}")
             return AcknowledgeMessage(to_user).generate(from_user, {})
         elif action == "solution-complete":
             sys.exit(0)
