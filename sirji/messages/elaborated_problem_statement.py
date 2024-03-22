@@ -17,11 +17,11 @@ class ElaboratedProblemStatementMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "The problem statement (PS) that needs to be solved programmatically."
+            "details": "Elaborated/rephrased problem statement (PS) for which the steps need to be generated."
         })
 
     def description(self):
-        return "The problem statement (PS) that needs to be solved programmatically:"
+        return "Generate steps for the elaborated/rephrased problem statement (PS):"
 
     @staticmethod
     def properties():

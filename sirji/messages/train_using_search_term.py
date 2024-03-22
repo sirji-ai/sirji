@@ -17,11 +17,11 @@ class TrainUsingSearchTermMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "term": "The search term that needs to be searched on a search engine and use the first few URLs to be crawled, parsed, and trained to answer questions."
+            "term": "The search term that needs to be crawled and trained on."
         })
 
     def description(self):
-        return "Train using a search term."
+        return "Train using a search term:"
 
     @staticmethod
     def properties():

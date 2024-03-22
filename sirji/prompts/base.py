@@ -18,6 +18,8 @@ class PromptGeneratorBase(ABC):
         system_prompt += f"{self.other_agents_interaction_message_prompt()}"
         system_prompt += f"{self.ending_prompt()}"
 
+        #print(system_prompt)
+
         return system_prompt
 
     @abstractmethod
@@ -108,18 +110,17 @@ class PromptGeneratorBase(ABC):
     def other_agents_interaction_message_prompt(self):
         interaction_message_prompt = ""
         if self.interact_with():
-            interaction_message_prompt += "Allowed responses/messages and their formats are described below.\n"
-            interaction_message_prompt += "Ensure that your response/message is always encapsulated inside 3 backticks (```).\n"
+            interaction_message_prompt += "Allowed responses and their formats are described below.\n\n"
 
             for instance in self.interact_with():
-                interaction_message_prompt += f"The allowed messages that you can send to {instance.short_name()} are:\n\n"
+                interaction_message_prompt += f"The allowed responses that you can send to the {instance.short_name()} are:\n\n"
                 incoming_message_display_count = 1
                 incoming_message_instances = instance.incoming_message_instances()
                 for message_instance in incoming_message_instances:
                     interaction_message_prompt += f"{incoming_message_display_count}. {message_instance.description()}\n"
                     interaction_message_prompt += f"{message_instance.sample(self.short_name())}\n"
                     incoming_message_display_count += 1
-                interaction_message_prompt += f"The allowed messages from {instance.short_name()} to you are:\n\n"
+                interaction_message_prompt += f"The allowed responses from the {instance.short_name()} to you are:\n\n"
                 outgoing_message_display_count = 1
                 outgoing_message_instances = instance.outgoing_message_instances()
                 for message_instance in outgoing_message_instances:
@@ -131,17 +132,16 @@ class PromptGeneratorBase(ABC):
     def caller_agent_interaction_message_prompt(self):
         interaction_message_prompt = ""
         if self.incoming_message_instances() or self.outgoing_message_instances():
-            interaction_message_prompt += "Allowed responses/messages and their formats are described below.\n"
-            interaction_message_prompt += "Ensure that your response/message is always encapsulated inside 3 backticks (```).\n"
+            interaction_message_prompt += "Allowed responses and their formats are described below.\n\n"
 
-            interaction_message_prompt += f"The allowed messages from {self.caller_short_name} to you are:\n\n"
+            interaction_message_prompt += f"The allowed responses from the {self.caller_short_name} to you are:\n\n"
             incoming_message_display_count = 1
             incoming_message_instances = self.incoming_message_instances()
             for message_instance in incoming_message_instances:
                 interaction_message_prompt += f"{incoming_message_display_count}. {message_instance.description()}\n"
                 interaction_message_prompt += f"{message_instance.sample(self.caller_short_name)}\n"
                 incoming_message_display_count += 1
-            interaction_message_prompt += f"The allowed messages that you can send to {self.caller_short_name} are:\n\n"
+            interaction_message_prompt += f"The allowed responses that you can send to the {self.caller_short_name} are:\n\n"
             outgoing_message_display_count = 1
             outgoing_message_instances = self.outgoing_message_instances()
             for message_instance in outgoing_message_instances:

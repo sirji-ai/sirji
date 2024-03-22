@@ -21,7 +21,7 @@ class InferMessage(BaseMessages):
         })
 
     def description(self):
-        return "Ask questions on the trained content."
+        return "Ask questions on the trained content:"
 
     @staticmethod
     def properties():

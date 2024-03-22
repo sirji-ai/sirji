@@ -19,8 +19,8 @@ class CreateFileMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "file_name": "Name of the file to create along with workspace folder path.",
-            "content": "Multiline file content here. It should start from a new line."
+            "file_name": "File name along with the path.",
+            "content": "Multiline file content. It should start from a new line."
         })
 
     def description(self):

@@ -17,11 +17,11 @@ class TrainUsingUrlMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "url": "URL that needs to be crawled, parsed, and trained to answer questions."
+            "url": "The URL that needs to be crawled, parsed, and trained to answer questions."
         })
 
     def description(self):
-        return "Train using a URL."
+        return "Train using a URL:"
 
     @staticmethod
     def properties():

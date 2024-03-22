@@ -18,7 +18,7 @@ class ResponseMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Multiline details of the response received after execution."
+            "details": "Multilined response."
         })
 
     def description(self):

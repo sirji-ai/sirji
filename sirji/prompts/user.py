@@ -7,6 +7,7 @@ from .base import PromptGeneratorBase
 from sirji.messages.answer import AnswerMessage
 from sirji.messages.acknowledge import AcknowledgeMessage
 from sirji.messages.question import QuestionMessage
+from sirji.messages.inform import InformMessage
 from sirji.messages.step_completed import StepCompletedMessage
 from sirji.messages.step_started import StepStartedMessage
 from sirji.messages.solution_complete import SolutionCompleteMessage
@@ -42,7 +43,8 @@ class UserPrompt(PromptGeneratorBase):
 
     def incoming_message_instances(self):
         return [
-            # QuestionMessage(self.short_name()),
+            #QuestionMessage(self.short_name()),
+            InformMessage(self.short_name()),
             StepCompletedMessage(self.short_name()),
             StepStartedMessage(self.short_name()),
             SolutionCompleteMessage(self.short_name())
@@ -51,7 +53,7 @@ class UserPrompt(PromptGeneratorBase):
     def outgoing_message_instances(self):
         return [
             ProblemStatementMessage(self.short_name()),
-            # AnswerMessage(self.short_name()),
+            #AnswerMessage(self.short_name()),
             AcknowledgeMessage(self.short_name())
         ]
 

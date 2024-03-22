@@ -5,6 +5,7 @@ from sirji.messages.create_file import CreateFileMessage
 from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
 from sirji.messages.problem_statement import ProblemStatementMessage
 from sirji.messages.infer import InferMessage
+from sirji.messages.inform import InformMessage
 from sirji.messages.install_package import InstallPackageMessage
 from sirji.messages.output import OutputMessage
 from sirji.messages.question import QuestionMessage
@@ -34,6 +35,8 @@ class ParserFactory:
             return ProblemStatementMessage
         elif action_type == "infer":
             return InferMessage
+        elif action_type == "inform":
+            return InformMessage
         elif action_type == "install-package":
             return InstallPackageMessage
         elif action_type == "output":

@@ -18,8 +18,7 @@ class StepsMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "summary": "summarize your understanding of the problem statement",
-            "details": "Multiline details of steps to solve the problem. Each step is described as 'Step #: ....'."
+            "details": "List of steps to solve the problem. Each step is described as 'Step #: ....'."
         })
 
     def description(self):
@@ -27,4 +26,4 @@ class StepsMessage(BaseMessages):
 
     @staticmethod
     def properties():
-        return ['FROM', 'TO', 'ACTION', 'SUMMARY', 'DETAILS']
+        return ['FROM', 'TO', 'ACTION', 'DETAILS']
