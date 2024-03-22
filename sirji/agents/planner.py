@@ -2,7 +2,10 @@ from openai import OpenAI
 import os
 
 from sirji.prompts.planner import PlannerPrompt
+from sirji.messages.parser import MessageParser
+from sirji.storage.steps import initialize_steps
 
+from sirji.tools.logger import planner as pLogger
 
 class SingletonMeta(type):
     """
@@ -47,7 +50,17 @@ class Planner(metaclass=SingletonMeta):
 
         response_message = chat_completion.choices[0].message.content
 
+        # Storing 
+        self.store_steps(response_message)
+
         self.conversation.append(
             {'role': 'assistant', 'content': response_message})
-
         return response_message
+    
+    def store_steps(self, message):
+        steps = MessageParser.parse_steps(message)
+
+        for index, description in enumerate(steps, start=1):
+            pLogger.info(f"[ ] Step {index}: {description}")
+
+        initialize_steps(steps)

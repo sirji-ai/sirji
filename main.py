@@ -53,6 +53,7 @@ class Main():
         self.problem_statement = args.ps
 
         if self.problem_statement:
+            sLogger.info(f"Going to Coder with the problem statement: {self.problem_statement}")
             print(f"Problem statement: {self.problem_statement}")
         else:
             print("No problem statement was provided. Exiting.")
@@ -158,9 +159,17 @@ class Main():
         """
         Recursively passes the response object among different objects.
         """
-        # Extract the 'TO' field from the response object.
-        recipient = self._parse_response(message).get("TO")
+        response = self._parse_response(message)
+        recipient = response.get("TO")
+        sender = response.get("FROM")
+        action = response.get("ACTION")
 
+        sLogger.info(f"Forwarding message from {sender} to {recipient} for action: {action}")
+
+        if(action == "solution-complete"):
+            details = response.get("DETAILS")
+            sLogger.info(f"Solution complete: {details}")
+    
         response_message = ''
 
         # Pass the response to the appropriate object and update the response object.

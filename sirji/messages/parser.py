@@ -78,3 +78,45 @@ class MessageParser:
 
         # print(Parser.parse(input_message))
         # {'FROM': 'user', 'TO': 'sirji', 'ACTION': 'question', 'DETAILS': 'How to create a file in Python?'}
+    
+    @staticmethod
+    def parse_steps(message):
+        parsed_message = MessageParser.parse(message)
+
+        if parsed_message.get("ACTION") == "steps":
+            details = parsed_message.get("DETAILS")
+            
+            # Initialize an empty array to store the parsed steps
+            parsed_steps = []
+
+            # Split the details into lines
+            steps_lines = details.strip().split("\n")
+
+            # Initialize variables to store current step details
+            current_step_number = None
+            current_step_description = ""
+
+            # Iterate over each line to parse the steps
+            for line in steps_lines:
+                # Check if the line starts with "Step" followed by a number
+                if line.strip().startswith("Step"):
+                    # If it's a new step, add the previous step to the parsed_steps list
+                    if current_step_number is not None:
+                        parsed_steps.append(current_step_description.strip())
+                    
+                    # Extract the step number and description from the line
+                    step_parts = line.split(":", 1)
+                    current_step_number = step_parts[0].strip()
+                    current_step_description = step_parts[1].strip()
+                else:
+                    # If the line doesn't start with "Step", it's part of the current step's description
+                    # Append it to the current step description
+                    current_step_description += "\n" + line.strip()
+
+            # Add the last step to the parsed_steps list
+            if current_step_number is not None:
+                parsed_steps.append(current_step_description.strip())
+            
+            return parsed_steps
+        else:
+            return "Invalid message"

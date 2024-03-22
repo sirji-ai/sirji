@@ -3,6 +3,8 @@ import os
 
 from sirji.prompts.coder import CoderPrompt
 
+from sirji.tools.logger import coder as cLogger
+
 
 class SingletonMeta(type):
     """
@@ -38,6 +40,10 @@ class Coder(metaclass=SingletonMeta):
         # Append user's input message to the conversation
         self.conversation.append({'role': 'user', 'content': input_message})
 
+        cLogger.info(f"Incoming: \n{input_message}")
+
+        cLogger.info("Calling OpenAI Chat Completions API")
+
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
             model="gpt-4-turbo-preview",
@@ -48,5 +54,6 @@ class Coder(metaclass=SingletonMeta):
 
         self.conversation.append(
             {'role': 'assistant', 'content': response_message})
-
+        
+        cLogger.info(f"Outgoing: \n{response_message}")
         return response_message
