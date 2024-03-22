@@ -11,13 +11,13 @@ class ContentHandlerFactory:
 
         if url.endswith('.pdf'):
             return PDFHandler()
-        elif 'github.com' in url:
-            # Check if URL follows the pattern of a GitHub repo main page
-            if re.match(r'^https://github\.com/[\w-]+/[\w-]+/?$', url):
-                return GitHubHandler()
-            else:
-                logger.info(f"URL {url} does not match GitHub repository pattern. Crawling as a web page.")
-                return WebPageHandler()
+        # elif 'github.com' in url:
+        #     # Check if URL follows the pattern of a GitHub repo main page
+        #     if re.match(r'^https://github\.com/[\w-]+/[\w-]+/?$', url):
+        #         return GitHubHandler()
+        #     else:
+        #         logger.info(f"URL {url} does not match GitHub repository pattern. Crawling as a web page.")
+        #         return WebPageHandler()
         else:
             return WebPageHandler()
 

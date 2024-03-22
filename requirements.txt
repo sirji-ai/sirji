@@ -4,3 +4,4 @@ beautifulsoup4==4.12.3
 pypdf2==3.0.1
 markdownify==0.11.6
 pyobjc==10.2
+playwright==1.42.0

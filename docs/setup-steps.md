@@ -13,6 +13,7 @@ source venv/bin/activate
 
 ```zsh
 pip install -r requirements.txt
+playwright install
 ```
 
 ## Setup Environment Variables
