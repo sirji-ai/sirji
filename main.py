@@ -27,6 +27,8 @@ from sirji.messages.parser import MessageParser
 
 from sirji.messages.problem_statement import ProblemStatementMessage
 
+last_recipient = ''
+
 
 class Main():
     def __init__(self):
@@ -53,7 +55,8 @@ class Main():
         self.problem_statement = args.ps
 
         if self.problem_statement:
-            sLogger.info(f"Going to Coder with the problem statement: {self.problem_statement}")
+            sLogger.info(
+                f"Going to Coder with the problem statement: {self.problem_statement}")
             print(f"Problem statement: {self.problem_statement}")
         else:
             print("No problem statement was provided. Exiting.")
@@ -61,7 +64,7 @@ class Main():
 
     def empty_workspace(self):
         workspace_dir = "workspace"
-        
+
         # List all files and directories in the workspace directory
         for item in os.listdir(workspace_dir):
             if (item == "logs"):
@@ -97,18 +100,21 @@ class Main():
 
                 except AttributeError:
                     # Handle the case where the logger doesn't have a 'filepath' attribute
-                    print(f"Logger {logger} does not have a 'filepath' attribute.")
+                    print(
+                        f"Logger {logger} does not have a 'filepath' attribute.")
 
                 except IOError as e:
                     # Handle other I/O errors, such as permission errors
-                    print(f"Failed to open file for logger {logger} at {logger.filepath}: {e}")
-        
+                    print(
+                        f"Failed to open file for logger {logger} at {logger.filepath}: {e}")
+
     def initialize_logs(self):
         # Truncate the logs
         self.truncate_logs()
 
         # Initialize the logs
-        cLogger.initialize_logs("Coder: Specializing in generating and modifying code, this agent is skilled in various programming languages and is equipped to handle tasks ranging from quick fixes to developing complex algorithms.\n\n\n")
+        cLogger.initialize_logs(
+            "Coder: Specializing in generating and modifying code, this agent is skilled in various programming languages and is equipped to handle tasks ranging from quick fixes to developing complex algorithms.\n\n\n")
 
         rLogger.initialize_logs("Researcher: dives into vast pools of information to find answers, evidence, or data that support the task at hand. Whether it's through browsing the web, accessing databases, or consulting academic journals, this agent is adept at gathering and synthesizing relevant information to aid in problem-solving.\n\n\n")
 
@@ -116,9 +122,11 @@ class Main():
 
         eLogger.initialize_logs("Executor: responsible for running code or scripts in a controlled environment, allowing for executing and testing activities. Executor verifies the correctness and efficacy of solutions before they are finalized and implements automated tasks as defined by the Planner.\n\n\n")
 
-        sLogger.initialize_logs("Sirji: Sirji will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.\n\n\n")
+        sLogger.initialize_logs(
+            "Sirji: Sirji will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.\n\n\n")
 
-        uLogger.initialize_logs("User: The user is the person who interacts with Sirji. The user can ask questions, provide problem statements, and receive solutions from Sirji.\n\n\n")
+        uLogger.initialize_logs(
+            "User: The user is the person who interacts with Sirji. The user can ask questions, provide problem statements, and receive solutions from Sirji.\n\n\n")
 
     def open_views(self):
         screen_width, screen_height = get_screen_resolution()
@@ -159,17 +167,36 @@ class Main():
         """
         Recursively passes the response object among different objects.
         """
-        response = self._parse_response(message)
-        recipient = response.get("TO")
-        sender = response.get("FROM")
-        action = response.get("ACTION")
 
-        sLogger.info(f"Forwarding message from {sender} to {recipient} for action: {action}")
+        global last_recipient  # Declare that we intend to use the global variable
 
-        if(action == "solution-complete"):
+        try:
+            response = self._parse_response(message)
+            recipient = response.get("TO")
+            sender = response.get("FROM")
+            action = response.get("ACTION")
+        except Exception as e:
+            recipient = last_recipient
+            message = textwrap.dedent(f"""
+              ```
+              FROM: User
+              TO: {recipient}
+              ACTION: acknowledge
+              DETAILS: Sure.
+              ```
+              """)
+            response = self._parse_response(message)
+            recipient = response.get("TO")
+            sender = response.get("FROM")
+            action = response.get("ACTION")
+
+        sLogger.info(
+            f"Forwarding message from {sender} to {recipient} for action: {action}")
+
+        if (action == "solution-complete"):
             details = response.get("DETAILS")
             sLogger.info(f"Solution complete: {details}")
-    
+
         response_message = ''
 
         # Pass the response to the appropriate object and update the response object.
@@ -186,6 +213,8 @@ class Main():
             # Optionally, insert a return or break statement if 'UR' is a terminal condition.
         else:
             raise ValueError(f"Unknown recipient type: {recipient}")
+
+        last_recipient = recipient
 
         self.handle_response(response_message)
 

@@ -1,11 +1,28 @@
 from sirji.messages.parser_factory import ParserFactory
 
 
+def discard_format_deviations(input_message):
+    input_message = input_message.strip()
+
+    # Locate the positions of the first and last backticks (`).
+    start_index = input_message.find("```")
+    end_index = input_message.rfind("```")
+
+    # Extract the message prefix, message, and message suffix.
+    message_prefix = input_message[:start_index].strip()
+    # Including backticks as part of the message content.
+    message_content = input_message[start_index:end_index+3].strip()
+    message_suffix = input_message[end_index+3:].strip()
+
+    return message_content
+
+
 class MessageParser:
     @staticmethod
     def parse(input_message):
 
-        input_message = input_message.strip()
+        input_message = discard_format_deviations(input_message)
+
         # Check if the input message starts and ends with ```
         if not input_message.startswith("```") or not input_message.endswith("```"):
             return "Invalid message"
