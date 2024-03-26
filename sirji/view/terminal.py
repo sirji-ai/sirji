@@ -7,9 +7,9 @@ def run_applescript(script):
 def open_terminal_and_run_command(command, title, position_index, w, h):
     margin = 5  # Margin size in pixels
     positions = [
-        (margin, 22 + margin),  # First row, first column
+        # (margin, 22 + margin),  # First row, first column
         (w + 2 * margin, 22 + margin),  # First row, second column
-        (margin, h + 2 * margin + 22),  # Second row, first column
+        # (margin, h + 2 * margin + 22),  # Second row, first column
         (w + 2 * margin, h + 2 * margin + 22),  # Second row, second column
         (margin, 2 * h + 3 * margin + 22),  # Third row, first column
         (w + 2 * margin, 2 * h + 3 * margin + 22),  # Third row, second column,

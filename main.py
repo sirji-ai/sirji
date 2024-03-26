@@ -1,13 +1,15 @@
-import argparse
 import sys
 import uuid
 import os
 import shutil
 import textwrap
 import re
+import threading
+import queue
 
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
+from sirji.view.chat import send_external_system_message, run_chat_app, disable_chat_send_button, enable_chat_send_button
 
 from sirji.tools.logger import coder as cLogger
 from sirji.tools.logger import researcher as rLogger
@@ -29,11 +31,34 @@ from sirji.messages.problem_statement import ProblemStatementMessage
 
 last_recipient = ''
 
+# Global queue to safely exchange messages between threads
+messages_queue = queue.Queue()
+
+
+def empty_workspace():
+    workspace_dir = "workspace"
+
+    # List all files and directories in the workspace directory
+    for item in os.listdir(workspace_dir):
+        if (item == "logs"):
+            continue  # Skip the code directory
+
+        item_path = os.path.join(workspace_dir, item)
+
+        try:
+            # If it's a directory, remove it along with its contents
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            # If it's a file, remove it
+            else:
+                os.remove(item_path)
+        except Exception as e:
+            print(f"Error removing {item_path}: {e}")
+
 
 class Main():
     def __init__(self):
         self.problem_statement = None  # Placeholder
-        self.empty_workspace()
         self.initialize_logs()
 
         self.coder = Coder()
@@ -41,46 +66,6 @@ class Main():
         self.researcher = Researcher('openai_assistant', 'openai_assistant')
         self.executor = Executor()
         self.user = User()
-
-    def read_arguments(self):
-        # Create ArgumentParser object
-        parser = argparse.ArgumentParser(description="Process some inputs.")
-
-        # Add the 'ps' argument
-        parser.add_argument('--ps', type=str, help='Your problem statement')
-
-        # Parse the arguments
-        args = parser.parse_args()
-
-        self.problem_statement = args.ps
-
-        if self.problem_statement:
-            sLogger.info(
-                f"Going to Coder with the problem statement: {self.problem_statement}")
-            print(f"Problem statement: {self.problem_statement}")
-        else:
-            print("No problem statement was provided. Exiting.")
-            sys.exit(1)
-
-    def empty_workspace(self):
-        workspace_dir = "workspace"
-
-        # List all files and directories in the workspace directory
-        for item in os.listdir(workspace_dir):
-            if (item == "logs"):
-                continue  # Skip the code directory
-
-            item_path = os.path.join(workspace_dir, item)
-
-            try:
-                # If it's a directory, remove it along with its contents
-                if os.path.isdir(item_path):
-                    shutil.rmtree(item_path)
-                # If it's a file, remove it
-                else:
-                    os.remove(item_path)
-            except Exception as e:
-                print(f"Error removing {item_path}: {e}")
 
     def truncate_logs(self):
         # List of loggers
@@ -135,7 +120,6 @@ class Main():
         window_height = (screen_height - 22 - 4 * margin) // 3
 
         command_title_pairs = [
-            (f"tail -f {sLogger.filepath}", "Sirji"),
             (f"watch -n 1 'cat {pLogger.filepath}'", "Plan Progress"),
             (f"tail -f {rLogger.filepath}", "Research Agent"),
             (f"tail -f {cLogger.filepath}", "Coding Agent"),
@@ -187,12 +171,23 @@ class Main():
             sender = response.get("FROM").strip()
             action = response.get("ACTION").strip()
 
-        sLogger.info(
+        send_external_system_message(
             f"Forwarding message from {sender} to {recipient} for action: {action}")
 
         if (action == "solution-complete"):
             details = response.get("DETAILS")
-            sLogger.info(f"Solution complete: {details}")
+            send_external_system_message(
+                f"Solution complete from my end: {details}")
+
+            send_external_system_message(
+                "If you have any feedback, please let me know.")
+            enable_chat_send_button()
+
+            user_feedback = ""
+            while True:
+                # Wait for a new message to become available
+                user_feedback = messages_queue.get()
+                break
 
         response_message = ''
 
@@ -216,8 +211,18 @@ class Main():
         self.handle_response(response_message)
 
     def start(self):
-        self.read_arguments()
         self.open_views()
+
+        send_external_system_message(
+            "Hi there! Please define the problem statement.")
+
+        while True:
+            # Wait for a new message to become available
+            self.problem_statement = messages_queue.get()
+            print(self.problem_statement)
+            break
+
+        disable_chat_send_button()
 
         ps_message = self.user.generate_problem_statement_message(
             self.problem_statement, 'Coder')
@@ -227,5 +232,15 @@ class Main():
         self.handle_response(response_message)
 
 
-if __name__ == "__main__":
+def perform_non_gui_tasks():
     Main().start()
+
+
+if __name__ == "__main__":
+    empty_workspace()
+
+    background_thread = threading.Thread(target=perform_non_gui_tasks)
+    background_thread.start()
+
+    # Pass the messages_queue to the ChatApp instance
+    run_chat_app(messages_queue)
