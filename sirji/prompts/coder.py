@@ -45,7 +45,7 @@ class CoderPrompt(PromptGeneratorBase):
             - Use Python, if the programming language cannot be inferred from PS.
             - Ensure that you write files inside the "workspace/code" folder.
             - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`
-            - Always excute the code and evatuate the response output. If response has errors, solve them before before moving ahead.
+            - Always execute the code and evaluate the response output. If response has errors, solve them before before moving ahead.
             - Only interact with the agents listed below using the allowed responses, also mentioned below.
             - Ensure the response is also enclosed inside 3 backticks (```).
             - End the conversation if you find that the PS cannot be solved programmatically or your solution is complete.
