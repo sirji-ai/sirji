@@ -33,19 +33,34 @@ class CoderPrompt(PromptGeneratorBase):
             # //- Generate README markdown files explaining the generated code.
             # //- Install required packages, libraries, and dependencies to execute the generated code.
 
+    # def responsibilities_prompt(self):
+    #     return textwrap.dedent(f"""
+    #         - Pay close attention to PS and try to programmatically solve it as asked.
+    #         - Follow secure software development practices while generating code.
+    #         - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched. After training, infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
+    #         - Generate a list of non-technical steps before code generation.                   
+    #         - Once non-technical steps are generated, always notify about the step started before starting the work for it.
+    #         - Once non-technical steps are generated, always notify about the step completed before moving to the next step. 
+    #         - Use Python, if the programming language cannot be inferred from PS.
+    #         - Ensure that you write files inside the "workspace/code" folder.
+    #         - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`
+    #         - Always execute the code and evaluate the response output. If the response has errors, solve them before moving ahead.
+    #         - Only interact with the agents listed below using the allowed responses, also mentioned below.
+    #         - Ensure the response is also enclosed inside 3 backticks (```).
+    #         - End the conversation if you find that the PS cannot be solved programmatically or your solution is complete.
+    #         """)
+    
     def responsibilities_prompt(self):
         return textwrap.dedent(f"""
             - Pay close attention to PS and try to programmatically solve it as asked.
-            - Follow secure software development practices while generating code.
-            - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched. After training, infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
-            - Generate a list of non-technical steps before code generation.
-            - Always notify the step, before starting the work on it.
-            - Always notify the completed step, before moving to the next step. 
-            - Always notify only one step status at a time.
             - Use Python, if the programming language cannot be inferred from PS.
+            - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched. After training, infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
+            - Generate a list of non-technical steps before you start solving the problem statement (PS) programmatically. 
+            - Follow the generated non-technical steps sequentially to solve the PS.                             
+            - Always notify about the step started before you start working on it. Similarly, notify about the step completed before you move to the next step.
             - Ensure that you write files inside the "workspace/code" folder.
+            - Follow secure software development practices while generating code.
             - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`
-            - Always execute the code and evaluate the response output. If response has errors, solve them before before moving ahead.
             - Only interact with the agents listed below using the allowed responses, also mentioned below.
             - Ensure the response is also enclosed inside 3 backticks (```).
             - End the conversation if you find that the PS cannot be solved programmatically or your solution is complete.
@@ -57,8 +72,8 @@ class CoderPrompt(PromptGeneratorBase):
     def interact_with(self):
         return [
             UserPrompt(self.name(), self.short_name()),
-            PlannerPrompt(self.name(), self.short_name()),
             ResearcherPrompt(self.name(), self.short_name()),
+            PlannerPrompt(self.name(), self.short_name()),
             ExecutorPrompt(self.name(), self.short_name())
         ]
 

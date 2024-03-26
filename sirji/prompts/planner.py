@@ -23,15 +23,23 @@ class PlannerPrompt(PromptGeneratorBase):
           You are a {self.name()} ({self.short_name()}), helping generate a list of non-technical steps required to solve the given problem statement (PS).
           """)
 
+    # def responsibilities_prompt(self):
+    #     return textwrap.dedent(f"""
+    #       - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
+    #       - Don't explain the steps further using sub-steps.
+    #       - Don't be granular with the step generation. Generate high-level steps enough to solve the problem statement.
+    #       - Respond with a list of steps.                              
+    #       """)
+    
     def responsibilities_prompt(self):
         return textwrap.dedent(f"""
-          - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
+          - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.                  
+          - Use Python, if the programming language cannot be inferred from PS.
           - Don't explain the steps further using sub-steps.
-          - Don't be granular with the step generation. Generate high-level steps enough to solve the problem statement.
-          - Respond with a list of steps.
-          - Always notify the step, before starting the work on it.
-          - Always notify the completed step, before moving to the next step. 
-          - Always notify only one step status at a time.
+          - Generate concise steps enough to solve the problem statement.
+          - Ensure that all the steps should be about either research or create file or install package or execute code to debug.
+          - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead. 
+          - Respond with a list of steps.                              
           """)
 
     def capabilities_prompt(self):

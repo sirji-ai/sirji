@@ -48,7 +48,9 @@ class User(metaclass=SingletonMeta):
         elif action == "inform":
             return AcknowledgeMessage(to_user).generate(from_user, {})
         elif action == "solution-complete":
-            sys.exit(0)
+            print("In the Solution complete case")
+            self.handle_progress(parsed_message)
+            sys.exit(0) # Will be removed in the next feature.
 
     def handle_progress(self, parsed_message):
         steps = get_steps()
@@ -60,10 +62,9 @@ class User(metaclass=SingletonMeta):
 
         pLogger.initialize_logs("Planner: planner is tasked with orchestrating the overall strategy for solving user queries. Assesses the problem statement and determines the most effective sequence of actions, delegating tasks to other agents and tools as necessary. This agent ensures that Sirji's workflow is efficient and goal-oriented.\n\n\n")
 
-        step_numbers = self.extract_step_numbers(details)
-        min_step_number = min(map(int, step_numbers)) 
-
         if action == "step-started":
+            step_numbers = self.extract_step_numbers(details)
+            min_step_number = min(map(int, step_numbers)) 
             for step_number in range(1, len(steps) + 1):
                 if step_number < min_step_number:
                     pLogger.info(f"[✓] Step {step_number}: {steps[step_number - 1]}")
@@ -72,12 +73,15 @@ class User(metaclass=SingletonMeta):
                 else:
                     pLogger.info(f"[ ] Step {step_number}: {steps[step_number - 1]}")
         elif action == "step-completed":
+            step_numbers = self.extract_step_numbers(details)
+            min_step_number = min(map(int, step_numbers)) 
             for step_number in range(1, len(steps) + 1):
                 if step_number < min_step_number or step_number in map(int, step_numbers): 
                     pLogger.info(f"[✓] Step {step_number}: {steps[step_number - 1]}")
                 else:
                     pLogger.info(f"[ ] Step {step_number}: {steps[step_number - 1]}")
         elif action == "solution-complete":
+            print(f"Steps left: {len(steps)}")
             for step_number in range(1, len(steps) + 1):
                 pLogger.info(f"[✓] Step {step_number}: {steps[step_number - 1]}")
         else:

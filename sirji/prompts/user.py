@@ -34,6 +34,9 @@ class UserPrompt(PromptGeneratorBase):
 
     def capabilities_prompt(self):
         return textwrap.dedent("""
+          - Provide the problem statement (PS).   
+          - Provide the answer to the question asked.             
+          - Acknowledge the informational messages.
           - Acknowledge started or completed steps.
           - Acknowledge the final solution.
           """)
@@ -45,8 +48,8 @@ class UserPrompt(PromptGeneratorBase):
         return [
             #QuestionMessage(self.short_name()),
             InformMessage(self.short_name()),
-            StepCompletedMessage(self.short_name()),
             StepStartedMessage(self.short_name()),
+            StepCompletedMessage(self.short_name()),
             SolutionCompleteMessage(self.short_name())
         ]
 

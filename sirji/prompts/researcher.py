@@ -29,7 +29,7 @@ class ResearcherPrompt(PromptGeneratorBase):
     def capabilities_prompt(self):
         return textwrap.dedent("""
             - Crawl the given URL and get trained on its content.
-            - Search for a term and crawl the first few result URLs to get trained on their content.
+            - Search for a term, crawl the first few result URLs, and get trained on their content.
             - Infer from the trained content/knowledge and try to respond to questions asked.
             """)
 

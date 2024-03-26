@@ -102,7 +102,7 @@ class PromptGeneratorBase(ABC):
         interact_with_prompt = ""
 
         for instance in self.interact_with():
-            interact_with_prompt += f"{instance.short_name()} can:\n"
+            interact_with_prompt += f"{instance.short_name()} can:"
             interact_with_prompt += f"{instance.capabilities_prompt()}\n\n"
 
         return interact_with_prompt
