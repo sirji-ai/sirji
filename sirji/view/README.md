@@ -13,3 +13,11 @@ AppleScript is used to control the Terminal application on macOS.
 ## Screen
 
 The Screen module provides a method to retrieve the current screen resolution on macOS systems. Utilizing the AppKit framework, it captures and returns the main screen's width and height in pixels.
+
+## Chat
+
+A simple, singleton-based chat interface built with [tkinter](https://docs.python.org/3/library/tkinter.html). It utilizes a message queue for communicating between components and provides a neat GUI for user interaction.
+
+- Singleton Design Pattern: Ensures only one instance of the chat application runs.
+- Multithreaded Message Queue Support: Allows sending messages to be queued and processed asynchronously.
+- Used in Sirji's main process to take problem statement and feedback on the solution from the user.

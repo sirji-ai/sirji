@@ -214,7 +214,7 @@ class Main():
         self.open_views()
 
         send_external_system_message(
-            "Hi there! Please define the problem statement.")
+            "Hello! Please provide the problem you need me to solve.")
 
         while True:
             # Wait for a new message to become available
