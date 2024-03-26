@@ -56,8 +56,8 @@ class CoderPrompt(PromptGeneratorBase):
 
     def interact_with(self):
         return [
-            PlannerPrompt(self.name(), self.short_name()),
             UserPrompt(self.name(), self.short_name()),
+            PlannerPrompt(self.name(), self.short_name()),
             ResearcherPrompt(self.name(), self.short_name()),
             ExecutorPrompt(self.name(), self.short_name())
         ]
