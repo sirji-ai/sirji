@@ -183,11 +183,11 @@ class Main():
                 "If you have any feedback, please let me know.")
             enable_chat_send_button()
 
-            user_feedback = ""
-            while True:
-                # Wait for a new message to become available
-                user_feedback = messages_queue.get()
-                break
+            # user_feedback = ""
+            # while True:
+            #     # Wait for a new message to become available
+            #     user_feedback = messages_queue.get()
+            #     break
 
         response_message = ''
 
