@@ -173,6 +173,8 @@ class Main():
 
         send_external_system_message(
             f"Forwarding message from {sender} to {recipient} for action: {action}")
+        
+        response_message = ''
 
         if (action == "question"):
             details = response.get("DETAILS")
@@ -183,11 +185,9 @@ class Main():
 
             ans_message = self.user.generate_answer_message(
                 user_input, 'Coder')
-            print(f"ans_message: {ans_message}")
 
             disable_chat_send_button()
-            response_message = self.coder.message(ans_message)
-            self.handle_response(response_message)
+            self.handle_response(ans_message)
         elif (action == 'solution-complete'):
             details = response.get("DETAILS")
             send_external_system_message(f" Solution complete: {details}")
@@ -197,13 +197,8 @@ class Main():
 
             ans_message = self.user.generate_feedback_message(
                 user_input, 'Coder')
-            print(f"ans_message: {ans_message}")
-
             disable_chat_send_button()
-            response_message = self.coder.message(ans_message)
-            self.handle_response(response_message)
-            
-        response_message = ''
+            self.handle_response(ans_message)
 
         # Pass the response to the appropriate object and update the response object.
         if recipient == "Coder":
