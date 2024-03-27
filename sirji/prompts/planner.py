@@ -1,6 +1,6 @@
 import textwrap
 
-from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
+from sirji.messages.generate_steps import GenerateStepsMessage
 
 from sirji.messages.steps import StepsMessage
 
@@ -29,10 +29,9 @@ class PlannerPrompt(PromptGeneratorBase):
           - Use Python, if the programming language cannot be inferred from PS.
           - Don't explain the steps further using sub-steps.
           - Generate concise steps enough to solve the problem statement.
-          - Ensure that all the steps should be about either create file or install package or execute command or execute code to debug.
-          - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead.
-          - Add steps to read from external files by using a combination of wget and cat commands.
-          - Focus on particular datapoints given in the PS and not solve the problem in a over-generalized manner.
+          - Ensure that all the steps should be about either create file or install package or execute command or execute code to debug or git clone or read files.
+          - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead.                   
+          - Focus on particular data points given in the PS and not solve the problem in a over-generalized manner.
           """)
 
     def capabilities_prompt(self):
@@ -44,7 +43,7 @@ class PlannerPrompt(PromptGeneratorBase):
         return []
 
     def incoming_message_instances(self):
-        return [ElaboratedProblemStatementMessage(self.short_name())]
+        return [GenerateStepsMessage(self.short_name())]
 
     def outgoing_message_instances(self):
         return [StepsMessage(self.short_name())]

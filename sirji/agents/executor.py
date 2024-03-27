@@ -55,7 +55,7 @@ class Executor(metaclass=SingletonMeta):
             logger.info(
                 f"Executing command in {self._workspace_dir()}: {command}")
             result = subprocess.run(command, shell=True, cwd=self._workspace_dir(), check=True,
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=180)
 
             logger.info(f"Command executed successfully: {command}")
             return result.stdout
@@ -78,7 +78,7 @@ class Executor(metaclass=SingletonMeta):
 
         if action == "create-file":
             details = self.create_file(parsedMessage)
-        elif action == "execute-file":
+        elif action == "execute-command":
             details = self.execute_command(
                 parsedMessage.get("COMMAND").strip())
         elif action == "install-package":

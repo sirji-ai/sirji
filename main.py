@@ -176,9 +176,9 @@ class Main():
         
         response_message = ''
 
-        if (action == "question"):
+        if (action == "question" or action == "inform"):
             details = response.get("DETAILS")
-            send_external_system_message(f" Question: {details}")
+            send_external_system_message(f"Question: {details}")
             enable_chat_send_button()
 
             user_input = self.wait_for_user_input()

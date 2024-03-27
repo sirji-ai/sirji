@@ -3,25 +3,25 @@ import textwrap
 from sirji.messages.base import BaseMessages
 
 
-class ExecuteFileMessage(BaseMessages):
+class ExecuteCommandMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
         ```
         FROM: {interactor}
         TO: {implementor}
-        ACTION: execute-file
+        ACTION: execute-command
         COMMAND: {command}							 
         ```
         """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "command": "Command to execute a file."
+            "command": "Command to execute."
         })
 
     def description(self):
-        return "To execute a file:"
+        return "To execute a command:"
 
     @staticmethod
     def properties():

@@ -83,7 +83,7 @@ class User(metaclass=SingletonMeta):
                 return  
             
             self.cleanup_log_file()
-            min_step_number = min(map(int, step_numbers)) 
+            min_step_number = max(map(int, step_numbers)) 
             for step_number in range(1, len(steps) + 1):
                 if step_number < min_step_number:
                     pLogger.info(f"[✓] Step {step_number}: {steps[step_number - 1]}")
@@ -97,7 +97,7 @@ class User(metaclass=SingletonMeta):
                 return  
             
             self.cleanup_log_file()
-            min_step_number = min(map(int, step_numbers)) 
+            min_step_number = max(map(int, step_numbers)) 
             for step_number in range(1, len(steps) + 1):
                 if step_number < min_step_number or step_number in map(int, step_numbers): 
                     pLogger.info(f"[✓] Step {step_number}: {steps[step_number - 1]}")
