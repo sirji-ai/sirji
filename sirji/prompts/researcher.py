@@ -26,10 +26,16 @@ class ResearcherPrompt(PromptGeneratorBase):
     def responsibilities_prompt(self):
         return ""  # This will never be called.
 
+    # def capabilities_prompt(self):
+    #     return textwrap.dedent("""
+    #         - Crawl the given URL and get trained on its content.
+    #         - Search for a term, crawl the first few result URLs, and get trained on their content.
+    #         - Infer from the trained content/knowledge and try to respond to questions asked.
+    #         """)
+
     def capabilities_prompt(self):
         return textwrap.dedent("""
             - Crawl the given URL and get trained on its content.
-            - Search for a term, crawl the first few result URLs, and get trained on their content.
             - Infer from the trained content/knowledge and try to respond to questions asked.
             """)
 
@@ -39,8 +45,11 @@ class ResearcherPrompt(PromptGeneratorBase):
     def interact_with(self):
         return []
 
+    # def incoming_message_instances(self):
+    #     return [TrainUsingSearchTermMessage(self.short_name()), TrainUsingUrlMessage(self.short_name()), InferMessage(self.short_name())]
+
     def incoming_message_instances(self):
-        return [TrainUsingSearchTermMessage(self.short_name()), TrainUsingUrlMessage(self.short_name()), InferMessage(self.short_name())]
+        return [TrainUsingUrlMessage(self.short_name()), InferMessage(self.short_name())]
 
     def outgoing_message_instances(self):
         return [ResponseMessage(self.short_name()), OutputMessage(self.short_name())]

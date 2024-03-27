@@ -23,33 +23,13 @@ class PlannerPrompt(PromptGeneratorBase):
           You are a {self.name()} ({self.short_name()}), helping generate a list of non-technical steps required to solve the given problem statement (PS).
           """)
 
-    # def responsibilities_prompt(self):
-    #     return textwrap.dedent(f"""
-    #       - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
-    #       - Don't explain the steps further using sub-steps.
-    #       - Don't be granular with the step generation. Generate high-level steps enough to solve the problem statement.
-    #       - Respond with a list of steps.
-    #       """)
-
-    # def responsibilities_prompt(self):
-    #     return textwrap.dedent(f"""
-    #       - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
-    #       - Add research steps when necessary. Research includes training on URLs or terms outside of your knowledge in the PS. After training, research also involves infering from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
-    #       - Use Python, if the programming language cannot be inferred from PS.
-    #       - Don't explain the steps further using sub-steps.
-    #       - Generate concise steps enough to solve the problem statement.
-    #       - Ensure that all the steps should be about either research or create file or install package or execute code to debug.
-    #       - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead. 
-    #       - Respond with a list of steps.
-    #       """)
-
     def responsibilities_prompt(self):
         return textwrap.dedent(f"""
           - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
           - Use Python, if the programming language cannot be inferred from PS.
           - Don't explain the steps further using sub-steps.
           - Generate concise steps enough to solve the problem statement.
-          - Ensure that all the steps should be about either research or create file or install package or execute code to debug.
+          - Ensure that all the steps should be about either create file or install package or execute command or execute code to debug.
           - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead.
           - Add steps to read from external files by using a combination of wget and cat commands.
           - Focus on particular datapoints given in the PS and not solve the problem in a over-generalized manner.
