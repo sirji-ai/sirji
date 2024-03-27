@@ -33,13 +33,14 @@ class PlannerPrompt(PromptGeneratorBase):
     
     def responsibilities_prompt(self):
         return textwrap.dedent(f"""
-          - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.                  
+          - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
+          - Add research steps when necessary. Research includes training on URLs or terms outside of your knowledge in the PS. After training, research also involves infering from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
           - Use Python, if the programming language cannot be inferred from PS.
           - Don't explain the steps further using sub-steps.
           - Generate concise steps enough to solve the problem statement.
           - Ensure that all the steps should be about either research or create file or install package or execute code to debug.
           - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead. 
-          - Respond with a list of steps.                              
+          - Respond with a list of steps.
           """)
 
     def capabilities_prompt(self):

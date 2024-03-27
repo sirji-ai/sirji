@@ -59,9 +59,10 @@ class CoderPrompt(PromptGeneratorBase):
             - Follow the generated non-technical steps sequentially to solve the PS.
             - Ask questions, if essential.                             
             - Always notify about the step started before you start working on it. Similarly, notify about the step completed before you move to the next step.
-            - Ensure that you write files inside the "workspace/code" folder.
             - Follow secure software development practices while generating code.
+            - Ensure that you don't create any file/folder outside of "workspace/code" folder.
             - Navigate to the workspace folder using 'cd' command, then execute all subsequent commands. Example `cd <<workspace folder>> && <<your executable>>`
+            - Read from external files by using a combination of wget and cat commands.
             - Only interact with the agents listed below using the allowed responses, also mentioned below.
             - Ensure the response is also enclosed inside 3 backticks (```).
             - End the conversation if you find that the PS cannot be solved programmatically or your solution is complete.
