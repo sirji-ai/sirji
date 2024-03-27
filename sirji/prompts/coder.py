@@ -56,7 +56,8 @@ class CoderPrompt(PromptGeneratorBase):
             - Use Python, if the programming language cannot be inferred from PS.
             - Identify URLs or terms (outside of your knowledge) in the PS, which you want to be trained on or researched. After training, infer from the trained content/knowledge. If the response of the inference has new URLs or terms (outside of your knowledge), you can get trained on them as well.
             - Generate a list of non-technical steps before you start solving the problem statement (PS) programmatically. 
-            - Follow the generated non-technical steps sequentially to solve the PS.                             
+            - Follow the generated non-technical steps sequentially to solve the PS.
+            - Ask questions, if essential.                             
             - Always notify about the step started before you start working on it. Similarly, notify about the step completed before you move to the next step.
             - Ensure that you write files inside the "workspace/code" folder.
             - Follow secure software development practices while generating code.

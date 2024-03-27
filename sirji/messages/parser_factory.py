@@ -16,6 +16,7 @@ from sirji.messages.step_started import StepStartedMessage
 from sirji.messages.steps import StepsMessage
 from sirji.messages.train_using_search_term import TrainUsingSearchTermMessage
 from sirji.messages.train_using_url import TrainUsingUrlMessage
+from sirji.messages.feedback import FeedbackMessage
 
 class ParserFactory:
     
@@ -57,5 +58,7 @@ class ParserFactory:
             return TrainUsingSearchTermMessage
         elif action_type == "train-using-url":
             return TrainUsingUrlMessage
+        elif action_type == "feedback":
+            return FeedbackMessage
         else:
             raise Exception("Invalid action type: " + action_type)

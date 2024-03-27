@@ -6,6 +6,7 @@ import textwrap
 import re
 import threading
 import queue
+import time
 
 from sirji.view.terminal import open_terminal_and_run_command
 from sirji.view.screen import get_screen_resolution
@@ -28,7 +29,6 @@ from sirji.messages.parser import MessageParser
 
 
 from sirji.messages.problem_statement import ProblemStatementMessage
-
 last_recipient = ''
 
 # Global queue to safely exchange messages between threads
@@ -174,21 +174,35 @@ class Main():
         send_external_system_message(
             f"Forwarding message from {sender} to {recipient} for action: {action}")
 
-        if (action == "solution-complete"):
+        if (action == "question"):
             details = response.get("DETAILS")
-            send_external_system_message(
-                f"Solution complete from my end: {details}")
-
-            send_external_system_message(
-                "If you have any feedback, please let me know.")
+            send_external_system_message(f" Question: {details}")
             enable_chat_send_button()
 
-            # user_feedback = ""
-            # while True:
-            #     # Wait for a new message to become available
-            #     user_feedback = messages_queue.get()
-            #     break
+            user_input = self.wait_for_user_input()
 
+            ans_message = self.user.generate_answer_message(
+                user_input, 'Coder')
+            print(f"ans_message: {ans_message}")
+
+            disable_chat_send_button()
+            response_message = self.coder.message(ans_message)
+            self.handle_response(response_message)
+        elif (action == 'solution-complete'):
+            details = response.get("DETAILS")
+            send_external_system_message(f" Solution complete: {details}")
+            enable_chat_send_button()
+
+            user_input = self.wait_for_user_input()
+
+            ans_message = self.user.generate_feedback_message(
+                user_input, 'Coder')
+            print(f"ans_message: {ans_message}")
+
+            disable_chat_send_button()
+            response_message = self.coder.message(ans_message)
+            self.handle_response(response_message)
+            
         response_message = ''
 
         # Pass the response to the appropriate object and update the response object.
@@ -230,6 +244,17 @@ class Main():
         response_message = self.coder.message(ps_message)
 
         self.handle_response(response_message)
+
+    def wait_for_user_input(self):
+        user_input = ""
+        while True:
+            # Wait for a new message to become available
+            time.sleep(1)
+            user_input = messages_queue.get()
+            break
+
+        print(f"User input: {user_input}")
+        return user_input
 
 
 def perform_non_gui_tasks():
