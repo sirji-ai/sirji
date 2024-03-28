@@ -24,24 +24,8 @@ export SIRJI_GOOGLE_SEARCH_API_KEY='GOOGLE SEARCH API KEY'
 export SIRJI_GOOGLE_SEARCH_ENGINE_ID='GOOGLE SEARCH ENGINE ID'
 ```
 
-## Example Usages
+## Start Sirji
 
-TODO: remove the following section later when main process is ready.
-
-### Researcher
-
-```python
-from sirji.agents.researcher import Researcher
-
-# Initialize Researcher
-researcher = Researcher('openai_assistant', 'openai_assistant')
-
-# For given URLs, convert to markdown files. Generate and store embeddings.
-researcher.index(['https://example.com'])
-
-# For a given query, perform Google search, convert result pages to markdown. Generate and store embeddings.
-researcher.search_and_index('YOUR QUERY HERE')
-
-# Retrieve the matching context uisng embeddings and pass it along prompt for inference.
-researcher.infer('Sample question')
+```zsh
+python3 main.py
 ```
