@@ -1,6 +1,6 @@
 # Setup Steps
 
-# Virtual Environment
+## Virtual Environment
 
 Create a virtual environment to separate Python dependencies, allowing for project-specific packages without interfering with system-wide installations.
 
