@@ -1,0 +1,34 @@
+Table users {
+  id int [pk]  // Unique identifier for users
+  name varchar  // Name of the user
+  email varchar  // Email of the user (used for authentication)
+  password_hash varchar [note: "Hashed password for security"] // Hashed password for authentication
+  created_at timestamp  // Timestamp indicating when the user record was created
+  updated_at timestamp  // Timestamp indicating when the user record was last updated
+}
+
+Table images {
+  id int [pk]  // Unique identifier for images
+  url varchar  // URL of the image
+  created_at timestamp  // Timestamp indicating when the image record was created
+  updated_at timestamp  // Timestamp indicating when the image record was last updated
+}
+
+Table conversations {
+  id int [pk]  // Unique identifier for conversations
+  creator_user_id int [ref: > users.id]  // Foreign key referencing the creator of the conversation
+  title varchar  // Title of the conversation
+  image_id int [ref: > images.id]  // Foreign key referencing the image associated with the conversation
+  description varchar  // Description of the conversation
+  created_at timestamp  // Timestamp indicating when the conversation was created
+  updated_at timestamp  // Timestamp indicating when the conversation was last updated
+}
+
+Table messages {
+  id int [pk]  // Unique identifier for messages
+  conversation_id int [ref: > conversations.id]  // Foreign key referencing the conversation to which the message belongs
+  from_user_id int [ref: > users.id]  // Foreign key referencing the user who sent the message
+  text varchar  // Content of the message
+  created_at timestamp  // Timestamp indicating when the message was sent
+  updated_at timestamp  // Timestamp indicating when the message was last updated
+}

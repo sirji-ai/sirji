@@ -4,6 +4,18 @@
 
 Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.
 
+## Demo Videos
+
+For demo videos, visit [here](./demos).
+
+## How to Use<a name="how-to-use"></a>
+
+The dogfood version of Sirji is ready.
+
+Follow these [setup steps](./docs/setup-steps.md) to start Sirji.
+
+## Capabilities<a name="capabilities"></a>
+
 Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API.
 
 To begin with, it will be equipped with:
@@ -31,14 +43,6 @@ In the dogfood version of Sirji, we are planning to have 4 layers in its archite
 The sequence diagram below shows how the user initiates Sirji by giving a problem statement through a chat terminal. From this point onwards, Sirji initiates a hands-free solution approach. However, the user can interact with Sirji by sending messages and asking to improve or modify the solution.
 
 ![Sirji Sequence Diagram](https://github.com/sirji-ai/sirji/assets/4491083/807e62d8-3ded-47c8-81cb-89dfa959ff72)
-
-## How to Use<a name="how-to-use"></a>
-
-The dogfood version of Sirji is ready.
-
-Follow these [setup steps](./docs/setup-steps.md) to start Sirji.
-
-For demo videos, visit [here](https://github.com/TrueSparrowSystems/sirji-demos).
 
 ## Supported AI Models<a name="supported-ai-models"></a>
 
