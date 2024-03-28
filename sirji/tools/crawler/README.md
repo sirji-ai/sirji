@@ -3,6 +3,10 @@
 
 The Crawler module in the Sirji project is designed to process a list of URLs and handle different types of content such as web pages, PDFs, and GitHub repositories. It utilizes a factory pattern to select the appropriate handler based on the URL's content type.
 
+## Design Pattern
+
+The module prominently uses the **Factory Design Pattern** to dynamically select the appropriate handler (`WebPageHandler`, `PDFHandler`, `GitHubHandler`) for a given URL. This pattern allows for easy extension and management of different types of content handlers without modifying the core crawling logic.
+
 ## Handlers
 
 - **WebPageHandler**: Crawls web page URLs and saves the content in markdown format.
