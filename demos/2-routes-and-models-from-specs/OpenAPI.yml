@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  title: Messaging App APIs with JWT Authentication
+  description: APIs for user sign up, login with JWT authentication, CRUD of conversations, and CRUD of messages in a conversation
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: Authentication
+    description: Endpoints for user authentication
+  - name: Conversations
+    description: Endpoints for CRUD operations on conversations
+  - name: Messages
+    description: Endpoints for CRUD operations on messages within a conversation
+paths:
+  /signup:
+    post:
+      summary: User Sign Up
+      description: Register a new user.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: User registered successfully.
+        '400':
+          description: Bad request. Invalid input.
+  /login:
+    post:
+      summary: User Login
+      description: Authenticate a user and generate JWT token.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User logged in successfully. JWT token returned.
+        '401':
+          description: Unauthorized. Invalid credentials.
+  /conversations:
+    get:
+      summary: List Conversations
+      description: Retrieve a list of conversations.
+      tags:
+        - Conversations
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: List of conversations retrieved successfully.
+    post:
+      summary: Create Conversation
+      description: Create a new conversation.
+      tags:
+        - Conversations
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                image_id:
+                  type: integer
+                description:
+                  type: string
+              required:
+                - title
+                - image_id
+                - description
+      responses:
+        '201':
+          description: Conversation created successfully.
+        '400':
+          description: Bad request. Invalid input.
+  /conversations/{conversation_id}:
+    get:
+      summary: Get Conversation
+      description: Retrieve details of a conversation.
+      tags:
+        - Conversations
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          description: ID of the conversation to retrieve.
+          schema:
+            type: integer
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Conversation details retrieved successfully.
+        '404':
+          description: Conversation not found.
+    put:
+      summary: Update Conversation
+      description: Update details of a conversation.
+      tags:
+        - Conversations
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          description: ID of the conversation to update.
+          schema:
+            type: integer
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                image_id:
+                  type: integer
+                description:
+                  type: string
+              required:
+                - title
+                - image_id
+                - description
+      responses:
+        '200':
+          description: Conversation updated successfully.
+        '400':
+          description: Bad request. Invalid input.
+        '404':
+          description: Conversation not found.
+    delete:
+      summary: Delete Conversation
+      description: Delete a conversation.
+      tags:
+        - Conversations
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          description: ID of the conversation to delete.
+          schema:
+            type: integer
+      security:
+        - JWTAuth: []
+      responses:
+        '204':
+          description: Conversation deleted successfully.
+        '404':
+          description: Conversation not found.
+  /conversations/{conversation_id}/messages:
+    get:
+      summary: List Messages
+      description: Retrieve a list of messages in a conversation.
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          description: ID of the conversation to retrieve messages from.
+          schema:
+            type: integer
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: List of messages retrieved successfully.
+        '404':
+          description: Conversation not found.
+    post:
+      summary: Create Message
+      description: Add a new message to a conversation.
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          description: ID of the conversation to add message to.
+          schema:
+            type: integer
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from_user_id:
+                  type: integer
+                text:
+                  type: string
+              required:
+                - from_user_id
+                - text
+      responses:
+        '201':
+          description: Message added successfully.
+        '400':
+          description: Bad request. Invalid input.
+        '404':
+          description: Conversation not found.
