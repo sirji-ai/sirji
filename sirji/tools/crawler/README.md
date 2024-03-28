@@ -1,18 +1,44 @@
 
-# Crawler Tools
+# Crawler Module
 
-This folder contains the components necessary for the crawler functionality within the project. It follows a Factory Design Pattern to create instances of different types of handlers (e.g., GitHub, PDF, Web Page) based on the input provided.
+The Crawler module in the Sirji project is designed to process a list of URLs and handle different types of content such as web pages, PDFs, and GitHub repositories. It utilizes a factory pattern to select the appropriate handler based on the URL's content type.
 
 ## Design Pattern
 
-The Factory Design Pattern is used to abstract the creation logic of handler objects. This allows for easy addition of new handler types without modifying the existing codebase significantly.
+The module prominently uses the **Factory Design Pattern** to dynamically select the appropriate handler (`WebPageHandler`, `PDFHandler`, `GitHubHandler`) for a given URL. This pattern allows for easy extension and management of different types of content handlers without modifying the core crawling logic.
 
-## Sample Usages
+## Handlers
 
-- **GitHub Handler**: Used for crawling GitHub repositories. Usage: `factory.create_handler('github', repo_url)`
-- **PDF Handler**: Handles the extraction of text from PDF files. Usage: `factory.create_handler('pdf', file_path)`
-- **Web Page Handler**: Crawls web pages to extract useful information. Usage: `factory.create_handler('web_page', url)`
+- **WebPageHandler**: Crawls web page URLs and saves the content in markdown format.
+- **PDFHandler**: Downloads PDFs from URLs, converts them to markdown format, and saves the content.
+- **GitHubHandler**: Clones GitHub repositories from provided URLs.
 
-Each handler extends from a base handler class (`base.py`), ensuring a consistent interface for all types of handlers.
+## Usage
 
-Please note, `factory` refers to an instance of the factory class responsible for creating handler objects.
+To use the crawler module, you need to pass a list of URLs and an output directory where the crawled content will be saved.
+
+```python
+from sirji.tools.crawler import crawl_urls
+
+urls = [
+    'http://example.com',
+    'https://github.com/user/repository',
+    'http://example.com/document.pdf'
+]
+
+output_dir = 'path/to/output/directory'
+
+crawl_urls(urls, output_dir)
+```
+
+This will process each URL using the appropriate handler and save the content in the specified output directory.
+
+## Installation
+
+Ensure you have all the dependencies installed by running:
+
+```bash
+pip install -r requirements.txt
+```
+
+This module relies on external libraries such as `playwright` for web crawling, `PyPDF2` and `markdownify` for PDF processing, and standard Python libraries for handling GitHub repositories.
