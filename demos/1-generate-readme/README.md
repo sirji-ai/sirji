@@ -8,5 +8,5 @@ Clone the "sirji" repository: git@github.com:sirji-ai/sirji.git and checkout the
 
 ## Demo Video
 
-https://github.com/TrueSparrowSystems/sirji-demos/assets/7627517/aa84bcf5-80cf-49f5-b82b-ed58772404c2
+
 
