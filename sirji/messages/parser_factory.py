@@ -1,8 +1,8 @@
 from sirji.messages.acknowledge import AcknowledgeMessage
 from sirji.messages.answer import AnswerMessage
-from sirji.messages.execute_file import ExecuteFileMessage
+from sirji.messages.execute_command import ExecuteCommandMessage
 from sirji.messages.create_file import CreateFileMessage
-from sirji.messages.elaborated_problem_statement import ElaboratedProblemStatementMessage
+from sirji.messages.generate_steps import GenerateStepsMessage
 from sirji.messages.problem_statement import ProblemStatementMessage
 from sirji.messages.infer import InferMessage
 from sirji.messages.inform import InformMessage
@@ -16,6 +16,7 @@ from sirji.messages.step_started import StepStartedMessage
 from sirji.messages.steps import StepsMessage
 from sirji.messages.train_using_search_term import TrainUsingSearchTermMessage
 from sirji.messages.train_using_url import TrainUsingUrlMessage
+from sirji.messages.feedback import FeedbackMessage
 
 class ParserFactory:
     
@@ -25,12 +26,12 @@ class ParserFactory:
             return AcknowledgeMessage
         elif action_type == "answer":
             return AnswerMessage
-        elif action_type == "execute-file":
-            return ExecuteFileMessage
+        elif action_type == "execute-command":
+            return ExecuteCommandMessage
         elif action_type == "create-file":
             return CreateFileMessage
-        elif action_type == "elaborated-problem-statement":
-            return ElaboratedProblemStatementMessage
+        elif action_type == "generate-steps":
+            return GenerateStepsMessage
         elif action_type == "problem-statement":
             return ProblemStatementMessage
         elif action_type == "infer":
@@ -57,5 +58,7 @@ class ParserFactory:
             return TrainUsingSearchTermMessage
         elif action_type == "train-using-url":
             return TrainUsingUrlMessage
+        elif action_type == "feedback":
+            return FeedbackMessage
         else:
             raise Exception("Invalid action type: " + action_type)

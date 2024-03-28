@@ -3,25 +3,25 @@ import textwrap
 from sirji.messages.base import BaseMessages
 
 
-class SolutionCompleteMessage(BaseMessages):
+class FeedbackMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
-          FROM: {interactor}
-          TO: {implementor}
-          ACTION: solution-complete
+          FROM: {implementor}
+          TO: {interactor}
+          ACTION: feedback
           DETAILS: {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "A concise message to inform that the solution is complete."
+            "details": "Feedback on the solution provided."
         })
 
     def description(self):
-        return "To inform that the solution to the problem is complete:"
+        return "Feedback on the solution provided:"
 
     @staticmethod
     def properties():

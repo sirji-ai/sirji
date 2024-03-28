@@ -26,7 +26,6 @@ In the dogfood version of Sirji, we are planning to have 4 layers in its archite
 
 ![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/4204d366-ccbc-473a-8a0b-233333ce1fdc)
 
-
 ## Sequence Diagram<a name="sequence-diagram"></a>
 
 The sequence diagram below shows how the user initiates Sirji by giving a problem statement through a chat terminal. From this point onwards, Sirji initiates a hands-free solution approach. However, the user can interact with Sirji by sending messages and asking to improve or modify the solution.
@@ -35,10 +34,11 @@ The sequence diagram below shows how the user initiates Sirji by giving a proble
 
 ## How to Use<a name="how-to-use"></a>
 
-The dogfood version of Sirji is under development. The current ETA is Friday, March 22 2024.
+The dogfood version of Sirji is ready.
 
-- [Setup steps and examples](./docs/setup-steps.md)
-- [Researcher Module](./sirji/agents/researcher/README.md)
+Follow these [setup steps](./docs/setup-steps.md) to start Sirji.
+
+For demo videos, visit [here](https://github.com/TrueSparrowSystems/sirji-demos).
 
 ## Supported AI Models<a name="supported-ai-models"></a>
 

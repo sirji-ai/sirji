@@ -1,4 +1,4 @@
-# Researcher
+# Research Agent or Researcher
 
 Whenever Sirji comes across requirements in which there are knowledge points, outside of its knowledge, it invokes the Researcher module. Researcher is based on the RAG (Retrieval-Augmented Generation) framework.
 

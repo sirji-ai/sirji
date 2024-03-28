@@ -3,14 +3,14 @@ import textwrap
 from sirji.messages.base import BaseMessages
 
 
-class ElaboratedProblemStatementMessage(BaseMessages):
+class GenerateStepsMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: elaborated-problem-statement
+          ACTION: generate-steps
           DETAILS: {details}
           ```
           """)
