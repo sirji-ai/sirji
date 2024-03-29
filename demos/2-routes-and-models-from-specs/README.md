@@ -9,5 +9,6 @@ Create API routes in modular files by understanding the OpenAPI specs file conte
 
 ## Demo Video
 
-https://github.com/TrueSparrowSystems/sirji-demos/assets/7627517/3f255148-7ea8-461f-8b80-f53c02a6e909
+Watch on YouTube: https://www.youtube.com/watch?v=Bl73DOqXrtg
 
+[![Sirji generating specs based models, migrations and routes](https://github.com/sirji-ai/sirji/assets/7627517/ceac9f4f-ec4b-48ec-bd75-7de8fbafa376)](https://www.youtube.com/watch?v=Bl73DOqXrtg)
