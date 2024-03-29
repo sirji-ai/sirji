@@ -1,26 +1,54 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+import { renderView } from './utils/render_view';
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "sirji" is now active!');
+async function selectWorkspace() {
+ const workspaceRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
+ const workspaceRootPath = workspaceRootUri ? workspaceRootUri.fsPath : null;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('sirji.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Sirji!');
-	});
+ if (!workspaceRootUri) {
+  // Prompt user to open a folder
+  const openFolderMsg = 'No workspace/folder is open. Please open a folder to proceed.';
+  await vscode.window.showErrorMessage(openFolderMsg, 'Open Folder').then(async (selection) => {
+   if (selection === 'Open Folder') {
+    await vscode.commands.executeCommand('workbench.action.files.openFolder');
+    return; // Exit the current command execution to avoid further operations until folder is opened
+   }
+  });
+ }
 
-	context.subscriptions.push(disposable);
+ return {
+  workspaceRootUri: workspaceRootUri,
+  workspaceRootPath: workspaceRootPath
+ };
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+let chatPanel: vscode.WebviewPanel | undefined = undefined;
+
+function activate(context: vscode.ExtensionContext) {
+ let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
+  if (chatPanel) {
+   chatPanel.reveal(vscode.ViewColumn.One);
+   return;
+  } else {
+   const workspaceRootObj = await selectWorkspace();
+   const workspaceRootUri = workspaceRootObj.workspaceRootUri;
+   const workspaceRootPath = workspaceRootObj.workspaceRootPath;
+
+   vscode.window.showInformationMessage('Chatbot is ready to assist you!');
+
+   chatPanel = renderView(context, 'chat', workspaceRootUri, workspaceRootPath);
+
+   chatPanel.onDidDispose(() => {
+    chatPanel = undefined;
+   });
+  }
+ });
+
+ context.subscriptions.push(disposable);
+}
+
+function deactivate() {}
+
+exports.activate = activate;
+exports.deactivate = deactivate;
