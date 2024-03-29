@@ -1,28 +1,26 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class StepsMessage(BaseMessages):
+class FeedbackMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {implementor}
           TO: {interactor}
-          ACTION: steps
-          DETAILS:
-          {details}
+          ACTION: feedback
+          DETAILS: {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "List of steps to solve the problem. Each step is described as 'Step #: ....'."
+            "details": "Feedback on the solution provided."
         })
 
     def description(self):
-        return "List of steps required to solve the problem:"
+        return "Feedback on the solution provided:"
 
     @staticmethod
     def properties():

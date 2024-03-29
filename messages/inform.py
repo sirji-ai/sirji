@@ -1,27 +1,26 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class SolutionCompleteMessage(BaseMessages):
+class InformMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: solution-complete
+          ACTION: inform
           DETAILS: {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "A concise message to inform that the solution is complete."
+            "details": "Details of your decisions or choices."
         })
 
     def description(self):
-        return "To inform that the solution to the problem is complete:"
+        return "To inform about your decisions or choices:"
 
     @staticmethod
     def properties():

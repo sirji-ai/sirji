@@ -1,41 +1,27 @@
-from sirji.messages.parser_factory import ParserFactory
+from parser_factory import ParserFactory
 
+def validate_message(message):
+    # Check if the input message starts and ends with ```
+    if not message.startswith("```") or not message.endswith("```"):
+        return "Invalid message"
+    
+    # Remove the ``` from the start and end
+    message = message.strip("```").strip()
 
-def discard_format_deviations(input_message):
-    input_message = input_message.strip()
+    # Split the message into lines
+    lines = message.split("\n")
 
-    # Locate the positions of the first and last backticks (`).
-    start_index = input_message.find("```")
-    end_index = input_message.rfind("```")
-
-    # Extract the message prefix, message, and message suffix.
-    message_prefix = input_message[:start_index].strip()
-    # Including backticks as part of the message content.
-    message_content = input_message[start_index:end_index+3].strip()
-    message_suffix = input_message[end_index+3:].strip()
-
-    return message_content
-
+    # Check if there are at least 4 lines
+    if len(lines) < 4:
+        return "Invalid message"
+    
+    return lines
 
 class MessageParser:
     @staticmethod
     def parse(input_message):
 
-        input_message = discard_format_deviations(input_message)
-
-        # Check if the input message starts and ends with ```
-        if not input_message.startswith("```") or not input_message.endswith("```"):
-            return "Invalid message"
-
-        # Remove the ``` from the start and end
-        input_message = input_message.strip("```").strip()
-
-        # Split the input message into lines
-        lines = input_message.split("\n")
-
-        # Check if there are at least 4 lines
-        if len(lines) < 4:
-            return "Invalid message"
+        lines = validate_message(input_message)
 
         # Extract FROM, TO, and ACTION from the first 3 lines
         from_user = lines[0].split(":")[1].strip()
@@ -50,8 +36,6 @@ class MessageParser:
         payload = "\n".join(lines[3:])
 
         available_properties = ParserFactory.get_parser(action).properties()
-
-        # Now, for payload split it by new line if line include `:` then consider it a key. But check if the key is available in the available_properties. If yes, then consider it as a key, otherwise consider it as a value of the previous key.
 
         payload = payload.split("\n")
 
@@ -81,21 +65,7 @@ class MessageParser:
         output = {**input_text_obj, **payload_dict}
 
         return output
-
-        # Example usage
-
-        # input_message = """
-        # ```
-        # FROM: user
-        # TO: sirji
-        # ACTION: question
-        # DETAILS: How to create a file in Python?
-        # ```
-        # """
-
-        # print(Parser.parse(input_message))
-        # {'FROM': 'user', 'TO': 'sirji', 'ACTION': 'question', 'DETAILS': 'How to create a file in Python?'}
-    
+            
     @staticmethod
     def parse_steps(message):
         parsed_message = MessageParser.parse(message)

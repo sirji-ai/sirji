@@ -1,16 +1,15 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class OutputMessage(BaseMessages):
+class StepsMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {implementor}
           TO: {interactor}
-          ACTION: output
+          ACTION: steps
           DETAILS:
           {details}
           ```
@@ -18,11 +17,11 @@ class OutputMessage(BaseMessages):
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Multilined response."
+            "details": "List of steps to solve the problem. Each step is described as 'Step #: ....'."
         })
 
     def description(self):
-        return "The response output:"
+        return "List of steps required to solve the problem:"
 
     @staticmethod
     def properties():

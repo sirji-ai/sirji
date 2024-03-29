@@ -1,28 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class TrainUsingUrlMessage(BaseMessages):
+class TrainUsingSearchTermMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: train-using-url
-          URL: {url}
+          ACTION: train-using-search-term
+          TERM: {term}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "url": "The URL that needs to be crawled, parsed, and trained to answer questions."
+            "term": "The search term that needs to be crawled and trained on."
         })
 
     def description(self):
-        return "Train using a URL:"
+        return "Train using a search term:"
 
     @staticmethod
     def properties():
-        return ['FROM', 'TO', 'ACTION', 'URL']
+        return ['FROM', 'TO', 'ACTION', 'TERM']

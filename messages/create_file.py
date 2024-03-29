@@ -1,7 +1,6 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
-
+from base import BaseMessages
 
 class CreateFileMessage(BaseMessages):
 

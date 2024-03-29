@@ -1,28 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class InstallPackageMessage(BaseMessages):
+class StepStartedMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: install-package
-          COMMAND: {command}
+          ACTION: step-started
+          DETAILS: {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "command": "Command to install the package or library."
+            "details": "Example details 'Step # started'."
         })
 
     def description(self):
-        return "To install a package or library:"
+        return "Inform the step you are about to start on:"
 
     @staticmethod
     def properties():
-        return ['FROM', 'TO', 'ACTION', 'COMMAND']
+        return ['FROM', 'TO', 'ACTION', 'DETAILS']

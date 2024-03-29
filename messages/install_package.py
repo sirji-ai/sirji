@@ -1,28 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class TrainUsingSearchTermMessage(BaseMessages):
+class InstallPackageMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: train-using-search-term
-          TERM: {term}
+          ACTION: install-package
+          COMMAND: {command}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "term": "The search term that needs to be crawled and trained on."
+            "command": "Command to install the package or library."
         })
 
     def description(self):
-        return "Train using a search term:"
+        return "To install a package or library:"
 
     @staticmethod
     def properties():
-        return ['FROM', 'TO', 'ACTION', 'TERM']
+        return ['FROM', 'TO', 'ACTION', 'COMMAND']

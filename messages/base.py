@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class BaseMessages(ABC):
 
     def __init__(self, implementor):

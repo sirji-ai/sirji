@@ -1,6 +1,5 @@
 import textwrap
-from sirji.messages.base import BaseMessages
-
+from base import BaseMessages
 
 class AcknowledgeMessage(BaseMessages):
 

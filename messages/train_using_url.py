@@ -1,28 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class GenerateStepsMessage(BaseMessages):
+class TrainUsingUrlMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: generate-steps
-          DETAILS: {details}
+          ACTION: train-using-url
+          URL: {url}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Problem statement (PS) here."
+            "url": "The URL that needs to be crawled, parsed, and trained to answer questions."
         })
 
     def description(self):
-        return "Generate steps for the problem statement (PS):"
+        return "Train using a URL:"
 
     @staticmethod
     def properties():
-        return ['FROM', 'TO', 'ACTION', 'DETAILS']
+        return ['FROM', 'TO', 'ACTION', 'URL']

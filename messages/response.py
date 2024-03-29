@@ -1,27 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class InformMessage(BaseMessages):
+class ResponseMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
-          FROM: {interactor}
-          TO: {implementor}
-          ACTION: inform
-          DETAILS: {details}
+          FROM: {implementor}
+          TO: {interactor}
+          ACTION: response
+          DETAILS:
+          {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Details of your decisions or choices."
+            "details": "Multilined response."
         })
 
     def description(self):
-        return "To inform about your decisions or choices:"
+        return "The response output:"
 
     @staticmethod
     def properties():

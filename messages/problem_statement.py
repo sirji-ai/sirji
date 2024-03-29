@@ -1,27 +1,26 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class InferMessage(BaseMessages):
+class ProblemStatementMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
           FROM: {interactor}
           TO: {implementor}
-          ACTION: infer
+          ACTION: problem-statement
           DETAILS: {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Question to extract answers, code examples, GitHub URLs, relevant external URLs from the trained content."
+            "details": "The problem statement (PS) that needs to be solved programmatically."
         })
 
     def description(self):
-        return "Ask questions on the trained content:"
+        return "The problem statement (PS) that needs to be solved programmatically:"
 
     @staticmethod
     def properties():

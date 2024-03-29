@@ -1,27 +1,27 @@
 import textwrap
 
-from sirji.messages.base import BaseMessages
+from base import BaseMessages
 
-
-class StepStartedMessage(BaseMessages):
+class OutputMessage(BaseMessages):
 
     def template(self):
         return textwrap.dedent("""
           ```
-          FROM: {interactor}
-          TO: {implementor}
-          ACTION: step-started
-          DETAILS: {details}
+          FROM: {implementor}
+          TO: {interactor}
+          ACTION: output
+          DETAILS:
+          {details}
           ```
           """)
 
     def sample(self, interactor):
         return self.generate(interactor, {
-            "details": "Example details 'Step # started'."
+            "details": "Multilined response."
         })
 
     def description(self):
-        return "Inform the step you are about to start on:"
+        return "The response output:"
 
     @staticmethod
     def properties():
