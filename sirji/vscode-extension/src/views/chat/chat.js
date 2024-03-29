@@ -1,3 +1,5 @@
+import UserSvg from '../../assets/user_svg.js';
+import BotSvg from '../../assets/bot_svg.js';
 const userInput = document.getElementById('userInput');
 userInput.addEventListener('input', adjustTextAreaHeight);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
@@ -21,6 +23,18 @@ function sendUserMessage() {
  }
 }
 
+function updateIconColors() {
+ const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+ const iconColor = isDarkMode ? '#FFFFFF' : '#000000'; // White for dark mode, black for light mode
+
+ document.querySelectorAll('.icon').forEach((iconElement) => {
+  iconElement.style.color = iconColor;
+ });
+}
+
+updateIconColors();
+
 function sendBotMessage(message) {
  message = message.trim();
  if (message) {
@@ -39,28 +53,57 @@ function adjustTextAreaHeight() {
 }
 
 function displayMessage(msg, sender) {
- const messageContainer = document.getElementById('messageContainer');
- const messageDiv = document.createElement('div');
+ //  const messageContainer = document.getElementById('messageContainer');
+ //  const messageDiv = document.createElement('div');
 
- // Directly assign msg to `textContent` to avoid interpreting msg as HTML
- messageDiv.textContent = msg; // Use textContent for security
+ const chatListContainerElement = document.getElementById('messageContainer');
 
- messageDiv.classList.add(sender); // Apply .user or .bot styling
- messageContainer.appendChild(messageDiv);
-
- // Replace new lines in the textContent with <br> by wrapping lines in HTML
- // This is a safe operation since we are controlling the HTML structure and not
- // directly including user input in the HTML.
- const formattedMessage = messageDiv.innerHTML.replace(/\n/g, '<br>');
- messageDiv.innerHTML = formattedMessage;
-
- // // Replace new line characters with HTML line break to properly display in HTML
- // const formattedMessage = msg.replace(/\n/g, '<br>');
- // messageDiv.innerHTML = formattedMessage; // Use the formatted message here
-
- // messageDiv.classList.add(sender); // Apply .user or .bot styling
- // messageContainer.appendChild(messageDiv);
+ const messageElement = createMessageElement(msg, sender);
 
  // Defer the scrolling a bit to ensure layout updates
- messageContainer.scrollTop = messageContainer.scrollHeight;
+ chatListContainerElement.appendChild(messageElement);
+
+ chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight;
+
+ userInput.value = '';
+}
+
+function createMessageElement(msg, sender) {
+ const chatElement = document.createElement('div');
+
+ // Construct user message HTML format
+ if (sender === 'user') {
+  chatElement.classList.add('user-message');
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('user');
+  messageElement.textContent = msg;
+
+  chatElement.appendChild(messageElement);
+  // Replace new line characters with HTML line break to properly display in HTML
+  const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
+  messageElement.innerHTML = formattedMessage;
+
+  const iconElement = document.createElement('div');
+  iconElement.classList.add('icon');
+  iconElement.innerHTML = UserSvg;
+  chatElement.appendChild(iconElement);
+ }
+
+ // Construct bot message HTML format
+ if (sender === 'bot') {
+  chatElement.classList.add('bot-message');
+  const iconElement = document.createElement('div');
+  iconElement.classList.add('icon');
+  iconElement.innerHTML = BotSvg;
+  chatElement.appendChild(iconElement);
+
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('bot');
+  messageElement.textContent = msg;
+  chatElement.appendChild(messageElement);
+  const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
+  messageElement.innerHTML = formattedMessage;
+ }
+
+ return chatElement;
 }

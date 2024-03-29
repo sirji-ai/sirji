@@ -35,8 +35,6 @@ function activate(context: vscode.ExtensionContext) {
    const workspaceRootUri = workspaceRootObj.workspaceRootUri;
    const workspaceRootPath = workspaceRootObj.workspaceRootPath;
 
-   vscode.window.showInformationMessage('Chatbot is ready to assist you!');
-
    chatPanel = renderView(context, 'chat', workspaceRootUri, workspaceRootPath);
 
    chatPanel.onDidDispose(() => {
