@@ -7,4 +7,6 @@ Generate a simple website to show the last closing, opening and current price of
 ```
 ## Demo Video
 
-https://github.com/TrueSparrowSystems/sirji-demos/assets/7627517/b69598d7-2579-4539-843c-046422882084
+Watch on YouTube: https://www.youtube.com/watch?v=fmYhbTGSTlA
+
+[![Sirji generating stock price website](https://github.com/sirji-ai/sirji/assets/7627517/a7abda56-fc99-406d-8b94-553ec8946799)](https://www.youtube.com/watch?v=fmYhbTGSTlA)
