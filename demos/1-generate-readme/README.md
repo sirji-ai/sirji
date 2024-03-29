@@ -10,4 +10,4 @@ Clone the "sirji" repository: git@github.com:sirji-ai/sirji.git and checkout the
 
 Watch on YouTube: https://www.youtube.com/watch?v=B9kWchC6lKw
 
-[![Sirji generates README](https://img.youtube.com/vi/B9kWchC6lKw/0.jpg)](https://www.youtube.com/watch?v=B9kWchC6lKw)
+[![Sirji generates README](https://github.com/sirji-ai/sirji/assets/7627517/9fa49bee-8488-403d-a8b2-54c5aff05628)](https://www.youtube.com/watch?v=B9kWchC6lKw)
