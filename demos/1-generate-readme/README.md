@@ -7,6 +7,7 @@ Clone the "sirji" repository: git@github.com:sirji-ai/sirji.git and checkout the
 ```
 
 ## Demo Video
-https://github.com/TrueSparrowSystems/sirji-demos/assets/7627517/aa84bcf5-80cf-49f5-b82b-ed58772404c2
 
+Watch on YouTube: https://www.youtube.com/watch?v=B9kWchC6lKw
 
+[![Sirji generates README](https://img.youtube.com/vi/B9kWchC6lKw/0.jpg)](https://www.youtube.com/watch?v=B9kWchC6lKw)
