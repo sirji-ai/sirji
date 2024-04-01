@@ -15,7 +15,7 @@ export function renderView(
 ): vscode.WebviewPanel {
  let viewDetails: any;
 
- if (view == 'chat') {
+ if (view === 'chat') {
   viewDetails = getChatViewDetails(context);
  } else {
   throw new Error(`View not defined ${view} in renderer.ts`);
@@ -27,7 +27,7 @@ export function renderView(
 
  panel.webview.onDidReceiveMessage(
   (message: string) => {
-   invokeAgent(path.join(__dirname, '..', 'src', 'pycode', 'script.py'), [message])
+   invokeAgent(path.join(__dirname, '..', 'pycode', 'script.py'), [message])
     .then((response) => {
      const splittedResponse = response.split(':'),
       responseCommand = splittedResponse.shift().trim(),
@@ -92,12 +92,12 @@ function getChatViewDetails(context: vscode.ExtensionContext): object {
   retainContextWhenHidden: true
  });
 
- const htmlFilePath = path.join(__dirname, '..', 'src', 'views', 'chat', 'chat.html');
+ const htmlFilePath = path.join(__dirname, '..', 'views', 'chat', 'chat.html');
  const chatScriptUri = panel.webview.asWebviewUri(
-  vscode.Uri.file(path.join(__dirname, '..', 'src', 'views', 'chat', 'chat.js'))
+  vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.js'))
  );
  const chatStyleUri = panel.webview.asWebviewUri(
-  vscode.Uri.file(path.join(__dirname, '..', 'src', 'views', 'chat', 'chat.css'))
+  vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.css'))
  );
  return {
   panel: panel,

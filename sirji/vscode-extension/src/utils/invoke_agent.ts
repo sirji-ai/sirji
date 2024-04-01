@@ -1,4 +1,4 @@
-import * as child_process from "child_process";
+import * as childProcess from "child_process";
 import * as vscode from "vscode";
 
 export async function invokeAgent(
@@ -15,7 +15,7 @@ async function executePythonScript(
   args: string[] = []
 ): Promise<any> {
   return new Promise((resolve, reject) => {
-    const process = child_process.spawn("python3", [scriptPath, ...args]);
+    const process = childProcess.spawn("python3", [scriptPath, ...args]);
 
     let responseData = "",
       errorData = "";
