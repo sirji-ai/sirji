@@ -1,9 +1,9 @@
 from sirji_messages import ActionEnum, AgentEnum
 
-# Defining permissions
+# Defining permissions_dict
 # Key: (from_agent, to_agent)
 # Value: set of allowed actions between the agents
-permissions = {
+permissions_dict = {
     (AgentEnum.CODER, AgentEnum.EXECUTOR): {
         ActionEnum.CREATE_FILE,
         ActionEnum.EXECUTE_COMMAND,
@@ -49,10 +49,10 @@ def validate_permission(from_str, to_str, action_str):
         to_agent = AgentEnum[to_str]
         action = ActionEnum[action_str]
 
-        # Check if the (from_agent, to_agent) pair is in the permissions dictionary
-        if (from_agent, to_agent) in permissions:
+        # Check if the (from_agent, to_agent) pair is in the permissions_dict
+        if (from_agent, to_agent) in permissions_dict:
             # Get the allowed actions for the given agent pair
-            allowed_actions = permissions[(from_agent, to_agent)]
+            allowed_actions = permissions_dict[(from_agent, to_agent)]
 
             # If allowed_actions is directly an ActionEnum (not iterable), wrap it in a set
             if isinstance(allowed_actions, ActionEnum):
@@ -63,7 +63,7 @@ def validate_permission(from_str, to_str, action_str):
 
             return action in allowed_actions
         else:
-            # The agent pair does not have any permissions defined
+            # The agent pair does not have any permissions_dict defined
             return False
     except KeyError:
         # The provided string values do not match any enum

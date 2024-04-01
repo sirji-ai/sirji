@@ -1,29 +1,24 @@
 import textwrap
 
-from sirji.messages.generate_steps import GenerateStepsMessage
+from sirji_messages import AgentEnum
 
-from sirji.messages.steps import StepsMessage
-
-from .base import PromptGeneratorBase
+from .base import AgentSystemPromptBase
 
 
-class PlannerPrompt(PromptGeneratorBase):
-
-    def __init__(self, caller_name, caller_short_name):
-        super().__init__(caller_name, caller_short_name)
+class PlannerSystemPrompt(AgentSystemPromptBase):
 
     def name(self):
-        return "Planning Agent"
+        return AgentEnum.PLANNER.full_name
 
     def short_name(self):
-        return "Planner"
+        return AgentEnum.PLANNER.name
 
-    def intro_prompt(self):
+    def intro(self):
         return textwrap.dedent(f"""
           You are a {self.name()} ({self.short_name()}), helping generate a list of non-technical steps required to solve the given problem statement (PS).
           """)
 
-    def responsibilities_prompt(self):
+    def responsibilities(self):
         return textwrap.dedent(f"""
           - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
           - Use Python, if the programming language cannot be inferred from PS.
@@ -34,19 +29,10 @@ class PlannerPrompt(PromptGeneratorBase):
           - Focus on particular data points given in the PS and not solve the problem in a over-generalized manner.
           """)
 
-    def capabilities_prompt(self):
+    def capabilities(self):
         return textwrap.dedent("""
           - Generate non-technical steps to solve the problem programmatically.
           """)
-
-    def interact_with(self):
-        return []
-
-    def incoming_message_instances(self):
-        return [GenerateStepsMessage(self.short_name())]
-
-    def outgoing_message_instances(self):
-        return [StepsMessage(self.short_name())]
 
     def ending_prompt(self):
         return ""

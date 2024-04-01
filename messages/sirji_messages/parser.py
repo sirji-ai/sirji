@@ -1,6 +1,6 @@
 from .messages.factory import MessageFactory
 from .custom_exceptions import MessageParsingError, MessageValidationError
-from .permissions import validate_permission
+from sirji_messages import validate_permission
 
 
 def parse(input_message):

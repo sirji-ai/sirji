@@ -1,6 +1,7 @@
 import textwrap
 from abc import ABC, abstractmethod
 
+
 class BaseMessages(ABC):
 
     @abstractmethod
@@ -40,13 +41,11 @@ class BaseMessages(ABC):
             ```
             FROM: {self.from_agent}
             TO: {self.to_agent}
-            ACTION: {self.action}
-            """)
+            ACTION: {self.action}""")
 
     def template_suffix_part(self):
-        return textwrap.dedent(f"""
-            ```
+        return textwrap.dedent(f"""```
             """)
-    
+
     def template(self):
         return self.template_prefix_part() + self.template_payload_part() + self.template_suffix_part()
