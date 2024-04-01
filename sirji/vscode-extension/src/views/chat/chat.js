@@ -43,6 +43,8 @@ function sendBotMessage(message) {
  }
 }
 
+sendBotMessage('Hello, I am Sirji. What would you like me to build today?');
+
 function adjustTextAreaHeight() {
  const minHeight = 15;
  const maxHeight = 90;
