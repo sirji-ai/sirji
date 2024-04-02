@@ -1,172 +1,120 @@
 # sirji-messages
 
-`sirji-messages` is a Python package.
+`sirji-messages` is a comprehensive Python package for creating, parsing, validating, and managing message interactions based on permissions in multi-agent systems or applications.
 
 ## Installation
 
-Install `sirji-messages` quickly with pip:
-
-```
+```bash
 pip install sirji-messages
 ```
 
-## Usages
+## Features and Usage
 
-### Message Parser
+### Message Parsing
 
-The message parser can be used to parse the message string and return a dictionary with the following mandatory keys:
+Parse structured message strings into Python dictionaries for easy access to the message components.
 
-- `FROM`: The sender of the message.
-- `TO`: The receiver of the message.
-- `ACTION`: The action of the message.
-
-````python
+```python
 from sirji_messages import message_parse
 
-message_str ="""```
+# Example message string to parse
+message_str = """```
 FROM: CODER
 TO: USER
 ACTION: INFORM
-DETAILS: Some information.
+DETAILS: Welcome to sirji-messages. Here's how you can start.
 ```"""
 
+# Parsing the message
 message = message_parse(message_str)
-````
+print(message)
+```
 
-### Permissions
+### Permission Validation
 
-The permissions dictionary can be used to check if a particular action message is allowed between two agents.
+Determine if a specified action is allowed between two agents based on predefined permission rules.
 
 ```python
 from sirji_messages import permissions_dict, validate_permission, AgentEnum
 
+# Example check if a CODER can QUESTION a USER
+is_allowed = validate_permission("CODER", "USER", "QUESTION")
+print(f"Is allowed: {is_allowed}")
+
+# Get a direct look at permissions dictionary for CODER sending to USER
 print(permissions_dict[(AgentEnum.CODER, AgentEnum.USER)])
-print(validate_permission("CODER","USER", "QUESTION"))
 ```
 
-### Custom Exceptions
+### Handling Custom Exceptions
 
-The message parser can throw exceptions of following types:
+Efficiently manage parsing and validation errors with custom exceptions for improved error handling and debugging.
 
-- `MessageParsingError`: If the message string is not in the correct format.
-- `MessageValidationError`: If the message string is in the correct format but the message is not valid.
-
-````python
+```python
 from sirji_messages import MessageParsingError, MessageValidationError, message_parse
 
-input_message = """
-`
-FROM: CODER
-TO: USER
-ACTION: QUESTION
-DETAILS: Test Question?```
-"""
-
 try:
-    print(message_parse(input_message))
-except Exception as e:
-    if isinstance(e, MessageValidationError):
-        print(e)
-    elif isinstance(e, MessageParsingError):
-        print(e)
-````
-
-### Action Enum
-
-The action enum can be used to get the action message enum from the string. We can use either '.' or '[]' to get the enum.
-
-```python
-from sirji_messages import ActionEnum
-
-# Access using '.'
-action1 = ActionEnum.ACKNOWLEDGE
-
-# Access using `[]`
-action2 = ActionEnum['ACKNOWLEDGE']
-
-# Get short name for the action
-print(action1.name)
+    # Attempt parsing an incorrectly formatted message
+    message_parse("INCORRECT_FORMAT")
+except MessageParsingError as e:
+    print(f"Parsing Error: {e}")
+except MessageValidationError as e:
+    print(f"Validation Error: {e}")
 ```
 
-### Agent Enum
+### Enums for Intuitive References
 
-The agent enum can be used to get the agent enum from the string. We can use either '.' or '[]' to get the enum.
+Use enums (`ActionEnum`, `AgentEnum`) to reference actions and agent types programmatically, enhancing code clarity and reducing errors.
 
 ```python
-from sirji_messages import AgentEnum
+from sirji_messages import ActionEnum, AgentEnum
 
-# Access using '.'
-agent1 = AgentEnum.CODER
+# Example usage of enums for action and agent reference
+action = ActionEnum.ACKNOWLEDGE
+agent = AgentEnum.CODER
 
-# Access using `[]`
-agent2 = AgentEnum['CODER']
+# Accessing enum properties
+print(f"Action: {action.name}, Agent: {agent.full_name}")
 
-# Get short name for the agent
-print(agent1.name)
-
-# Get full name for the agent
-print(agent1.full_name)
+# Access to enums using [] is also possible
+action = ActionEnum['ACKNOWLEDGE']
+agent = AgentEnum['CODER']
 ```
 
-### Message Factory
+### Factories for Dynamic Message and Prompt Creation
 
-The message factory can be used to get the message class from the action enum name.
-
-```python
-from sirji_messages import MessageFactory, ActionEnum
-MessageClass = MessageFactory[ActionEnum.ACKNOWLEDGE.name]
-
-# Get sample message
-sample_message_str = MessageClass().sample()
-print(sample_message_str)
-
-# Generate message for specific template vars
-generated_message_str = MessageClass().generate({})
-print(generated_message_str)
-```
-
-### Agent System Prompt Factory
-
-The agent system prompt factory can be used to get the system prompt class from the agent enum name.
+Utilize factories (`MessageFactory`, `AgentSystemPromptFactory`) to instantiate message and prompt classes dynamically based on enums. It simplifies creating custom messages or retrieving specific system prompts without hardcoding class names.
 
 ```python
-from sirji_messages import AgentSystemPromptFactory, AgentEnum
-AgentSystemPromptClass = AgentSystemPromptFactory[AgentEnum.CODER.name]
+from sirji_messages import MessageFactory, ActionEnum, AgentSystemPromptFactory, AgentEnum
 
-# Get the system prompt for the agent
-print(AgentSystemPromptClass().system_prompt())
+# Message class instantiation from an action enum
+message_class = MessageFactory[ActionEnum.INFORM.name]
+print(f"Sample INFORM message:\n{message_class().sample()}")
+
+# Generate message using passed template variables
+print(f"Generated INFORM message:\n"{message_class().generate({"details": "Some sample information."})}")
+
+# System prompt class instantiation from an agent enum
+prompt_class = AgentSystemPromptFactory[AgentEnum.CODER.name]
+print(f"CODER system prompt: {prompt_class().system_prompt()}")
 ```
 
 ## Running Tests and Coverage Analysis
 
-Ensure you have `pytest` and `coverage.py` installed:
+Tests can be run, and coverage can be analyzed in a few simple steps:
 
-```zsh
+```bash
+# Install testing dependencies
 pip install pytest coverage
+
+# Execute tests
+pytest
+
+# Measure coverage, excluding test files
+coverage run --omit="tests/*" -m pytest
+coverage report
 ```
-
-In your project directory:
-
-1. **Execute Tests:**
-
-   ```zsh
-   pytest
-   ```
-
-2. **Measure Coverage:**
-
-   Exclude test files from the coverage report:
-
-   ```zsh
-   coverage run --omit="tests/*" -m pytest
-   ```
-
-   View the coverage report in the terminal:
-
-   ```zsh
-   coverage report
-   ```
 
 ## License
 
-`sirji-messages` is made available under the MIT License. See the included LICENSE file for more details.
+Distributed under the MIT License. See `LICENSE` for more information.
