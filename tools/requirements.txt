@@ -1,0 +1,4 @@
+requests==2.31.0
+pypdf2==3.0.1
+markdownify==0.11.6
+playwright==1.42.0
