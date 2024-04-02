@@ -1,7 +1,19 @@
 import * as vscode from 'vscode';
 
+let sirjiTerminal: vscode.Terminal | undefined;
+
 export function executeCommand(command: string) {
-    let terminal = vscode.window.createTerminal(`Sirji Terminal`);
-    terminal.show();
-    terminal.sendText(command);
+ if (!sirjiTerminal) {
+  sirjiTerminal = vscode.window.createTerminal(`Sirji Terminal`);
+
+  //Clear the reference if the terminal is closed
+  vscode.window.onDidCloseTerminal((terminal) => {
+   if (terminal === sirjiTerminal) {
+    sirjiTerminal = undefined;
+   }
+  });
+ }
+
+ sirjiTerminal.show();
+ sirjiTerminal.sendText(command);
 }
