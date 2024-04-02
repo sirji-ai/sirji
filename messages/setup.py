@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-messages',
-    version='0.0.1',
+    version='0.0.2',
     author='Sirji',
     description='Message Mediator.',
     long_description=open('README.md').read(),
