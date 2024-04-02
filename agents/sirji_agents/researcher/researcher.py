@@ -1,86 +1,98 @@
 import os
 
+from sirji_tools.crawler import crawl_urls
+from sirji_tools.search import search_for
+from sirji_tools.logger import r_logger as logger
+
+from sirji_messages import message_parse, MessageFactory, ActionEnum
+
 from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
-from sirji.tools.crawler import crawl_urls
-from sirji.tools.search import search_for
-from sirji.tools.logger import researcher as logger
-from sirji.messages.parser import MessageParser
 
-from sirji.messages.response import ResponseMessage
-from sirji.messages.output import OutputMessage
 
-class Researcher:
-    def __init__(self, embeddings_type, inferer_type):
+class ResearchAgent:
+    def __init__(self, embeddings_type, inferer_type, init_payload={}):
+        """Initialize Researcher with specific embeddings and inferer types."""
         logger.info("Initializing researcher...")
 
-        # Initialize the embeddings manager
-        self.embeddings_manager = EmbeddingsFactory.get_instance(
-            embeddings_type)
+        self._embeddings_manager = EmbeddingsFactory.get_instance(
+            embeddings_type, init_payload)
 
-        # Initialize the inferer
-        self.inferer = InfererFactory.get_instance(inferer_type)
+        self.init_payload = self._embeddings_manager.init_payload
 
-        self.research_folder = 'workspace/researcher'
+        self._inferer = InfererFactory.get_instance(
+            inferer_type, self.init_payload)
+
+        self._research_folder = 'workspace/researcher'
 
         logger.info("Completed initializing researcher")
 
-    def message(self, input_message):     
-        parsed_message = MessageParser.parse(input_message)
-
+    def message(self, input_message):
+        """Public method to process input messages and dispatch actions."""
+        parsed_message = message_parse(input_message)
         action = parsed_message.get("ACTION")
-        from_user = parsed_message.get("FROM")
-        to_user = parsed_message.get("TO")
 
-        if action == "train-using-search-term":
-            logger.info(f"Training using search term: {parsed_message.get('TERM')}")
-            self.search_and_index(parsed_message.get('TERM'))
+        if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
+            return self._handle_train_using_search_term(parsed_message)
+        elif action == ActionEnum.TRAIN_USING_URL.name:
+            return self._handle_train_using_url(parsed_message)
+        elif action == ActionEnum.INFER.name:
+            return self._handle_infer(parsed_message)
 
-            return OutputMessage(to_user).generate(from_user, {
-                "details": "Training using search term completed successfully"  # Noting returned from the search_and_index method
-            })
-        elif action == "train-using-url":
-            logger.info(f"Training using URL: {parsed_message.get('URL')}")
-            self.index([parsed_message.get('URL')])
-            return OutputMessage(to_user).generate(from_user, {
-                "details": "Training using url completed successfully"  # Noting returned from the index method
-            })
-        elif action == "infer":
-            logger.info(f"Infering: {parsed_message.get('DETAILS')}")
+    def _handle_train_using_search_term(self, parsed_message):
+        """Private method to handle training using a search term."""
+        logger.info(
+            f"Training using search term: {parsed_message.get('TERM')}")
+        self._search_and_index(parsed_message.get('TERM'))
 
-            response = self.infer(parsed_message.get('DETAILS'))
-            return ResponseMessage(to_user).generate(from_user, {
-                "details": response 
-            })
-        
-    def index(self, urls):
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully")
+
+    def _handle_train_using_url(self, parsed_message):
+        """Private method to handle training using a specific URL."""
+        logger.info(f"Training using URL: {parsed_message.get('URL')}")
+        self._index([parsed_message.get('URL')])
+
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully")
+
+    def _handle_infer(self, parsed_message):
+        """Private method to handle inference requests."""
+        logger.info(f"Infering: {parsed_message.get('DETAILS')}")
+        response = self._infer(parsed_message.get('DETAILS'))
+
+        return self._generate_message(ActionEnum.RESPONSE, response)
+
+    def _generate_message(self, action_enum, details):
+        """Generate standardized messages for responses based on action enum."""
+        message_class = MessageFactory[action_enum.name]
+        return message_class().generate({"details": details})
+
+    def _index(self, urls):
+        """Index given URLs."""
         logger.info("Started indexing the URLs")
-        crawl_urls(urls, self.research_folder)
-        self._reindex()
+        crawl_urls(urls, self._research_folder)
+        self.__reindex()
         logger.info("Completed indexing the URLs")
 
-    def search_and_index(self, query):
+    def _search_and_index(self, query):
+        """Search for a query and index resulting URLs."""
         urls = search_for(query)
-        self.index(urls)
+        self._index(urls)
 
-    def infer(self, problem_statement):
-        retrieved_context = self.embeddings_manager.retrieve_context(
+    def _infer(self, problem_statement):
+        """Infer based on the given problem statement and context."""
+        retrieved_context = self._embeddings_manager.retrieve_context(
             problem_statement)
+        return self._inferer.infer(retrieved_context, problem_statement)
 
-        return self.inferer.infer(retrieved_context, problem_statement)
-
-    def _reindex(self):
+    def __reindex(self):
+        """Re-index the research folder recursively. Note: This is treated exceptionally private."""
         logger.info("Recursively indexing the research folder")
-
-        # Recursively walk through all folders and sub-folders
-        for root, dirs, files in os.walk(self.research_folder):
+        for root, dirs, files in os.walk(self._research_folder):
             for folder in dirs:
                 folder_path = os.path.join(root, folder)
-                print(folder_path)
+                # Improved logging
+                logger.info(f"Indexing folder: {folder_path}")
 
-                # Call embeddings_manager.index on each folder
-                response = self.embeddings_manager.index(folder_path)
-                # Optional: You may want to do something with the response
-
-        logger.info(
-            "Completed recursive indexing of the research folder")
+                response = self._embeddings_manager.index(folder_path)
+                # Optionally handle the response
+        logger.info("Completed recursive indexing of the research folder")

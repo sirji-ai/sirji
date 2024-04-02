@@ -1,3 +1,3 @@
-from .researcher import Researcher
+from .researcher import ResearchAgent
 
-__all__ = ['Researcher']
+__all__ = ['ResearchAgent']

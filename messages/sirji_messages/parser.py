@@ -1,5 +1,6 @@
 from .messages.factory import MessageFactory
 from .custom_exceptions import MessageParsingError, MessageValidationError
+from .action_enum import ActionEnum
 from sirji_messages import validate_permission
 
 
@@ -14,7 +15,7 @@ def parse(input_message):
     parsed_message = {"FROM": message_info["FROM"], "TO": message_info["TO"],
                       "ACTION": message_info["ACTION"], **payload_dict}
 
-    if parsed_message.get("ACTION") == "steps":
+    if parsed_message.get("ACTION") == ActionEnum.STEPS.name:
         parsed_message = {
             **parsed_message, "parsed_steps": _parse_steps(parsed_message)}
 

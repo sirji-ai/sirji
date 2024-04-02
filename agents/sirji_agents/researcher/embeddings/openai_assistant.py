@@ -1,13 +1,15 @@
 import os
 import json
 from openai import OpenAI
+
+from sirji_tools.logger import r_logger as logger
+
 from .base import BaseEmbeddings
-from sirji.tools.logger import researcher as logger
 
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
-    def __init__(self):
+    def __init__(self, init_payload={}):
         logger.info("Initializing OpenAI Assistant Embeddings")
 
         # Fetch OpenAI API key from environment variable
@@ -20,8 +22,20 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         # Initialize OpenAI client
         self.client = OpenAI(api_key=api_key)
 
-        # Create assistant and preserve assistant_id
-        self.assistant_id = self._create_assistant()
+        # Existing initialization logic
+        self.init_payload = init_payload
+
+        # Check for assistant_id in the payload
+        if 'assistant_id' in self.init_payload:
+            self.assistant_id = self.init_payload['assistant_id']
+            logger.info(f"Using existing assistant ID: {self.assistant_id}")
+        else:
+            self.assistant_id = self._create_assistant()
+            # Update payload
+            self.init_payload['assistant_id'] = self.assistant_id
+
+            # Provide a way to output this updated init_payload
+            logger.info(f"New assistant created with ID: {self.assistant_id}")
 
         self.index_file_path = 'workspace/researcher/file_index.json'
 
@@ -66,7 +80,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         For OpenAI Assistants API, this step is not needed.
         To re-use the assistant_id, pass it in the retrieved context.
         """
-        return self.assistant_id
+        return ""
 
     def _create_assistant(self):
         logger.info("Creating a new assistant instance")
