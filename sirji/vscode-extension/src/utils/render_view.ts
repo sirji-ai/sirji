@@ -1,17 +1,18 @@
 import * as vscode from 'vscode';
 import path from 'path';
 import * as fs from 'fs';
-import { randomBytes } from 'crypto';
 import { invokeAgent } from './invoke_agent';
 import { openBrowser } from './open_browser';
 import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
+import { handleChatMessage } from './handle_chat_messages';
 
 export function renderView(
  context: vscode.ExtensionContext,
  view: string,
  workspaceRootUri: any,
- workspaceRootPath: any
+ workspaceRootPath: any,
+ problemId: string
 ): vscode.WebviewPanel {
  let viewDetails: any;
 
@@ -21,34 +22,15 @@ export function renderView(
   throw new Error(`View not defined ${view} in renderer.ts`);
  }
 
+ viewDetails.replaceInHtml.nonce = problemId;
+
  const panel = viewDetails.panel;
 
  panel.webview.html = getWebviewContent(viewDetails.htmlFilePath, viewDetails.replaceInHtml);
 
  panel.webview.onDidReceiveMessage(
   (message: string) => {
-   invokeAgent(path.join(__dirname, '..', 'pycode', 'script.py'), [message])
-    .then((response) => {
-     const splittedResponse = response.split(':'),
-      responseCommand = splittedResponse.shift().trim(),
-      responseDetails = splittedResponse.join(':').trim();
-
-     if (responseCommand === 'Browse') {
-      openBrowser(responseDetails);
-      panel.webview.postMessage('Browser Opened');
-     } else if (responseCommand === 'Execute') {
-      executeCommand(responseDetails);
-      panel.webview.postMessage('Command Executed');
-     } else if (responseCommand === 'Create') {
-      createFile(workspaceRootPath, 'yourFile.txt', responseDetails);
-      panel.webview.postMessage('File Created');
-     } else {
-      panel.webview.postMessage(response);
-     }
-    })
-    .catch((error) => {
-     console.log(error);
-    });
+   handleChatMessage(message, panel, context, workspaceRootPath);
   },
   undefined,
   context.subscriptions
@@ -61,8 +43,6 @@ function getWebviewContent(htmlFilePath: string, replaceInHtml: { [key: string]:
  // load required html file
  let htmlContent = fs.readFileSync(htmlFilePath, { encoding: 'utf8' });
 
- replaceInHtml.nonce = generateNonce();
-
  htmlContent = Object.keys(replaceInHtml).reduce((str, key) => {
   const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
   return str.replace(regex, replaceInHtml[key]);
@@ -71,10 +51,6 @@ function getWebviewContent(htmlFilePath: string, replaceInHtml: { [key: string]:
  checkForUnresolvedPlaceholders(htmlContent);
 
  return htmlContent;
-}
-
-function generateNonce(length = 16): string {
- return randomBytes(length).toString('hex');
 }
 
 function checkForUnresolvedPlaceholders(htmlContent: string): void {

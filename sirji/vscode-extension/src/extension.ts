@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
+import { randomBytes } from 'crypto';
 
 import { renderView } from './utils/render_view';
 import { configStorage } from './utils/config_storage';
+import { maintainHistory } from './utils/maintain_history';
 
 async function selectWorkspace() {
  const workspaceRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
@@ -27,25 +29,30 @@ async function selectWorkspace() {
 let chatPanel: vscode.WebviewPanel | undefined = undefined;
 
 function activate(context: vscode.ExtensionContext) {
-  configStorage(context);
-  let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
-    if (chatPanel) {
-    chatPanel.reveal(vscode.ViewColumn.One);
-    return;
-    } else {
-    const workspaceRootObj = await selectWorkspace();
-    const workspaceRootUri = workspaceRootObj.workspaceRootUri;
-    const workspaceRootPath = workspaceRootObj.workspaceRootPath;
+ //TODO: implement config management
+ //  configStorage(context);
 
-    chatPanel = renderView(context, 'chat', workspaceRootUri, workspaceRootPath);
+ let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
+  if (chatPanel) {
+   chatPanel.reveal(vscode.ViewColumn.One);
+   return;
+  } else {
+   const workspaceRootObj = await selectWorkspace();
+   const workspaceRootUri = workspaceRootObj.workspaceRootUri;
+   const workspaceRootPath = workspaceRootObj.workspaceRootPath;
 
-    chatPanel.onDidDispose(() => {
-      chatPanel = undefined;
-    });
-    }
-  });
+   const problemId = randomBytes(16).toString('hex');
+   maintainHistory().createHistoryFolder(workspaceRootPath, problemId);
 
-  context.subscriptions.push(disposable);
+   chatPanel = renderView(context, 'chat', workspaceRootUri, workspaceRootPath, problemId);
+
+   chatPanel.onDidDispose(() => {
+    chatPanel = undefined;
+   });
+  }
+ });
+
+ context.subscriptions.push(disposable);
 }
 
 function deactivate() {}
