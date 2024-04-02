@@ -4,6 +4,7 @@ import * as path from 'path';
 const HISTORY_FOLDER = '.sirji';
 
 class MaintainHistory {
+
  public createHistoryFolder(workspaceRootPath: any, problemId: string): void {
   const dirPath = path.join(workspaceRootPath, HISTORY_FOLDER, problemId);
   fs.mkdirSync(dirPath, { recursive: true });

@@ -1,86 +1,73 @@
 import * as vscode from 'vscode';
 import path from 'path';
 import * as fs from 'fs';
-import { invokeAgent } from './invoke_agent';
-import { openBrowser } from './open_browser';
-import { executeCommand } from './execute_command';
-import { createFile } from './create_file';
-import { handleChatMessage } from './handle_chat_messages';
 
 export function renderView(
- context: vscode.ExtensionContext,
- view: string,
- workspaceRootUri: any,
- workspaceRootPath: any,
- problemId: string
+  context: vscode.ExtensionContext | undefined,
+  view: string,
+  workspaceRootUri: any,
+  workspaceRootPath: any,
+  problemId: string
 ): vscode.WebviewPanel {
- let viewDetails: any;
+  let viewDetails: any;
 
- if (view === 'chat') {
-  viewDetails = getChatViewDetails(context);
- } else {
-  throw new Error(`View not defined ${view} in renderer.ts`);
- }
+  if (view === 'chat') {
+    viewDetails = getChatViewDetails(context);
+  } else {
+    throw new Error(`View not defined ${view} in renderer.ts`);
+  }
 
- viewDetails.replaceInHtml.nonce = problemId;
+  viewDetails.replaceInHtml.nonce = problemId;
 
- const panel = viewDetails.panel;
+  const panel = viewDetails.panel;
 
- panel.webview.html = getWebviewContent(viewDetails.htmlFilePath, viewDetails.replaceInHtml);
+  panel.webview.html = getWebviewContent(viewDetails.htmlFilePath, viewDetails.replaceInHtml);
 
- panel.webview.onDidReceiveMessage(
-  (message: string) => {
-   handleChatMessage(message, panel, context, workspaceRootPath);
-  },
-  undefined,
-  context.subscriptions
- );
-
- return panel;
+  return panel;
 }
 
 function getWebviewContent(htmlFilePath: string, replaceInHtml: { [key: string]: string }): string {
- // load required html file
- let htmlContent = fs.readFileSync(htmlFilePath, { encoding: 'utf8' });
+  // load required html file
+  let htmlContent = fs.readFileSync(htmlFilePath, { encoding: 'utf8' });
 
- htmlContent = Object.keys(replaceInHtml).reduce((str, key) => {
-  const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
-  return str.replace(regex, replaceInHtml[key]);
- }, htmlContent);
+  htmlContent = Object.keys(replaceInHtml).reduce((str, key) => {
+    const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+    return str.replace(regex, replaceInHtml[key]);
+  }, htmlContent);
 
- checkForUnresolvedPlaceholders(htmlContent);
+  checkForUnresolvedPlaceholders(htmlContent);
 
- return htmlContent;
+  return htmlContent;
 }
 
 function checkForUnresolvedPlaceholders(htmlContent: string): void {
- const placeholderRegex = /\$\{[^}]+\}/;
- const match = htmlContent.match(placeholderRegex);
+  const placeholderRegex = /\$\{[^}]+\}/;
+  const match = htmlContent.match(placeholderRegex);
 
- if (match) {
-  throw new Error(`Unresolved placeholder found: ${match[0]}`);
- }
+  if (match) {
+    throw new Error(`Unresolved placeholder found: ${match[0]}`);
+  }
 }
 
-function getChatViewDetails(context: vscode.ExtensionContext): object {
- const panel = vscode.window.createWebviewPanel('SirjiChat', 'Sirji', vscode.ViewColumn.One, {
-  enableScripts: true,
-  retainContextWhenHidden: true
- });
+function getChatViewDetails(context: vscode.ExtensionContext | undefined): object {
+  const panel = vscode.window.createWebviewPanel('SirjiChat', 'Sirji', vscode.ViewColumn.One, {
+    enableScripts: true,
+    retainContextWhenHidden: true
+  });
 
- const htmlFilePath = path.join(__dirname, '..', 'views', 'chat', 'chat.html');
- const chatScriptUri = panel.webview.asWebviewUri(
-  vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.js'))
- );
- const chatStyleUri = panel.webview.asWebviewUri(
-  vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.css'))
- );
- return {
-  panel: panel,
-  htmlFilePath: htmlFilePath,
-  replaceInHtml: {
-   chatScriptUri: chatScriptUri,
-   chatStyleUri: chatStyleUri
-  }
- };
+  const htmlFilePath = path.join(__dirname, '..', 'views', 'chat', 'chat.html');
+  const chatScriptUri = panel.webview.asWebviewUri(
+    vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.js'))
+  );
+  const chatStyleUri = panel.webview.asWebviewUri(
+    vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.css'))
+  );
+  return {
+    panel: panel,
+    htmlFilePath: htmlFilePath,
+    replaceInHtml: {
+      chatScriptUri: chatScriptUri,
+      chatStyleUri: chatStyleUri
+    }
+  };
 }

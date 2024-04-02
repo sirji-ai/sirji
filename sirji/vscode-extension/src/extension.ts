@@ -1,30 +1,7 @@
 import * as vscode from 'vscode';
 import { randomBytes } from 'crypto';
 
-import { renderView } from './utils/render_view';
-import { configStorage } from './utils/config_storage';
-import { maintainHistory } from './utils/maintain_history';
-
-async function selectWorkspace() {
- const workspaceRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
- const workspaceRootPath = workspaceRootUri ? workspaceRootUri.fsPath : null;
-
- if (!workspaceRootUri) {
-  // Prompt user to open a folder
-  const openFolderMsg = 'No workspace/folder is open. Please open a folder to proceed.';
-  await vscode.window.showErrorMessage(openFolderMsg, 'Open Folder').then(async (selection) => {
-   if (selection === 'Open Folder') {
-    await vscode.commands.executeCommand('workbench.action.files.openFolder');
-    return; // Exit the current command execution to avoid further operations until folder is opened
-   }
-  });
- }
-
- return {
-  workspaceRootUri: workspaceRootUri,
-  workspaceRootPath: workspaceRootPath
- };
-}
+import { Facilitator } from './utils/facilitator';
 
 let chatPanel: vscode.WebviewPanel | undefined = undefined;
 
@@ -34,21 +11,14 @@ function activate(context: vscode.ExtensionContext) {
 
  let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
   if (chatPanel) {
-   chatPanel.reveal(vscode.ViewColumn.One);
-   return;
+    chatPanel.reveal(vscode.ViewColumn.One);
+    return;
   } else {
-   const workspaceRootObj = await selectWorkspace();
-   const workspaceRootUri = workspaceRootObj.workspaceRootUri;
-   const workspaceRootPath = workspaceRootObj.workspaceRootPath;
+    chatPanel = await new Facilitator(context).init() || vscode.window.createWebviewPanel('DummyView', 'Dummy', vscode.ViewColumn.One, {});
 
-   const problemId = randomBytes(16).toString('hex');
-   maintainHistory().createHistoryFolder(workspaceRootPath, problemId);
-
-   chatPanel = renderView(context, 'chat', workspaceRootUri, workspaceRootPath, problemId);
-
-   chatPanel.onDidDispose(() => {
-    chatPanel = undefined;
-   });
+    chatPanel.onDidDispose(() => {
+      chatPanel = undefined;
+    });
   }
  });
 
