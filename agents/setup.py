@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-agents',
-    version='0.0.1',
+    version='0.0.2',
     author='Sirji',
-    description='Message Handler for agents: planner, coder and researcher.',
+    description='Research, Coding and Planning agents used by Sirji.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/sirji-ai/sirji',
