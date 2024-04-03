@@ -1,0 +1,45 @@
+{
+  "name": "sirji",
+  "displayName": "Sirji",
+  "description": "“Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sirji.chat",
+        "title": "Sirji"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && cp -r src/views src/pycode out/",
+    "watch-ts": "tsc -watch -p ./",
+    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/pycode out/'",
+    "watch": "concurrently npm:watch-*",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.87.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.3.3"
+  }
+}
