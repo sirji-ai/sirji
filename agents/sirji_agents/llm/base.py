@@ -1,7 +1,7 @@
 from openai import OpenAI
 import os
 
-from sirji_messages import AgentSystemPromptFactory
+from sirji_messages import AgentSystemPromptFactory, message_parse  
 
 
 class SingletonMeta(type):
@@ -43,23 +43,30 @@ class LLMAgentBase(metaclass=SingletonMeta):
         if not history:
             prompt_class = AgentSystemPromptFactory[self.agent_enum.name]
             conversation.append(
-                {'role': 'system', 'content': prompt_class().system_prompt()})
+                {"role": "system", "content": prompt_class().system_prompt()})
         else:
             conversation = history
 
-        conversation.append({'role': 'user', 'content': input_message})
+        parsed_input_message = message_parse(input_message)
+        conversation.append({"role": "user", "content": input_message, "parsed_content": parsed_input_message})
 
         return conversation
 
     def __get_response(self, conversation):
+        history = []
+
+        for message in conversation:
+            history.append({"role": message['role'], "content": message['content']})
+
         chat_completion = self.client.chat.completions.create(
-            messages=conversation,
+            messages=history,
             model="gpt-4-turbo-preview",
             temperature=0,
             max_tokens=4095,
         )
 
         response_message = chat_completion.choices[0].message.content
-        conversation.append({'role': 'assistant', 'content': response_message})
+        parsed_response_message = message_parse(response_message)
+        conversation.append({"role": "assistant", "content": response_message, "parsed_content": parsed_response_message})
 
         return response_message
