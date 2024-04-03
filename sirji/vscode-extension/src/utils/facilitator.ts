@@ -67,12 +67,11 @@ export class Facilitator {
  private async setupVirtualEnv(): Promise<void> {
   const oThis = this;
 
-  const response = await invokeAgent(
+  await invokeAgent(
    '', // Passing empty string as the virtual env might not be present.
    path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'),
    [path.join(oThis.workspaceRootPath, 'venv')]
   );
-  oThis.problemStatementSent = true;
  }
 
  private setupHistoryMaintainor() {
