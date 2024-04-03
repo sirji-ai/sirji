@@ -17,6 +17,10 @@ venv
 node_modules
 out
 dist
-node_modules
 .vscode-test/
 *.vsix
+*.egg-info
+
+.coverage
+
+.pytest_cache
