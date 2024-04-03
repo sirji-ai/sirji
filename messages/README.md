@@ -92,7 +92,8 @@ message_class = MessageFactory[ActionEnum.INFORM.name]
 print(f"Sample INFORM message:\n{message_class().sample()}")
 
 # Generate message using passed template variables
-print(f"Generated INFORM message:\n"{message_class().generate({"details": "Some sample information."})}")
+generated_messages = message_class().generate({"details": "Some sample information."})
+print(f"Generated INFORM message:\n{generated_messages}")
 
 # System prompt class instantiation from an agent enum
 prompt_class = AgentSystemPromptFactory[AgentEnum.CODER.name]
