@@ -28,19 +28,41 @@ userInput.addEventListener('input', adjustTextAreaHeight);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
+// Settings modal
+document.getElementById('saveSettings').onclick = function () {
+ saveSettings();
+};
+document.getElementById('openSettings').onclick = function () {
+ openSettings();
+};
+document.getElementById('closeSettings').onclick = function () {
+ closeSettings();
+};
+
 // IMP: Acquire the VS Code API
 const vscode = acquireVsCodeApi();
 
 // Listen for messages from the extension
 window.addEventListener('message', (event) => {
- sendBotMessage(event.data);
+ switch (event.data.type) {
+  case 'settingSaved':
+   settingSaved(event.data.content);
+   break;
+
+  case 'botMessage':
+   sendBotMessage(event.data.content);
+   break;
+
+  default:
+   sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
+ }
 });
 
 function sendUserMessage() {
  const message = userInput.value.trim();
  if (message) {
   displayMessage(message, 'user');
-  vscode.postMessage(message);
+  vscode.postMessage({ type: 'userMessage', content: message });
   userInput.value = '';
   adjustTextAreaHeight();
  }
@@ -56,8 +78,6 @@ function updateIconColors() {
  });
 }
 
-updateIconColors();
-
 function sendBotMessage(message) {
  message = message.trim();
  if (message) {
@@ -65,8 +85,6 @@ function sendBotMessage(message) {
   adjustTextAreaHeight();
  }
 }
-
-sendBotMessage('Hello, I am Sirji. What would you like me to build today?');
 
 function adjustTextAreaHeight() {
  const minHeight = 15;
@@ -132,3 +150,79 @@ function createMessageElement(msg, sender) {
 
  return chatElement;
 }
+
+function openSettings() {
+ document.getElementById('settingsModal').style.display = 'block';
+ //  vscode.postMessage({ type: 'requestEnvVariables' });
+}
+
+function closeSettings() {
+ document.getElementById('settingsModal').style.display = 'none';
+}
+
+function saveSettings() {
+ const openAIKey = document.getElementById('openai_api_key').value.trim();
+ const googleSearchEngineId = document.getElementById('google_search_engine_id').value.trim();
+ const googleSearchEngineApiKey = document.getElementById('google_search_engine_api_key').value.trim();
+
+ let isValid = true;
+
+ document.getElementById('save_settings_error').textContent = '';
+
+ if (!openAIKey) {
+  document.getElementById('openai_api_key_error').textContent = 'OpenAI API Key is required.';
+  isValid = false;
+ } else {
+  document.getElementById('openai_api_key_error').textContent = '';
+ }
+
+ if (!googleSearchEngineId) {
+  document.getElementById('google_search_engine_id_error').textContent = 'Google Search Engine ID is required.';
+  isValid = false;
+ } else {
+  document.getElementById('google_search_engine_id_error').textContent = '';
+ }
+
+ if (!googleSearchEngineApiKey) {
+  document.getElementById('google_search_engine_api_key_error').textContent =
+   'Google Search Engine API Key is required.';
+  isValid = false;
+ } else {
+  document.getElementById('google_search_engine_api_key_error').textContent = '';
+ }
+
+ if (isValid) {
+  const saveButton = document.getElementById('saveSettings');
+  saveButton.textContent = 'Saving...';
+  saveButton.disabled = true;
+
+  const settings = {
+   openai_api_key: openAIKey,
+   google_search_engine_id: googleSearchEngineId,
+   google_search_engine_api_key: googleSearchEngineApiKey
+  };
+
+  vscode.postMessage({ type: 'saveSettings', content: settings });
+ }
+}
+
+function settingSaved(data) {
+ const saveButton = document.getElementById('saveSettings');
+ saveButton.textContent = 'Save';
+ saveButton.disabled = false;
+ if (data.success) {
+  sendBotMessage(data.message);
+  closeSettings();
+ } else {
+  document.getElementById(
+   'save_settings_error'
+  ).textContent = `Settings can not be saved. Please contact Sirji team. Error: ${data.message}`;
+ }
+}
+
+updateIconColors();
+
+vscode.postMessage({
+ type: 'webViewReady',
+ content: true
+});

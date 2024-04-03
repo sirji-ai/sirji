@@ -19,6 +19,33 @@
     <button id="sendBtn">Send</button>
    </div>
   </div>
+  <div id="openSettings">⚙️</div>
+  <div id="settingsModal" class="modal">
+   <div class="modal-content">
+    <span id="closeSettings">&times;</span>
+    <h2>Environment Variables Configuration</h2>
+    <div class="input-wrapper">
+     <label for="openai_api_key">OpenAI API Key</label>
+     <input type="text" id="openai_api_key" placeholder="Enter the OpenAI api key" />
+     <span class="error-message" id="openai_api_key_error"></span>
+    </div>
+    <div class="input-wrapper">
+     <label for="google_search_engine_id">Google Search Engine ID</label>
+     <input type="text" id="google_search_engine_id" placeholder="Enter the Google Search Engine ID" />
+     <span class="error-message" id="google_search_engine_id_error"></span>
+    </div>
+    <div class="input-wrapper">
+     <label for="google_search_engine_api_key">Google Search Engine API Key</label>
+     <input type="text" id="google_search_engine_api_key" placeholder="Enter the Google Search Engine API Key" />
+     <span class="error-message" id="google_search_engine_api_key_error"></span>
+    </div>
+
+    <div class="input-wrapper">
+     <span class="error-message" id="save_settings_error"></span>
+    </div>
+    <button id="saveSettings">Save</button>
+   </div>
+  </div>
   <script type="module" nonce="${nonce}" src="${chatScriptUri}"></script>
  </body>
 </html>

@@ -4,30 +4,29 @@ import { openBrowser } from './open_browser';
 import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
 import { invokeAgent } from './invoke_agent';
-import { configStorage } from './config_storage';
+// import { configStorage } from './secret_storage';
 
 export async function handleChatMessage(message: string, panel: any, context: any, workspaceRootPath: any) {
  try {
   // TODO: Daksh, please pass path.join(oThis.workspaceRootPath, 'venv') as the first argument in the following.
   const response = await invokeAgent('', path.join(__dirname, '..', 'py_scripts', 'message.py'), [message]);
 
-  const secretStorage = configStorage(context);
+  // const secretStorage = configStorage(context);
 
-  if (secretStorage.isApiKey(message)) {
-   console.log('API Key: ', message);
-   const secretKey = 'userAPIKey';
-   await secretStorage.storeSecret(secretKey, message);
-   panel.webview.postMessage('Your API key has been securely stored.');
-   return;
-  }
+  // if (secretStorage.isApiKey(message)) {
+  //  console.log('API Key: ', message);
+  //  const secretKey = 'userAPIKey';
+  //  await secretStorage.storeSecret(secretKey, message);
+  //  panel.webview.postMessage('Your API key has been securely stored.');
+  //  return;
+  // }
 
-  if (message === 'Get API Key') {
-   const secretKey = 'userAPIKey';
-   const secret = await secretStorage.retrieveSecret(secretKey);
-   return secret;
-  }
+  // if (message === 'Get API Key') {
+  //  const secretKey = 'userAPIKey';
+  //  const secret = await secretStorage.retrieveSecret(secretKey);
+  //  return secret;
+  // }
 
-  console.log('Response: ', response);
   const splittedResponse = response.split(':'),
    responseCommand = splittedResponse.shift().trim(),
    responseDetails = splittedResponse.join(':').trim();

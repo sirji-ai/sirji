@@ -125,3 +125,97 @@ textarea {
  background-color: #444;
  transform: scale(1.05);
 }
+
+#openSettings {
+ position: absolute;
+ top: 10px;
+ right: 20px;
+ cursor: pointer;
+ font-size: 24px;
+}
+
+.modal {
+ display: none;
+ position: fixed;
+ z-index: 1;
+ left: 0;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ overflow: auto;
+ background-color: rgb(0, 0, 0);
+ background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+ background-color: #f1f1f1;
+ margin: 15% auto;
+ padding: 20px;
+ border: 1px solid #888;
+ width: 50%;
+}
+
+.modal-content h2 {
+ color: #666;
+}
+
+#closeSettings {
+ color: #aaa;
+ float: right;
+ font-size: 28px;
+ font-weight: bold;
+ cursor: pointer;
+}
+
+#closeSettings:hover,
+#closeSettings:focus {
+ color: black;
+ text-decoration: none;
+ cursor: pointer;
+}
+
+#saveSettings {
+ padding: 10px 20px;
+ border: none;
+ border-radius: 5px;
+ background-color: #302f2f;
+ color: white;
+ font-weight: bold;
+ cursor: pointer;
+ transition: background-color 0.3s, transform 0.2s;
+}
+
+#saveSettings:hover {
+ background-color: #444;
+ transform: scale(1.05);
+}
+
+.input-wrapper {
+ margin-bottom: 15px;
+}
+
+.input-wrapper label {
+ display: block;
+ margin-bottom: 5px;
+ font-size: 14px;
+ color: #666;
+}
+
+.input-wrapper input[type='text'] {
+ width: calc(100% - 10px);
+ padding: 10px;
+ border: 1px solid #ccc;
+ border-radius: 5px;
+ font-size: 13px;
+ box-sizing: border-box;
+}
+
+.input-wrapper input[type='text']:hover {
+ border-color: #888;
+}
+
+.error-message {
+ color: red;
+ font-size: 12px;
+ margin-top: 5px;
+}

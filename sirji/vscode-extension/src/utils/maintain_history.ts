@@ -3,8 +3,7 @@ import * as path from 'path';
 
 const HISTORY_FOLDER = '.sirji';
 
-class MaintainHistory {
-
+export class MaintainHistory {
  public createHistoryFolder(workspaceRootPath: any, problemId: string): void {
   const dirPath = path.join(workspaceRootPath, HISTORY_FOLDER, problemId);
   fs.mkdirSync(dirPath, { recursive: true });
@@ -22,8 +21,4 @@ class MaintainHistory {
   const rawData = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(rawData);
  }
-}
-
-export function maintainHistory() {
- return new MaintainHistory();
 }
