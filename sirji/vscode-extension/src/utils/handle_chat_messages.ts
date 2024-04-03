@@ -8,7 +8,7 @@ import { configStorage } from './config_storage';
 
 export async function handleChatMessage(message: string, panel: any, context: any, workspaceRootPath: any) {
  try {
-  const response = await invokeAgent(path.join(__dirname, '..', 'pycode', 'message.py'), [message]);
+  const response = await invokeAgent(path.join(__dirname, '..', 'py_scripts', 'message.py'), [message]);
 
   const secretStorage = configStorage(context);
 
