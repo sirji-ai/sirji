@@ -67,9 +67,11 @@ export class Facilitator {
  private async setupVirtualEnv(): Promise<void> {
   const oThis = this;
 
-  const response = await invokeAgent(path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
-   path.join(oThis.workspaceRootPath, 'venv')
-  ]);
+  const response = await invokeAgent(
+   '', // Passing empty string as the virtual env might not be present.
+   path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'),
+   [path.join(oThis.workspaceRootPath, 'venv')]
+  );
   oThis.problemStatementSent = true;
  }
 
@@ -101,6 +103,7 @@ export class Facilitator {
   // From second message onwards remember what message was sent to user, and construct appropraite reply msg.
   if (!oThis.problemStatementSent) {
    const response = await invokeAgent(
+    path.join(oThis.workspaceRootPath, 'venv'),
     path.join(__dirname, '..', 'py_scripts', 'generate_problem_statement_message.py'),
     ['-ps', message]
    );
