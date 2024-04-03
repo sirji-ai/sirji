@@ -29,6 +29,9 @@ export class Facilitator {
   // Setup workspace
   await oThis.selectWorkspace();
 
+  // Setup Python virtual env and Install dependencies
+  await oThis.setupVirtualEnv();
+
   // Setup History Maintainor
   oThis.setupHistoryMaintainor();
 
@@ -59,6 +62,15 @@ export class Facilitator {
     }
    });
   }
+ }
+
+ private async setupVirtualEnv(): Promise<void> {
+  const oThis = this;
+
+  const response = await invokeAgent(path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+   path.join(oThis.workspaceRootPath, 'venv')
+  ]);
+  oThis.problemStatementSent = true;
  }
 
  private setupHistoryMaintainor() {
