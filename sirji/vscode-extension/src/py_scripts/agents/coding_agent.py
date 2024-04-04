@@ -44,8 +44,11 @@ class CodingAgentRunner:
             elif last_action == ActionEnum.SOLUTION_COMPLETE.name:
                 message_class = MessageFactory[ActionEnum.FEEDBACK.name]
                 message_str = message_class().generate({"details": contents})
+            elif last_action in [ActionEnum.STEP_STARTED.name, ActionEnum.STEP_COMPLETED.name]:
+                message_class = MessageFactory[ActionEnum.ACKNOWLEDGE.name]
+                message_str = message_class().generate({"details": contents})
             else:
-                message_str = contents
+                raise ValueError(f"Invalid action: {last_action}")
         else:
             message_str = contents
 
