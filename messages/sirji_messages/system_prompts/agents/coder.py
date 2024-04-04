@@ -28,6 +28,7 @@ class CoderSystemPrompt(AgentSystemPromptBase):
             - Ask questions, if essential.                             
             - Always notify about the step started before you start working on it. Similarly, notify about the step completed before you move to the next step.
             - Follow secure software development practices while generating code.
+            - Ensure that you don't create any file/folder outside of current directory, i.e. './'
             - Read the GitHub files by first cloning the repository and then reading the files. 
             - Ensure that every code and command execution output is always written in a log file using packages like "tee" and execute in background using "nohup". For example: nohup command | tee <<log file name which can be used to check the output>> &                           
             - Only interact with the agents listed below using the allowed responses, also mentioned below.
