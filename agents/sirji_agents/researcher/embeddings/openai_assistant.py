@@ -37,9 +37,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             # Provide a way to output this updated init_payload
             logger.info(f"New assistant created with ID: {self.assistant_id}")
 
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-
-        self.index_file_path = os.path.join(workspace, '.sirji', 'researcher', 'file_index.json')
+        self.index_file_path = os.path.join(self._get_workspace_folder(), '.sirji', 'researcher', 'file_index.json')
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
@@ -83,6 +81,13 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         To re-use the assistant_id, pass it in the retrieved context.
         """
         return ""
+
+    def _get_workspace_folder(self):
+        workspace = os.environ.get("SIRJI_WORKSPACE")
+        if workspace is None:
+            raise ValueError(
+                "SIRJI_WORKSPACE is not set as an environment variable")
+        return workspace
 
     def _create_assistant(self):
         logger.info("Creating a new assistant instance")
