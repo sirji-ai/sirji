@@ -161,34 +161,34 @@ function closeSettings() {
 }
 
 function saveSettings() {
- const openAIKey = document.getElementById('openai_api_key').value.trim();
- const googleSearchEngineId = document.getElementById('google_search_engine_id').value.trim();
- const googleSearchEngineApiKey = document.getElementById('google_search_engine_api_key').value.trim();
+ const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
+ const googleSearchEngineId = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID').value.trim();
+ const googleSearchEngineApiKey = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY').value.trim();
 
  let isValid = true;
 
  document.getElementById('save_settings_error').textContent = '';
 
  if (!openAIKey) {
-  document.getElementById('openai_api_key_error').textContent = 'OpenAI API Key is required.';
+  document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = 'OpenAI API Key is required.';
   isValid = false;
  } else {
-  document.getElementById('openai_api_key_error').textContent = '';
+  document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = '';
  }
 
  if (!googleSearchEngineId) {
-  document.getElementById('google_search_engine_id_error').textContent = 'Google Search Engine ID is required.';
+  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = 'Google Search Engine ID is required.';
   isValid = false;
  } else {
-  document.getElementById('google_search_engine_id_error').textContent = '';
+  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = '';
  }
 
  if (!googleSearchEngineApiKey) {
-  document.getElementById('google_search_engine_api_key_error').textContent =
+  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent =
    'Google Search Engine API Key is required.';
   isValid = false;
  } else {
-  document.getElementById('google_search_engine_api_key_error').textContent = '';
+  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = '';
  }
 
  if (isValid) {
@@ -197,9 +197,9 @@ function saveSettings() {
   saveButton.disabled = true;
 
   const settings = {
-   openai_api_key: openAIKey,
-   google_search_engine_id: googleSearchEngineId,
-   google_search_engine_api_key: googleSearchEngineApiKey
+   SIRJI_OPENAI_API_KEY: openAIKey,
+   SIRJI_GOOGLE_SEARCH_ENGINE_ID: googleSearchEngineId,
+   SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY: googleSearchEngineApiKey
   };
 
   vscode.postMessage({ type: 'saveSettings', content: settings });
