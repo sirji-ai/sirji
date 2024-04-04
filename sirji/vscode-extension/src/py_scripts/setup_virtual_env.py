@@ -12,7 +12,7 @@ def create_venv(venv):
         subprocess.check_call([sys.executable, "-m", "venv", venv])
     else:
         print("Virtual environment already exists.")
-    return os.path.join(venv, "bin", "python") if os.name != "nt" else os.path.join(venv, "Scripts", "python.exe")
+    return os.path.join(venv, "bin", "python") if os.name != "nt" else os.path.join(venv, "Scripts", "python.exe"), os.path.join(venv, "bin", 'playwright') 
 
 def install_packages(venv_python, requirements_path):
     """
@@ -20,6 +20,13 @@ def install_packages(venv_python, requirements_path):
     """
     print(f"Installing packages from {requirements_path}...")
     subprocess.check_call([venv_python, "-m", "pip", "install", "-r", requirements_path])
+
+def install_playwright(venv_playwright):
+    """
+    Install playwright in the virtual environment.
+    """
+    print(f"Installing playwright...")
+    subprocess.check_call([venv_playwright, "install"])
 
 def parse_arguments():
     """
@@ -32,7 +39,7 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
     
-    venv_python = create_venv(args.venv)
+    venv_python, venv_playwright = create_venv(args.venv)
 
     # Assuming the requirements.txt file is in the same directory as this script
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -43,6 +50,8 @@ if __name__ == "__main__":
     else:
         print(f"Error: requirements.txt file not found in {script_dir}")
         sys.exit(1)
+
+    install_playwright(venv_playwright)
 
     print(f"Setup complete. Virtual environment '{args.venv}' is ready to use with packages from requirements.txt.")
 
