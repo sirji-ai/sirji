@@ -21,7 +21,7 @@ class StepsMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "details": "List of steps to solve the problem. Each step will start with 'Step #: ....'."
+            "details": "List of steps to solve the problem. Each step must start with 'Step #: ....'."
         })
 
     def description(self):
