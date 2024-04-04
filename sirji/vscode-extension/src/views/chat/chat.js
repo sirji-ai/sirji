@@ -31,8 +31,6 @@ userInput.addEventListener('input', adjustTextAreaHeight);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
-setProgress(5, 10);
-
 // Settings modal
 document.getElementById('saveSettings').onclick = function () {
   saveSettings();
@@ -85,6 +83,16 @@ window.addEventListener('message', (event) => {
   }
 });
 
+function updateIconColors() {
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  const iconColor = isDarkMode ? '#FFFFFF' : '#000000';
+
+  document.querySelectorAll('.icon').forEach((iconElement) => {
+    iconElement.style.color = iconColor;
+  });
+}
+
 function sendUserMessage() {
   const message = userInput.value.trim();
   if (message) {
@@ -93,16 +101,6 @@ function sendUserMessage() {
     userInput.value = '';
     adjustTextAreaHeight();
   }
-}
-
-function updateIconColors() {
-  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  const iconColor = isDarkMode ? '#FFFFFF' : '#000000'; // White for dark mode, black for light mode
-
-  document.querySelectorAll('.icon').forEach((iconElement) => {
-    iconElement.style.color = iconColor;
-  });
 }
 
 function sendBotMessage(message) {
@@ -269,6 +267,7 @@ function updateStepStatus(message, status) {
 
 function displayPlannedSteps(steps) {
   setProgress(totalStepsCompleted, steps.length);
+  document.getElementById('progressCircle').style.display = 'flex';
   console.log('Displaying planned steps:', steps);
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');

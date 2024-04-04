@@ -331,20 +331,6 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.USER:
-          // if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
-          //   console.log('parsedMessage', parsedMessage);
-
-          //   oThis.chatPanel?.webview.postMessage({
-          //     type: 'plannedSteps',
-          //     content: parsedMessage.DETAILS
-          //   });
-
-          //   rawMessage = 'sure';
-          //   parsedMessage = {
-          //     TO: ACTOR_ENUM.CODER
-          //   };
-          // }
-
           if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
             oThis.chatPanel?.webview.postMessage({
               type: 'plannedStepStart',
