@@ -11,8 +11,13 @@
   <body>
     <div id="topRightControls">
       <div id="progressCircle">
-        <svg id="progressRing" width="20" height="20">
+        <!--<svg id="progressRing" width="20" height="20">
           <circle id="progressRingCircle" stroke="#ADD8E6" stroke-width="4" fill="transparent" r="8" cx="10" cy="10" />
+        </svg>-->
+        <svg id="progressRing" width="30" height="30">
+          <circle id="outerBorder" stroke="#f1f1f1" stroke-width="1" fill="transparent" r="9" cx="15" cy="15"></circle>
+          <circle id="progressRingCircle" stroke="#ADD8E6" stroke-width="2" fill="transparent" r="8" cx="15" cy="15"></circle>
+          <circle id="innerBorder" stroke="#f1f1f1" stroke-width="1" fill="transparent" r="6" cx="15" cy="15"></circle>
         </svg>
         <div id="progressText">0 of 0</div>
       </div>

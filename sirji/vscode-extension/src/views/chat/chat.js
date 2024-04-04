@@ -31,6 +31,8 @@ userInput.addEventListener('input', adjustTextAreaHeight);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
+setProgress(5, 10);
+
 // Settings modal
 document.getElementById('saveSettings').onclick = function () {
   saveSettings();

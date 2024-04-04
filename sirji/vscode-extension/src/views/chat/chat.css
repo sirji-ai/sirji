@@ -126,18 +126,19 @@ textarea {
   transform: scale(1.05);
 }
 
-.topRightControls {
-  display: flex; /* This will place the child elements next to each other */
-  align-items: center; /* Align items vertically in the center */
+#topRightControls {
+  display: flex; 
+  align-items: center;
   flex-direction: row;
   justify-content: flex-end;
-  border-width: 1px solid white;
 }
 
 #openSettings {
   cursor: pointer;
   font-size: 24px;
-  border-width: 1px solid yellow;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
 
 #progressCircle {
@@ -146,34 +147,26 @@ textarea {
   align-items: center;
   margin-right: 10px;
   position: relative;
-  width: 100px;
+  width: 90px;
   height: 30px;
+  gap: 3px; 
 }
 
-#progressCircle {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center the items horizontally */
-  gap: 10px; /* Creates space between SVG and text */
-  border-width: 1px solid red;
-}
 
 #progressRingCircle {
-  /* Removed border style as it's not needed for the SVG circle itself */
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
 
 #progressText {
-  /* Removed absolute positioning and related styles */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
   white-space: nowrap;
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 4px;
   padding: 2px 4px;
   color: #000;
-  border-width: 1px solid green;
+  border: 1px solid blue;
 }
 
 /** Setting Modal **/
