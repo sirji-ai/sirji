@@ -12,25 +12,25 @@ let chatPanel: vscode.WebviewPanel | undefined = undefined;
  * @param context - The extension context
  */
 function activate(context: vscode.ExtensionContext) {
- // Register the command `sirji.chat`. This command is defined in the package.json file.
- let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
-  // If chatPanel already exists, reveal it in the first column without creating a new one
-  if (chatPanel) {
-   chatPanel.reveal(vscode.ViewColumn.One);
-   return;
-  }
-  // Else, create a new chatPanel instance using the Facilitator class and listen for its disposal.
-  else {
-   chatPanel = await new Facilitator(context).init();
-   chatPanel?.onDidDispose(() => {
-    // Clean up when the chatPanel is closed by setting it to undefined
-    chatPanel = undefined;
-   });
-  }
- });
+  // Register the command `sirji.chat`. This command is defined in the package.json file.
+  let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
+    // If chatPanel already exists, reveal it in the first column without creating a new one
+    if (chatPanel) {
+      chatPanel.reveal(vscode.ViewColumn.One);
+      return;
+    }
+    // Else, create a new chatPanel instance using the Facilitator class and listen for its disposal.
+    else {
+      chatPanel = await new Facilitator(context).init();
+      chatPanel?.onDidDispose(() => {
+        // Clean up when the chatPanel is closed by setting it to undefined
+        chatPanel = undefined;
+      });
+    }
+  });
 
- // Add the command to the context's subscriptions to ensure proper disposal
- context.subscriptions.push(disposable);
+  // Add the command to the context's subscriptions to ensure proper disposal
+  context.subscriptions.push(disposable);
 }
 
 /**

@@ -30,13 +30,13 @@ document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
 // Settings modal
 document.getElementById('saveSettings').onclick = function () {
- saveSettings();
+  saveSettings();
 };
 document.getElementById('openSettings').onclick = function () {
- openSettings();
+  openSettings();
 };
 document.getElementById('closeSettings').onclick = function () {
- closeSettings();
+  closeSettings();
 };
 
 // IMP: Acquire the VS Code API
@@ -44,185 +44,182 @@ const vscode = acquireVsCodeApi();
 
 // Listen for messages from the extension
 window.addEventListener('message', (event) => {
- switch (event.data.type) {
-  case 'settingSaved':
-   settingSaved(event.data.content);
-   break;
+  switch (event.data.type) {
+    case 'settingSaved':
+      settingSaved(event.data.content);
+      break;
 
-  case 'botMessage':
-   sendBotMessage(event.data.content);
-   break;
+    case 'botMessage':
+      sendBotMessage(event.data.content);
+      break;
 
-  default:
-   sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
- }
+    default:
+      sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
+  }
 });
 
 function sendUserMessage() {
- const message = userInput.value.trim();
- if (message) {
-  displayMessage(message, 'user');
-  vscode.postMessage({ type: 'userMessage', content: message });
-  userInput.value = '';
-  adjustTextAreaHeight();
- }
+  const message = userInput.value.trim();
+  if (message) {
+    displayMessage(message, 'user');
+    vscode.postMessage({ type: 'userMessage', content: message });
+    userInput.value = '';
+    adjustTextAreaHeight();
+  }
 }
 
 function updateIconColors() {
- const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
- const iconColor = isDarkMode ? '#FFFFFF' : '#000000'; // White for dark mode, black for light mode
+  const iconColor = isDarkMode ? '#FFFFFF' : '#000000'; // White for dark mode, black for light mode
 
- document.querySelectorAll('.icon').forEach((iconElement) => {
-  iconElement.style.color = iconColor;
- });
+  document.querySelectorAll('.icon').forEach((iconElement) => {
+    iconElement.style.color = iconColor;
+  });
 }
 
 function sendBotMessage(message) {
- message = message.trim();
- if (message) {
-  displayMessage(message, 'bot');
-  adjustTextAreaHeight();
- }
+  message = message.trim();
+  if (message) {
+    displayMessage(message, 'bot');
+    adjustTextAreaHeight();
+  }
 }
 
 function adjustTextAreaHeight() {
- const minHeight = 15;
- const maxHeight = 90;
+  const minHeight = 15;
+  const maxHeight = 90;
 
- userInput.style.height = minHeight + 'px';
- const newHeight = Math.min(maxHeight, Math.max(userInput.scrollHeight, minHeight));
- userInput.style.height = newHeight + 'px';
+  userInput.style.height = minHeight + 'px';
+  const newHeight = Math.min(maxHeight, Math.max(userInput.scrollHeight, minHeight));
+  userInput.style.height = newHeight + 'px';
 }
 
 function displayMessage(msg, sender) {
- //  const messageContainer = document.getElementById('messageContainer');
- //  const messageDiv = document.createElement('div');
+  //  const messageContainer = document.getElementById('messageContainer');
+  //  const messageDiv = document.createElement('div');
 
- const chatListContainerElement = document.getElementById('messageContainer');
+  const chatListContainerElement = document.getElementById('messageContainer');
 
- const messageElement = createMessageElement(msg, sender);
+  const messageElement = createMessageElement(msg, sender);
 
- // Defer the scrolling a bit to ensure layout updates
- chatListContainerElement.appendChild(messageElement);
+  // Defer the scrolling a bit to ensure layout updates
+  chatListContainerElement.appendChild(messageElement);
 
- chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight;
+  chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight;
 
- userInput.value = '';
+  userInput.value = '';
 }
 
 function createMessageElement(msg, sender) {
- const chatElement = document.createElement('div');
+  const chatElement = document.createElement('div');
 
- // Construct user message HTML format
- if (sender === 'user') {
-  chatElement.classList.add('user-message');
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('user');
-  messageElement.textContent = msg;
+  // Construct user message HTML format
+  if (sender === 'user') {
+    chatElement.classList.add('user-message');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('user');
+    messageElement.textContent = msg;
 
-  chatElement.appendChild(messageElement);
-  // Replace new line characters with HTML line break to properly display in HTML
-  const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
-  messageElement.innerHTML = formattedMessage;
+    chatElement.appendChild(messageElement);
+    // Replace new line characters with HTML line break to properly display in HTML
+    const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
+    messageElement.innerHTML = formattedMessage;
 
-  const iconElement = document.createElement('div');
-  iconElement.classList.add('icon');
-  iconElement.innerHTML = UserSvg;
-  chatElement.appendChild(iconElement);
- }
+    const iconElement = document.createElement('div');
+    iconElement.classList.add('icon');
+    iconElement.innerHTML = UserSvg;
+    chatElement.appendChild(iconElement);
+  }
 
- // Construct bot message HTML format
- if (sender === 'bot') {
-  chatElement.classList.add('bot-message');
-  const iconElement = document.createElement('div');
-  iconElement.classList.add('icon');
-  iconElement.innerHTML = BotSvg;
-  chatElement.appendChild(iconElement);
+  // Construct bot message HTML format
+  if (sender === 'bot') {
+    chatElement.classList.add('bot-message');
+    const iconElement = document.createElement('div');
+    iconElement.classList.add('icon');
+    iconElement.innerHTML = BotSvg;
+    chatElement.appendChild(iconElement);
 
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('bot');
-  messageElement.textContent = msg;
-  chatElement.appendChild(messageElement);
-  const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
-  messageElement.innerHTML = formattedMessage;
- }
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('bot');
+    messageElement.textContent = msg;
+    chatElement.appendChild(messageElement);
+    const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
+    messageElement.innerHTML = formattedMessage;
+  }
 
- return chatElement;
+  return chatElement;
 }
 
 function openSettings() {
- document.getElementById('settingsModal').style.display = 'block';
- //  vscode.postMessage({ type: 'requestEnvVariables' });
+  document.getElementById('settingsModal').style.display = 'block';
+  //  vscode.postMessage({ type: 'requestEnvVariables' });
 }
 
 function closeSettings() {
- document.getElementById('settingsModal').style.display = 'none';
+  document.getElementById('settingsModal').style.display = 'none';
 }
 
 function saveSettings() {
- const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
- const googleSearchEngineId = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID').value.trim();
- const googleSearchEngineApiKey = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY').value.trim();
+  const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
+  const googleSearchEngineId = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID').value.trim();
+  const googleSearchEngineApiKey = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY').value.trim();
 
- let isValid = true;
+  let isValid = true;
 
- document.getElementById('save_settings_error').textContent = '';
+  document.getElementById('save_settings_error').textContent = '';
 
- if (!openAIKey) {
-  document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = 'OpenAI API Key is required.';
-  isValid = false;
- } else {
-  document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = '';
- }
+  if (!openAIKey) {
+    document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = 'OpenAI API Key is required.';
+    isValid = false;
+  } else {
+    document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = '';
+  }
 
- if (!googleSearchEngineId) {
-  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = 'Google Search Engine ID is required.';
-  isValid = false;
- } else {
-  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = '';
- }
+  if (!googleSearchEngineId) {
+    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = 'Google Search Engine ID is required.';
+    isValid = false;
+  } else {
+    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = '';
+  }
 
- if (!googleSearchEngineApiKey) {
-  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent =
-   'Google Search Engine API Key is required.';
-  isValid = false;
- } else {
-  document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = '';
- }
+  if (!googleSearchEngineApiKey) {
+    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = 'Google Search Engine API Key is required.';
+    isValid = false;
+  } else {
+    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = '';
+  }
 
- if (isValid) {
-  const saveButton = document.getElementById('saveSettings');
-  saveButton.textContent = 'Saving...';
-  saveButton.disabled = true;
+  if (isValid) {
+    const saveButton = document.getElementById('saveSettings');
+    saveButton.textContent = 'Saving...';
+    saveButton.disabled = true;
 
-  const settings = {
-   SIRJI_OPENAI_API_KEY: openAIKey,
-   SIRJI_GOOGLE_SEARCH_ENGINE_ID: googleSearchEngineId,
-   SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY: googleSearchEngineApiKey
-  };
+    const settings = {
+      SIRJI_OPENAI_API_KEY: openAIKey,
+      SIRJI_GOOGLE_SEARCH_ENGINE_ID: googleSearchEngineId,
+      SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY: googleSearchEngineApiKey,
+    };
 
-  vscode.postMessage({ type: 'saveSettings', content: settings });
- }
+    vscode.postMessage({ type: 'saveSettings', content: settings });
+  }
 }
 
 function settingSaved(data) {
- const saveButton = document.getElementById('saveSettings');
- saveButton.textContent = 'Save';
- saveButton.disabled = false;
- if (data.success) {
-  sendBotMessage(data.message);
-  closeSettings();
- } else {
-  document.getElementById(
-   'save_settings_error'
-  ).textContent = `Settings can not be saved. Please contact Sirji team. Error: ${data.message}`;
- }
+  const saveButton = document.getElementById('saveSettings');
+  saveButton.textContent = 'Save';
+  saveButton.disabled = false;
+  if (data.success) {
+    sendBotMessage(data.message);
+    closeSettings();
+  } else {
+    document.getElementById('save_settings_error').textContent = `Settings can not be saved. Please contact Sirji team. Error: ${data.message}`;
+  }
 }
 
 updateIconColors();
 
 vscode.postMessage({
- type: 'webViewReady',
- content: true
+  type: 'webViewReady',
+  content: true,
 });

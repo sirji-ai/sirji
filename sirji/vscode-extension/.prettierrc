@@ -1,0 +1,30 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "semi": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "arrowParens": "always",
+  "printWidth": 200,
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "singleQuote": true,
+        "trailingComma": "none",
+        "semi": true,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.py",
+      "options": {
+        "singleQuote": true,
+        "trailingComma": "none",
+        "tabWidth": 2
+      }
+    }
+  ]
+}

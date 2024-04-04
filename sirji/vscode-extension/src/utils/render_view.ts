@@ -2,13 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import * as fs from 'fs';
 
-export function renderView(
-  context: vscode.ExtensionContext | undefined,
-  view: string,
-  workspaceRootUri: any,
-  workspaceRootPath: any,
-  problemId: string
-): vscode.WebviewPanel {
+export function renderView(context: vscode.ExtensionContext | undefined, view: string, workspaceRootUri: any, workspaceRootPath: any, problemId: string): vscode.WebviewPanel {
   let viewDetails: any;
 
   if (view === 'chat') {
@@ -56,12 +50,8 @@ function getChatViewDetails(context: vscode.ExtensionContext | undefined): objec
   });
 
   const htmlFilePath = path.join(__dirname, '..', 'views', 'chat', 'chat.html');
-  const chatScriptUri = panel.webview.asWebviewUri(
-    vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.js'))
-  );
-  const chatStyleUri = panel.webview.asWebviewUri(
-    vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.css'))
-  );
+  const chatScriptUri = panel.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.js')));
+  const chatStyleUri = panel.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, '..', 'views', 'chat', 'chat.css')));
   return {
     panel: panel,
     htmlFilePath: htmlFilePath,

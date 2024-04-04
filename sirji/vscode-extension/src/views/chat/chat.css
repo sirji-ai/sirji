@@ -1,221 +1,221 @@
 body[data-vscode-theme-kind='vscode-dark'] {
- .icon,
- svg > g {
-  fill: white;
- }
+  .icon,
+  svg > g {
+    fill: white;
+  }
 }
 
 body[data-vscode-theme-kind='vscode-light'] {
- .icon,
- svg > g {
-  fill: black;
- }
+  .icon,
+  svg > g {
+    fill: black;
+  }
 }
 
 body[data-vscode-theme-kind='vscode-dark'] {
- .icon,
- svg {
-  fill: white;
- }
+  .icon,
+  svg {
+    fill: white;
+  }
 }
 
 body[data-vscode-theme-kind='vscode-light'] {
- .icon,
- svg {
-  fill: black;
- }
+  .icon,
+  svg {
+    fill: black;
+  }
 }
 
 body,
 html {
- margin: 0;
- padding: 0;
- height: 100%;
- box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 #chatContainer {
- display: flex;
- flex-direction: column;
- height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 #messageContainer {
- display: flex;
- flex-direction: column;
- padding: 20px;
- overflow-y: auto;
- flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 .bot-message {
- display: flex;
- justify-content: flex-start;
- align-items: flex-start;
- gap: 4px;
- margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 10px;
 }
 
 .user-message {
- display: flex;
- justify-content: flex-end;
- align-items: flex-start;
- gap: 4px;
- margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 10px;
 }
 /* Adjusted message styles for flexible width  */
 .user,
 .bot {
- min-width: 100px;
- max-width: 80%;
- padding: 7px 10px;
- border-radius: 6px;
- color: white;
+  min-width: 100px;
+  max-width: 80%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: white;
 }
 
 .user {
- background-color: #4caf50;
- align-self: flex-end;
- margin-left: auto;
- /*   border-top-right-radius: 0px; */
+  background-color: #4caf50;
+  align-self: flex-end;
+  margin-left: auto;
+  /*   border-top-right-radius: 0px; */
 }
 .bot {
- background-color: #666;
- align-self: flex-start;
- margin-right: auto;
- /*   border-top-left-radius: 0px; */
+  background-color: #666;
+  align-self: flex-start;
+  margin-right: auto;
+  /*   border-top-left-radius: 0px; */
 }
 /* .user:last-child, .bot:last-child {
   margin-bottom: 70px;
 } */
 /* Input container fixed at the bottom */
 #inputContainer {
- display: flex;
- justify-content: space-between;
- align-items: flex-end;
- padding: 10px;
- background: #f1f1f1;
- position: fixed;
- bottom: 0;
- left: 0;
- width: calc(100% - 20px);
- box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px;
+  background: #f1f1f1;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: calc(100% - 20px);
+  box-sizing: border-box;
 }
 
 textarea {
- flex-grow: 1;
- margin-right: 10px;
- padding: 10px 10px 0px 10px;
- border: none;
- border-radius: 5px;
- overflow-y: hidden;
- resize: none;
- font-size: 13px;
+  flex-grow: 1;
+  margin-right: 10px;
+  padding: 10px 10px 0px 10px;
+  border: none;
+  border-radius: 5px;
+  overflow-y: hidden;
+  resize: none;
+  font-size: 13px;
 }
 
 #sendBtn {
- padding: 10px 20px;
- border: none;
- border-radius: 5px;
- background-color: #302f2f;
- color: white;
- font-weight: bold;
- cursor: pointer;
- transition: background-color 0.3s, transform 0.2s;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #302f2f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 #sendBtn:hover {
- background-color: #444;
- transform: scale(1.05);
+  background-color: #444;
+  transform: scale(1.05);
 }
 
 #openSettings {
- position: absolute;
- top: 10px;
- right: 20px;
- cursor: pointer;
- font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
 }
 
 .modal {
- display: none;
- position: fixed;
- z-index: 1;
- left: 0;
- top: 0;
- width: 100%;
- height: 100%;
- overflow: auto;
- background-color: rgb(0, 0, 0);
- background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
- background-color: #f1f1f1;
- margin: 15% auto;
- padding: 20px;
- border: 1px solid #888;
- width: 50%;
+  background-color: #f1f1f1;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
 }
 
 .modal-content h2 {
- color: #666;
+  color: #666;
 }
 
 #closeSettings {
- color: #aaa;
- float: right;
- font-size: 28px;
- font-weight: bold;
- cursor: pointer;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 #closeSettings:hover,
 #closeSettings:focus {
- color: black;
- text-decoration: none;
- cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 #saveSettings {
- padding: 10px 20px;
- border: none;
- border-radius: 5px;
- background-color: #302f2f;
- color: white;
- font-weight: bold;
- cursor: pointer;
- transition: background-color 0.3s, transform 0.2s;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #302f2f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 #saveSettings:hover {
- background-color: #444;
- transform: scale(1.05);
+  background-color: #444;
+  transform: scale(1.05);
 }
 
 .input-wrapper {
- margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .input-wrapper label {
- display: block;
- margin-bottom: 5px;
- font-size: 14px;
- color: #666;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #666;
 }
 
 .input-wrapper input[type='text'] {
- width: calc(100% - 10px);
- padding: 10px;
- border: 1px solid #ccc;
- border-radius: 5px;
- font-size: 13px;
- box-sizing: border-box;
+  width: calc(100% - 10px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 13px;
+  box-sizing: border-box;
 }
 
 .input-wrapper input[type='text']:hover {
- border-color: #888;
+  border-color: #888;
 }
 
 .error-message {
- color: red;
- font-size: 12px;
- margin-top: 5px;
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 }
