@@ -1,8 +1,72 @@
-# Sirji>
+<p align="center">
+  <a href="." target="blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/01b1c0b2-994f-41ae-898e-d82b721b3173" width="120" alt="Sirji Logo" /></a>
+</p>
+
+<p align="center">
+  <em>Sirji is an Open Source AI Software Development Agent.</em>
+</p>
+
+<p align="center">
+  Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
+</p>
+
+<p align="center">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
+  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
+  <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+</p>
+
+<p align="center">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/sirji-ai/sirji">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/sirji-ai/sirji">
+  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/sirji-ai/sirji">
+</p>
+
+
+## Description
 
 > “Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.
 
-Inspired by <a href="https://www.cognition-labs.com/introducing-devin" target="_blank">Devin</a>, Sirji is an initiative by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a> to build an open-source AI software development agent that solves complex problems. It will automatically create a plan to solve the problem statement, prioritize it, organize research, write code, execute it, and fix issues.
+Sirji is a Visual Studio Code Extension (developed in TypeScript) that provides an interactive chat interface right within VS Code IDE to assist the user in inputting their problem statement, submitting feedback or enhancement requests, and getting answers to various queries during the problem-solving process.
+
+## Architecture Diagram
+<img width="893" alt="vs code extension - architecture" src="https://github.com/sirji-ai/sirji/assets/7627517/6120d7cc-550c-4497-9d83-587bc2a8bc8a">
+
+The extension leverages the capabilities of VS Code, such as Editor, Terminal, Browser and Project Explorer.
+
+Additionally, it introduces an Executor Agent built-in TypeScript that facilitates:
+- Running Commands
+- Filesystem Create, Read, Update, Delete (CRUD) operations
+- Installing Packages
+
+A chat interface is implemented within the VS Code IDE to interact with the user.
+
+## PyPI Packages
+To reuse code across multiple user interfaces (including the earlier GUI of Dogfood, the current VS Code Extension, and the future Browser interface), we have published these three PyPI packages:
+
+### sirji-agents [![PyPI version](https://img.shields.io/pypi/v/sirji-agents.svg)](https://pypi.org/project/sirji-agents/)
+
+`sirji-agents` is a PyPI package, developed in the `agents` folder of this monorepo. It implements these three key agents:
+- The **Planning Agent** takes in a problem statement and breaks it down into steps.
+- The **Coding Agent** goes step by and generates code to solve it programmatically.
+- The **Research Agent** utilizes RAG, and gets trained on URLs and Search terms. Later, it can use the training knowledge to infer for answering the questions asked by the Coding Agent.
+
+The Planning Agent and Coding Agent utilize OpenAI Chat Completions API, but they can be easily extended to infer from other LLMs.
+Similarly, the Research Agent is currently built using the OpenAI Assistants API and can be easily extended to use vector databases to store the embeddings and implement the RAG approach.
+
+For more details, visit the [sirji-agents page on PyPI](https://pypi.org/project/sirji-agents/).
+
+
+
+
+
+--------
+
+
+
+
+
+
 
 ## Demo Videos
 
