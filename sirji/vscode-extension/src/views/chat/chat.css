@@ -60,6 +60,9 @@ html {
   gap: 4px;
   margin-bottom: 10px;
 }
+.user-message:last-child, .bot-message:last-child {
+  margin-bottom: 70px;
+}
 /* Adjusted message styles for flexible width  */
 .user,
 .bot {
@@ -74,17 +77,12 @@ html {
   background-color: #4caf50;
   align-self: flex-end;
   margin-left: auto;
-  /*   border-top-right-radius: 0px; */
 }
 .bot {
   background-color: #666;
   align-self: flex-start;
   margin-right: auto;
-  /*   border-top-left-radius: 0px; */
 }
-/* .user:last-child, .bot:last-child {
-  margin-bottom: 70px;
-} */
 /* Input container fixed at the bottom */
 #inputContainer {
   display: flex;
@@ -126,14 +124,20 @@ textarea {
   transform: scale(1.05);
 }
 
+/** Top Controls **/
 #topRightControls {
+  position: fixed;
   display: flex; 
   align-items: center;
   flex-direction: row;
   justify-content: flex-end;
+  width: 100%;
+  height: 30px;
 }
+ 
 
 #openSettings {
+  display: flex;
   cursor: pointer;
   font-size: 24px;
   width: 30px;
