@@ -1,10 +1,12 @@
 # sirji-tools
 
-`sirji-tools` is a Python package.
+`sirji-tools` is a PyPI package that provides tools for:
+
+- Crawling (downloading web pages to markdown files)
+- Searching (using the Google Search API for search results)
+- Custom Logging
 
 ## Installation
-
-Install `sirji-tools` quickly with pip:
 
 ```
 pip install sirji-tools
@@ -12,7 +14,7 @@ pip install sirji-tools
 
 ## Usage
 
-### Crawl URLs 
+### Crawl URLs
 
 Crawl URLs tool will be used to crawl the web pages and extract the information from the web pages. And store the information for the further processing by researcher.
 
@@ -24,9 +26,9 @@ urls = ['https://www.google.com', 'https://www.yahoo.com']
 crawl_urls(urls, 'workspace/researcher')
 ```
 
-### Search 
+### Search
 
-Search tool will be used to search the information from the web pages based on the search terms provided. 
+Search tool will be used to search the information from the web pages based on the search terms provided.
 It returns the list of URLs related to the search terms.
 
 ```python
@@ -49,4 +51,4 @@ p_logger.info("Log line here")
 
 ## License
 
-`sirji-tools` is made available under the MIT License. See the included LICENSE file for more details.
+Distributed under the MIT License. See `LICENSE` for more information.

@@ -1,13 +1,28 @@
 # sirji-agents
 
-`sirji-agents` is a Python package designed to handle messages for Coding Agent, Planning Agent and Research Agent.
+`sirji-agents` is a PyPI package that implements three key agents for Sirji:
+
+- Coding Agent
+- Planning Agent
+- Research Agent
+
+It Utilizes:
+
+- OpenAI Chat Completions API
+- OpenAI Assistants API
+
+This package communicates with models and RAG assistants.
 
 ## Installation
 
-Install `sirji-agents` quickly with pip:
-
-```
+```zsh
 pip install sirji-agents
+```
+
+Run the following to enable playwright:
+
+```zsh
+playwright install
 ```
 
 ## Usages
@@ -104,4 +119,4 @@ response_message, planner_history = planner.message(message_str, planner_history
 
 ## License
 
-`sirji-agents` is made available under the MIT License. See the included LICENSE file for more details.
+Distributed under the MIT License. See `LICENSE` for more information.

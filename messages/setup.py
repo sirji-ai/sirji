@@ -2,9 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-messages',
-    version='0.0.3',
+    version='0.0.4',
     author='Sirji',
     description='Sirji messaging protocol implementation to create, validate and parse messages.',
+    license='MIT',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/sirji-ai/sirji',

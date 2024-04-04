@@ -1,6 +1,10 @@
 # sirji-messages
 
-`sirji-messages` is a comprehensive Python package for creating, parsing, validating, and managing message interactions based on permissions in multi-agent systems or applications.
+`sirji-messages` is a PyPI package that implements the Sirji message protocol with following highlights:
+
+- Message Factory
+- Permissions Matrix (for defining message actions allowed between two agents)
+- System prompt generation
 
 ## Installation
 
