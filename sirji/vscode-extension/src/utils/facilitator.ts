@@ -138,7 +138,10 @@ export class Facilitator {
 
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
-      content: 'Hello, I am Sirji. Please wait while i am setting up the workspace...'
+      content: {
+        message: 'Hello, I am Sirji. Please wait while i am setting up the workspace...',
+        allowUserMessage: true
+      }
     });
 
     // Setup Python virtual env and Install dependencies
@@ -148,7 +151,10 @@ export class Facilitator {
     } catch (error) {
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
-        content: `Unable to setup python virtual environment. Error: ${error}`
+        content: {
+          message: `Unable to setup python virtual environment. Error: ${error}`,
+          allowUserMessage: false
+        }
       });
       return;
     }
@@ -156,12 +162,12 @@ export class Facilitator {
     if (!oThis.envVars) {
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
-        content: "Please configure your environment by simply tapping on the settings icon. Let's get you all set up and ready to go!"
+        content: { message: "Please configure your environment by simply tapping on the settings icon. Let's get you all set up and ready to go!", allowUserMessage: false }
       });
     } else {
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
-        content: 'I am all setup! What would you like me to build today?'
+        content: { message: 'I am all setup! What would you like me to build today?', allowUserMessage: true }
       });
     }
   }
@@ -307,7 +313,7 @@ export class Facilitator {
         case ACTOR_ENUM.PLANNER:
           oThis.chatPanel?.webview.postMessage({
             type: 'botMessage',
-            content: 'Generating Steps to solve the problem statement...'
+            content: { message: 'Generating Steps to solve the problem statement...', allowUserMessage: false }
           });
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
@@ -359,7 +365,7 @@ export class Facilitator {
             keepFacilitating = false;
             oThis.chatPanel?.webview.postMessage({
               type: 'botMessage',
-              content: parsedMessage.DETAILS
+              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
             });
           }
           break;

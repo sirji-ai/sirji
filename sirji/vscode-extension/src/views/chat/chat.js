@@ -63,7 +63,8 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'botMessage':
-      sendBotMessage(event.data.content);
+      sendBotMessage(event.data.content.message);
+      disableSendButton(!event.data.content.allowUserMessage);
       break;
 
     case 'plannedSteps':
@@ -101,6 +102,7 @@ function sendUserMessage() {
     userInput.value = '';
     adjustTextAreaHeight();
   }
+  disableSendButton(true);
 }
 
 function sendBotMessage(message) {
@@ -268,7 +270,6 @@ function updateStepStatus(message, status) {
 function displayPlannedSteps(steps) {
   setProgress(totalStepsCompleted, steps.length);
   document.getElementById('progressCircle').style.display = 'flex';
-  console.log('Displaying planned steps:', steps);
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');
   listElement.innerHTML = '';
@@ -303,6 +304,13 @@ function setProgress(x, y) {
 
   const progressText = document.getElementById('progressText');
   progressText.textContent = `${x} of ${y}`;
+}
+
+function disableSendButton(disable) {
+  const sendButton = document.getElementById('sendBtn');
+  if (sendButton) {
+    sendButton.disabled = disable;
+  }
 }
 
 updateIconColors();

@@ -120,10 +120,15 @@ textarea {
   transition: background-color 0.3s, transform 0.2s;
 }
 
-#sendBtn:hover {
+#sendBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* #sendBtn:hover {
   background-color: #444;
   transform: scale(1.05);
-}
+} */
 
 /** Top Controls **/
 #topRightControls {
