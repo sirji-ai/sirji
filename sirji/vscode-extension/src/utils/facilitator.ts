@@ -6,7 +6,10 @@ import { renderView } from './render_view';
 import { MaintainHistory } from './maintain_history';
 import { invokeAgent } from './invoke_agent';
 import { SecretStorage } from './secret_storage';
-import { Constants } from './constants';
+import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
+import { openBrowser } from './open_browser';
+import { executeCommand } from './execute_command';
+import { createFile } from './create_file';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -166,7 +169,7 @@ export class Facilitator {
   private async setupVirtualEnv(): Promise<void> {
     const oThis = this;
 
-    await invokeAgent(oThis.context, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+    await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
       '--venv',
       path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
     ]);
@@ -186,7 +189,7 @@ export class Facilitator {
 
       case 'userMessage':
         await oThis.initFacilitation(message.content, {
-          TO: 'CODER'
+          TO: ACTOR_ENUM.CODER
         });
         break;
 
@@ -249,19 +252,24 @@ export class Facilitator {
 
     let keepFacilitating: Boolean = true;
     while (keepFacilitating) {
+      console.log('inside while loop', parsedMessage);
       const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.PYTHON_INPUT_FILE);
       switch (parsedMessage.TO) {
-        case 'CODER':
-          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.CODER_JSON_FILE);
+        case ACTOR_ENUM.CODER:
+          if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
+            oThis.chatPanel?.webview.postMessage({
+              type: 'plannedSteps',
+              content: parsedMessage.PARSED_STEPS
+            });
+          }
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py'), [
-            '--input',
-            inputFilePath,
-            '--conversation',
-            coderConversationFilePath
-          ]);
+          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.CODER_JSON_FILE);
+
+          const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
+
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
 
           const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
 
@@ -275,15 +283,14 @@ export class Facilitator {
 
           break;
 
-        case 'RESEARCHER':
+        case ACTOR_ENUM.RESEARCHER:
+          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+
           const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.RESEARCHER_JSON_FILE);
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'researcher_agent.py'), [
-            '--input',
-            inputFilePath,
-            '--conversation',
-            researcherConversationFilePath
-          ]);
+          const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'researcher_agent.py');
+
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
 
           const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
 
@@ -297,10 +304,19 @@ export class Facilitator {
 
           break;
 
-        case 'PLANNER':
+        case ACTOR_ENUM.PLANNER:
+          oThis.chatPanel?.webview.postMessage({
+            type: 'botMessage',
+            content: 'Generating Steps to solve the problem statement...'
+          });
+
+          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+
           const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.PLANNER_JSON_FILE);
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py'), ['--conversation', plannerConversationFilePath]);
+          const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
+
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
 
           const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
 
@@ -314,20 +330,81 @@ export class Facilitator {
 
           break;
 
-        case 'USER':
-          if (parsedMessage.action === 'STEP_COMPLETED' || parsedMessage.action === 'STEP_STARTED') {
-            // update plan for user
-          } else if (parsedMessage.action === 'SOLUTION_COMPLETE' || parsedMessage.action === 'QUESTION' || parsedMessage.action === 'INFORM') {
-            keepFacilitating = false;
-            this.chatPanel?.webview.postMessage({
-              type: 'botMessage',
-              content: parsedMessage['DETAILS']
+        case ACTOR_ENUM.USER:
+          // if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
+          //   console.log('parsedMessage', parsedMessage);
+
+          //   oThis.chatPanel?.webview.postMessage({
+          //     type: 'plannedSteps',
+          //     content: parsedMessage.DETAILS
+          //   });
+
+          //   rawMessage = 'sure';
+          //   parsedMessage = {
+          //     TO: ACTOR_ENUM.CODER
+          //   };
+          // }
+
+          if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
+            oThis.chatPanel?.webview.postMessage({
+              type: 'plannedStepStart',
+              content: parsedMessage.DETAILS
             });
+
+            rawMessage = 'sure';
+            parsedMessage = {
+              TO: ACTOR_ENUM.CODER
+            };
           }
 
+          if (parsedMessage.ACTION === ACTION_ENUM.STEP_COMPLETED) {
+            oThis.chatPanel?.webview.postMessage({
+              type: 'plannedStepComplete',
+              content: parsedMessage.DETAILS
+            });
+
+            rawMessage = 'sure';
+            parsedMessage = {
+              TO: ACTOR_ENUM.CODER
+            };
+          }
+
+          if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE || parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
+            keepFacilitating = false;
+            oThis.chatPanel?.webview.postMessage({
+              type: 'botMessage',
+              content: parsedMessage.DETAILS
+            });
+          }
           break;
 
+        case ACTOR_ENUM.EXECUTOR:
+          switch (parsedMessage.ACTION) {
+            case ACTION_ENUM.OPEN_BROWSER:
+              openBrowser(parsedMessage.URL);
+              console.log('Browse', parsedMessage);
+              break;
+
+            case ACTION_ENUM.INSTALL_PACKAGE:
+              executeCommand(parsedMessage.COMMAND);
+              console.log('Install', parsedMessage);
+              break;
+
+            case ACTION_ENUM.EXECUTE_COMMAND:
+              executeCommand(parsedMessage.COMMAND);
+              console.log('Execute', parsedMessage);
+              break;
+            case ACTION_ENUM.CREATE_FILE:
+              createFile(oThis.workspaceRootPath, 'yourFile.txt', parsedMessage.COMMAND);
+              console.log('Create', parsedMessage);
+              break;
+            default:
+              console.log('Default', parsedMessage);
+          }
+
         default:
+          console.log('Default', parsedMessage);
+          keepFacilitating = false;
           break;
       }
     }

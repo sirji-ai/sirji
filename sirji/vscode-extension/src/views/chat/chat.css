@@ -126,14 +126,57 @@ textarea {
   transform: scale(1.05);
 }
 
-#openSettings {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  cursor: pointer;
-  font-size: 24px;
+.topRightControls {
+  display: flex; /* This will place the child elements next to each other */
+  align-items: center; /* Align items vertically in the center */
+  flex-direction: row;
+  justify-content: flex-end;
+  border-width: 1px solid white;
 }
 
+#openSettings {
+  cursor: pointer;
+  font-size: 24px;
+  border-width: 1px solid yellow;
+}
+
+#progressCircle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  position: relative;
+  width: 100px;
+  height: 30px;
+}
+
+#progressCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the items horizontally */
+  gap: 10px; /* Creates space between SVG and text */
+  border-width: 1px solid red;
+}
+
+#progressRingCircle {
+  /* Removed border style as it's not needed for the SVG circle itself */
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+#progressText {
+  /* Removed absolute positioning and related styles */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  padding: 2px 4px;
+  color: #000;
+  border-width: 1px solid green;
+}
+
+/** Setting Modal **/
 .modal {
   display: none;
   position: fixed;
@@ -218,4 +261,76 @@ textarea {
   color: red;
   font-size: 12px;
   margin-top: 5px;
+}
+
+/** Planner Modal **/
+#closePlanner {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#closePlanner:hover,
+#closePlanner:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#plannerStepsList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+  padding: 10px;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.stepItem label {
+  margin: 0;
+  flex-grow: 1;
+  color: inherit;
+}
+
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.checkbox:checked {
+  background-color: #4caf50;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

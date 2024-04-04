@@ -6,9 +6,9 @@ import { SecretStorage } from './secret_storage';
 import { Constants } from './constants';
 import fs from 'fs';
 
-export async function invokeAgent(context: vscode.ExtensionContext | undefined, workspaceRootPath: string, scriptPath: string, args: string[] = []): Promise<any> {
+export async function invokeAgent(context: vscode.ExtensionContext | undefined, workspaceRootPath: string, problemId: string, scriptPath: string, args: string[] = []): Promise<any> {
   console.log('Executing command:', 'python3', [scriptPath, ...args].join(' '));
-  const response = await executePythonScript(context, workspaceRootPath, scriptPath, args);
+  const response = await executePythonScript(context, workspaceRootPath, problemId, scriptPath, args);
   console.log(response);
   return response;
 }
@@ -35,10 +35,11 @@ async function getEnvVars(context: vscode.ExtensionContext | undefined, workspac
   return envVars;
 }
 
-async function executePythonScript(context: vscode.ExtensionContext | undefined, workspaceRootPath: string, scriptPath: string, args: string[] = []): Promise<any> {
+async function executePythonScript(context: vscode.ExtensionContext | undefined, workspaceRootPath: string, problemId: string, scriptPath: string, args: string[] = []): Promise<any> {
   const venvPath = path.join(workspaceRootPath, Constants.PYHTON_VENV_FOLDER);
   const pythonPath = getPythonPath(workspaceRootPath, venvPath);
   const envVars = await getEnvVars(context, workspaceRootPath);
+  envVars.SIRJI_RUN_ID = problemId;
 
   return new Promise((resolve, reject) => {
     const process = childProcess.spawn(pythonPath, [scriptPath, ...args], {

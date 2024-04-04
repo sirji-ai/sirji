@@ -9,6 +9,16 @@
     <link nonce="${nonce}" rel="stylesheet" type="text/css" href="${chatStyleUri}" />
   </head>
   <body>
+    <div id="topRightControls">
+      <div id="progressCircle">
+        <svg id="progressRing" width="20" height="20">
+          <circle id="progressRingCircle" stroke="#ADD8E6" stroke-width="4" fill="transparent" r="8" cx="10" cy="10" />
+        </svg>
+        <div id="progressText">0 of 0</div>
+      </div>
+      <div id="openSettings">⚙️</div>
+    </div>
+
     <div id="chatContainer">
       <div id="messageContainer"></div>
       <div id="inputContainer">
@@ -16,7 +26,15 @@
         <button id="sendBtn">Send</button>
       </div>
     </div>
-    <div id="openSettings">⚙️</div>
+
+    <div id="plannerModal" class="modal">
+      <div class="modal-content">
+        <span id="closePlanner">&times;</span>
+        <h2>Planner aaaa</h2>
+        <ul id="plannerStepsList"></ul>
+      </div>
+    </div>
+
     <div id="settingsModal" class="modal">
       <div class="modal-content">
         <span id="closeSettings">&times;</span>

@@ -23,6 +23,9 @@ const UserSvg = `
 </svg>
 `;
 
+let stepsArray;
+let totalStepsCompleted = 0;
+
 const userInput = document.getElementById('userInput');
 userInput.addEventListener('input', adjustTextAreaHeight);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
@@ -39,11 +42,21 @@ document.getElementById('closeSettings').onclick = function () {
   closeSettings();
 };
 
+// Planner modal
+document.getElementById('progressCircle').addEventListener('click', () => {
+  document.getElementById('plannerModal').style.display = 'block';
+});
+
+document.getElementById('closePlanner').addEventListener('click', () => {
+  document.getElementById('plannerModal').style.display = 'none';
+});
+
 // IMP: Acquire the VS Code API
 const vscode = acquireVsCodeApi();
 
 // Listen for messages from the extension
 window.addEventListener('message', (event) => {
+  console.log('Received message in chat.js:', event.data);
   switch (event.data.type) {
     case 'settingSaved':
       settingSaved(event.data.content);
@@ -51,6 +64,18 @@ window.addEventListener('message', (event) => {
 
     case 'botMessage':
       sendBotMessage(event.data.content);
+      break;
+
+    case 'plannedSteps':
+      displayPlannedSteps(event.data.content);
+      break;
+
+    case 'plannedStepStart':
+      updateStepStatus(event.data.content, 'started');
+      break;
+
+    case 'plannedStepComplete':
+      updateStepStatus(event.data.content, 'completed');
       break;
 
     default:
@@ -215,6 +240,68 @@ function settingSaved(data) {
   } else {
     document.getElementById('save_settings_error').textContent = `Settings can not be saved. Please contact Sirji team. Error: ${data.message}`;
   }
+}
+
+function updateStepStatus(message, status) {
+  let stepNumber = message.match(/\d+/g);
+
+  if (stepNumber.length === 1) {
+    console.log('Updating step:', stepNumber[0], stepsArray[0]);
+    stepsArray[stepNumber[0] - 1].status = status;
+  }
+
+  let maxStepNumber = 0;
+  if (stepNumber.length === 2) {
+    maxStepNumber = Math.max(...stepNumber);
+    for (let i = 0; i < maxStepNumber - 1; i++) {
+      stepsArray[i].status = status;
+    }
+  }
+
+  if (status === 'completed') {
+    totalStepsCompleted = maxStepNumber;
+  }
+
+  displayPlannedSteps(stepsArray);
+}
+
+function displayPlannedSteps(steps) {
+  setProgress(totalStepsCompleted, steps.length);
+  console.log('Displaying planned steps:', steps);
+  stepsArray = steps;
+  const listElement = document.getElementById('plannerStepsList');
+  listElement.innerHTML = '';
+  steps.forEach((step, index) => {
+    step.status = step.status || '';
+    const listItem = document.createElement('li');
+    listItem.className = 'stepItem';
+    const stepDescription = step.description;
+
+    if (step.status === 'started') {
+      listItem.innerHTML = `<div class="loader"></div><label>${stepDescription}</label>`;
+    } else {
+      listItem.innerHTML = `
+      <input type="checkbox" class="checkbox" id="checkbox-${index}" ${step.status === 'completed' ? 'checked' : ''}>
+      <label for="checkbox-${index}">${stepDescription}</label>
+      `;
+    }
+    listElement.appendChild(listItem);
+  });
+}
+
+function setProgress(x, y) {
+  const circle = document.getElementById('progressRingCircle');
+  const radius = circle.r.baseVal.value;
+  const circumference = radius * 2 * Math.PI;
+
+  circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  circle.style.strokeDashoffset = circumference;
+
+  const offset = circumference - (x / y) * circumference;
+  circle.style.strokeDashoffset = offset;
+
+  const progressText = document.getElementById('progressText');
+  progressText.textContent = `${x} of ${y}`;
 }
 
 updateIconColors();
