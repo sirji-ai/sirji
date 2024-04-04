@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-tools',
-    version='0.0.2',
+    version='0.0.3',
     author='Sirji',
     description='Crawler and search tools used by Sirji.',
     long_description=open('README.md').read(),

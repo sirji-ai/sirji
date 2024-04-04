@@ -37,7 +37,9 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             # Provide a way to output this updated init_payload
             logger.info(f"New assistant created with ID: {self.assistant_id}")
 
-        self.index_file_path = 'workspace/researcher/file_index.json'
+        workspace = os.environ.get("SIRJI_WORKSPACE")
+
+        self.index_file_path = os.path.join(workspace, '.sirji', 'researcher', 'file_index.json')
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()

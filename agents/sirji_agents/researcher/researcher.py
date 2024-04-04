@@ -22,8 +22,10 @@ class ResearchAgent:
 
         self._inferer = InfererFactory.get_instance(
             inferer_type, self.init_payload)
+        
+        workspace = os.environ.get("SIRJI_WORKSPACE")
 
-        self._research_folder = 'workspace/researcher'
+        self._research_folder = os.path.join(workspace, '.sirji', "researcher")
 
         logger.info("Completed initializing researcher")
 

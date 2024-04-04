@@ -25,7 +25,8 @@ class LoggerSingleton:
         self.logger = self._setup_logger(file_name, log_level)
     
     def _log_folder(self):
-        return os.path.join("workspace", "logs")
+        workspace = os.environ.get("SIRJI_WORKSPACE")
+        return os.path.join(workspace, '.sirji', "logs")
     
     def _log_file_path(self, file_name):
         return os.path.join(self._log_folder(), file_name)
