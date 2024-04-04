@@ -1,7 +1,7 @@
 import argparse
 import os
 import json
-from sirji_messages import MessageFactory, ActionEnum
+from sirji_messages import MessageFactory, ActionEnum, AgentEnum
 from sirji_agents import CodingAgent
 
 class CodingAgentRunner:
@@ -35,6 +35,17 @@ class CodingAgentRunner:
         if not conversations:
             message_class = MessageFactory[ActionEnum.PROBLEM_STATEMENT.name]
             message_str = message_class().generate({"details": contents})
+        elif conversations[-1]['parsed_content']['TO'] == AgentEnum.USER.name:
+            last_action = conversations[-1]['parsed_content']['ACTION']
+
+            if last_action in [ActionEnum.INFORM.name, ActionEnum.QUESTION.name]:
+                message_class = MessageFactory[ActionEnum.ANSWER.name]
+                message_str = message_class().generate({"details": contents})
+            elif last_action == ActionEnum.SOLUTION_COMPLETE.name:
+                message_class = MessageFactory[ActionEnum.FEEDBACK.name]
+                message_str = message_class().generate({"details": contents})
+            else:
+                message_str = contents
         else:
             message_str = contents
 
