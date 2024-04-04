@@ -17,7 +17,7 @@ def parse(input_message):
 
     if parsed_message.get("ACTION") == ActionEnum.STEPS.name:
         parsed_message = {
-            **parsed_message, "parsed_steps": _parse_steps(parsed_message)}
+            **parsed_message, "PARSED_STEPS": _parse_steps(parsed_message)}
 
     return parsed_message
 

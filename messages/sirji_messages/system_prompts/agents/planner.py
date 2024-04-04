@@ -22,6 +22,7 @@ class PlannerSystemPrompt(AgentSystemPromptBase):
         return textwrap.dedent(f"""
           - Pay close attention to PS while generating non-technical steps to solve the problem programmatically.
           - Use Python, if the programming language cannot be inferred from PS.
+          - Ensure that each step in the list of steps should start with Step #:                     
           - Don't explain the steps further using sub-steps.
           - Generate concise steps enough to solve the problem statement.
           - Ensure that all the steps should be about either create file or install package or execute command or execute code to debug or git clone or read files.
