@@ -75,17 +75,28 @@ def _parse_payload(payload, custom_properties):
 def _parse_steps(parsed_message):
     details = parsed_message.get("DETAILS", "")
     parsed_steps = []
-    current_step_number = None
-    current_step_description = ""
-    for line in details.split("\n"):
-        if line.startswith("Step"):
-            if current_step_number is not None:
-                parsed_steps.append(
-                    {"step": current_step_number, "description": current_step_description.strip()})
-            current_step_number, current_step_description = line.split(":", 1)
-        else:
-            current_step_description += f"\n{line.strip()}"
-    if current_step_number is not None:
-        parsed_steps.append({"step": current_step_number,
-                            "description": current_step_description.strip()})
+    
+    if any(line.strip().startswith("Step") for line in details.split("\n")): 
+        current_step_number = None
+        current_step_description = ""
+        for line in details.split("\n"):
+            line = line.strip() 
+            if line.startswith("Step"):
+                if current_step_number is not None:
+                    parsed_steps.append(
+                        {"step": current_step_number.strip(), "description": current_step_description.strip()})
+                current_step_number, current_step_description = [part.strip() for part in line.split(":", 1)]
+            else:
+                current_step_description += f"\n{line}"
+        if current_step_number is not None:
+            parsed_steps.append({"step": current_step_number.strip(),
+                                "description": current_step_description.strip()})
+    else:
+        step_number = 1
+        for line in details.split("\n"):
+            line = line.strip()
+            if line:  
+                parsed_steps.append({"step": f"Step {step_number}", "description": line})
+                step_number += 1
+
     return parsed_steps
