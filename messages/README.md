@@ -1,4 +1,29 @@
-# sirji-messages
+<p align="center">
+  <a href="." target="blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/363fc6dd-69af-4d84-8b7c-a91ec092058d" width="250" alt="Sirji Logo" /></a>
+</p>
+
+<p align="center">
+  <em>Sirji is an Open Source AI Software Development Agent.</em>
+</p>
+
+<p align="center">
+  Built with ❤️ by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
+</p>
+
+<p align="center">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
+  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
+  <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+  <img alt="PyPI sirji-messages" src="https://img.shields.io/pypi/v/sirji-messages.svg">
+</p>
+
+<p align="center">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/sirji-ai/sirji">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/sirji-ai/sirji">
+  <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/sirji-ai/sirji">
+</p>
+
+## Sirji Messages
 
 `sirji-messages` is a PyPI package that implements the Sirji message protocol with following highlights:
 
@@ -8,17 +33,30 @@
 
 ## Installation
 
-```bash
+### Setup Virtual Environment
+
+We recommend setting up a virtual environment to isolate Python dependencies, ensuring project-specific packages without conflicting with system-wide installations.
+
+```zsh
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Install Package
+
+Install the package from PyPi:
+
+```zsh
 pip install sirji-messages
 ```
 
-## Features and Usage
+## Usage
 
 ### Message Parsing
 
 Parse structured message strings into Python dictionaries for easy access to the message components.
 
-```python
+````python
 from sirji_messages import message_parse
 
 # Example message string to parse
@@ -32,7 +70,7 @@ DETAILS: Welcome to sirji-messages. Here's how you can start.
 # Parsing the message
 message = message_parse(message_str)
 print(message)
-```
+````
 
 ### Permission Validation
 
@@ -104,11 +142,21 @@ prompt_class = AgentSystemPromptFactory[AgentEnum.CODER.name]
 print(f"CODER system prompt: {prompt_class().system_prompt()}")
 ```
 
+## For Contributors
+
+1. Fork and clone the repository.
+2. Create and activate the virtual environment as described above.
+3. Install the package in editable mode by running the following command from repository root:
+
+```zsh
+pip install -e .
+```
+
 ## Running Tests and Coverage Analysis
 
-Tests can be run, and coverage can be analyzed in a few simple steps:
+Follow the above mentioned steps for "contributors", before running the test cases.
 
-```bash
+```zsh
 # Install testing dependencies
 pip install pytest coverage
 

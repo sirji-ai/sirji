@@ -46,7 +46,7 @@ source venv/bin/activate
 
 Install the package from PyPi:
 
-```
+```zsh
 pip install sirji-tools
 ```
 
@@ -109,9 +109,9 @@ pip install -e .
 
 ## Running Tests and Coverage Analysis
 
-Tests can be run, and coverage can be analyzed in a few simple steps:
+Follow the above mentioned steps for "contributors", before running the test cases.
 
-```bash
+```zsh
 # Install testing dependencies
 pip install pytest coverage
 
