@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
+  Built with ❤️ by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
 </p>
 
 <p align="center">
