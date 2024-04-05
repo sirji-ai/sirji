@@ -50,6 +50,12 @@ Install the package from PyPi:
 pip install sirji-tools
 ```
 
+Run the following command to install playwright:
+
+```zsh
+playwright install
+```
+
 ## Usage
 
 ### Environment Variables
@@ -105,6 +111,12 @@ p_logger.info("Log line here")
 
 ```zsh
 pip install -e .
+```
+
+5. Run the following command to install playwright:
+
+```zsh
+playwright install
 ```
 
 ## Running Tests and Coverage Analysis
