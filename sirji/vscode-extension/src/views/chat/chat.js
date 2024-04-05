@@ -181,8 +181,6 @@ function closeSettings() {
 
 function saveSettings() {
   const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
-  const googleSearchEngineId = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID').value.trim();
-  const googleSearchEngineApiKey = document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY').value.trim();
 
   let isValid = true;
 
@@ -195,20 +193,6 @@ function saveSettings() {
     document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = '';
   }
 
-  if (!googleSearchEngineId) {
-    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = 'Google Search Engine ID is required.';
-    isValid = false;
-  } else {
-    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_ID_ERROR').textContent = '';
-  }
-
-  if (!googleSearchEngineApiKey) {
-    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = 'Google Search Engine API Key is required.';
-    isValid = false;
-  } else {
-    document.getElementById('SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY_ERROR').textContent = '';
-  }
-
   if (isValid) {
     const saveButton = document.getElementById('saveSettings');
     saveButton.textContent = 'Saving...';
@@ -216,8 +200,6 @@ function saveSettings() {
 
     const settings = {
       SIRJI_OPENAI_API_KEY: openAIKey,
-      SIRJI_GOOGLE_SEARCH_ENGINE_ID: googleSearchEngineId,
-      SIRJI_GOOGLE_SEARCH_ENGINE_API_KEY: googleSearchEngineApiKey,
     };
 
     vscode.postMessage({ type: 'saveSettings', content: settings });
