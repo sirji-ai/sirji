@@ -1,7 +1,7 @@
 from openai import OpenAI
 import os
 
-from sirji_messages import AgentSystemPromptFactory, message_parse  
+from sirji_messages import AgentSystemPromptFactory, message_parse, MessageParsingError
 
 
 class SingletonMeta(type):
@@ -29,11 +29,9 @@ class LLMAgentBase(metaclass=SingletonMeta):
         conversation = self.__prepare_conversation(input_message, history)
 
         self.logger.info(f"Incoming: \n{input_message}")
-        self.logger.info("Calling OpenAI Chat Completions API")
+        self.logger.info("Calling OpenAI Chat Completions API\n")
 
         response_message = self.__get_response(conversation)
-
-        self.logger.info(f"Outgoing: \n{response_message}")
 
         return response_message, conversation
 
@@ -53,6 +51,33 @@ class LLMAgentBase(metaclass=SingletonMeta):
         return conversation
 
     def __get_response(self, conversation):
+        
+        retry_llm_count = 0
+        response_message = ''
+
+        while(True):
+            response_message = self.__call_llm(conversation)
+            try:
+                # Attempt parsing
+                parsed_response_message = message_parse(response_message)
+                conversation.append({"role": "assistant", "content": response_message, "parsed_content": parsed_response_message})
+                break
+            except MessageParsingError as e:
+                self.logger.info("Error while parsing the message.\n")
+                retry_llm_count += 1
+                if retry_llm_count > 2:
+                    raise e
+                self.logger.info(f"Requesting LLM to resend the message in correct format.\n")
+                conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
+                conversation.append({"role": "user", "content": "The last message was not as per the allowed message formats. Please resend it with proper formatting."})
+            except Exception as e:
+                self.logger.info(f"Generic error while parsing message. Error: {e}\n")
+                raise e
+            
+            
+        return response_message
+    
+    def __call_llm(self, conversation):
         history = []
 
         for message in conversation:
@@ -68,8 +93,5 @@ class LLMAgentBase(metaclass=SingletonMeta):
         response_message = chat_completion.choices[0].message.content
 
         self.logger.info(f"Raw response from Chat Completions API: \n{response_message}\n\n\n")
-
-        parsed_response_message = message_parse(response_message)
-        conversation.append({"role": "assistant", "content": response_message, "parsed_content": parsed_response_message})
 
         return response_message
