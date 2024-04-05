@@ -17,7 +17,6 @@ export class Facilitator {
   private workspaceRootPath: any;
   private problemId: string = '';
   private chatPanel: vscode.WebviewPanel | undefined;
-  private problemStatementSent = false;
   private secretManager: SecretStorage | undefined;
   private envVars: any = undefined;
   private historyManager: MaintainHistory | undefined;
@@ -386,10 +385,15 @@ export class Facilitator {
               executeCommand(parsedMessage.COMMAND);
               console.log('Execute', parsedMessage);
               break;
+
             case ACTION_ENUM.CREATE_FILE:
-              createFile(oThis.workspaceRootPath, 'yourFile.txt', parsedMessage.COMMAND);
-              console.log('Create', parsedMessage);
+              const res = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
+              rawMessage = res;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
               break;
+
             default:
               console.log('Default', parsedMessage);
           }
