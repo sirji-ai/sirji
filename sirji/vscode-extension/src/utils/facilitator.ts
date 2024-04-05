@@ -10,6 +10,7 @@ import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 import { openBrowser } from './open_browser';
 import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
+import { readContent } from './read_content';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -404,6 +405,22 @@ export class Facilitator {
                 TO: ACTOR_ENUM.CODER
               };
               console.log('Create', createFileRes);
+              break;
+
+            case ACTION_ENUM.READ_DIR:
+              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              rawMessage = readDirContentRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
+              break;
+
+            case ACTION_ENUM.READ_FILE:
+              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILENAME);
+              rawMessage = readFileContentRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
               break;
 
             default:

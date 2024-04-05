@@ -5,6 +5,7 @@ from sirji_messages import validate_permission
 
 
 def parse(input_message):
+    input_message = _discard_format_deviations(input_message)
     lines = _validate_message(input_message)
     message_info = _extract_message_info(lines)
     payload = "\n".join(lines[3:])
@@ -20,6 +21,21 @@ def parse(input_message):
             **parsed_message, "PARSED_STEPS": _parse_steps(parsed_message)}
 
     return parsed_message
+
+def _discard_format_deviations(input_message):
+    input_message = input_message.strip()
+
+    # Locate the positions of the first and last backticks (`).
+    start_index = input_message.find("```")
+    end_index = input_message.rfind("```")
+
+    # Extract the message prefix, message, and message suffix.
+    message_prefix = input_message[:start_index].strip()
+    # Including backticks as part of the message content.
+    message_content = input_message[start_index:end_index+3].strip()
+    message_suffix = input_message[end_index+3:].strip()
+
+    return message_content
 
 
 def _validate_message(message):
