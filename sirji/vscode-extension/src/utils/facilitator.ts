@@ -403,11 +403,23 @@ export class Facilitator {
               break;
 
             default:
-              console.log('Default', parsedMessage);
+              console.log('Execution default', parsedMessage);
+              oThis.chatPanel?.webview.postMessage({
+                type: 'botMessage',
+                content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+              });
+              keepFacilitating = false;
+              break;
           }
 
+          break;
+
         default:
-          console.log('Default', parsedMessage);
+          console.log('Actor default', parsedMessage);
+          oThis.chatPanel?.webview.postMessage({
+            type: 'botMessage',
+            content: { message: `Received message with unknown TO: ${parsedMessage.TO}. Raw message: ${rawMessage}`, allowUserMessage: true }
+          });
           keepFacilitating = false;
           break;
       }
