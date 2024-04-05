@@ -66,7 +66,7 @@ def _parse_payload(payload, custom_properties):
                 payload_dict[key] = value
                 last_key = key
             elif last_key:
-                payload_dict[last_key] += "\n" + value
+                payload_dict[last_key] += "\n" + line
         elif last_key:
             payload_dict[last_key] += "\n" + line
     return payload_dict
