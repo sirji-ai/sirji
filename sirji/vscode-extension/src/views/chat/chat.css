@@ -319,7 +319,7 @@ body[data-vscode-theme-kind='vscode-light'] {
 
 .stepItem {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   margin: 5px 0;
   padding: 10px;
@@ -338,11 +338,11 @@ body[data-vscode-theme-kind='vscode-light'] {
 .checkbox {
   appearance: none;
   -webkit-appearance: none;
-  width: 20px;
   height: 20px;
   border: 1px solid #ccc;
   border-radius: 3px;
   cursor: pointer;
+  min-width: 20px;
 }
 
 .checkbox:checked {
@@ -353,7 +353,7 @@ body[data-vscode-theme-kind='vscode-light'] {
   border: 3px solid #f3f3f3;
   border-top: 3px solid #3498db;
   border-radius: 50%;
-  width: 20px;
+  min-width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
 }
