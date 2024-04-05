@@ -147,7 +147,18 @@ textarea {
   position: fixed;
   width: -webkit-fill-available;
   top: 0px;
-  background-color: inherit;
+}
+
+body[data-vscode-theme-kind='vscode-dark'] {
+  .fixedHeader{
+    background-color: black;
+  }
+}
+
+body[data-vscode-theme-kind='vscode-light'] {
+  .fixedHeader{
+    background-color: white;
+  }  
 }
 
 .progressContainer {
@@ -167,7 +178,7 @@ textarea {
 }
 
 #progressCircle {
-  display: block;
+  display: none;
   justify-content: center;
   align-items: center;
   margin-right: 10px;
