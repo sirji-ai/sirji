@@ -66,6 +66,9 @@ class LLMAgentBase(metaclass=SingletonMeta):
         )
 
         response_message = chat_completion.choices[0].message.content
+
+        self.logger.info(f"Raw response from Chat Completions API: \n{response_message}\n\n\n")
+
         parsed_response_message = message_parse(response_message)
         conversation.append({"role": "assistant", "content": response_message, "parsed_content": parsed_response_message})
 
