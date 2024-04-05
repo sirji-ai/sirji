@@ -3,8 +3,8 @@ import * as path from 'path';
 import { Constants } from './constants';
 
 export class MaintainHistory {
-  public createHistoryFolder(workspaceRootPath: any, problemId: string): void {
-    const dirPath = path.join(workspaceRootPath, Constants.HISTORY_FOLDER, problemId);
+  public createHistoryFolder(workspaceRootPath: any, sirjiRunId: string): void {
+    const dirPath = path.join(workspaceRootPath, Constants.HISTORY_FOLDER, sirjiRunId);
     fs.mkdirSync(dirPath, { recursive: true });
   }
 

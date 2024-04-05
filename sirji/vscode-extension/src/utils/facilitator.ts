@@ -15,7 +15,7 @@ export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
   private workspaceRootUri: any;
   private workspaceRootPath: any;
-  private problemId: string = '';
+  private sirjiRunId: string = '';
   private chatPanel: vscode.WebviewPanel | undefined;
   private secretManager: SecretStorage | undefined;
   private envVars: any = undefined;
@@ -50,7 +50,7 @@ export class Facilitator {
 
   private async setupEnvironment() {
     const oThis = this;
-    oThis.problemId = randomBytes(16).toString('hex');
+    oThis.sirjiRunId = randomBytes(16).toString('hex');
   }
 
   private async selectWorkspace(): Promise<void> {
@@ -75,7 +75,7 @@ export class Facilitator {
     const oThis = this;
     oThis.historyManager = new MaintainHistory();
 
-    oThis.historyManager.createHistoryFolder(oThis.workspaceRootPath, oThis.problemId);
+    oThis.historyManager.createHistoryFolder(oThis.workspaceRootPath, oThis.sirjiRunId);
   }
 
   private async setupSecretManager() {
@@ -121,7 +121,7 @@ export class Facilitator {
   private openChatViewPanel() {
     const oThis = this;
 
-    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.problemId);
+    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.sirjiRunId);
 
     oThis.chatPanel.webview.onDidReceiveMessage(
       async (message: any) => {
@@ -174,7 +174,7 @@ export class Facilitator {
   private async setupVirtualEnv(): Promise<void> {
     const oThis = this;
 
-    await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+    await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
       '--venv',
       path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
     ]);
@@ -258,7 +258,7 @@ export class Facilitator {
     let keepFacilitating: Boolean = true;
     while (keepFacilitating) {
       console.log('inside while loop', parsedMessage);
-      const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.PYTHON_INPUT_FILE);
+      const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PYTHON_INPUT_FILE);
       switch (parsedMessage.TO) {
         case ACTOR_ENUM.CODER:
           if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
@@ -270,11 +270,11 @@ export class Facilitator {
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.CODER_JSON_FILE);
+          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
 
           const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
 
           const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
 
@@ -291,11 +291,11 @@ export class Facilitator {
         case ACTOR_ENUM.RESEARCHER:
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.RESEARCHER_JSON_FILE);
+          const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
 
           const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'researcher_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
 
           const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
 
@@ -317,11 +317,11 @@ export class Facilitator {
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.problemId, Constants.PLANNER_JSON_FILE);
+          const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
 
           const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.problemId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
 
           const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
 
@@ -378,20 +378,23 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.INSTALL_PACKAGE:
-              const installPackageCommandRes = executeCommand(parsedMessage.COMMAND, oThis.workspaceRootPath);
+              const installPackageLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
+              const installPackageCommandRes = await executeCommand(parsedMessage.COMMAND, installPackageLogPath);
               rawMessage = installPackageCommandRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
-              console.log('Install', parsedMessage);
+              console.log('installPackageCommandRes', installPackageCommandRes);
               break;
 
             case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandRes = executeCommand(parsedMessage.COMMAND, oThis.workspaceRootPath);
+              const executedCommandLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
+              const executedCommandRes = await executeCommand(parsedMessage.COMMAND, executedCommandLogPath);
               rawMessage = executedCommandRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
+              console.log('executedCommandRes', executedCommandRes);
               break;
 
             case ACTION_ENUM.CREATE_FILE:
@@ -400,6 +403,7 @@ export class Facilitator {
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
+              console.log('Create', createFileRes);
               break;
 
             default:

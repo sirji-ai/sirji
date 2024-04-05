@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
 
+const fsPromises = fs.promises;
 let sirjiTerminal: vscode.Terminal | undefined;
 
-export function executeCommand(command: string, workspaceRootPath: string): any {
+export async function executeCommand(command: string, workspaceRootPath: string): Promise<any> {
   if (!sirjiTerminal) {
     sirjiTerminal = vscode.window.createTerminal(`Sirji Terminal`);
 
-    //Clear the reference if the terminal is closed
     vscode.window.onDidCloseTerminal((terminal) => {
       if (terminal === sirjiTerminal) {
         sirjiTerminal = undefined;
@@ -18,28 +18,45 @@ export function executeCommand(command: string, workspaceRootPath: string): any 
 
   sirjiTerminal.show();
 
-  //TODO:QUESTION: instead of adding a tee command from openAI side, should we always add it from our side? As we want to create the file inside the .sirji directory and capture the output of the command
-  if (command.includes('tee')) {
-    sirjiTerminal.sendText(command);
-    const fileName = command.split('tee')[1].trim().split(' ')[0];
-    const filePath = path.join(workspaceRootPath, fileName);
+  const fileName = `output.txt`;
+  const filePath = path.join(workspaceRootPath, fileName);
 
-    setTimeout(() => {
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      return fileContent;
-    }, 15000);
-  } else {
-    const fileName = `output_${new Date().getTime()}.txt`;
-    const filePath = path.join(workspaceRootPath, fileName);
+  command = `${command} 2>&1 | tee ${filePath}`;
 
-    command = `${command} 2>&1 | tee ${filePath}`;
+  sirjiTerminal.sendText(command);
 
-    sirjiTerminal.sendText(command);
-
-    setTimeout(() => {
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-
-      return fileContent;
-    }, 15000);
+  try {
+    await waitForFile(filePath);
+  } catch (error) {
+    throw error;
   }
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const fileContent = await fsPromises.readFile(filePath, 'utf8');
+
+  return fileContent;
+}
+
+async function waitForFile(filePath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const dir = path.dirname(filePath);
+    const basename = path.basename(filePath);
+
+    const watcher = fs.watch(dir, (eventType, filename) => {
+      if (filename && path.basename(filename) === basename) {
+        watcher.close();
+        resolve();
+      }
+    });
+
+    const timeout = setTimeout(() => {
+      watcher.close();
+      reject(new Error(`File ${basename} did not appear after timeout`));
+    }, 15000);
+
+    watcher.on('close', () => {
+      clearTimeout(timeout);
+    });
+  });
 }

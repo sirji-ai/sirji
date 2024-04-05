@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import * as fs from 'fs';
 
-export function renderView(context: vscode.ExtensionContext | undefined, view: string, workspaceRootUri: any, workspaceRootPath: any, problemId: string): vscode.WebviewPanel {
+export function renderView(context: vscode.ExtensionContext | undefined, view: string, workspaceRootUri: any, workspaceRootPath: any, sirjiRunId: string): vscode.WebviewPanel {
   let viewDetails: any;
 
   if (view === 'chat') {
@@ -11,7 +11,7 @@ export function renderView(context: vscode.ExtensionContext | undefined, view: s
     throw new Error(`View not defined ${view} in renderer.ts`);
   }
 
-  viewDetails.replaceInHtml.nonce = problemId;
+  viewDetails.replaceInHtml.nonce = sirjiRunId;
 
   const panel = viewDetails.panel;
 
