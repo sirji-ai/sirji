@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="." target="blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/01b1c0b2-994f-41ae-898e-d82b721b3173" width="120" alt="Sirji Logo" /></a>
+  <a href="." target="blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/363fc6dd-69af-4d84-8b7c-a91ec092058d" width="250" alt="Sirji Logo" /></a>
 </p>
 
 <p align="center">
