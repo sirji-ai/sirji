@@ -372,23 +372,31 @@ export class Facilitator {
         case ACTOR_ENUM.EXECUTOR:
           switch (parsedMessage.ACTION) {
             case ACTION_ENUM.OPEN_BROWSER:
+              //TODO:Implement this
               openBrowser(parsedMessage.URL);
               console.log('Browse', parsedMessage);
               break;
 
             case ACTION_ENUM.INSTALL_PACKAGE:
-              executeCommand(parsedMessage.COMMAND);
+              const installPackageCommandRes = executeCommand(parsedMessage.COMMAND, oThis.workspaceRootPath);
+              rawMessage = installPackageCommandRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
               console.log('Install', parsedMessage);
               break;
 
             case ACTION_ENUM.EXECUTE_COMMAND:
-              executeCommand(parsedMessage.COMMAND);
-              console.log('Execute', parsedMessage);
+              const executedCommandRes = executeCommand(parsedMessage.COMMAND, oThis.workspaceRootPath);
+              rawMessage = executedCommandRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
               break;
 
             case ACTION_ENUM.CREATE_FILE:
-              const res = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
-              rawMessage = res;
+              const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
+              rawMessage = createFileRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
