@@ -21,6 +21,8 @@ from .actions.train_using_search_term import TrainUsingSearchTermMessage
 from .actions.train_using_url import TrainUsingUrlMessage
 from .actions.feedback import FeedbackMessage
 from .actions.training_output import TrainingOutputMessage
+from .actions.read_dir import ReadDirMessage
+from .actions.read_file import ReadFileMessage
 
 
 class MetaMessageFactory(type):
@@ -58,6 +60,8 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.TRAIN_USING_SEARCH_TERM: TrainUsingSearchTermMessage,
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
         ActionEnum.FEEDBACK: FeedbackMessage,
-        ActionEnum.TRAINING_OUTPUT: TrainingOutputMessage
+        ActionEnum.TRAINING_OUTPUT: TrainingOutputMessage,
+        ActionEnum.READ_DIR: ReadDirMessage,
+        ActionEnum.READ_FILE: ReadFileMessage
     }
 

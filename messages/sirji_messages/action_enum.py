@@ -22,3 +22,5 @@ class ActionEnum(Enum):
     TRAIN_USING_URL = auto()
     FEEDBACK = auto()
     TRAINING_OUTPUT = auto()
+    READ_FILE = auto()
+    READ_DIR = auto()

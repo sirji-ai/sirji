@@ -1,3 +1,3 @@
-sirji-messages==0.0.4
+sirji-messages==0.0.5
 sirji-tools==0.0.5
 openai==1.14.1

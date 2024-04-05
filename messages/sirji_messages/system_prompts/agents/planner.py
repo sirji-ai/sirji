@@ -25,9 +25,9 @@ class PlannerSystemPrompt(AgentSystemPromptBase):
           - Ensure that each step in the list of steps should start with 'Step #: ....'                    
           - Don't explain the steps further using sub-steps.
           - Generate concise steps enough to solve the problem statement.
-          - Ensure that all the steps should be about either create file or install package or execute command or execute code to debug or git clone or read files.
+          - Ensure that all the steps are about either create file or install package or execute command or execute code to debug or git clone or read single file or read all files in a directory (including those in its subdirectories).
           - Always add a step to execute the code and evaluate the response output. If the response has errors, solve them before moving ahead.                   
-          - Focus on particular data points given in the PS and not solve the problem in a over-generalized manner.
+          - Focus on particular data points given in the PS and not solve the problem in an over-generalized manner.
           """)
 
     def capabilities(self):

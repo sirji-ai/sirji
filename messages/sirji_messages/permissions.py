@@ -7,7 +7,9 @@ permissions_dict = {
     (AgentEnum.CODER, AgentEnum.EXECUTOR): {
         ActionEnum.CREATE_FILE,
         ActionEnum.EXECUTE_COMMAND,
-        ActionEnum.INSTALL_PACKAGE
+        ActionEnum.INSTALL_PACKAGE,
+        ActionEnum.READ_FILE,
+        ActionEnum.READ_DIR
     },
     (AgentEnum.CODER, AgentEnum.PLANNER): (
         ActionEnum.GENERATE_STEPS
