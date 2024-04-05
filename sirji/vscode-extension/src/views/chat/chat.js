@@ -310,7 +310,14 @@ function disableSendButton(disable) {
   const sendButton = document.getElementById('sendBtn');
   if (sendButton) {
     sendButton.disabled = disable;
+    updatePlaceholder(disable);
   }
+}
+
+function updatePlaceholder(disable) {
+  const placeholderText = disable ? 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
+  userInput.placeholder = placeholderText;
+  userInput.disabled = disable;
 }
 
 updateIconColors();
