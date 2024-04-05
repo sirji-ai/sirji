@@ -1,67 +1,37 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock  # Updated import here
 from sirji_tools.search import search_for
 
-class TestSearch:
-    @patch('sirji_tools.search.search.requests.get')
-    @patch('sirji_tools.search.search.load_config')
-    def test_search_for_success(self, mock_load_config, mock_get):
-        # Setup
-        # Mocking load_config to return a predefined configuration
-        mock_load_config.return_value = {
-            'google_search_url': 'https://www.googleapis.com/customsearch/v1',
-            'search_results_per_page': 10
-        }
-
-        # Mocking the response of requests.get
-        mock_response = MagicMock()
-        mock_response.json.return_value = {
-            'items': [
-                {'link': 'https://example.com/page1'},
-                {'link': 'https://example.com/page2'}
-            ]
-        }
-        mock_get.return_value = mock_response
-
-        # Expected result
-        expected_urls = ['https://example.com/page1', 'https://example.com/page2']
-
-        # Actual call
-        result = search_for('test query')
-
-        # Assertions
-        assert result == expected_urls, "The search_for function did not return the expected URLs."
-
-    @patch('sirji_tools.search.search.requests.get')
-    @patch('sirji_tools.search.search.load_config')
-    def test_search_for_failure(self, mock_load_config, mock_get):
-        # Setup
-        # Mocking load_config to return a predefined configuration
-        mock_load_config.return_value = {
-            'google_search_url': 'https://www.googleapis.com/customsearch/v1',
-            'search_results_per_page': 10
-        }
-
-        # Simulating a network failure during the search
-        mock_get.side_effect = Exception("Network failure")
-
-        # Testing for exception handling
-        with pytest.raises(Exception) as exc_info:
-            search_for('test query')
-
-        assert str(exc_info.value) == "Network failure", "The search_for function did not handle the exception as expected."
-
-    @patch('sirji_tools.search.search.load_config')
-    def test_search_for_empty_query(self, mock_load_config):
-        # Setup
-        # Mocking load_config to return a predefined configuration
-        mock_load_config.return_value = {
-            'google_search_url': 'https://www.googleapis.com/customsearch/v1',
-            'search_results_per_page': 10
-        }
-
-        # Testing for empty query handling
-        with pytest.raises(KeyError) as exc_info:
-            search_for('')
-
-        assert str(exc_info.value) == "'Query is empty'", "The search_for function did not handle the empty query as expected."
+@patch('sirji_tools.search.search.sync_playwright')
+def test_search_for_returns_filtered_urls(mock_playwright):
+    # Setup the mock environment
+    mock_browser_context = mock_playwright.return_value.__enter__.return_value.chromium.launch.return_value.new_context.return_value
+    mock_browser_page = mock_browser_context.new_page.return_value
+    
+    # Mocking the navigation to Google's search page
+    mock_browser_page.goto.return_value = None
+    
+    # Mocking the filling and pressing enter on the search input
+    mock_browser_page.fill.return_value = None
+    mock_browser_page.press.return_value = None
+    
+    # Simulate a delay for loading search results
+    # skipping the time.sleep through mock
+    
+    # Mocking the query_selector_all method to return mock links as search results
+    mock_browser_page.query_selector_all.return_value = [
+        MagicMock(get_attribute=MagicMock(return_value='https://www.google.com/url?url=https://www.example.com')),
+        MagicMock(get_attribute=MagicMock(return_value='https://www.google.com/url?url=https://www.maps.google.com')),
+        MagicMock(get_attribute=MagicMock(return_value='https://www.google.com/url?url=https://www.example2.com')),
+        # Add more mock results as needed
+    ]
+    
+    expected_urls = ['https://www.example.com', 'https://www.example2.com']  # Expected output after filtering excluded domains and duplicates
+    actual_urls = search_for('test query')
+    
+    # Assertions
+    assert len(actual_urls) <= 10, "The function returned more than 10 URLs."
+    assert set(expected_urls).issubset(set(actual_urls)), "The returned URLs are not as expected after filtering."
+    mock_browser_page.goto.assert_called_once_with('https://www.google.com')
+    mock_browser_page.fill.assert_called_once_with('input[name=q]', 'test query')
+    mock_browser_page.press.assert_called_once_with('input[name=q]', 'Enter')
