@@ -65,6 +65,12 @@ window.addEventListener('message', (event) => {
       updateStepStatus(event.data.content, 'completed');
       break;
 
+    case 'solutionCompleted':
+      sendBotMessage(event.data.content.message);
+      disableSendButton(!event.data.content.allowUserMessage);
+      markSolutionCompleted(event.data.content);
+      break;
+
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
   }
@@ -248,6 +254,7 @@ function updateStepStatus(message, status) {
 
   if (status === 'completed') {
     totalStepsCompleted = maxStepNumber;
+    setProgress(totalStepsCompleted, stepsArray.length);
   }
 
   displayPlannedSteps(stepsArray);
@@ -305,6 +312,15 @@ function updatePlaceholder(disable) {
   userInput.placeholder = placeholderText;
   userInput.disabled = disable;
   adjustTextAreaHeight();
+}
+
+function markSolutionCompleted(data) {
+  stepsArray.forEach((step) => {
+    step.status = 'completed';
+  });
+  totalStepsCompleted = stepsArray.length;
+  setProgress(stepsArray.length, stepsArray.length);
+  displayPlannedSteps(stepsArray);
 }
 
 updateIconColors();

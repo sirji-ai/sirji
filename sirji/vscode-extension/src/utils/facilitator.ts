@@ -361,7 +361,15 @@ export class Facilitator {
             };
           }
 
-          if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE || parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
+          if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
+            keepFacilitating = false;
+            oThis.chatPanel?.webview.postMessage({
+              type: 'solutionCompleted',
+              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
+            });
+          }
+
+          if (parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
             keepFacilitating = false;
             oThis.chatPanel?.webview.postMessage({
               type: 'botMessage',
