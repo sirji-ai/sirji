@@ -23,7 +23,7 @@ class ResearchAgent:
         self._inferer = InfererFactory.get_instance(
             inferer_type, self.init_payload)
 
-        self._research_folder = os.path.join(self._get_workspace_folder(), '.sirji', "researcher")
+        self._research_folder = os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), "researcher")
 
         logger.info("Completed initializing researcher")
 
@@ -45,6 +45,13 @@ class ResearchAgent:
             raise ValueError(
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
+    
+    def _get_run_id_folder(self):
+        run_id = os.environ.get("SIRJI_RUN_ID")
+        if run_id is None:
+            raise ValueError(
+                "SIRJI_RUN_ID is not set as an environment variable")
+        return run_id
 
     def _handle_train_using_search_term(self, parsed_message):
         """Private method to handle training using a search term."""

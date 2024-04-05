@@ -25,7 +25,7 @@ class LoggerSingleton:
         self.logger = self._setup_logger(file_name, log_level)
     
     def _log_folder(self):
-        return os.path.join(self._get_workspace_folder(), '.sirji', "logs")
+        return os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), "logs")
     
     def _get_workspace_folder(self):
         workspace = os.environ.get("SIRJI_WORKSPACE")
@@ -33,6 +33,13 @@ class LoggerSingleton:
             raise ValueError(
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
+
+    def _get_run_id_folder(self):
+        run_id = os.environ.get("SIRJI_RUN_ID")
+        if run_id is None:
+            raise ValueError(
+                "SIRJI_RUN_ID is not set as an environment variable")
+        return run_id 
     
     def _log_file_path(self, file_name):
         return os.path.join(self._log_folder(), file_name)

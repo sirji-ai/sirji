@@ -5,7 +5,7 @@ from sirji_agents import PlanningAgent
 
 class PlanningAgentRunner:
     def get_workplace_file_path(self, filename):
-        return os.path.join(self._get_workspace_folder(), '.sirji', filename)
+        return os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), filename)
     
     def _get_workspace_folder(self):
         workspace = os.environ.get("SIRJI_WORKSPACE")
@@ -13,6 +13,13 @@ class PlanningAgentRunner:
             raise ValueError(
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
+    
+    def _get_run_id_folder(self):
+        run_id = os.environ.get("SIRJI_RUN_ID")
+        if run_id is None:
+            raise ValueError(
+                "SIRJI_RUN_ID is not set as an environment variable")
+        return run_id
 
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
