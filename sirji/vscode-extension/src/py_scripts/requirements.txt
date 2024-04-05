@@ -1,2 +1,2 @@
 sirji-messages==0.0.4
-sirji-agents==0.0.4
+sirji-agents==0.0.5
