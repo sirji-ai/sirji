@@ -1,7 +1,7 @@
 from openai import OpenAI
 import os
 
-from sirji_messages import AgentSystemPromptFactory, message_parse, MessageParsingError
+from sirji_messages import AgentSystemPromptFactory, message_parse, MessageParsingError, MessageValidationError
 
 
 class SingletonMeta(type):
@@ -62,7 +62,8 @@ class LLMAgentBase(metaclass=SingletonMeta):
                 parsed_response_message = message_parse(response_message)
                 conversation.append({"role": "assistant", "content": response_message, "parsed_content": parsed_response_message})
                 break
-            except MessageParsingError as e:
+            except (MessageParsingError, MessageValidationError) as e:
+            # Handling both MessageParsingError and MessageValidationError similarly
                 self.logger.info("Error while parsing the message.\n")
                 retry_llm_count += 1
                 if retry_llm_count > 2:
