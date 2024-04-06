@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
+  Built with ❤️ by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a>
 </p>
 
 <p align="center">
@@ -23,97 +23,43 @@
 </p>
 
 
-## Description
+## Sirji
 
-> “Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.
+Sirji is a Visual Studio Code Extension that serves as an AI Software Development Agent, an open-source alternative to Devin. It functions as a virtual software developer, geared towards solving the given problem statement. These problem statements can either involve fresh, greenfield development or efforts aimed at enhancing existing code, bug fixing, documentation, and test case creation in brownfield development.
 
-Sirji is a Visual Studio Code Extension (developed in TypeScript) that provides an interactive chat interface right within VS Code IDE to assist the user in inputting their problem statement, submitting feedback or enhancement requests, and getting answers to various queries during the problem-solving process.
+The extension leverages the capabilities of VS Code, including the Editor, Terminal, Browser, and Project Explorer.
 
-## Architecture Diagram
-<img width="893" alt="vs code extension - architecture" src="https://github.com/sirji-ai/sirji/assets/7627517/6120d7cc-550c-4497-9d83-587bc2a8bc8a">
+Additionally, it provides an interactive chat interface through which users can submit their problem statements, enhancement requests, feedback, and answers to requests for elaboration.
 
-The extension leverages the capabilities of VS Code, such as Editor, Terminal, Browser and Project Explorer.
+## Demo
 
-Additionally, it introduces an Executor Agent built-in TypeScript that facilitates:
-- Running Commands
-- Filesystem Create, Read, Update, Delete (CRUD) operations
-- Installing Packages
+## Getting Started
+TODO: Add steps for how to get started with using Sirji.
 
-A chat interface is implemented within the VS Code IDE to interact with the user.
+## Architecture
 
-## PyPI Packages
-To reuse code across multiple user interfaces (including the earlier GUI of Dogfood, the current VS Code Extension, and the future Browser interface), we have published these three PyPI packages:
+### Agents
+Sirji gets the work done using it's following agents:
+- The **Planning Agent** takes a problem statement and breaks it down into steps.
+- The **Coding Agent** proceeds step by step through the generated steps to solve the problem programmatically.
+- The **Research Agent** utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms. It can later use this acquired knowledge to answer questions posed by the Coding Agent.
+- The **Executor Agent** is responsible for Filesystem CRUD, executing commands, and installing dependencies.
 
-### sirji-agents [![PyPI version](https://img.shields.io/pypi/v/sirji-agents.svg)](https://pypi.org/project/sirji-agents/)
+### Architecture Diagram
+<img width="100%" alt="VS Code Extension - Architecture" src="https://github.com/sirji-ai/sirji/assets/7627517/0cee6e34-a42a-4db0-81db-d2f930132465">
 
-`sirji-agents` is a PyPI package, developed in the `agents` folder of this monorepo. It implements these three key agents:
-- The **Planning Agent** takes in a problem statement and breaks it down into steps.
-- The **Coding Agent** goes step by and generates code to solve it programmatically.
-- The **Research Agent** utilizes RAG, and gets trained on URLs and Search terms. Later, it can use the training knowledge to infer for answering the questions asked by the Coding Agent.
+### Architecture Details
+The Executor Agent is implemented directly within the extension and is written in TypeScript.
 
-The Planning Agent and Coding Agent utilize OpenAI Chat Completions API, but they can be easily extended to infer from other LLMs.
-Similarly, the Research Agent is currently built using the OpenAI Assistants API and can be easily extended to use vector databases to store the embeddings and implement the RAG approach.
+The Planning Agent, Coding Agent, and Research Agent are developed in the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/)<a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
-For more details, visit the [sirji-agents page on PyPI](https://pypi.org/project/sirji-agents/).
+The communication between all these agents is defined as a message protocol. The Message Factory (CRUD for messages as per the message protocol) and permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/)<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
 
+The tools for crawling URLs (converting them to markdowns), searching for a term on Google, and custom logger are developed in the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/)<a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
+## For Contributors
+TODO: Add a link to the doc in which steps for contributors to set up a local dev environment.
 
+## License
 
-
---------
-
-
-
-
-
-
-
-## Demo Videos
-
-For demo videos, visit [here](./demos).
-
-## How to Use<a name="how-to-use"></a>
-
-The dogfood version of Sirji is ready.
-
-Follow these [setup steps](./docs/setup-steps.md) to start Sirji.
-
-## Capabilities<a name="capabilities"></a>
-
-Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API.
-
-To begin with, it will be equipped with:
-
-- **Chat Terminal**: To give problem statements and continuously interact with Sirji.
-
-- **Shell**: To create, modify, and execute files and install packages.
-
-- **Browser**: To research different topics to solve the problem.
-
-## How It Works<a name="how-it-works"></a>
-
-In the dogfood version of Sirji, we are planning to have 4 layers in its architecture as shown in the high-level architecture diagram below.
-
-- User Interaction Layer, i.e. Sirji>, will be the front-facing layer interacting with the user. Users can give the problem statement, and give suggestions or modification requests through this layer. Here, users can also see the progress made by Sirji. A command line chat terminal will be used to take user inputs.
-
-- The Agents and Tools Layer will contain multiple agents and tools to be used by Sirji. The available agents will be the Planner, Coder, Security Analyser, Researcher, and Debugger. And, the available tools will be Crawler, Executor, and Logger. To check the work done by agents and tools, we will publish logs in their respective log files.
-
-- The last two layers will consist of the Model & Embeddings Layer, and the Capabilities Layer with browser and shell access.
-
-![Sirji Architecture Diagram](https://github.com/sirji-ai/sirji/assets/4491083/4204d366-ccbc-473a-8a0b-233333ce1fdc)
-
-## Sequence Diagram<a name="sequence-diagram"></a>
-
-The sequence diagram below shows how the user initiates Sirji by giving a problem statement through a chat terminal. From this point onwards, Sirji initiates a hands-free solution approach. However, the user can interact with Sirji by sending messages and asking to improve or modify the solution.
-
-![Sirji Sequence Diagram](https://github.com/sirji-ai/sirji/assets/4491083/807e62d8-3ded-47c8-81cb-89dfa959ff72)
-
-## Supported AI Models<a name="supported-ai-models"></a>
-
-We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. But the package will be designed to be composable for supporting other AI models too.
-
-## Contribution
-
-We welcome more helping hands to make Sirji better. Feel free to report issues, and raise PRs for fixes & enhancements.
-
-<p align="left">Built with :heart: by <a href="https://truesparrow.com/" target="_blank">True Sparrow</a></p>
+Distributed under the MIT License. See `LICENSE` for more information.
