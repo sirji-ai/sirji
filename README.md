@@ -31,7 +31,8 @@ The extension leverages the capabilities of VS Code, including the Editor, Termi
 
 Additionally, it provides an interactive chat interface through which users can submit their problem statements, enhancement requests, feedback, and answers to requests for elaboration.
 
-## Demo
+## Demo Videos
+TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to the demos page.
 
 ## Getting Started
 TODO: Add steps for how to get started with using Sirji.
