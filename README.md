@@ -25,7 +25,7 @@
 
 ## Sirji
 
-Sirji is a Visual Studio Code Extension that serves as an AI Software Development Agent, an open-source alternative to Devin. It functions as a virtual software developer, geared towards solving the given problem statement. These problem statements can either involve fresh, greenfield development or efforts aimed at enhancing existing code, bug fixing, documentation, and test case creation in brownfield development.
+Sirji is a Visual Studio Code Extension that acts as an AI Software Development Agent, an open-source alternative to Devin. It functions as a virtual software developer, geared towards solving the given problem statement. These problem statements can either involve fresh, greenfield development or efforts aimed at enhancing existing code, bug fixing, documentation, and test case creation in brownfield development.
 
 The extension leverages the capabilities of VS Code, including the Editor, Terminal, Browser, and Project Explorer.
 
