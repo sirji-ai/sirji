@@ -13,6 +13,12 @@ def read_files_content(root_folder):
         if '.pytest_cache' in dirs:
             dirs.remove('.pytest_cache')
 
+        if 'out' in dirs:
+            dirs.remove('out')
+
+        if 'node_modules' in dirs:
+            dirs.remove('node_modules')
+
         for file in files:
             try:
                 file_path = os.path.join(subdir, file)
