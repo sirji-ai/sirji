@@ -38,9 +38,9 @@ TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to th
 
 Ensure that you have following installed on your machine:
 
-- Node.js and npm
 - Visual Studio Code
-- Python (>= 3.6)
+- Node.js (>= 18) and npm (>= 8.19)
+- Python (>= 3.11)
 
 ### Using the extension in Debug mode
 
