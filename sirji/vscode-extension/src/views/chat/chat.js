@@ -235,9 +235,11 @@ function updateStepStatus(message, status) {
   }
 
   if (status === 'completed') {
-    totalStepsCompleted = maxStepNumber;
+    totalStepsCompleted = stepsArray.length;
     setProgress(totalStepsCompleted, stepsArray.length);
   }
+
+  totalStepsCompleted = stepsArray.filter((step) => step.status === 'completed').length;
 
   displayPlannedSteps(stepsArray);
 }
