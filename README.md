@@ -42,7 +42,7 @@ Ensure that you have following installed on your machine:
 - Visual Studio Code
 - Python (>= 3.6)
 
-### For Collaborators
+### Using the extension in Debug mode
 
 Change directory to `sirji/vscode-extension` and open it in VS Code.
 
@@ -72,6 +72,9 @@ In the new VS Code window (Extension Development Host), trigger the Extension Co
 - Open the Command Palette (`Cmd+Shift+P`), type in the command title `Sirji` and press `Enter`.
 
 The Sirji chat opens. Follow the chat to use Sirji.
+
+### Installing from VSIX file
+TODO
 
 ## Architecture
 
