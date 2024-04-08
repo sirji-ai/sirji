@@ -41,6 +41,7 @@ Ensure that you have following installed on your machine:
 - Visual Studio Code
 - Node.js (>= 18) and npm (>= 8.19)
 - Python (>= 3.11)
+- tee command
 
 ### Using the extension in Debug mode
 
