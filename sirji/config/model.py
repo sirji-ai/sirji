@@ -19,12 +19,13 @@ class ModelClient:
                     "SIRJI_OLLAMA_MODEL", "deepseek-coder:latest"
                 )
                 self.client = OpenAI(
-                    model=ollama_model,
                     api_key="FOSS_FTW",
                     base_url="http://localhost:11434/v1",
                 )
+                self.model = ollama_model
             else:
                 self.client = OpenAI(api_key=api_key)
+                self.model = "model"
         except Exception as e:
             print(e)
             raise ValueError(

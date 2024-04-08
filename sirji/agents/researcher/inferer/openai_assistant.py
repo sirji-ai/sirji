@@ -19,6 +19,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
 
         # Set self.client as the value of self.client set in ModelClient class
         self.client = model_client.client
+        self.model = model_client.model
 
         # Placeholder for the OpenAI Assistant object
         self.assistant = None
@@ -101,7 +102,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         run = self.client.beta.threads.runs.create(
             thread_id=self.thread.id,
             assistant_id=self.assistant_id,
-            model="gpt-4-turbo-preview",
+            model=self.model,
             tools=[{"type": "retrieval"}],
         )
 

@@ -16,6 +16,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
         # Set self.client as the value of self.client set in ModelClient class
         self.client = model_client.client
+        self.model = model_client.model
 
         # Create assistant and preserve assistant_id
         self.assistant_id = self._create_assistant()
@@ -79,7 +80,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             name="Research Assistant",
             instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
             tools=[{"type": "retrieval"}],
-            model="gpt-4-turbo-preview",
+            model=self.model,
         )
 
         logger.info("Completed creating a new assistant")

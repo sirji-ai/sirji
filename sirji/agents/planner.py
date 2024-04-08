@@ -35,6 +35,7 @@ class Planner(metaclass=SingletonMeta):
 
         # Set self.client as the value of self.client set in ModelClient class
         self.client = model_client.client
+        self.model = model_client.model
         pass
 
     def message(self, input_message):
@@ -43,7 +44,7 @@ class Planner(metaclass=SingletonMeta):
 
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
-            model="gpt-4-turbo-preview",
+            model=self.model,
             temperature=0,
             max_tokens=4095,
         )
