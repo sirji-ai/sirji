@@ -174,7 +174,6 @@ function createMessageElement(msg, sender) {
 
 function openSettings() {
   document.getElementById('settingsModal').style.display = 'block';
-  //  vscode.postMessage({ type: 'requestEnvVariables' });
 }
 
 function closeSettings() {
@@ -223,6 +222,18 @@ function settingSaved(data) {
 function updateStepStatus(message, status) {
   let stepNumber = message.match(/\d+/g);
 
+  if (!stepNumber) {
+    return;
+  }
+
+  if (stepNumber && stepNumber.length === 0) {
+    return;
+  }
+
+  if (stepsArray?.length === 0) {
+    return;
+  }
+
   if (stepNumber.length === 1) {
     console.log('Updating step:', stepNumber[0], stepsArray[0]);
     stepsArray[stepNumber[0] - 1].status = status;
@@ -257,6 +268,10 @@ function displayPlannedSteps(steps) {
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');
   listElement.innerHTML = '';
+
+  if (!steps) {
+    return;
+  }
 
   if (steps.length === 0) {
     return;
