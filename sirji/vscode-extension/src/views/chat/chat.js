@@ -54,6 +54,7 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'plannedSteps':
+      totalStepsCompleted = 0;
       displayPlannedSteps(event.data.content);
       break;
 
@@ -250,6 +251,11 @@ function displayPlannedSteps(steps) {
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');
   listElement.innerHTML = '';
+
+  if (steps.length === 0) {
+    return;
+  }
+
   steps.forEach((step, index) => {
     step.status = step.status || '';
     const listItem = document.createElement('li');
@@ -298,7 +304,11 @@ function updatePlaceholder(disable) {
   adjustTextAreaHeight();
 }
 
-function markSolutionCompleted(data) {
+function markSolutionCompleted() {
+  if (stepsArray?.length === 0) {
+    return;
+  }
+
   stepsArray.forEach((step) => {
     step.status = 'completed';
   });

@@ -204,55 +204,6 @@ export class Facilitator {
     }
   }
 
-  private async constructUserMessage(message: string) {
-    const oThis = this;
-    //write in a file
-    //call coder
-    // Read coder json file
-    // call infinite loop function with the last message, formatted
-  }
-
-  //  private async initFacilitation(message: string) {
-  //   while (true) {
-  //    // add switch cases
-  //    switch (message) {
-  //     case 'Researcher':
-  //      //write in a file
-  //      //call researcher
-  //      //read last message from researcher json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'Coder':
-  //      //write in a file
-  //      //call coder
-  //      //read last message from coder json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'Planner':
-  //      //write in a file
-  //      //call planner
-  //      //read last message from planner json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'User':
-  //      // if
-  //      // step_started step_completed
-  //      // update plan for user
-  //      // write sure in a file
-  //      // call coder
-  //      // read last message from coder json file
-  //      // set the last message to message
-  //      //  else
-  //      // solution_completed, question, inform
-  //      // show the message to end user, open user input box and break the while loop
-  //      break;
-  //    }
-  //   }
-  //  }
-
   private async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
