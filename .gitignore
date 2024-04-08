@@ -24,3 +24,6 @@ dist
 .coverage
 
 .pytest_cache
+
+# Dev scripts
+read_all.py
