@@ -67,13 +67,13 @@ Sirji gets the work done using it's following agents:
 
 ### PyPI Packages
 
-The Planning Agent, Coding Agent, and Research Agent are developed in the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/)<a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
+The Planning Agent, Coding Agent, and Research Agent are developed within the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo). <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
-The communication between all these agents is defined as a message protocol. The Message Factory (CRUD for messages as per the message protocol) and permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/)<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+Communication among these agents is facilitated through a defined message protocol. The Message Factory (responsible for creating, reading, updating, and deleting messages according to the message protocol) and the permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo).<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
 
-The tools for crawling URLs (converting them to markdowns), searching for a term on Google, and custom logger are developed in the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/)<a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
-All these packages are called from Python Adapter Scripts, which are spawned by the extension.
+All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
 ## License
 
