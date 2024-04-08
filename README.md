@@ -42,48 +42,11 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.11) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-## Using the extension in Debug mode
+## Contributing
 
-After cloning the repository, switch to the `sirji/vscode-extension` directory:
+We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
 
-```zsh
-git clone git@github.com:sirji-ai/sirji.git
-cd sirji/vscode-extension
-```
-
-Open the folder in Visual Studio Code:
-
-```zsh
-code .
-```
-
-Install the project dependencies by running:
-
-```zsh
-npm install
-```
-
-Compile the TypeScript code:
-
-```zsh
-npm run compile
-```
-
-To start debugging the extension in VS Code, follow these steps:
-
-- Open the **Run and Debug** view from the Activity Bar on the left side of the window or by using the shortcut `Cmd+Shift+D`.
-- From the **Run and Debug** dropdown menu at the top, select the `Run Extension` option.
-- Press the **Start Debugging** button (green play icon) to launch a new VS Code window (Extension Development Host) with the extension loaded.
-
-To activate the extension in the new VS Code window (Extension Development Host):
-
-- Trigger the extension command by opening the Command Palette with `Cmd+Shift+P`, typing `Sirji`, and pressing `Enter`.
-
-Observe the Sirji chat interface open. Interact with Sirji via the chat.
-
-## Installing from VSIX file
-
-TODO
+Thank you for considering contributing to Sirji. We look forward to your contributions!
 
 ## Architecture
 
