@@ -39,7 +39,7 @@ Make sure you have installed all of the following prerequisites on your machine:
 
 - Visual Studio Code (>= 1.80.2)
 - Node.js (>= 18) and npm (>= 8.19)
-- Python (>= 3.11) - Make sure `python --version` runs without error.
+- Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
 ## Contributing
