@@ -1,10 +1,17 @@
 # Contributing to Sirji
 
-Thank you for your interest in contributing to Sirji, a VS Code Extension aimed at enhancing your coding workflow. This guide will help you set up your environment for contributing to Sirji.
+Thank you for your interest in contributing to Sirji, a VS Code Extension that aims to enhance your coding experience. This guide is designed to help you set up your environment for contributing to Sirji and its components, including the associated PyPI packages.
 
-## Getting Started
+## Prerequisites
 
-Before contributing, you'll need to clone the repository and set up the project on your local machine. Follow these steps to get started:
+Make sure you have installed all of the following prerequisites on your machine:
+
+- Visual Studio Code (>= 1.80.2)
+- Node.js (>= 18) and npm (>= 8.19)
+- Python (>= 3.11) - Make sure `python --version` runs without error.
+- tee command - Make sure `which tee` runs without error.
+
+## Contributing to VS Code Extension
 
 ### 1. Clone the Repository
 
@@ -32,7 +39,7 @@ code .
 
 ### 4. Install Dependencies
 
-Install the project dependencies to ensure that everything will run smoothly:
+Install the project dependencies:
 
 ```zsh
 npm install
@@ -46,23 +53,23 @@ Compile the TypeScript code to JavaScript:
 npm run compile
 ```
 
-## Debugging the Extension
+### 6. Run Sirji in Debug Mode
 
 To start debugging the extension and see your changes in action, follow these steps:
 
-1. **Open the Run and Debug View**
+- **Open the Run and Debug View**
 
-   - You can open this view from the Activity Bar on the left side of the window or by using the shortcut `Cmd+Shift+D`.
+  - You can open this view from the Activity Bar on the left side of the window or by using the shortcut `Cmd+Shift+D`.
 
-2. **Select Debug Configuration**
+- **Select Debug Configuration**
 
-   - From the dropdown menu at the top of the **Run and Debug** view, select the `Run Extension` option.
+  - From the dropdown menu at the top of the **Run and Debug** view, select the `Run Extension` option.
 
-3. **Start Debugging**
+- **Start Debugging**
 
-   - Press the **Start Debugging** button (the green play icon) to launch a new VS Code window (Extension Development Host) where the extension will be loaded.
+  - Press the **Start Debugging** button (the green play icon) to launch a new VS Code window (Extension Development Host) where the extension will be loaded.
 
-### Activating the Extension
+### 7. Activating Sirji
 
 To activate the extension in the Extension Development Host:
 
@@ -70,17 +77,16 @@ To activate the extension in the Extension Development Host:
 
 Now the Sirji chat interface should open, allowing you to interact with Sirji via the chat.
 
-## Contribution Guidelines
+## Contributing to the PyPI Packages
 
-We encourage you to contribute to Sirji! Please consider the following guidelines when planning your contributions:
+To contribute to one of the PyPI packages (`sirji-agents`, `sirji-messages`, `sirji-tools`), please refer to the instructions provided in the respective `README` files within their directories:
 
-- Ensure any code changes are properly documented and include relevant comments.
-- Adhere to the existing code style and standards.
-- Test your changes thoroughly in the Extension Development Host before submitting a pull request.
-- Include a descriptive message with your pull request detailing what has been changed or added.
+- [Agents README](./agents/README.md) for contributing to `sirji-agents`.
+- [Messages README](./messages/README.md) for contributing to `sirji-messages`.
+- [Tools README](./tools/README.md) for contributing to `sirji-tools`.
 
-## Questions or Problems?
+## Questions or Issues?
 
-If you encounter any problems or have questions about contributing to Sirji, please open an issue on our GitHub repository. We're here to help!
+If you face any issues or have questions about contributing, don’t hesitate to open an issue in our GitHub repository. We're here to help and look forward to your contributions!
 
-Again, thank you for your interest in contributing to Sirji. Happy coding!
+Thank you for considering contributing to Sirji. Happy coding!
