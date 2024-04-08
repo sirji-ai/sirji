@@ -48,6 +48,10 @@ We welcome contributions to Sirji! If you're interested in helping improve this 
 
 Thank you for considering contributing to Sirji. We look forward to your contributions!
 
+## Reporting Issues
+
+If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
+
 ## Architecture
 
 Sirji gets the work done using it's following agents:
