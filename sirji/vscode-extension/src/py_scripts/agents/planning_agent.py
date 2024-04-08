@@ -22,17 +22,18 @@ class PlanningAgentRunner:
         return run_id
 
     def read_or_initialize_conversation_file(self, file_path):
-        if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
-            with open(file_path, 'w') as file:
-                json.dump({"conversations": []}, file, indent=4)
-                return []
-        else:
-            with open(file_path, 'r') as file:
-                return json.load(file)["conversations"]
+            if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+                with open(file_path, 'w') as file:
+                    json.dump({"conversations": [], "prompt_tokens": 0, "completion_tokens": 0}, file, indent=4)
+                    return [], 0, 0
+            else:
+                with open(file_path, 'r') as file:
+                    contents = json.load(file)
+                    return contents["conversations"], contents["prompt_tokens"], contents["completion_tokens"]
 
-    def write_conversations_to_file(self, file_path, conversations):
+    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations}, file, indent=4)
+            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
     
     def process_input_file(self, input_file_path, conversations):
         with open(input_file_path, 'r') as file:
@@ -47,11 +48,15 @@ class PlanningAgentRunner:
         input_file_path = self.get_workplace_file_path(input_file)
         conversation_file_path = self.get_workplace_file_path(conversation_file)
 
-        conversations = self.read_or_initialize_conversation_file(conversation_file_path)
+        conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
+
         message_str = self.process_input_file(input_file_path, conversations)
 
-        response, conversations = self.process_message(message_str, conversations)
-        self.write_conversations_to_file(conversation_file_path, conversations)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations)
+        
+        prompt_tokens += prompt_tokens_consumed
+        completion_tokens += completion_tokens_consumed
+        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process interactions.")

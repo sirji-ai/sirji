@@ -227,7 +227,7 @@ export class Facilitator {
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          oThis.to_coder_relay_to_chat_panel(parsedMessage);
+          oThis.toCoderRelayToChatPanel(parsedMessage);
 
           const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
 
@@ -245,7 +245,7 @@ export class Facilitator {
 
           parsedMessage = lastCoderMessage?.parsed_content;
 
-          oThis.from_coder_relay_to_chat_panel(parsedMessage);
+          oThis.fromCoderRelayToChatPanel(parsedMessage);
 
           break;
 
@@ -254,7 +254,7 @@ export class Facilitator {
 
           const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
 
-          const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'researcher_agent.py');
+          const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
 
           await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
 
@@ -410,7 +410,7 @@ export class Facilitator {
     }
   }
 
-  private from_coder_relay_to_chat_panel(parsedMessage: any) {
+  private fromCoderRelayToChatPanel(parsedMessage: any) {
     const oThis = this;
 
     let contentMessage = null;
@@ -469,7 +469,7 @@ export class Facilitator {
     });
   }
 
-  private to_coder_relay_to_chat_panel(parsedMessage: any) {
+  private toCoderRelayToChatPanel(parsedMessage: any) {
     const oThis = this;
 
     let contentMessage = null;
@@ -498,5 +498,48 @@ export class Facilitator {
         allowUserMessage: false
       }
     });
+  }
+
+  private async calculateTotalTokensUsed() {
+    const oThis = this;
+
+    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
+    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
+    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
+
+    const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
+    const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
+    const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
+
+    const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
+
+    const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
+
+    const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+    const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+
+    return {
+      total_prompt_tokens: totalPromptTokens,
+      total_completion_tokens: totalCompletionTokens,
+      total_prompt_tokens_value: totalPromptTokensValueInDollar,
+      total_completion_tokens_value: totalCompletionTokensValueInDollar
+    };
+  }
+
+  private async getTokensUsed(conversationFilePath: string): Promise<any> {
+    const oThis = this;
+
+    if (oThis.historyManager?.checkIfFileExists(conversationFilePath)) {
+      const conversationContent = JSON.parse(oThis.historyManager?.readFile(conversationFilePath));
+      return {
+        prompt_tokens: conversationContent.prompt_tokens,
+        completion_tokens: conversationContent.completion_tokens
+      };
+    }
+
+    return {
+      prompt_tokens: 0,
+      completion_tokens: 0
+    };
   }
 }
