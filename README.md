@@ -34,16 +34,15 @@ Additionally, it provides an interactive chat interface through which users can 
 
 TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to the demos page.
 
-## Getting Started
-
-Ensure that you have following installed on your machine:
+## Prerequisites
+Make sure you have installed all of the following prerequisites on your machine:
 
 - Visual Studio Code
 - Node.js (>= 18) and npm (>= 8.19)
 - Python (>= 3.11)
 - tee command
 
-### Using the extension in Debug mode
+## Using the extension in Debug mode
 
 After cloning the repository, switch to the `sirji/vscode-extension` directory:
 
@@ -82,7 +81,7 @@ To activate the extension in the new VS Code window (Extension Development Host)
 
 Observe the Sirji chat interface open. Interact with Sirji via the chat.
 
-### Installing from VSIX file
+## Installing from VSIX file
 
 TODO
 
