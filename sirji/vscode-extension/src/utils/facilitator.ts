@@ -271,7 +271,6 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.PLANNER:
-
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
           const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
@@ -434,7 +433,7 @@ export class Facilitator {
         break;
 
       case ACTION_ENUM.INSTALL_PACKAGE:
-        contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;  
+        contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
         break;
 
       case ACTION_ENUM.READ_FILE:
@@ -450,7 +449,7 @@ export class Facilitator {
         break;
 
       case ACTION_ENUM.INFER:
-        contentMessage = 'Inferring from the Reasearch Agent based on trained knowledge';
+        contentMessage = 'Inferring from the Research Agent based on trained knowledge';
         break;
 
       default:
