@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "vscode": "^1.87.0"
+    "vscode": "^1.80.2"
   },
   "categories": [
     "Other"
