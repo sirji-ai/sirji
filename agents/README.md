@@ -113,7 +113,7 @@ from sirji_messages import MessageFactory, ActionEnum
 message_class = MessageFactory[ActionEnum.INFER.name]
 message_str = message_class().generate({"details": "How to use yahoo finance api?"})
 
-researcher.message(message_str)
+response, total_tokens = researcher.message(message_str)
 ```
 
 ### Coding Agent

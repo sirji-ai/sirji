@@ -71,9 +71,9 @@ class ResearchAgent:
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
         logger.info(f"Infering: {parsed_message.get('DETAILS')}")
-        response = self._infer(parsed_message.get('DETAILS'))
+        response, total_tokens = self._infer(parsed_message.get('DETAILS'))
 
-        return self._generate_message(ActionEnum.RESPONSE, response)
+        return self._generate_message(ActionEnum.RESPONSE, response), total_tokens
 
     def _generate_message(self, action_enum, details):
         """Generate standardized messages for responses based on action enum."""
