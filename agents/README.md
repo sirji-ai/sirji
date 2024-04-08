@@ -133,7 +133,7 @@ message_str = message_class().generate({"details": "Create a python executable f
 coder_history = []
 
 # call the Coder and update the history variable
-response_message, coder_history = coder.message(message_str, coder_history)
+response_message, coder_history, tokens_consumed = coder.message(message_str, coder_history)
 
 # Now in the new history:
 # coder_history[0] is the system prompt
@@ -162,7 +162,7 @@ message_str = message_class().generate({"details": "Create a python executable f
 planner_history = []
 
 # call the Planner and update the history variable
-response_message, planner_history = planner.message(message_str, planner_history)
+response_message, planner_history, tokens_consumed = planner.message(message_str, planner_history)
 ```
 
 ## For Contributors
