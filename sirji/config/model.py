@@ -15,8 +15,13 @@ class ModelClient:
                 "yes",
             ]
             if usingOllama:
+                ollama_model = os.environ.get(
+                    "SIRJI_OLLAMA_MODEL", "deepseek-coder:latest"
+                )
                 self.client = OpenAI(
-                    api_key="FOSS_FTW", base_url="http://localhost:11434/v1"
+                    model=ollama_model,
+                    api_key="FOSS_FTW",
+                    base_url="http://localhost:11434/v1",
                 )
             else:
                 self.client = OpenAI(api_key=api_key)
