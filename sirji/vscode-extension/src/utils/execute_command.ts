@@ -21,7 +21,7 @@ export async function executeCommand(command: string, workspaceRootPath: string)
   const fileName = `output.txt`;
   const filePath = path.join(workspaceRootPath, fileName);
 
-  command = `${command} 2>&1 | tee ${filePath}`;
+  command = `(${command}) 2>&1 | tee ${filePath}`;
 
   sirjiTerminal.sendText(command);
 
@@ -53,7 +53,7 @@ async function waitForFile(filePath: string): Promise<void> {
     const timeout = setTimeout(() => {
       watcher.close();
       reject(new Error(`File ${basename} did not appear after timeout`));
-    }, 15000);
+    }, 30000);
 
     watcher.on('close', () => {
       clearTimeout(timeout);

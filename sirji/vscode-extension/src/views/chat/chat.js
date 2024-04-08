@@ -45,15 +45,17 @@ window.addEventListener('message', (event) => {
   console.log('Received message in chat.js:', event.data);
   switch (event.data.type) {
     case 'settingSaved':
-      settingSaved(event.data.content);
+      settingSaved(event.data.content.message);
+      disableSendButton(!event.data.content.allowUserMessage);
       break;
 
     case 'botMessage':
       sendBotMessage(event.data.content.message);
-      disableSendButton(!event.data.content.allowUserMessage);
+      disableSendButton(!event.data.content.allowUserMessage, event.data.content.messageInputText);
       break;
 
     case 'plannedSteps':
+      totalStepsCompleted = 0;
       displayPlannedSteps(event.data.content);
       break;
 
@@ -221,9 +223,26 @@ function settingSaved(data) {
 function updateStepStatus(message, status) {
   let stepNumber = message.match(/\d+/g);
 
+  if (!stepNumber) {
+    return;
+  }
+
+  if (stepNumber && stepNumber.length === 0) {
+    return;
+  }
+
+  if (stepsArray?.length === 0) {
+    return;
+  }
+
   if (stepNumber.length === 1) {
     console.log('Updating step:', stepNumber[0], stepsArray[0]);
     stepsArray[stepNumber[0] - 1].status = status;
+    if (status === 'completed') {
+      for (let i = 0; i < stepNumber[0] - 1; i++) {
+        stepsArray[i].status = status;
+      }
+    }
   }
 
   let maxStepNumber = 0;
@@ -252,6 +271,15 @@ function displayPlannedSteps(steps) {
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');
   listElement.innerHTML = '';
+
+  if (!steps) {
+    return;
+  }
+
+  if (steps.length === 0) {
+    return;
+  }
+
   steps.forEach((step, index) => {
     step.status = step.status || '';
     const listItem = document.createElement('li');
@@ -288,22 +316,26 @@ function setProgress(x, y) {
   progressTextInsideModal.textContent = `${x} of ${y} tasks done`;
 }
 
-function disableSendButton(disable) {
+function disableSendButton(disable, message) {
   const sendButton = document.getElementById('sendBtn');
   if (sendButton) {
     sendButton.disabled = disable;
-    updatePlaceholder(disable);
+    updatePlaceholder(disable, message);
   }
 }
 
-function updatePlaceholder(disable) {
-  const placeholderText = disable ? 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
+function updatePlaceholder(disable, message) {
+  const placeholderText = disable ? message || 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
   userInput.placeholder = placeholderText;
   userInput.disabled = disable;
   adjustTextAreaHeight();
 }
 
-function markSolutionCompleted(data) {
+function markSolutionCompleted() {
+  if (stepsArray?.length === 0) {
+    return;
+  }
+
   stepsArray.forEach((step) => {
     step.status = 'completed';
   });

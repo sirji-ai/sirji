@@ -37,10 +37,10 @@ TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to th
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your machine:
 
-- Visual Studio Code
+- Visual Studio Code (>= 1.80.2)
 - Node.js (>= 18) and npm (>= 8.19)
-- Python (>= 3.11)
-- tee command
+- Python (>= 3.11) - Make sure `python --version` runs without error.
+- tee command - Make sure `which tee` runs without error.
 
 ## Using the extension in Debug mode
 

@@ -1,9 +1,3 @@
-# Change Log
+# ChangeLog
 
-All notable changes to the "sirji" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+## v0.0.1

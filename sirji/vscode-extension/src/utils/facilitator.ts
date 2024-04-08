@@ -41,7 +41,7 @@ export class Facilitator {
     await oThis.setupSecretManager();
 
     // Setup History Manager
-    oThis.setupHistoryManager();
+    // oThis.setupHistoryManager();
 
     // Open Chat Panel
     oThis.openChatViewPanel();
@@ -115,7 +115,7 @@ export class Facilitator {
 
     oThis.chatPanel?.webview.postMessage({
       type: 'settingSaved',
-      content: responseContent
+      content: { message: responseContent, allowUserMessage: true }
     });
   }
 
@@ -140,7 +140,8 @@ export class Facilitator {
       type: 'botMessage',
       content: {
         message: 'Hello, I am Sirji. Please wait while i am setting up the workspace...',
-        allowUserMessage: true
+        allowUserMessage: false,
+        messageInputText: 'Sirji> is setting up the workspace... Please wait...'
       }
     });
 
@@ -194,6 +195,10 @@ export class Facilitator {
         break;
 
       case 'userMessage':
+        if (!oThis.historyManager) {
+          oThis.setupHistoryManager();
+        }
+
         await oThis.initFacilitation(message.content, {
           TO: ACTOR_ENUM.CODER
         });
@@ -203,55 +208,6 @@ export class Facilitator {
         vscode.window.showErrorMessage(`Unknown message received from chat panel: ${message}`);
     }
   }
-
-  private async constructUserMessage(message: string) {
-    const oThis = this;
-    //write in a file
-    //call coder
-    // Read coder json file
-    // call infinite loop function with the last message, formatted
-  }
-
-  //  private async initFacilitation(message: string) {
-  //   while (true) {
-  //    // add switch cases
-  //    switch (message) {
-  //     case 'Researcher':
-  //      //write in a file
-  //      //call researcher
-  //      //read last message from researcher json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'Coder':
-  //      //write in a file
-  //      //call coder
-  //      //read last message from coder json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'Planner':
-  //      //write in a file
-  //      //call planner
-  //      //read last message from planner json file
-  //      // set last message to message
-  //      break;
-
-  //     case 'User':
-  //      // if
-  //      // step_started step_completed
-  //      // update plan for user
-  //      // write sure in a file
-  //      // call coder
-  //      // read last message from coder json file
-  //      // set the last message to message
-  //      //  else
-  //      // solution_completed, question, inform
-  //      // show the message to end user, open user input box and break the while loop
-  //      break;
-  //    }
-  //   }
-  //  }
 
   private async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
@@ -271,6 +227,8 @@ export class Facilitator {
 
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
+          oThis.to_coder_relay_to_chat_panel(parsedMessage);
+
           const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
 
           const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
@@ -286,6 +244,8 @@ export class Facilitator {
           rawMessage = lastCoderMessage?.content;
 
           parsedMessage = lastCoderMessage?.parsed_content;
+
+          oThis.from_coder_relay_to_chat_panel(parsedMessage);
 
           break;
 
@@ -311,11 +271,6 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.PLANNER:
-          oThis.chatPanel?.webview.postMessage({
-            type: 'botMessage',
-            content: { message: 'Generating Steps to solve the problem statement...', allowUserMessage: false }
-          });
-
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
           const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
@@ -453,5 +408,95 @@ export class Facilitator {
           break;
       }
     }
+  }
+
+  private from_coder_relay_to_chat_panel(parsedMessage: any) {
+    const oThis = this;
+
+    let contentMessage = null;
+
+    if (!parsedMessage || !parsedMessage.ACTION) {
+      return;
+    }
+
+    switch (parsedMessage.ACTION) {
+      case ACTION_ENUM.GENERATE_STEPS:
+        contentMessage = 'Generating steps to solve the given problem statement.';
+        break;
+
+      case ACTION_ENUM.CREATE_FILE:
+        contentMessage = `Creating File: ${parsedMessage.FILENAME}`;
+        break;
+
+      case ACTION_ENUM.EXECUTE_COMMAND:
+        contentMessage = `Executing Command: ${parsedMessage.COMMAND}`;
+        break;
+
+      case ACTION_ENUM.INSTALL_PACKAGE:
+        contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
+        break;
+
+      case ACTION_ENUM.READ_FILE:
+        contentMessage = `Reading File: ${parsedMessage.FILENAME}`;
+        break;
+
+      case ACTION_ENUM.READ_DIR:
+        contentMessage = `Reading Files in Folder (and its Sub-Folders): ${parsedMessage.DIRPATH}`;
+        break;
+
+      case ACTION_ENUM.TRAIN_USING_URL:
+        contentMessage = `Training Research Agent (RAG): Using contents from ${parsedMessage.URL}`;
+        break;
+
+      case ACTION_ENUM.INFER:
+        contentMessage = 'Inferring from the Research Agent based on trained knowledge';
+        break;
+
+      default:
+        break;
+    }
+
+    if (!contentMessage) {
+      return;
+    }
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'botMessage',
+      content: {
+        message: contentMessage,
+        allowUserMessage: false
+      }
+    });
+  }
+
+  private to_coder_relay_to_chat_panel(parsedMessage: any) {
+    const oThis = this;
+
+    let contentMessage = null;
+
+    if (!parsedMessage || !parsedMessage.ACTION) {
+      return;
+    }
+
+    switch (parsedMessage.ACTION) {
+      case ACTION_ENUM.STEPS:
+        contentMessage = 'Steps generation done.';
+        break;
+
+      default:
+        break;
+    }
+
+    if (!contentMessage) {
+      return;
+    }
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'botMessage',
+      content: {
+        message: contentMessage,
+        allowUserMessage: false
+      }
+    });
   }
 }

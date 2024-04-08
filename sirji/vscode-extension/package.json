@@ -3,8 +3,13 @@
   "displayName": "Sirji",
   "description": "“Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirji-ai/sirji"
+  },
+  "license": "MIT",
   "engines": {
-    "vscode": "^1.87.0"
+    "vscode": "^1.80.2"
   },
   "categories": [
     "Other"
@@ -27,12 +32,15 @@
     "watch": "concurrently npm:watch-*",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "prepack": "cp ../../README.md README.md && cp ../../LICENSE LICENSE",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
-    "@types/vscode": "^1.87.0",
+    "@types/vscode": "^1.80.2",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "@vscode/test-cli": "^0.0.6",
