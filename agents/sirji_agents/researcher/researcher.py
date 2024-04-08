@@ -59,14 +59,14 @@ class ResearchAgent:
             f"Training using search term: {parsed_message.get('TERM')}")
         self._search_and_index(parsed_message.get('TERM'))
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully")
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully"), 0
 
     def _handle_train_using_url(self, parsed_message):
         """Private method to handle training using a specific URL."""
         logger.info(f"Training using URL: {parsed_message.get('URL')}")
         self._index([parsed_message.get('URL')])
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully")
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0
 
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
