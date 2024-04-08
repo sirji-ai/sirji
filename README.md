@@ -16,7 +16,7 @@ Follow these [setup steps](./docs/setup-steps.md) to start Sirji.
 
 ## Capabilities<a name="capabilities"></a>
 
-Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API.
+Sirji is being built using Python. It currently uses OpenAI chat completions API and OpenAI assistants API. Sirji works with either an OpenAI API key to use GPT 4, or a local model via Ollama.
 
 To begin with, it will be equipped with:
 
@@ -46,7 +46,7 @@ The sequence diagram below shows how the user initiates Sirji by giving a proble
 
 ## Supported AI Models<a name="supported-ai-models"></a>
 
-We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. But the package will be designed to be composable for supporting other AI models too.
+We are planning to use the `gpt-4-turbo-preview` model for the dogfood release. ~~But the package will be designed to be composable for supporting other AI models too.~~ It should now work with local models via Ollama.
 
 ## Contribution
 
