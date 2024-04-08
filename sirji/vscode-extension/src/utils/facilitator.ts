@@ -115,7 +115,7 @@ export class Facilitator {
 
     oThis.chatPanel?.webview.postMessage({
       type: 'settingSaved',
-      content: responseContent
+      content: { message: responseContent, allowUserMessage: true }
     });
   }
 
@@ -140,7 +140,8 @@ export class Facilitator {
       type: 'botMessage',
       content: {
         message: 'Hello, I am Sirji. Please wait while i am setting up the workspace...',
-        allowUserMessage: true
+        allowUserMessage: false,
+        messageInputText: 'Sirji> is setting up the workspace... Please wait...'
       }
     });
 

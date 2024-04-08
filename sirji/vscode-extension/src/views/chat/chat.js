@@ -45,12 +45,13 @@ window.addEventListener('message', (event) => {
   console.log('Received message in chat.js:', event.data);
   switch (event.data.type) {
     case 'settingSaved':
-      settingSaved(event.data.content);
+      settingSaved(event.data.content.message);
+      disableSendButton(!event.data.content.allowUserMessage);
       break;
 
     case 'botMessage':
       sendBotMessage(event.data.content.message);
-      disableSendButton(!event.data.content.allowUserMessage);
+      disableSendButton(!event.data.content.allowUserMessage, event.data.content.messageInputText);
       break;
 
     case 'plannedSteps':
@@ -289,16 +290,16 @@ function setProgress(x, y) {
   progressText.textContent = `${x} of ${y}`;
 }
 
-function disableSendButton(disable) {
+function disableSendButton(disable, message) {
   const sendButton = document.getElementById('sendBtn');
   if (sendButton) {
     sendButton.disabled = disable;
-    updatePlaceholder(disable);
+    updatePlaceholder(disable, message);
   }
 }
 
-function updatePlaceholder(disable) {
-  const placeholderText = disable ? 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
+function updatePlaceholder(disable, message) {
+  const placeholderText = disable ? message || 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
   userInput.placeholder = placeholderText;
   userInput.disabled = disable;
   adjustTextAreaHeight();
