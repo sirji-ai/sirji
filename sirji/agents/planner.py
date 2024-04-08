@@ -1,17 +1,16 @@
-from openai import OpenAI
-import os
-
-from sirji.prompts.planner import PlannerPrompt
+from sirji.config.model import ModelClient
 from sirji.messages.parser import MessageParser
+from sirji.prompts.planner import PlannerPrompt
 from sirji.storage.steps import initialize_steps
-
 from sirji.tools.logger import planner as pLogger
+
 
 class SingletonMeta(type):
     """
     This is a metaclass that will be used to create a Singleton class.
     It ensures that only one instance of the Singleton class exists.
     """
+
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -25,22 +24,22 @@ class Planner(metaclass=SingletonMeta):
     def __init__(self):
         # Initialize conversation
         self.conversation = [
-            {'role': 'system', 'content': PlannerPrompt('Coding Agent', 'Coder').system_prompt()}]
+            {
+                "role": "system",
+                "content": PlannerPrompt("Coding Agent", "Coder").system_prompt(),
+            }
+        ]
 
-        # Fetch OpenAI API key from environment variable
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        # Initialize ModelClient
+        model_client = ModelClient()
 
-        if api_key is None:
-            raise ValueError(
-                "OpenAI API key is not set as an environment variable")
-
-        # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        # Set self.client as the value of self.client set in ModelClient class
+        self.client = model_client.client
         pass
 
     def message(self, input_message):
         # Append user's input message to the conversation
-        self.conversation.append({'role': 'user', 'content': input_message})
+        self.conversation.append({"role": "user", "content": input_message})
 
         chat_completion = self.client.chat.completions.create(
             messages=self.conversation,
@@ -51,13 +50,12 @@ class Planner(metaclass=SingletonMeta):
 
         response_message = chat_completion.choices[0].message.content
 
-        # Storing 
+        # Storing
         self.store_steps(response_message)
 
-        self.conversation.append(
-            {'role': 'assistant', 'content': response_message})
+        self.conversation.append({"role": "assistant", "content": response_message})
         return response_message
-    
+
     def store_steps(self, message):
         steps = MessageParser.parse_steps(message)
 
