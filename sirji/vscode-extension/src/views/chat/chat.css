@@ -38,7 +38,7 @@ html {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  margin-top: 30px;
+  margin-top: 45px;
 }
 
 #messageContainer {
@@ -141,25 +141,24 @@ textarea {
 /** Top Controls **/
 .fixedHeader {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   position: fixed;
+  height: 46px;
   width: -webkit-fill-available;
   top: 0px;
+  padding: 0px 10px;
+  background-color: #1e1e1e;
 }
 
-body[data-vscode-theme-kind='vscode-dark'] {
-  .fixedHeader{
-    background-color: black;
-  }
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-body[data-vscode-theme-kind='vscode-light'] {
-  .fixedHeader{
-    background-color: white;
-  }  
-}
 
 .progressContainer {
   display: flex;
@@ -174,18 +173,18 @@ body[data-vscode-theme-kind='vscode-light'] {
   font-size: 24px;
   width: 30px;
   height: 30px;
-  margin-right: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 #progressCircle {
-  display: none;
+  visibility: hidden;
   justify-content: center;
   align-items: center;
   margin-right: 10px;
   position: relative;
-  width: 90px;
   height: 30px;
-  gap: 3px;
+  gap: 5px;
 }
 
 #progressCircle:hover {
@@ -199,39 +198,93 @@ body[data-vscode-theme-kind='vscode-light'] {
 }
 
 #progressText {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-  white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12.1px;
+  text-align: left;
+  background-color: transparent;
+  border-radius: 2px;
   padding: 2px 4px;
-  color: #000;
-  border: 1px solid blue;
+  color: white;
+  transition: background-color 0.5s ease-in-out; /* Add transition for background-color */
 }
 
 /** Setting Modal **/
+
 .modal {
-  display: none;
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); 
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-body {
+  position: relative;
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 9px;
+  max-height: calc(
+    100% - 120px
+  ); 
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+
+  background-color: #1e1e1e;
+}
+
+.modal-header {
+  padding: 20px 40px 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .modal-content {
-  background-color: #f1f1f1;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
+  flex-grow: 1; 
+  overflow-y: auto; 
+  padding: 0 40px 20px 40px;
 }
 
-.modal-content h2 {
-  color: #666;
+.settings-modal-container {
+  display: flex;
+  flex-direction: column;
+  width: 720px;
+}
+
+.planner-modal-container {
+  width: 720px;
+}
+
+.modal-heading {
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 13.8px;
+  color: #ffffff;
+
+  margin-bottom: 5px;
+  margin-top: 15px;
+}
+
+.modal-subheading {
+  font-family: Arial;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 11.5px;
+  color: #ffffff;
+
+  margin-bottom: 10px;
 }
 
 #closeSettings {
@@ -240,6 +293,10 @@ body[data-vscode-theme-kind='vscode-light'] {
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 #closeSettings:hover,
@@ -302,6 +359,10 @@ body[data-vscode-theme-kind='vscode-light'] {
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 #closePlanner:hover,
@@ -317,16 +378,19 @@ body[data-vscode-theme-kind='vscode-light'] {
   margin: 0;
 }
 
+
 .stepItem {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  margin: 5px 0;
-  padding: 10px;
-  background-color: #e3f2fd;
-  color: #0d47a1;
+  padding: 10px 10px 10px 0;
   border-radius: 5px;
-  font-weight: bold;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 13.8px;
+  font-family: Arial;
+  color: #9d9d9d;
 }
 
 .stepItem label {
@@ -335,18 +399,41 @@ body[data-vscode-theme-kind='vscode-light'] {
   color: inherit;
 }
 
+
 .checkbox {
+  /* Hide the default checkbox */
   appearance: none;
   -webkit-appearance: none;
-  height: 20px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  cursor: pointer;
+  -moz-appearance: none;
   min-width: 20px;
+  height: 20px;
+  border: 2px solid #666666; 
+  border-radius: 50%; 
+  cursor: pointer;
+  outline: none;
+  position: relative;
 }
 
 .checkbox:checked {
-  background-color: #4caf50;
+  background-color: #4caf50; 
+  border: 2px solid #4caf50;
+}
+
+/* Hide the default checkbox and add a custom tick mark using the ::after pseudo-element */
+.checkbox:checked::after {
+  content: "✔"; 
+  font-size: 12px; 
+  color: white; 
+  position: absolute;
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+}
+
+/* Style the label for better usability */
+label {
+  margin-left: 10px; 
+  cursor: pointer; 
 }
 
 .loader {
@@ -366,4 +453,68 @@ body[data-vscode-theme-kind='vscode-light'] {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.tokensContainer {
+  display: none;   /* Hidden temporary */
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.tooltip {
+  visibility: hidden;
+  background-color: rgba(217, 217, 217, 1);
+  color: black;
+  text-align: center;
+  padding: 7px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: -45px;
+  width: 78px;
+  left: 46%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12.1px;
+  text-align: center;
+  color: rgba(32, 32, 33, 1);
+  background-color: rgba(217, 217, 217, 1);
+}
+
+.tooltip-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 5px 5px 5px; /* Changed border-width values */
+  border-color: transparent transparent rgba(217, 217, 217, 1) transparent;
+  position: absolute;
+  top: -5px; /* Adjust this value as needed */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tokensContainer:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tokens {
+  color: white;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12.1px;
+}
+
+
+.setting-modal-body {
+  background-color: white !important;
 }

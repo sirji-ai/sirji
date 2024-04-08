@@ -30,7 +30,7 @@ document.getElementById('closeSettings').onclick = function () {
 
 // Planner modal
 document.getElementById('progressCircle').addEventListener('click', () => {
-  document.getElementById('plannerModal').style.display = 'block';
+  document.getElementById('plannerModal').style.display = 'flex';
 });
 
 document.getElementById('closePlanner').addEventListener('click', () => {
@@ -171,7 +171,7 @@ function createMessageElement(msg, sender) {
 }
 
 function openSettings() {
-  document.getElementById('settingsModal').style.display = 'block';
+  document.getElementById('settingsModal').style.display = 'flex';
   //  vscode.postMessage({ type: 'requestEnvVariables' });
 }
 
@@ -237,6 +237,8 @@ function updateStepStatus(message, status) {
   if (status === 'completed') {
     totalStepsCompleted = stepsArray.length;
     setProgress(totalStepsCompleted, stepsArray.length);
+
+    toggleProgressTextColor();
   }
 
   totalStepsCompleted = stepsArray.filter((step) => step.status === 'completed').length;
@@ -246,7 +248,7 @@ function updateStepStatus(message, status) {
 
 function displayPlannedSteps(steps) {
   setProgress(totalStepsCompleted, steps.length);
-  document.getElementById('progressCircle').style.display = 'flex';
+  document.getElementById('progressCircle').style.visibility = 'visible';
   stepsArray = steps;
   const listElement = document.getElementById('plannerStepsList');
   listElement.innerHTML = '';
@@ -269,18 +271,21 @@ function displayPlannedSteps(steps) {
 }
 
 function setProgress(x, y) {
-  const circle = document.getElementById('progressRingCircle');
-  const radius = circle.r.baseVal.value;
-  const circumference = radius * 2 * Math.PI;
+  // const circle = document.getElementById('progressRingCircle');
+  // const radius = circle.r.baseVal.value;
+  // const circumference = radius * 2 * Math.PI;
 
-  circle.style.strokeDasharray = `${circumference} ${circumference}`;
-  circle.style.strokeDashoffset = circumference;
+  // circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  // circle.style.strokeDashoffset = circumference;
 
-  const offset = circumference - (x / y) * circumference;
-  circle.style.strokeDashoffset = offset;
+  // const offset = circumference - (x / y) * circumference;
+  // circle.style.strokeDashoffset = offset;
 
   const progressText = document.getElementById('progressText');
-  progressText.textContent = `${x} of ${y}`;
+  progressText.textContent = `${x} of ${y} tasks done`;
+
+  const progressTextInsideModal = document.getElementById('progressTextInsideModal');
+  progressTextInsideModal.textContent = `${x} of ${y} tasks done`;
 }
 
 function disableSendButton(disable) {
@@ -305,6 +310,18 @@ function markSolutionCompleted(data) {
   totalStepsCompleted = stepsArray.length;
   setProgress(stepsArray.length, stepsArray.length);
   displayPlannedSteps(stepsArray);
+}
+
+function toggleProgressTextColor() {
+  // Select the element with id "progressText"
+  const progressText = document.getElementById("progressText");
+
+  // Update the background color
+  progressText.style.backgroundColor = "#78a866";
+
+  setTimeout(() => {
+    progressText.style.backgroundColor = "transparent";
+  }, 2000);
 }
 
 updateIconColors();
