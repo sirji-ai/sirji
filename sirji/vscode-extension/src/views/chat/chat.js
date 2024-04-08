@@ -226,6 +226,11 @@ function updateStepStatus(message, status) {
   if (stepNumber.length === 1) {
     console.log('Updating step:', stepNumber[0], stepsArray[0]);
     stepsArray[stepNumber[0] - 1].status = status;
+    if (status === 'completed') {
+      for (let i = 0; i < stepNumber[0] - 1; i++) {
+        stepsArray[i].status = status;
+      }
+    }
   }
 
   let maxStepNumber = 0;

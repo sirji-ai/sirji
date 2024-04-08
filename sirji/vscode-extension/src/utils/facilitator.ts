@@ -41,7 +41,7 @@ export class Facilitator {
     await oThis.setupSecretManager();
 
     // Setup History Manager
-    oThis.setupHistoryManager();
+    // oThis.setupHistoryManager();
 
     // Open Chat Panel
     oThis.openChatViewPanel();
@@ -195,6 +195,10 @@ export class Facilitator {
         break;
 
       case 'userMessage':
+        if (!oThis.historyManager) {
+          oThis.setupHistoryManager();
+        }
+
         await oThis.initFacilitation(message.content, {
           TO: ACTOR_ENUM.CODER
         });
