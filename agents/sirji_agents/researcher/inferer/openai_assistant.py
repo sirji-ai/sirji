@@ -47,7 +47,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
 
         :param retrieved_context: The context information retrieved based on embeddings match.
         :param problem_statement: The initial problem statement or query.
-        :return: A tuple containing the model's response based on the combined information of the problem statement & the retrieved context and the total tokens used in the run.
+        :return: A tuple containing the model's response based on the combined information of the problem statement & the retrieved context, the number of prompt tokens used in the run, and the number of completion tokens used in the run.
         """
 
         # Generate a prompt to send to the assistant
@@ -83,7 +83,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         """
         Initiates a run and waits for the assistant's response, then retrieves and returns the last message.
 
-        :return: A tuple containing the text of the assistant's latest message and the total tokens used in the run.
+        :return: A tuple containing the text of the assistant's latest message, the number of prompt tokens used in the run, and the number of completion tokens used in the run.
         """
         # Start a run to fetch the assistant's response
         run = self.client.beta.threads.runs.create(
@@ -108,4 +108,4 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         messages = self.client.beta.threads.messages.list(
             thread_id=self.init_payload['thread_id'])
         new_message = messages.data[0].content[0].text.value
-        return new_message, run.usage.total_tokens
+        return new_message, run.usage.prompt_tokens, run.usage.completion_tokens
