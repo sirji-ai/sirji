@@ -41,6 +41,7 @@ export const ACTION_ENUM = {
 
   //coder and executor conversations
   EXECUTE_COMMAND: 'EXECUTE_COMMAND',
+  RUN_SERVER: 'RUN_SERVER',
   CREATE_FILE: 'CREATE_FILE',
   READ_FILE: 'READ_FILE',
   READ_DIR: 'READ_DIR',

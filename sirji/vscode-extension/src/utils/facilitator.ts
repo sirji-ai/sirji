@@ -476,6 +476,18 @@ export class Facilitator {
               console.log('executedCommandRes', executedCommandRes);
               break;
 
+            case ACTION_ENUM.RUN_SERVER:
+              const runServerLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
+
+              const runServerRes = await executeTask(parsedMessage.COMMAND, runServerLogPath);
+
+              rawMessage = runServerRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
+              console.log('runServerRes', runServerRes);
+              break;
+
             case ACTION_ENUM.CREATE_FILE:
               const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
               rawMessage = createFileRes;
@@ -555,6 +567,10 @@ export class Facilitator {
 
       case ACTION_ENUM.EXECUTE_COMMAND:
         contentMessage = `Executing Command: ${parsedMessage.COMMAND}`;
+        break;
+
+      case ACTION_ENUM.RUN_SERVER:
+        contentMessage = `Running Server: ${parsedMessage.COMMAND}`;
         break;
 
       case ACTION_ENUM.INSTALL_PACKAGE:

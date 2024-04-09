@@ -62,7 +62,7 @@ class CodingAgentRunner:
         elif conversations[-1]['parsed_content']['TO'] == AgentEnum.EXECUTOR.name:
             last_action = conversations[-1]['parsed_content']['ACTION']
 
-            if last_action in [ActionEnum.EXECUTE_COMMAND.name, ActionEnum.CREATE_FILE.name, ActionEnum.INSTALL_PACKAGE.name, ActionEnum.READ_FILE.name, ActionEnum.READ_DIR.name]:
+            if last_action in [ActionEnum.EXECUTE_COMMAND.name, ActionEnum.RUN_SERVER.name, ActionEnum.CREATE_FILE.name, ActionEnum.INSTALL_PACKAGE.name, ActionEnum.READ_FILE.name, ActionEnum.READ_DIR.name]:
                 message_class = MessageFactory[ActionEnum.OUTPUT.name]
                 message_str = message_class().generate({"details": contents})
             else:
