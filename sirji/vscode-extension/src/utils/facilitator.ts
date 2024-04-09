@@ -140,13 +140,13 @@ export class Facilitator {
   private async readCoderLogs() {
     const oThis = this;
 
-    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'coder.log');
+    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'coder.log');
 
     let coderLogFileContent = '';
-
+    
     if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
       coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
-      return coderLogFileContent;
+      // return coderLogFileContent;
     }
 
     this.chatPanel?.webview.postMessage({
@@ -158,29 +158,29 @@ export class Facilitator {
   private async readPlannerLogs() {
     const oThis = this;
 
-    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'planner.log');
+    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'planner.log');
 
     let plannerLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(plannerConversationFilePath)) {
       plannerLogFileContent = oThis.historyManager?.readFile(plannerConversationFilePath);
-      return plannerLogFileContent;
+      // return plannerLogFileContent;
     }
 
     oThis.chatPanel?.webview.postMessage({
       type: 'plannerLogs',
-      content: oThis.readPlannerLogs()
+      content: plannerLogFileContent
     });
   }
 
   private async readResearcherLogs() {
     const oThis = this;
 
-    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'researcher.log');
+    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'researcher.log');
 
     let researcherLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(researcherConversationFilePath)) {
       researcherLogFileContent = oThis.historyManager?.readFile(researcherConversationFilePath);
-      return researcherLogFileContent;
+      // return researcherLogFileContent;
     }
 
     this.chatPanel?.webview.postMessage({

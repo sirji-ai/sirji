@@ -45,7 +45,7 @@ const vscode = acquireVsCodeApi();
 
 // Listen for messages from the extension
 window.addEventListener('message', (event) => {
-  console.log('Received message in chat.js:', event.data);
+  console.log(`Received message in chat.js: ${event.data.type}`, event.data);
   switch (event.data.type) {
     case 'settingSaved':
       settingSaved(event.data.content.message);
@@ -432,22 +432,23 @@ function updateTooltipTokenValues(tokenValues) {
 
 function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
-  plannerLogs.innerHTML = data;
+  plannerLogs.innerText = data;
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
-  researcherLogs.innerHTML = data;
+  researcherLogs.innerText = data;
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
-  coderLogs.innerHTML = data;
+  coderLogs.innerText = data;
 }
 
 function displayCoderTab(data) {
+  showTab("coderTab");
   const coderTab = document.getElementById('coderTab');
-  coderTab.innerHTML = data;
+  // coderTab.innerHTML = data;
 
   coderTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestCoderLogs' });
@@ -455,8 +456,9 @@ function displayCoderTab(data) {
 }
 
 function displayPlannerTab(data) {
+  showTab("plannerTab");
   const plannerTab = document.getElementById('plannerTab');
-  plannerTab.innerHTML = data;
+  // plannerTab.innerHTML = data;
 
   plannerTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestPlannerLogs' });
@@ -464,8 +466,9 @@ function displayPlannerTab(data) {
 }
 
 function displayResearcherTab(data) {
+  showTab("researcherTab");
   const researcherTab = document.getElementById('researcherTab');
-  researcherTab.innerHTML = data;
+  // researcherTab.innerHTML = data;
 
   researcherTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestResearcherLogs' });
@@ -486,6 +489,39 @@ function closeResearcherTab() {
   clearInterval(researcherTabInterval);
   document.getElementById('researcherTab').innerHTML = '';
 }
+
+const tabButtons = document.querySelectorAll('.tab-button');
+
+tabButtons.forEach(function (button) {
+  button.addEventListener('click', function () {
+    const tabName = this.getAttribute('data-tab');
+    showTab(tabName);
+  });
+});
+
+function showTab(tabName) {
+  let i, tabcontent, tablinks;
+
+  // Get all elements with class="tab" and hide them
+  tabcontent = document.getElementsByClassName('tab');
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = 'none';
+  }
+
+  // Get all elements with class="tab-button" and remove the class "active"
+  tablinks = document.getElementsByClassName('tab-button');
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].classList.remove('active');
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(tabName).style.display = 'block';
+  document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+}
+
+// Show the initial tab on page load
+showTab('chatTerminalTab');
+
 
 updateIconColors();
 

@@ -433,7 +433,7 @@ label {
   border-radius: 6px;
   position: absolute;
   z-index: 1;
-  bottom: -63px;
+  bottom: -66px;
   width: 178px;
   left: 38%;
   transform: translateX(-50%);
@@ -537,6 +537,33 @@ label {
   border-color: #888;
 }
 
+.left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.tab {
+  display: none;
+  
+  margin-top: 46px;
+}
+
+.tab.active {
+  display: block;
+}
+
+/* Styles for tab buttons */
+.tab-button {
+  color: white;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  border-bottom: 1px solid white;
+}
+
 .tooltip-body{
   padding-top: 3px;
   padding-bottom: 3px;
@@ -545,4 +572,8 @@ label {
 .hr{
   margin: 7px 0;
   border-bottom: 1px solid grey;
+}
+
+.p-20{
+  padding: 20px;
 }
