@@ -306,46 +306,6 @@ textarea {
   cursor: pointer;
 }
 
-#saveSettings {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #302f2f;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-#saveSettings:hover {
-  background-color: #444;
-  transform: scale(1.05);
-}
-
-.input-wrapper {
-  margin-bottom: 15px;
-}
-
-.input-wrapper label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #666;
-}
-
-.input-wrapper input[type='text'] {
-  width: calc(100% - 10px);
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 13px;
-  box-sizing: border-box;
-}
-
-.input-wrapper input[type='text']:hover {
-  border-color: #888;
-}
-
 .error-message {
   color: red;
   font-size: 12px;
@@ -456,7 +416,7 @@ label {
 }
 
 .tokensContainer {
-  display: none;   /* Hidden temporary */
+  display: none;  
   justify-content: center;
   align-items: center;
   position: relative;
@@ -515,7 +475,64 @@ label {
   line-height: 12.1px;
 }
 
+.settings-modal-heading {
+  font-family: Arial;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18.4px;
+  text-align: left;
+  margin-top: 20px;
+  color: white;
+}
 
-.setting-modal-body {
-  background-color: white !important;
+.save-settings-button {
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  color: white;
+  border: 1px solid #2382d7;
+  background-color: #0079d5;
+  border-radius: 5px;
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 13.8px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.input-wrapper {
+  margin-bottom: 25px;
+  width: 400px;
+  margin-top: 20px;
+}
+
+.input-wrapper label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: white;
+
+  margin-left: 0px;
+  font-family: Arial;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.1px;
+  text-align: left;
+}
+
+.input-wrapper input[type="text"] {
+  width: calc(100% - 10px);
+  padding: 10px;
+  border: 1px solid #454545;
+  border-radius: 5px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: #242424;
+  color: white;
+}
+
+.input-wrapper input[type="text"]:hover {
+  border-color: #888;
 }
