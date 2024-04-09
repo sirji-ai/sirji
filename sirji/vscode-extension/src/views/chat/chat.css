@@ -536,3 +536,13 @@ label {
 .input-wrapper input[type="text"]:hover {
   border-color: #888;
 }
+
+.tooltip-body{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.hr{
+  margin: 7px 0;
+  border-bottom: 1px solid grey;
+}
