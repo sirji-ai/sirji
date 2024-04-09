@@ -74,13 +74,9 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'tokenUsed':
-      // displayFunctionForTokenUsed(event.data.content);
-      // event.data.content.total_prompt_tokens
-      // event.data.content.total_completion_tokens,
-      // event.data.content.total_prompt_tokens_value,
-      // event.data.content.total_completion_tokens_value
-
+      displayTokenUsed(event.data.content);
       break;
+    
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
   }
@@ -362,6 +358,26 @@ function toggleProgressTextColor() {
   setTimeout(() => {
     progressText.style.backgroundColor = "transparent";
   }, 2000);
+}
+
+function convertNumber(number) {
+  if (number >= 1000000) {
+    return Math.round(number / 100000) / 10 + 'M';
+  } else if (number >= 100000) {
+    return Math.round(number / 10000) / 100 + 'M';
+  } else if (number >= 1000) {
+    return Math.round(number / 100) / 10 + 'K';
+  } else {
+    return number.toString();
+  }
+}
+
+function displayTokenUsed(data) {
+  console.log("displayTokenUsed  ::: ", { data });
+  // event.data.content.total_prompt_tokens
+  // event.data.content.total_completion_tokens,
+  // event.data.content.total_prompt_tokens_value,
+  // event.data.content.total_completion_tokens_value
 }
 
 updateIconColors();
