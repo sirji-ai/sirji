@@ -58,7 +58,7 @@ export async function executeCommand(command: string, workspaceRootPath: string)
         } else {
           previousContent = currentContent;
         }
-      }, 30000);
+      }, 10000);
     });
   };
 
