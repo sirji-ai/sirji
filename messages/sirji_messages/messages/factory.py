@@ -4,6 +4,7 @@ from sirji_messages import ActionEnum
 from .actions.acknowledge import AcknowledgeMessage
 from .actions.answer import AnswerMessage
 from .actions.execute_command import ExecuteCommandMessage
+from .actions.run_server import RunServerMessage
 from .actions.create_file import CreateFileMessage
 from .actions.generate_steps import GenerateStepsMessage
 from .actions.problem_statement import ProblemStatementMessage
@@ -44,6 +45,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.ACKNOWLEDGE: AcknowledgeMessage,
         ActionEnum.ANSWER: AnswerMessage,
         ActionEnum.EXECUTE_COMMAND: ExecuteCommandMessage,
+        ActionEnum.RUN_SERVER: RunServerMessage,
         ActionEnum.CREATE_FILE: CreateFileMessage,
         ActionEnum.GENERATE_STEPS: GenerateStepsMessage,
         ActionEnum.PROBLEM_STATEMENT: ProblemStatementMessage,

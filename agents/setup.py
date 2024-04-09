@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-agents',
-    version='0.0.14',
+    version='0.0.15',
     author='Sirji',
     description='Research, Coding and Planning agents used by Sirji.',
     license='MIT',

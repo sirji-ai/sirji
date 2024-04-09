@@ -5,6 +5,7 @@ class ActionEnum(Enum):
     ACKNOWLEDGE = auto()
     ANSWER = auto()
     EXECUTE_COMMAND = auto()
+    RUN_SERVER = auto()
     CREATE_FILE = auto()
     GENERATE_STEPS = auto()
     PROBLEM_STATEMENT = auto()
