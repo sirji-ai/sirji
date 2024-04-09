@@ -21,7 +21,12 @@ export async function executeCommand(command: string, workspaceRootPath: string)
   const fileName = `output.txt`;
   const filePath = path.join(workspaceRootPath, fileName);
 
-  command = `(${command}) 2>&1 | tee "${filePath}"`;
+  if (command.startsWith('source ')) {
+    command = `${command} 2> "${filePath}"`;
+  } else {
+    command = `(${command}) 2>&1 | tee "${filePath}"`;
+  }
+
 
   sirjiTerminal.sendText(command);
 
@@ -31,7 +36,7 @@ export async function executeCommand(command: string, workspaceRootPath: string)
     throw error;
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 30000));
 
   const fileContent = await fsPromises.readFile(filePath, 'utf8');
 

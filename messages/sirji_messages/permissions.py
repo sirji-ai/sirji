@@ -20,7 +20,6 @@ permissions_dict = {
     ),
     (AgentEnum.CODER, AgentEnum.USER): (
         ActionEnum.QUESTION,
-        ActionEnum.INFORM,
         ActionEnum.STEP_STARTED,
         ActionEnum.STEP_COMPLETED,
         ActionEnum.SOLUTION_COMPLETE
