@@ -69,7 +69,7 @@ async function executePythonScript(context: vscode.ExtensionContext | undefined,
         if (errorData) {
           vscode.window.showErrorMessage(`Sirji> Python script execution error: ${errorData}`);
         }
-        reject(new Error(`script exited with code ${code}`));
+        reject(errorData);
       }
     });
   });

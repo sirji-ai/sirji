@@ -177,10 +177,14 @@ export class Facilitator {
   private async setupVirtualEnv(): Promise<void> {
     const oThis = this;
 
-    await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
-      '--venv',
-      path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
-    ]);
+    try {
+      await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+        '--venv',
+        path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
+      ]);
+    } catch (error) {
+      oThis.sendErrorToChatPanel(error);
+    }
   }
 
   private async handleMessagesFromChatPanel(message: any) {
@@ -234,7 +238,11 @@ export class Facilitator {
 
           const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
+          try {
+            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
+          } catch (error) {
+            oThis.sendErrorToChatPanel(error);
+          }
 
           const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
 
@@ -257,7 +265,11 @@ export class Facilitator {
 
           const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
+          try {
+            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
+          } catch (error) {
+            oThis.sendErrorToChatPanel(error);
+          }
 
           const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
 
@@ -278,7 +290,11 @@ export class Facilitator {
 
           const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
 
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
+          try {
+            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
+          } catch (error) {
+            oThis.sendErrorToChatPanel(error);
+          }
 
           const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
 
@@ -410,7 +426,7 @@ export class Facilitator {
           keepFacilitating = false;
           break;
       }
-      
+
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
 
       oThis.chatPanel?.webview.postMessage({
@@ -554,5 +570,16 @@ export class Facilitator {
       prompt_tokens: 0,
       completion_tokens: 0
     };
+  }
+
+  private sendErrorToChatPanel(error: any) {
+    const oThis = this;
+
+    const detailedErrorMessage = `An error occurred during the execution of the Python script: : ${error}`;
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'botMessage',
+      content: { message: detailedErrorMessage, allowUserMessage: true }
+    });
   }
 }
