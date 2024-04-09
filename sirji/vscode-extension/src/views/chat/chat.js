@@ -388,16 +388,14 @@ function toggleProgressTextColor() {
 }
 
 function convertNumber(number) {
-  if (number >= 1000000000) {
-      return (Math.round(number / 10000000) / 100) + 'B';
-  } else if (number >= 1000000) {
-      return (Math.round(number / 100000) / 10) + 'M';
+  if (number >= 1000000) {
+      return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 100000) {
-      return (Math.round(number / 10000) / 100) + 'M';
+      return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 1000) {
-      return (Math.round(number / 100) / 10) + 'K';
+      return (Math.ceil(number / 1000)).toFixed(1).replace('.0', '') + 'K';
   } else {
-      return number.toString();
+      return ""; // Don't show tokens less than 1K
   }
 }
 
@@ -405,6 +403,10 @@ function displayTokenUsed(data = {}) {
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = data;
 
   const totalTokensUsed = total_completion_tokens + total_prompt_tokens;
+
+  if (totalTokensUsed < 1000) {
+    return;
+  }
 
   updateTokensUsed(totalTokensUsed);
 
@@ -424,10 +426,10 @@ function updateTooltipTokenValues(tokenValues) {
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
 
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
-  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $ ${total_prompt_tokens_value}`;
+  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $ ${total_prompt_tokens_value.toFixed(2)}`;
 
   const jCompletionTokensUsed = document.getElementById('jCompletionTokensUsed');
-  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $ ${total_completion_tokens_value}`;
+  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $ ${total_completion_tokens_value.toFixed(2)}`;
 }
 
 function displayPlannerLogs(data) {
@@ -446,7 +448,7 @@ function displayCoderLogs(data) {
 }
 
 function displayCoderTab(data) {
-  showTab("coderTab");
+  // showTab("coderTab");
   const coderTab = document.getElementById('coderTab');
   // coderTab.innerHTML = data;
 
@@ -456,7 +458,7 @@ function displayCoderTab(data) {
 }
 
 function displayPlannerTab(data) {
-  showTab("plannerTab");
+  // showTab("plannerTab");
   const plannerTab = document.getElementById('plannerTab');
   // plannerTab.innerHTML = data;
 
@@ -466,7 +468,7 @@ function displayPlannerTab(data) {
 }
 
 function displayResearcherTab(data) {
-  showTab("researcherTab");
+  // showTab("researcherTab");
   const researcherTab = document.getElementById('researcherTab');
   // researcherTab.innerHTML = data;
 

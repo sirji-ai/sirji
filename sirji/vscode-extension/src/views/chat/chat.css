@@ -181,7 +181,6 @@ textarea {
   visibility: hidden;
   justify-content: center;
   align-items: center;
-  margin-right: 10px;
   position: relative;
   height: 30px;
   gap: 5px;
@@ -198,7 +197,7 @@ textarea {
 }
 
 #progressText {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 12.1px;
   text-align: left;
@@ -433,8 +432,8 @@ label {
   border-radius: 6px;
   position: absolute;
   z-index: 1;
-  bottom: -66px;
-  width: 178px;
+  bottom: -81px;
+  width: 193px;
   left: 38%;
   transform: translateX(-50%);
   opacity: 0;
@@ -442,8 +441,8 @@ label {
 }
 
 .tooltip-text {
-  font-family: Inter;
-  font-size: 10px;
+  font-family: Arial;
+  font-size: 13px;
   font-weight: 400;
   line-height: 12.1px;
   text-align: left;
@@ -470,7 +469,7 @@ label {
 
 .tokens {
   color: white;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 12.1px;
 }
@@ -558,6 +557,7 @@ label {
 .tab-button {
   color: white;
   cursor: pointer;
+  font-family: Arial;
 }
 
 .tab-button.active {
