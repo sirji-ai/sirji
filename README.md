@@ -43,11 +43,13 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-To check whether these prerequisites are met by your machine, run:
+To check whether your machine meets these prerequisites, run:
 
 ```zsh
 sh check_prerequisites.sh
 ```
+
+Also, you will need an OpenAI API key.
 
 ## Contributing
 
