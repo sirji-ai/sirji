@@ -35,7 +35,11 @@ export async function executeCommand(command: string, workspaceRootPath: string)
 
   const fileName = `output.txt`;
   const filePath = path.join(workspaceRootPath, fileName);
-  command = `(${command}) 2>&1 | tee "${filePath}"`;
+  if (command.startsWith('source ')) {
+    command = `${command} 2> "${filePath}"`;
+  } else {
+    command = `(${command}) 2>&1 | tee "${filePath}"`;
+  }
 
   sirjiTerminal.sendText(command);
 
