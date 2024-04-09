@@ -9,14 +9,14 @@ def test_message_parse_valid_input():
     ```
     FROM: CODER
     TO: USER
-    ACTION: INFORM
+    ACTION: QUESTION
     DETAILS: Some information.
     ```
     """
     expected_output = {
         'FROM': 'CODER',
         'TO': 'USER',
-        'ACTION': 'INFORM',
+        'ACTION': 'QUESTION',
         'DETAILS': 'Some information.'
     }
     assert message_parse(
@@ -24,7 +24,7 @@ def test_message_parse_valid_input():
 
 
 def test_message_parse_invalid_format_raises_error():
-    input_message = "FROM: CODER\nTO: USER\nACTION: INFORM\nDETAILS: Some information."
+    input_message = "FROM: CODER\nTO: USER\nACTION: QUESTION\nDETAILS: Some information."
     with pytest.raises(MessageValidationError):
         message_parse(input_message)
 
@@ -71,14 +71,14 @@ def test_message_parse_with_extra_spaces():
     ```
     FROM :  CODER
     TO : USER
-    ACTION : INFORM
+    ACTION : QUESTION
     DETAILS : Extra spaces around colons.
     ```
     """
     expected_output = {
         'FROM': 'CODER',
         'TO': 'USER',
-        'ACTION': 'INFORM',
+        'ACTION': 'QUESTION',
         'DETAILS': 'Extra spaces around colons.'
     }
     assert message_parse(
@@ -92,7 +92,7 @@ def test_message_parse_case_sensitivity():
     ```
     from: CODER
     to: USER
-    action: INFORM
+    action: QUESTION
     details: Checking case sensitivity.
     ```
     """

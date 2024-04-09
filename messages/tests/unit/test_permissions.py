@@ -7,7 +7,7 @@ from sirji_messages import validate_permission, AgentEnum, ActionEnum
 def test_permission_valid():
     # Assuming Coder has permission to inform a User
     assert validate_permission(
-        "CODER", "USER", "INFORM"), "Valid permission was denied"
+        "CODER", "USER", "QUESTION"), "Valid permission was denied"
 
 
 def test_permission_invalid_action():
@@ -19,17 +19,17 @@ def test_permission_invalid_action():
 def test_permission_invalid_agent_pair():
     # Assuming no direct interaction is allowed from Executor to User
     assert not validate_permission(
-        "EXECUTOR", "USER", "INFORM"), "Invalid agent pair was erroneously permitted"
+        "EXECUTOR", "USER", "QUESTION"), "Invalid agent pair was erroneously permitted"
 
 
 def test_permission_nonexistent_from_agent():
     assert not validate_permission(
-        "FAKE_AGENT", "USER", "INFORM"), "Permission check with nonexistent 'from' agent should be denied"
+        "FAKE_AGENT", "USER", "QUESTION"), "Permission check with nonexistent 'from' agent should be denied"
 
 
 def test_permission_nonexistent_to_agent():
     assert not validate_permission(
-        "CODER", "FAKE_AGENT", "INFORM"), "Permission check with nonexistent 'to' agent should be denied"
+        "CODER", "FAKE_AGENT", "QUESTION"), "Permission check with nonexistent 'to' agent should be denied"
 
 
 def test_permission_nonexistent_action():
@@ -41,4 +41,4 @@ def test_permission_nonexistent_action():
 
 def test_permission_with_invalid_agent_enum():
     assert not validate_permission(
-        "INVALID_AGENT", "USER", "INFORM"), "Permission check with invalid enum should return False instead of raising KeyError"
+        "INVALID_AGENT", "USER", "QUESTION"), "Permission check with invalid enum should return False instead of raising KeyError"

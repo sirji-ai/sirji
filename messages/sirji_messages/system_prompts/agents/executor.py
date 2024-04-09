@@ -29,6 +29,8 @@ class ExecutorSystemPrompt(AgentSystemPromptBase):
           - Read the content from all files in a directory and all its subdirectories at once (separated by a divider).
           - Install required dependencies/packages/libraries on macOS.
           - Execute code on macOS.
+          - Execute command on macOS.
+          - Run server process on macOS.
           """)
 
     def ending_prompt(self):
