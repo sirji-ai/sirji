@@ -51,6 +51,7 @@ export async function executeTask(command: string, workspaceRootPath: string): P
               tempFileContent = response.currentContent;
               if (!response.hasChanges && !hasReturnTaskExecutionResponse) {
                 hasReturnTaskExecutionResponse = true;
+
                 return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
               }
             }, 30000);
@@ -74,7 +75,7 @@ export async function executeTask(command: string, workspaceRootPath: string): P
       console.error(`Failed to execute task: ${error}`);
       throw error;
     } finally {
-      // disposables.forEach((d) => d.dispose());
+      disposables.forEach((d) => d.dispose());
     }
   });
 }
