@@ -59,21 +59,21 @@ class ResearchAgent:
             f"Training using search term: {parsed_message.get('TERM')}")
         self._search_and_index(parsed_message.get('TERM'))
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully")
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully"), 0, 0
 
     def _handle_train_using_url(self, parsed_message):
         """Private method to handle training using a specific URL."""
         logger.info(f"Training using URL: {parsed_message.get('URL')}")
         self._index([parsed_message.get('URL')])
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully")
+        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
 
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
         logger.info(f"Infering: {parsed_message.get('DETAILS')}")
-        response, total_tokens = self._infer(parsed_message.get('DETAILS'))
+        response, prompt_tokens, completion_tokens= self._infer(parsed_message.get('DETAILS'))
 
-        return self._generate_message(ActionEnum.RESPONSE, response), total_tokens
+        return self._generate_message(ActionEnum.RESPONSE, response), prompt_tokens, completion_tokens
 
     def _generate_message(self, action_enum, details):
         """Generate standardized messages for responses based on action enum."""

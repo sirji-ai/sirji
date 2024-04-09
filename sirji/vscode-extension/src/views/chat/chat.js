@@ -73,6 +73,14 @@ window.addEventListener('message', (event) => {
       markSolutionCompleted(event.data.content);
       break;
 
+    case 'tokenUsed':
+      // displayFunctionForTokenUsed(event.data.content);
+      // event.data.content.total_prompt_tokens
+      // event.data.content.total_completion_tokens,
+      // event.data.content.total_prompt_tokens_value,
+      // event.data.content.total_completion_tokens_value
+
+      break;
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
   }

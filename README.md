@@ -35,55 +35,29 @@ Additionally, it provides an interactive chat interface through which users can 
 TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to the demos page.
 
 ## Prerequisites
+
 Make sure you have installed all of the following prerequisites on your machine:
 
 - Visual Studio Code (>= 1.80.2)
 - Node.js (>= 18) and npm (>= 8.19)
-- Python (>= 3.11) - Make sure `python --version` runs without error.
+- Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-## Using the extension in Debug mode
-
-After cloning the repository, switch to the `sirji/vscode-extension` directory:
+To check whether these prerequisites are met by your machine, run:
 
 ```zsh
-git clone git@github.com:sirji-ai/sirji.git
-cd sirji/vscode-extension
+sh check_prerequisites.sh
 ```
 
-Open the folder in Visual Studio Code:
+## Contributing
 
-```zsh
-code .
-```
+We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
 
-Install the project dependencies by running:
+Thank you for considering contributing to Sirji. We look forward to your contributions!
 
-```zsh
-npm install
-```
+## Reporting Issues
 
-Compile the TypeScript code:
-
-```zsh
-npm run compile
-```
-
-To start debugging the extension in VS Code, follow these steps:
-
-- Open the **Run and Debug** view from the Activity Bar on the left side of the window or by using the shortcut `Cmd+Shift+D`.
-- From the **Run and Debug** dropdown menu at the top, select the `Run Extension` option.
-- Press the **Start Debugging** button (green play icon) to launch a new VS Code window (Extension Development Host) with the extension loaded.
-
-To activate the extension in the new VS Code window (Extension Development Host):
-
-- Trigger the extension command by opening the Command Palette with `Cmd+Shift+P`, typing `Sirji`, and pressing `Enter`.
-
-Observe the Sirji chat interface open. Interact with Sirji via the chat.
-
-## Installing from VSIX file
-
-TODO
+If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
 
 ## Architecture
 
@@ -100,13 +74,13 @@ Sirji gets the work done using it's following agents:
 
 ### PyPI Packages
 
-The Planning Agent, Coding Agent, and Research Agent are developed in the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/)<a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
+The Planning Agent, Coding Agent, and Research Agent are developed within the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo). <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
-The communication between all these agents is defined as a message protocol. The Message Factory (CRUD for messages as per the message protocol) and permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/)<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+Communication among these agents is facilitated through a defined message protocol. The Message Factory (responsible for creating, reading, updating, and deleting messages according to the message protocol) and the permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo).<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
 
-The tools for crawling URLs (converting them to markdowns), searching for a term on Google, and custom logger are developed in the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/)<a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
-All these packages are called from Python Adapter Scripts, which are spawned by the extension.
+All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
 ## License
 

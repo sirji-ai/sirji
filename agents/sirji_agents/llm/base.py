@@ -31,9 +31,9 @@ class LLMAgentBase(metaclass=SingletonMeta):
         self.logger.info(f"Incoming: \n{input_message}")
         self.logger.info("Calling OpenAI Chat Completions API\n")
 
-        response_message = self.__get_response(conversation)
+        response_message, prompt_tokens, completion_tokens = self.__get_response(conversation)
 
-        return response_message, conversation
+        return response_message, conversation, prompt_tokens, completion_tokens
 
     def __prepare_conversation(self, input_message, history):
         conversation = []
@@ -54,9 +54,14 @@ class LLMAgentBase(metaclass=SingletonMeta):
         
         retry_llm_count = 0
         response_message = ''
+        prompt_tokens = 0
+        completion_tokens = 0
 
         while(True):
-            response_message = self.__call_llm(conversation)
+            response_message, current_prompt_tokens, current_completion_tokens = self.__call_llm(conversation)
+            
+            prompt_tokens += current_prompt_tokens
+            completion_tokens += current_completion_tokens
             try:
                 # Attempt parsing
                 parsed_response_message = message_parse(response_message)
@@ -76,7 +81,7 @@ class LLMAgentBase(metaclass=SingletonMeta):
                 raise e
             
             
-        return response_message
+        return response_message, prompt_tokens, completion_tokens
     
     def __call_llm(self, conversation):
         history = []
@@ -93,6 +98,9 @@ class LLMAgentBase(metaclass=SingletonMeta):
 
         response_message = chat_completion.choices[0].message.content
 
+        # Get the total tokens used in the response
+        prompt_tokens = chat_completion.usage.prompt_tokens
+        completion_tokens = chat_completion.usage.completion_tokens
         self.logger.info(f"Raw response from Chat Completions API: \n{response_message}\n\n\n")
 
-        return response_message
+        return response_message, prompt_tokens, completion_tokens

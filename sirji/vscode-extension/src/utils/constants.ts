@@ -7,7 +7,9 @@ export const Constants = {
   CODER_JSON_FILE: 'coder.json',
   PLANNER_JSON_FILE: 'planner.json',
   RESEARCHER_JSON_FILE: 'researcher.json',
-  PYTHON_INPUT_FILE: 'input.txt'
+  PYTHON_INPUT_FILE: 'input.txt',
+  PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS: 10,
+  COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS: 30
 };
 
 function getPythonVenvPath(): string {

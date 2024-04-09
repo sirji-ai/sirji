@@ -16,4 +16,8 @@ export class MaintainHistory {
     const rawData = fs.readFileSync(filePath, 'utf-8');
     return rawData;
   }
+
+  public checkIfFileExists(filePath: any): boolean {
+    return fs.existsSync(filePath);
+  }
 }

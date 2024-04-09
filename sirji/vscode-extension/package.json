@@ -1,8 +1,8 @@
 {
   "name": "sirji",
   "displayName": "Sirji",
-  "description": "“Sirji” is everywhere. A fun jab among friends. A chuckle on the Zoom call. Much more than respect. It's our vibe.",
-  "version": "0.0.1",
+  "description": "Sirji is an AI Software Development Agent.",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/sirji-ai/sirji"

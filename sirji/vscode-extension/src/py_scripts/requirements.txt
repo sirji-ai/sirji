@@ -1,3 +1,3 @@
 urllib3==1.25.11
 sirji-messages==0.0.9
-sirji-agents==0.0.11
+sirji-agents==0.0.14
