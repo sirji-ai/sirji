@@ -11,6 +11,9 @@ const UserSvg = `
 
 let stepsArray;
 let totalStepsCompleted = 0;
+let coderTabInterval;
+let plannerTabInterval;
+let researcherTabInterval;
 
 const userInput = document.getElementById('userInput');
 userInput.addEventListener('input', adjustTextAreaHeight);
@@ -76,7 +79,31 @@ window.addEventListener('message', (event) => {
     case 'tokenUsed':
       displayTokenUsed(event.data.content.message);
       break;
-    
+
+    case 'showCoderTab':
+      displayCoderTab(event.data.content);
+      break;
+
+    case 'showPlannerTab':
+      displayPlannerTab(event.data.content);
+      break;
+
+    case 'showResearcherTab':
+      displayResearcherTab(event.data.content);
+      break;
+
+    case 'plannerLogs':
+      displayPlannerLogs(event.data.content);
+      break;
+
+    case 'researcherLogs':
+      displayResearcherLogs(event.data.content);
+      break;
+
+    case 'coderLogs':
+      displayCoderLogs(event.data.content);
+      break;
+
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
   }
@@ -350,13 +377,13 @@ function markSolutionCompleted() {
 
 function toggleProgressTextColor() {
   // Select the element with id "progressText"
-  const progressText = document.getElementById("progressText");
+  const progressText = document.getElementById('progressText');
 
   // Update the background color
-  progressText.style.backgroundColor = "#78a866";
+  progressText.style.backgroundColor = '#78a866';
 
   setTimeout(() => {
-    progressText.style.backgroundColor = "transparent";
+    progressText.style.backgroundColor = 'transparent';
   }, 2000);
 }
 
@@ -395,13 +422,69 @@ function updateTokensUsed(totalTokensUsed) {
 
 function updateTooltipTokenValues(tokenValues) {
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
-  
+
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
   jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $ ${total_prompt_tokens_value}`;
 
   const jCompletionTokensUsed = document.getElementById('jCompletionTokensUsed');
   jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $ ${total_completion_tokens_value}`;
+}
 
+function displayPlannerLogs(data) {
+  const plannerLogs = document.getElementById('plannerLogs');
+  plannerLogs.innerHTML = data;
+}
+
+function displayResearcherLogs(data) {
+  const researcherLogs = document.getElementById('researcherLogs');
+  researcherLogs.innerHTML = data;
+}
+
+function displayCoderLogs(data) {
+  const coderLogs = document.getElementById('coderLogs');
+  coderLogs.innerHTML = data;
+}
+
+function displayCoderTab(data) {
+  const coderTab = document.getElementById('coderTab');
+  coderTab.innerHTML = data;
+
+  coderTabInterval = setInterval(() => {
+    vscode.postMessage({ type: 'requestCoderLogs' });
+  }, 10000);
+}
+
+function displayPlannerTab(data) {
+  const plannerTab = document.getElementById('plannerTab');
+  plannerTab.innerHTML = data;
+
+  plannerTabInterval = setInterval(() => {
+    vscode.postMessage({ type: 'requestPlannerLogs' });
+  }, 10000);
+}
+
+function displayResearcherTab(data) {
+  const researcherTab = document.getElementById('researcherTab');
+  researcherTab.innerHTML = data;
+
+  researcherTabInterval = setInterval(() => {
+    vscode.postMessage({ type: 'requestResearcherLogs' });
+  }, 10000);
+}
+
+function closeCoderTab() {
+  clearInterval(coderTabInterval);
+  document.getElementById('coderTab').innerHTML = '';
+}
+
+function closePlannerTab() {
+  clearInterval(plannerTabInterval);
+  document.getElementById('plannerTab').innerHTML = '';
+}
+
+function closeResearcherTab() {
+  clearInterval(researcherTabInterval);
+  document.getElementById('researcherTab').innerHTML = '';
 }
 
 updateIconColors();

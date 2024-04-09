@@ -22,6 +22,9 @@ export class Facilitator {
   private secretManager: SecretStorage | undefined;
   private envVars: any = undefined;
   private historyManager: MaintainHistory | undefined;
+  private isPlannerTabShown: Boolean = false;
+  private isResearcherTabShown: Boolean = false;
+  private isCoderTabShown: Boolean = false;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -134,6 +137,58 @@ export class Facilitator {
     );
   }
 
+  private async readCoderLogs() {
+    const oThis = this;
+
+    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'coder.log');
+
+    let coderLogFileContent = '';
+
+    if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
+      coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
+      return coderLogFileContent;
+    }
+
+    this.chatPanel?.webview.postMessage({
+      type: 'coderLogs',
+      content: coderLogFileContent
+    });
+  }
+
+  private async readPlannerLogs() {
+    const oThis = this;
+
+    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'planner.log');
+
+    let plannerLogFileContent = '';
+    if (oThis.historyManager?.checkIfFileExists(plannerConversationFilePath)) {
+      plannerLogFileContent = oThis.historyManager?.readFile(plannerConversationFilePath);
+      return plannerLogFileContent;
+    }
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'plannerLogs',
+      content: oThis.readPlannerLogs()
+    });
+  }
+
+  private async readResearcherLogs() {
+    const oThis = this;
+
+    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, '.logs', 'researcher.log');
+
+    let researcherLogFileContent = '';
+    if (oThis.historyManager?.checkIfFileExists(researcherConversationFilePath)) {
+      researcherLogFileContent = oThis.historyManager?.readFile(researcherConversationFilePath);
+      return researcherLogFileContent;
+    }
+
+    this.chatPanel?.webview.postMessage({
+      type: 'researcherLogs',
+      content: researcherLogFileContent
+    });
+  }
+
   private async sendWelcomeMessage() {
     const oThis = this;
 
@@ -199,6 +254,18 @@ export class Facilitator {
         await oThis.setSecretEnvVars(message.content);
         break;
 
+      case 'requestPlannerLogs':
+        await oThis.readPlannerLogs();
+        break;
+
+      case 'requestResearcherLogs':
+        await oThis.readResearcherLogs();
+        break;
+
+      case 'requestCoderLogs':
+        await oThis.readCoderLogs();
+        break;
+
       case 'userMessage':
         if (!oThis.historyManager) {
           oThis.setupHistoryManager();
@@ -227,6 +294,17 @@ export class Facilitator {
             oThis.chatPanel?.webview.postMessage({
               type: 'plannedSteps',
               content: parsedMessage.PARSED_STEPS
+            });
+          }
+
+          if (!oThis.isCoderTabShown) {
+            oThis.isCoderTabShown = true;
+            oThis.chatPanel?.webview.postMessage({
+              type: 'showCoderTab',
+              content: {
+                sirjiRunId: oThis.sirjiRunId,
+                logs: oThis.readCoderLogs()
+              }
             });
           }
 
@@ -259,6 +337,15 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.RESEARCHER:
+          if (!oThis.isResearcherTabShown) {
+            oThis.isResearcherTabShown = true;
+            oThis.chatPanel?.webview.postMessage({
+              type: 'showResearcherTab',
+              content: {
+                sirjiRunId: oThis.sirjiRunId
+              }
+            });
+          }
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
           const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
@@ -284,6 +371,15 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.PLANNER:
+          if (!oThis.isPlannerTabShown) {
+            oThis.isPlannerTabShown = true;
+            oThis.chatPanel?.webview.postMessage({
+              type: 'showPlannerTab',
+              content: {
+                sirjiRunId: oThis.sirjiRunId
+              }
+            });
+          }
           oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
           const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
