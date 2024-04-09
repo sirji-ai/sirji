@@ -74,7 +74,7 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'tokenUsed':
-      displayTokenUsed(event.data.content);
+      displayTokenUsed(event.data.content.message);
       break;
     
     default:
@@ -372,12 +372,34 @@ function convertNumber(number) {
   }
 }
 
-function displayTokenUsed(data) {
-  console.log("displayTokenUsed  ::: ", { data });
-  // event.data.content.total_prompt_tokens
-  // event.data.content.total_completion_tokens,
-  // event.data.content.total_prompt_tokens_value,
-  // event.data.content.total_completion_tokens_value
+function displayTokenUsed(data = {}) {
+  const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = data;
+
+  const totalTokensUsed = total_completion_tokens + total_prompt_tokens;
+
+  updateTokensUsed(totalTokensUsed);
+
+  updateTooltipTokenValues(data);
+}
+
+function updateTokensUsed(totalTokensUsed) {
+  const tokens = convertNumber(totalTokensUsed);
+
+  const jTokensUsed = document.getElementById('jTokensUsed');
+  jTokensUsed.textContent = `${tokens} tokens`;
+
+  document.getElementById('jTokensContainer').style.display = 'flex';
+}
+
+function updateTooltipTokenValues(tokenValues) {
+  const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
+  
+  const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
+  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $ ${total_prompt_tokens_value}`;
+
+  const jCompletionTokensUsed = document.getElementById('jCompletionTokensUsed');
+  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $ ${total_completion_tokens_value}`;
+
 }
 
 updateIconColors();

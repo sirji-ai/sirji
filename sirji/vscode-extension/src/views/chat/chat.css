@@ -473,19 +473,20 @@ label {
   border-radius: 6px;
   position: absolute;
   z-index: 1;
-  bottom: -45px;
-  width: 78px;
-  left: 46%;
+  bottom: -63px;
+  width: 178px;
+  left: 38%;
   transform: translateX(-50%);
   opacity: 0;
   transition: opacity 0.3s;
 }
 
 .tooltip-text {
+  font-family: Inter;
   font-size: 10px;
   font-weight: 400;
   line-height: 12.1px;
-  text-align: center;
+  text-align: left;
   color: rgba(32, 32, 33, 1);
   background-color: rgba(217, 217, 217, 1);
 }

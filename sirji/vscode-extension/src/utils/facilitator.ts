@@ -410,6 +410,16 @@ export class Facilitator {
           keepFacilitating = false;
           break;
       }
+      
+      const totalTokensUsed = await oThis.calculateTotalTokensUsed();
+
+      oThis.chatPanel?.webview.postMessage({
+        type: 'tokenUsed',
+        content: {
+          message: totalTokensUsed,
+          allowUserMessage: false
+        }
+      });
     }
   }
 
