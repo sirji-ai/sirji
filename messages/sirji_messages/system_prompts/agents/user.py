@@ -25,7 +25,6 @@ class UserSystemPrompt(AgentSystemPromptBase):
         return textwrap.dedent("""
           - Provide the problem statement (PS).   
           - Provide the answer to the question asked.             
-          - Acknowledge the informational messages.
           - Acknowledge started or completed steps.
           - Acknowledge the final solution.
           """)
