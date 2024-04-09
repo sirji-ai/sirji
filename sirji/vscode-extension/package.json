@@ -2,17 +2,46 @@
   "name": "sirji",
   "displayName": "Sirji",
   "description": "Sirji is an AI Software Development Agent.",
-  "version": "0.0.3",
+  "version": "0.0.4",
+  "publisher": "TrueSparrow",
+  "icon": "./out/assets/sirji.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/sirji-ai/sirji"
   },
+  "bugs": {
+    "url": "https://github.com/sirji-ai/sirji/issues"
+  },
+  "qna": "https://github.com/orgs/sirji-ai/discussions/categories/q-a",
   "license": "MIT",
   "engines": {
     "vscode": "^1.80.2"
   },
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Machine Learning",
+    "Education"
+  ],
+  "keywords": [
+    "ai",
+    "sirji",
+    "true sparrow",
+    "openai",
+    "snippets",
+    "documentation",
+    "javascript",
+    "python",
+    "typescript",
+    "php",
+    "go",
+    "golang",
+    "ruby",
+    "c++",
+    "c#",
+    "java",
+    "kotlin",
+    "software development agent",
+    "opensource devin"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -26,9 +55,9 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./ && cp -r src/views src/py_scripts out/",
+    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets out/",
     "watch-ts": "tsc -watch -p ./",
-    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts out/'",
+    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets out/'",
     "watch": "concurrently npm:watch-*",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
