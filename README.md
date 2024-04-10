@@ -58,13 +58,11 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-To check whether your machine meets these prerequisites, run:
+Also, you will need an OpenAI API key to access the GPT-4 Turbo model.
 
-```zsh
-sh check_prerequisites.sh
-```
+## Installation
 
-Also, you will need an OpenAI API key.
+You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
 
 ## Architecture
 
