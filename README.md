@@ -59,16 +59,6 @@ sh check_prerequisites.sh
 
 Also, you will need an OpenAI API key.
 
-## Contributing
-
-We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
-
-Thank you for considering contributing to Sirji. We look forward to your contributions!
-
-## Reporting Issues
-
-If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
-
 ## Architecture
 
 Sirji gets the work done using it's following agents:
@@ -91,6 +81,16 @@ Communication among these agents is facilitated through a defined message protoc
 The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
+
+## Contributing
+
+We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
+
+Thank you for considering contributing to Sirji. We look forward to your contributions!
+
+## Reporting Issues
+
+If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
 
 ## License
 
