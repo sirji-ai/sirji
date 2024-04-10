@@ -588,3 +588,9 @@ label {
 .text-inactive{
   color: #9d9d9d;
 }
+
+.toolbar-icon:hover {
+  svg > path {
+    fill: #a1a1a1;
+  }
+}
