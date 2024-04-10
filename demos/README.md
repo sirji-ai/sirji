@@ -1,13 +1,13 @@
 # Sirji Demos
 
-Following are some demo videos illustrating [Sirji](https://github.com/sirji-ai/sirji)'s approach to various problems.
+Following are some select demo videos illustrating [Sirji](https://github.com/sirji-ai/sirji)'s problem solving flows.
 
 ## Demo 1: Tic-Tac-Toe Game
 
 ### Problem Statement
 
 ```
-Create a fully interactive website for playing Tic-Tac-Toe game.
+Create a fully interactive website for playing the Tic-Tac-Toe game.
 ```
 
 ### Demo Video
