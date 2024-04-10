@@ -1,6 +1,6 @@
 # Sirji Demos
 
-Following are some select demo videos illustrating [Sirji](https://github.com/sirji-ai/sirji)'s problem solving flows.
+Following are some select demo videos illustrating [Sirji](https://github.com/sirji-ai/sirji)'s problem-solving flows.
 
 ## Demo 1: Tic-Tac-Toe Game
 
