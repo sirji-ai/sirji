@@ -49,47 +49,75 @@ html {
   flex-grow: 1;
 }
 
-.bot-message {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.user-message {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
 .user-message:last-child,
 .bot-message:last-child {
   margin-bottom: 70px;
 }
 
 /* Adjusted message styles for flexible width  */
-.user,
-.bot {
+/* .user {
   min-width: 100px;
   max-width: 80%;
   padding: 7px 10px;
   border-radius: 6px;
   color: white;
-}
+} */
 
 .user {
   background-color: #4caf50;
   align-self: flex-end;
+  margin-right: auto;
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: white;
+}
+
+.user-message {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  align-self: end;
+  width: fit-content;
+  max-width: 80%;
+  margin-bottom: 10px;
+  gap: 4px;
+}
+
+.user-text-inactive{
+  align-self: flex-end;
   margin-left: auto;
+  min-width: 100px;
+  max-width: 80%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: white;
+  opacity: 0.9;
 }
 
 .bot {
   background-color: #666;
-  align-self: flex-start;
+  align-self: center;
   margin-right: auto;
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: white;
+}
+
+.bot-message {
+  display: flex;
+  align-items: flex-start;
+  width: fit-content;
+  max-width: 80%;
+  margin-bottom: 10px;
+  gap: 4px;
+}
+
+.message-loader{
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 /* Input container fixed at the bottom */
@@ -592,5 +620,31 @@ label {
 .toolbar-icon:hover {
   svg > path {
     fill: #a1a1a1;
+  }
+}
+
+#dots #dot1{
+  animation: load 1s infinite;
+}
+
+#dots #dot2{
+  animation: load 1s infinite;
+  animation-delay: 0.2s;
+}
+
+#dots #dot3{
+  animation: load 1s infinite;
+  animation-delay: 0.4s;
+}
+
+@keyframes load{
+  0%{
+    opacity: 0;
+  }
+  50%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
   }
 }

@@ -9,14 +9,27 @@ const UserSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M230.92 212c-15.23-26.33-38.7-45.21-66.09-54.16a72 72 0 1 0-73.66 0c-27.39 8.94-50.86 27.82-66.09 54.16a8 8 0 1 0 13.85 8c18.84-32.56 52.14-52 89.07-52s70.23 19.44 89.07 52a8 8 0 1 0 13.85-8M72 96a56 56 0 1 1 56 56 56.06 56.06 0 0 1-56-56" fill="#fff"/></svg>
 `;
 
-let stepsArray;
+const loaderSvg = `
+  <svg id="dots" width="25px" height="22px" viewBox="0 0 132 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="dots" sketch:type="MSArtboardGroup" fill="#A3A3A3">
+            <circle id="dot1" sketch:type="MSShapeGroup" cx="25" cy="30" r="13"></circle>
+            <circle id="dot2" sketch:type="MSShapeGroup" cx="65" cy="30" r="13"></circle>
+            <circle id="dot3" sketch:type="MSShapeGroup" cx="105" cy="30" r="13"></circle>
+        </g>
+    </g>
+  </svg>
+`;
+
+let stepsArray = [];
 let totalStepsCompleted = 0;
 let coderTabInterval;
 let plannerTabInterval;
 let researcherTabInterval;
 
 const userInput = document.getElementById('userInput');
-userInput.addEventListener('input', adjustTextAreaHeight);
+userInput.addEventListener('input', onInputChange);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
@@ -53,7 +66,7 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'botMessage':
-      sendBotMessage(event.data.content.message);
+      sendBotMessage(event.data.content.message, event.data.content.allowUserMessage);
       disableSendButton(!event.data.content.allowUserMessage, event.data.content.messageInputText);
       break;
 
@@ -71,7 +84,7 @@ window.addEventListener('message', (event) => {
       break;
 
     case 'solutionCompleted':
-      sendBotMessage(event.data.content.message);
+      sendBotMessage(event.data.content.message, event.data.content.allowUserMessage);
       disableSendButton(!event.data.content.allowUserMessage);
       markSolutionCompleted(event.data.content);
       break;
@@ -105,7 +118,7 @@ window.addEventListener('message', (event) => {
       break;
 
     default:
-      sendBotMessage(`Unknown message received from facilitator: ${event.data}`);
+      sendBotMessage(`Unknown message received from facilitator: ${event.data}`, false);
   }
 });
 
@@ -130,12 +143,17 @@ function sendUserMessage() {
   disableSendButton(true);
 }
 
-function sendBotMessage(message) {
+function sendBotMessage(message, allowUserInput) {
   message = message.trim();
   if (message) {
-    displayMessage(message, 'bot');
+    displayMessage(message, 'bot', allowUserInput);
     adjustTextAreaHeight();
   }
+}
+
+function onInputChange() {
+  // removRecentUserLoader();
+  adjustTextAreaHeight();
 }
 
 function adjustTextAreaHeight() {
@@ -147,13 +165,10 @@ function adjustTextAreaHeight() {
   userInput.style.height = newHeight + 'px';
 }
 
-function displayMessage(msg, sender) {
-  //  const messageContainer = document.getElementById('messageContainer');
-  //  const messageDiv = document.createElement('div');
-
+function displayMessage(msg, sender, allowUserInput) {
   const chatListContainerElement = document.getElementById('messageContainer');
 
-  const messageElement = createMessageElement(msg, sender);
+  const messageElement = createMessageElement(msg, sender, allowUserInput);
 
   // Defer the scrolling a bit to ensure layout updates
   chatListContainerElement.appendChild(messageElement);
@@ -161,16 +176,46 @@ function displayMessage(msg, sender) {
   chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight;
 
   userInput.value = '';
+
+  // if (sender === "bot" && allowUserInput) {
+  //   displayMessage("Waiting for your input", "user", true); 
+  // }
 }
 
-function createMessageElement(msg, sender) {
+function removRecentUserLoader() {
+  const userMessages = document.querySelectorAll(".user-message");
+
+  if (userMessages.length <= 0) {
+    return;
+  }
+
+  const recentMessage = userMessages[userMessages.length - 1];
+
+  recentMessage.remove();
+}
+
+function createMessageElement(msg, sender, allowUserInput) {
+  removeAllLoaderInstanceFromDOM("message-loader");
+  
   const chatElement = document.createElement('div');
+
 
   // Construct user message HTML format
   if (sender === 'user') {
+    if (allowUserInput) {
+      const loaderElement = document.createElement('div');
+      loaderElement.classList.add('message-loader');
+      loaderElement.innerHTML = loaderSvg;
+      chatElement.appendChild(loaderElement);
+    }
+
     chatElement.classList.add('user-message');
     const messageElement = document.createElement('div');
-    messageElement.classList.add('user');
+    if (allowUserInput) {
+      messageElement.classList.add('user-text-inactive');
+    } else {
+      messageElement.classList.add('user');
+    }
     messageElement.textContent = msg;
 
     chatElement.appendChild(messageElement);
@@ -198,9 +243,25 @@ function createMessageElement(msg, sender) {
     chatElement.appendChild(messageElement);
     const formattedMessage = messageElement.innerHTML.replace(/\n/g, '<br>');
     messageElement.innerHTML = formattedMessage;
-  }
 
+    if (!allowUserInput) {
+      const loaderElement = document.createElement('div');
+      loaderElement.classList.add('message-loader');
+      loaderElement.innerHTML = loaderSvg;
+      chatElement.appendChild(loaderElement);
+    }
+  }
+  
   return chatElement;
+}
+
+function removeAllLoaderInstanceFromDOM(className) {
+  var elementsToRemove = document.querySelectorAll(`.${className}`);
+
+  // Iterate over the NodeList and remove each element
+  elementsToRemove.forEach(function (element) {
+    element.remove();
+  });
 }
 
 function openSettings() {
@@ -244,7 +305,7 @@ function settingSaved(data) {
   saveButton.textContent = 'Save';
   saveButton.disabled = false;
   if (data.success) {
-    sendBotMessage(data.message);
+    sendBotMessage(data.message, false);
     closeSettings();
   } else {
     document.getElementById('save_settings_error').textContent = `Settings can not be saved. Please contact Sirji team. Error: ${data.message}`;
@@ -262,7 +323,7 @@ function updateStepStatus(message, status) {
     return;
   }
 
-  if (stepsArray?.length === 0) {
+  if (stepsArray?.length === 0 || !stepsArray) {
     return;
   }
 
