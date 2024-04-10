@@ -1,0 +1,82 @@
+{
+  "name": "sirji",
+  "displayName": "Sirji",
+  "description": "Sirji is an AI Software Development Agent.",
+  "version": "0.0.5",
+  "publisher": "TrueSparrow",
+  "icon": "out/assets/sirji.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirji-ai/sirji"
+  },
+  "bugs": {
+    "url": "https://github.com/sirji-ai/sirji/issues"
+  },
+  "qna": "https://github.com/orgs/sirji-ai/discussions/categories/q-a",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.2"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Education"
+  ],
+  "keywords": [
+    "ai",
+    "sirji",
+    "true sparrow",
+    "openai",
+    "snippets",
+    "documentation",
+    "javascript",
+    "python",
+    "typescript",
+    "php",
+    "go",
+    "golang",
+    "ruby",
+    "c++",
+    "c#",
+    "java",
+    "kotlin",
+    "software development agent",
+    "opensource devin"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sirji.chat",
+        "title": "Sirji"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets out/",
+    "watch-ts": "tsc -watch -p ./",
+    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets out/'",
+    "watch": "concurrently npm:watch-*",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test",
+    "prepack": "cp ../../README.md README.md && cp ../../LICENSE LICENSE",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.80.2",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.3.3"
+  }
+}

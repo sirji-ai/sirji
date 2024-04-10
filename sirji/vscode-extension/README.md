@@ -24,32 +24,17 @@
 
 ## Sirji
 
-Sirji is a Visual Studio Code extension that works as an AI software development agent.
+Sirji is a Visual Studio Code Extension that acts as an AI Software Development Agent, an open-source alternative to Devin. It functions as a virtual software developer, geared towards solving the given problem statement. These problem statements can either involve fresh, greenfield development or efforts aimed at enhancing existing code, bug fixing, documentation, and test case creation in brownfield development.
 
-It is a virtual software developer that includes individual agents for planning, coding, researching, and executing projects.
+The extension leverages the capabilities of VS Code, including the Editor, Terminal, Browser, and Project Explorer.
 
-Sirji solves users’ problem statements ranging from a new greenfield project to an existing brownfield project where it enhances existing code, fixes bugs, and writes test cases.
+Additionally, it provides an interactive chat interface through which users can submit their problem statements, enhancement requests, feedback, and answers to requests for elaboration.
 
-The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+## Demo Videos
 
-It provides an interactive chat interface through which users submit their problem statements, answer questions, and provide feedback to Sirji.
-
-Additionally and most importantly, Sirji sets up your local development environment by installing system-level packages as well as programming language-specific dependencies. It later executes the generated code in your local development environment.
-
-## Demo Video
-
-```
-Create a fully interactive website for playing the Tic-Tac-Toe game.
-```
-
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank">https://www.youtube.com/watch?v=DC_gmz04Ovs</a>
-
-<a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/fff071a6-f019-4797-ad44-55d7670e819f" alt="Tic Tac Toe game by Sirji"></a>
-
+TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to the demos page.
 
 ## Prerequisites
-
-Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize.
 
 Make sure you have installed all of the following prerequisites on your machine:
 
@@ -58,11 +43,23 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-Also, you will need an OpenAI API key to access the GPT-4 Turbo model.
+To check whether your machine meets these prerequisites, run:
 
-## Installation
+```zsh
+sh check_prerequisites.sh
+```
 
-You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
+Also, you will need an OpenAI API key.
+
+## Contributing
+
+We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
+
+Thank you for considering contributing to Sirji. We look forward to your contributions!
+
+## Reporting Issues
+
+If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
 
 ## Architecture
 
@@ -86,20 +83,6 @@ Communication among these agents is facilitated through a defined message protoc
 The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
-
-## Contributing
-
-We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
-
-Thank you for considering contributing to Sirji. We look forward to your contributions!
-
-## Reporting Issues
-
-If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
-
-## Stay In Touch
-
-<a href="https://calendly.com/nishith-true-sparrow/30min" target="_blank">Office Hours</a>
 
 ## License
 

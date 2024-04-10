@@ -13,3 +13,19 @@ __pycache__/
 venv
 
 .DS_Store
+
+node_modules
+out
+dist
+.vscode-test/
+*.vsix
+*.egg-info
+
+.coverage
+
+.pytest_cache
+
+# Dev scripts
+read_all.py
+
+.sirji
