@@ -426,10 +426,10 @@ function updateTooltipTokenValues(tokenValues) {
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
 
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
-  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $ ${total_prompt_tokens_value.toFixed(2)}`;
+  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $${total_prompt_tokens_value.toFixed(2)}`;
 
   const jCompletionTokensUsed = document.getElementById('jCompletionTokensUsed');
-  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $ ${total_completion_tokens_value.toFixed(2)}`;
+  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $${total_completion_tokens_value.toFixed(2)}`;
 }
 
 function displayPlannerLogs(data) {

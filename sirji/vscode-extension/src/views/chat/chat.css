@@ -432,12 +432,14 @@ label {
   border-radius: 6px;
   position: absolute;
   z-index: 1;
-  bottom: -81px;
-  width: 193px;
   left: 38%;
   transform: translateX(-50%);
   opacity: 0;
   transition: opacity 0.3s;
+  width: max-content;
+  top: 25px;
+  bottom: 0;
+  height: fit-content;
 }
 
 .tooltip-text {
@@ -540,28 +542,29 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .tab {
   display: none;
-  
-  margin-top: 46px;
 }
 
 .tab.active {
   display: block;
 }
 
-/* Styles for tab buttons */
 .tab-button {
-  color: white;
+  color: #9d9d9d;
   cursor: pointer;
-  font-family: Arial;
+}
+
+.tab-button:hover {
+  color: #ffffff;
 }
 
 .tab-button.active {
-  border-bottom: 1px solid white;
+  color: #ffffff;
+  border-bottom: 1px solid #2f79ce;
 }
 
 .tooltip-body{
@@ -576,4 +579,12 @@ label {
 
 .p-20{
   padding: 20px;
+}
+
+.pt-45{
+  padding-top: 45px;
+}
+
+.text-inactive{
+  color: #9d9d9d;
 }
