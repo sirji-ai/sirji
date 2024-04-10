@@ -24,7 +24,7 @@
 
 ## Sirji
 
-Sirji is a Visual Studio Code extension that acts as an AI software development agent.
+Sirji is a Visual Studio Code extension that works as an AI software development agent.
 
 It is a virtual software developer that includes individual agents for planning, coding, researching, and executing projects.
 
@@ -36,9 +36,16 @@ It provides an interactive chat interface through which users submit their probl
 
 Additionally and most importantly, Sirji sets up your local development environment by installing system-level packages as well as programming language-specific dependencies. It later executes the generated code in your local development environment.
 
-## Demo Videos
+## Demo Video
 
-TODO: Show 2 good demo videos - side by side. Then afterwards, give a link to the demos page.
+```
+Create a fully interactive website for playing the Tic-Tac-Toe game.
+```
+
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank">https://www.youtube.com/watch?v=DC_gmz04Ovs</a>
+
+<a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/fff071a6-f019-4797-ad44-55d7670e819f" alt="Tic Tac Toe game by Sirji"></a>
+
 
 ## Prerequisites
 
