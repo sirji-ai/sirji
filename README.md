@@ -92,6 +92,10 @@ Thank you for considering contributing to Sirji. We look forward to your contrib
 
 If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
 
+## Stay In Touch
+
+<a href="https://calendly.com/nishith-true-sparrow/30min" target="_blank">Office Hours</a>
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
