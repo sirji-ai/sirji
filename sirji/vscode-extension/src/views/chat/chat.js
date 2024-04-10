@@ -29,7 +29,7 @@ let plannerTabInterval;
 let researcherTabInterval;
 
 const userInput = document.getElementById('userInput');
-userInput.addEventListener('input', onInputChange);
+userInput.addEventListener('keydown', onInputChange);
 userInput.addEventListener('paste', () => setTimeout(adjustTextAreaHeight, 0));
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 
@@ -86,6 +86,7 @@ window.addEventListener('message', (event) => {
     case 'solutionCompleted':
       sendBotMessage(event.data.content.message, event.data.content.allowUserMessage);
       disableSendButton(!event.data.content.allowUserMessage);
+      removRecentUserLoader();
       markSolutionCompleted(event.data.content);
       break;
 
@@ -151,9 +152,14 @@ function sendBotMessage(message, allowUserInput) {
   }
 }
 
-function onInputChange() {
-  // removRecentUserLoader();
+function onInputChange(event) {
+  removRecentUserLoader();
   adjustTextAreaHeight();
+  
+  // Check if "Command" key (Mac) or "Ctrl" key (Windows/Linux) and "Enter" key are pressed
+  if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+    sendUserMessage();
+  }
 }
 
 function adjustTextAreaHeight() {
@@ -170,20 +176,20 @@ function displayMessage(msg, sender, allowUserInput) {
 
   const messageElement = createMessageElement(msg, sender, allowUserInput);
 
+  userInput.value = '';
+
   // Defer the scrolling a bit to ensure layout updates
   chatListContainerElement.appendChild(messageElement);
 
-  chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight;
+  if (sender === "bot" && allowUserInput) {
+    displayMessage("Waiting for your input", "user", true); 
+  }
 
-  userInput.value = '';
-
-  // if (sender === "bot" && allowUserInput) {
-  //   displayMessage("Waiting for your input", "user", true); 
-  // }
+  chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight + 10;
 }
 
 function removRecentUserLoader() {
-  const userMessages = document.querySelectorAll(".user-message");
+  const userMessages = document.querySelectorAll(".user-input-waiting");
 
   if (userMessages.length <= 0) {
     return;
@@ -209,12 +215,13 @@ function createMessageElement(msg, sender, allowUserInput) {
       chatElement.appendChild(loaderElement);
     }
 
-    chatElement.classList.add('user-message');
     const messageElement = document.createElement('div');
     if (allowUserInput) {
       messageElement.classList.add('user-text-inactive');
+      chatElement.classList.add('user-message', 'user-input-waiting');
     } else {
       messageElement.classList.add('user');
+      chatElement.classList.add('user-message');
     }
     messageElement.textContent = msg;
 
@@ -391,16 +398,6 @@ function displayPlannedSteps(steps) {
 }
 
 function setProgress(x, y) {
-  // const circle = document.getElementById('progressRingCircle');
-  // const radius = circle.r.baseVal.value;
-  // const circumference = radius * 2 * Math.PI;
-
-  // circle.style.strokeDasharray = `${circumference} ${circumference}`;
-  // circle.style.strokeDashoffset = circumference;
-
-  // const offset = circumference - (x / y) * circumference;
-  // circle.style.strokeDashoffset = offset;
-
   const progressText = document.getElementById('progressText');
   progressText.textContent = `${x} of ${y} tasks done`;
 
@@ -420,6 +417,7 @@ function updatePlaceholder(disable, message) {
   const placeholderText = disable ? message || 'Sirji> is working on the problem. We will open the chat window when we have some information, questions, or feedback..' : 'Type a message...';
   userInput.placeholder = placeholderText;
   userInput.disabled = disable;
+
   adjustTextAreaHeight();
 }
 
