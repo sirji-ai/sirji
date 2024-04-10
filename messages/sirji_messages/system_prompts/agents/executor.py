@@ -1,6 +1,6 @@
 import textwrap
 
-from sirji_messages import AgentEnum
+from sirji_messages import AgentEnum, ActionEnum
 
 from .planner import PlannerSystemPrompt
 
@@ -24,13 +24,12 @@ class ExecutorSystemPrompt(AgentSystemPromptBase):
     def capabilities(self):
         return textwrap.dedent("""
           - Interact with macOS terminal.
-          - Create or update files on macOS.
-          - Read content from a single file.
-          - Read the content from all files in a directory and all its subdirectories at once (separated by a divider).
-          - Install required dependencies/packages/libraries on macOS.
-          - Execute code on macOS.
-          - Execute command on macOS.
-          - Run server process on macOS.
+          - Run server process using {ActionEnum.RUN_SERVER.name} action.
+          - Create or update files using {ActionEnum.CREATE_FILE.name} action.
+          - Read content from a single file using {ActionEnum.READ_FILE.name} action.
+          - Read the content from all files in a directory and all its subdirectories at once (separated by a divider) using {ActionEnum.READ_DIR.name} action.
+          - Install required dependencies/packages/libraries using {ActionEnum.INSTALL_PACKAGE.name} action.
+          - Execute code and command using {ActionEnum.EXECUTE_COMMAND.name} action.
           """)
 
     def ending_prompt(self):

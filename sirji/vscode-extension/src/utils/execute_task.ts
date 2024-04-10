@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+let currentTaskExecution: any = null;
+
 async function checkForChanges(filePath: string, previousContent: string): Promise<{ hasChanges: boolean; currentContent: string }> {
   const currentContent = fs.readFileSync(filePath, 'utf-8');
 
@@ -36,32 +38,40 @@ export async function executeTask(command: string, workspaceRootPath: string): P
 
     let isTaskExecutionInProgress = false;
     let checkTaskPeriodically: any = null;
-    let hasReturnTaskExecutionResponse: Boolean = false;
 
     try {
+      console.log(` executeTask currentTaskExecution ${command}:`, { currentTaskExecution });
+      if (currentTaskExecution) {
+        try {
+          currentTaskExecution.terminate();
+          console.log('executeTask Terminated existing task.');
+        } catch (terminateError) {
+          console.error('executeTask Error terminating existing task:', terminateError);
+        }
+      }
+
       const execution = await vscode.tasks.executeTask(task);
 
-      console.log(`executeTask new task ${command}:`, { isTaskExecutionInProgress, hasReturnTaskExecutionResponse, tempFileName });
+      console.log(`executeTask new task ${command}:`, { isTaskExecutionInProgress, tempFileName });
 
       disposables.push(
         vscode.tasks.onDidStartTask((event) => {
           console.log(`executeTask inside onDidStartTask ${command}:`, event);
           if (event.execution.task === task) {
+            if (event.execution.task.name === 'Sirji') {
+              currentTaskExecution = event.execution;
+            }
             isTaskExecutionInProgress = true;
-            console.log(`executeTask setting setInterval ${command}:`, { isTaskExecutionInProgress, hasReturnTaskExecutionResponse, tempFileName });
+            console.log(`executeTask setting setInterval ${command}:`, { isTaskExecutionInProgress, tempFileName });
             checkTaskPeriodically = setInterval(async function () {
               const response = await checkForChanges(tempFilePath, tempFileContent);
 
-              console.log(`executeTask setInterval executed ${command}:`, { isTaskExecutionInProgress, hasReturnTaskExecutionResponse, tempFileName });
+              console.log(`executeTask setInterval executed ${command}:`, { isTaskExecutionInProgress, tempFileName });
 
               tempFileContent = response.currentContent;
-              if (!response.hasChanges && !hasReturnTaskExecutionResponse) {
-                hasReturnTaskExecutionResponse = true;
-                console.log(`executeTask setInterval return ${command}:`, { isTaskExecutionInProgress, hasReturnTaskExecutionResponse, tempFileName });
-                clearInterval(checkTaskPeriodically);
-                return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
-              }
-            }, 30000);
+              clearInterval(checkTaskPeriodically);
+              return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
+            }, 5000);
           }
         })
       );
@@ -71,14 +81,9 @@ export async function executeTask(command: string, workspaceRootPath: string): P
           console.log(`executeTask inside onDidEndTaskProcess ${command}:`, event);
           isTaskExecutionInProgress = false;
           clearInterval(checkTaskPeriodically);
-          if (!hasReturnTaskExecutionResponse) {
-            const response = await checkForChanges(tempFilePath, tempFileContent);
-            tempFileContent = response.currentContent;
-            hasReturnTaskExecutionResponse = true;
-            console.log(`executeTask onDidEndTaskProcess return ${command}:`, { isTaskExecutionInProgress, hasReturnTaskExecutionResponse, tempFileName });
-            disposables.forEach((d) => d.dispose());
-            return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
-          }
+          const response = await checkForChanges(tempFilePath, tempFileContent);
+          tempFileContent = response.currentContent;
+          return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
         })
       );
     } catch (error) {

@@ -41,6 +41,7 @@ class CoderSystemPrompt(AgentSystemPromptBase):
                 - Ensure that you don't create any file/folder outside of current directory, i.e. './'
                 - Read the GitHub files by first cloning the repository and then reading the files at once.
             - Always make sure:
+                - To respond with the {ActionEnum.RUN_SERVER.name} action when asked to run a server like process.
                 - Ensure if the step is to verify whether a command is installed or not, you check them one at a time.
                 - Ensure to always verify the current working directory (usign 'pwd' command) before using change directory (cd) command in a standalone way or as a part of another command.
                 - On getting file not found error for files which you created, check the present working directory (pwd).
