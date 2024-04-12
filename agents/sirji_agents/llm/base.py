@@ -91,7 +91,7 @@ class LLMAgentBase(metaclass=SingletonMeta):
 
         chat_completion = self.client.chat.completions.create(
             messages=history,
-            model="gpt-4-turbo-preview",
+            model="gpt-4-turbo",
             temperature=0,
             max_tokens=4095,
         )
