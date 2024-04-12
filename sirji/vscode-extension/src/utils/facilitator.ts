@@ -475,7 +475,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.RUN_SERVER:
-              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath);
+              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath, oThis.sirjiRunId);
 
               rawMessage = runServerRes;
               parsedMessage = {

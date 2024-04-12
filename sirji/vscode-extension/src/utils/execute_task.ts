@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Constants } from './constants';
 
 let currentTaskExecution: any = null;
 
@@ -15,18 +16,21 @@ async function checkForChanges(filePath: string, previousContent: string): Promi
   };
 }
 
-function constructResponse(isRunning: Boolean, tempFilePath: string, tempFileContent: string): string {
-  let response = isRunning ? 'Execute Command still running.' : 'Execute command complete. ';
-  response += `Command execution output from ${tempFilePath}\n`;
-  response += `${tempFileContent}`;
+function constructResponse(isRunning: Boolean, tempFileRelativePath: string, tempFileContent: string): string {
+  let response = isRunning ? 'Command is still running.' : 'Command execution completed.';
+  response += `\n------\nOutput from the command is getting logged to ${tempFileRelativePath}`;
+  response += `\n------\nOutput till now:\n${tempFileContent}\n------`;
   return response;
 }
 
-export async function executeTask(command: string, workspaceRootPath: string): Promise<string> {
+export async function executeTask(command: string, workspaceRootPath: string, sirjiRunId: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const tempFileName = `output.txt`;
-    const tempFilePath = path.join(workspaceRootPath, tempFileName);
-    let tempFileContent: string;
+
+    const tempFileRelativePath = path.join(Constants.HISTORY_FOLDER, sirjiRunId, tempFileName);
+    const tempFilePath = path.join(workspaceRootPath, tempFileRelativePath);
+    
+    let tempFileContent = '';
 
     command = `(${command}) 2>&1 | tee "${tempFilePath}"`;
 
@@ -68,10 +72,10 @@ export async function executeTask(command: string, workspaceRootPath: string): P
 
               console.log(`executeTask setInterval executed ${command}:`, { isTaskExecutionInProgress, tempFileName });
 
-              tempFileContent = response.currentContent;
+              tempFileContent += response.currentContent;
               clearInterval(checkTaskPeriodically);
-              return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
-            }, 5000);
+              return resolve(constructResponse(isTaskExecutionInProgress, tempFileRelativePath, tempFileContent));
+            }, 10000);
           }
         })
       );
@@ -83,7 +87,7 @@ export async function executeTask(command: string, workspaceRootPath: string): P
           clearInterval(checkTaskPeriodically);
           const response = await checkForChanges(tempFilePath, tempFileContent);
           tempFileContent = response.currentContent;
-          return resolve(constructResponse(isTaskExecutionInProgress, tempFilePath, tempFileContent));
+          return resolve(constructResponse(isTaskExecutionInProgress, tempFileRelativePath, tempFileContent));
         })
       );
     } catch (error) {
