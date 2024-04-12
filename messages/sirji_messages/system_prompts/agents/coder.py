@@ -32,7 +32,7 @@ class CoderSystemPrompt(AgentSystemPromptBase):
                     - Database (example: PostgreSQL, MySQL),
                     - Cache (example: Memcache, Redis), etc.
                 - Do not include Hosting component.
-                - Format the architecture components as a easy to read list with points and sub-points.
+                - Show the architecture components listed as points. Also specify intent of each component.
                 - Send the architecture components as a {ActionEnum.QUESTION.name} to get a confirmation on. The message details should look like: "\nHere are the main parts of the architecture::\n\n <<architecture components>> \n\nDoes everything look good to you, or do you need any adjustments?"
             - Once architecture components are finalized, then {ActionEnum.GENERATE_STEPS.name} to solve the problem statement:
                 - Share the problem statement, finalized user story and finalized architecture compoents with {AgentEnum.PLANNER.name} to get the list of steps on how to solve the problem statement (PS).
@@ -45,6 +45,7 @@ class CoderSystemPrompt(AgentSystemPromptBase):
                 - Ensure that you don't create any file/folder outside of workspace root folder, i.e. './'
                 - Read the GitHub files by first cloning the repository and then reading the files at once.
             - Ensure while responding with {ActionEnum.EXECUTE_COMMAND.name} action or {ActionEnum.INSTALL_PACKAGE.name} action:
+                - Command must be compatible with macOS.
                 - Command must be sufficiently chained. For example: 'source venv/bin/activate && pip install openai', 'cd server && npm run start'
             - Always make sure:
                 - To respond with the {ActionEnum.RUN_SERVER.name} action to run a server like continuous process.

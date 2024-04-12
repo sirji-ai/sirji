@@ -456,8 +456,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.INSTALL_PACKAGE:
-              const installPackageLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-              const installPackageCommandRes = await executeSpawn(parsedMessage.COMMAND, installPackageLogPath);
+              const installPackageCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
               rawMessage = installPackageCommandRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
@@ -466,9 +465,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-
-              const executedCommandRes = await executeSpawn(parsedMessage.COMMAND, executedCommandLogPath);
+              const executedCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
 
               rawMessage = executedCommandRes;
               parsedMessage = {
@@ -478,9 +475,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.RUN_SERVER:
-              const runServerLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-
-              const runServerRes = await executeTask(parsedMessage.COMMAND, runServerLogPath);
+              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath);
 
               rawMessage = runServerRes;
               parsedMessage = {
