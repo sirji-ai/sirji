@@ -20,7 +20,7 @@ class ReadDirMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "dir_path": "Name of a directory alongwith the path.",
+            "dir_path": "Name of a directory alongwith the path relative to the workspace root folder.",
         })
 
     def description(self):

@@ -89,7 +89,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         run = self.client.beta.threads.runs.create(
             thread_id=self.init_payload['thread_id'],
             assistant_id=self.assistant_id,
-            model="gpt-4-turbo-preview",
+            model="gpt-4-turbo",
             tools=[{"type": "retrieval"}]
         )
 

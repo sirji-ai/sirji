@@ -12,6 +12,7 @@ import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
 import { readContent } from './read_content';
 import { executeTask } from './execute_task';
+import { executeSpawn } from './execute_spawn';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -143,7 +144,7 @@ export class Facilitator {
     const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'coder.log');
 
     let coderLogFileContent = '';
-    
+
     if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
       coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
       // return coderLogFileContent;
@@ -455,8 +456,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.INSTALL_PACKAGE:
-              const installPackageLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-              const installPackageCommandRes = await executeCommand(parsedMessage.COMMAND, installPackageLogPath);
+              const installPackageCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
               rawMessage = installPackageCommandRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
@@ -465,9 +465,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-
-              const executedCommandRes = await executeCommand(parsedMessage.COMMAND, executedCommandLogPath);
+              const executedCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
 
               rawMessage = executedCommandRes;
               parsedMessage = {
@@ -477,9 +475,7 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.RUN_SERVER:
-              const runServerLogPath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId);
-
-              const runServerRes = await executeTask(parsedMessage.COMMAND, runServerLogPath);
+              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath, oThis.sirjiRunId);
 
               rawMessage = runServerRes;
               parsedMessage = {
@@ -621,7 +617,7 @@ export class Facilitator {
 
     switch (parsedMessage.ACTION) {
       case ACTION_ENUM.STEPS:
-        contentMessage = 'Steps generation done.';
+        contentMessage = 'Steps generation done. Proceeding step by step.';
         break;
 
       default:

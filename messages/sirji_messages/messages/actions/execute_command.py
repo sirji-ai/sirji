@@ -20,7 +20,7 @@ class ExecuteCommandMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "command": "Command to execute."
+            "command": "Command to execute, considering workspace root folder as current working directory."
         })
 
     def description(self):
