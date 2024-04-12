@@ -22,7 +22,7 @@ class CreateFileMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "file_name": "File name along with the path.",
+            "file_name": "File name along with the path relative to the workspace root folder.",
             "content": "Multiline file content. It should start from a new line."
         })
 

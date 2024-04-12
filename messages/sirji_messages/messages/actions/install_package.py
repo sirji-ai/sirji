@@ -20,7 +20,7 @@ class InstallPackageMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "command": "Command to install the package or library."
+            "command": "Command to execute, considering workspace root folder as current working directory."
         })
 
     def description(self):

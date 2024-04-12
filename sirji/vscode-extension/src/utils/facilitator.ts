@@ -622,7 +622,7 @@ export class Facilitator {
 
     switch (parsedMessage.ACTION) {
       case ACTION_ENUM.STEPS:
-        contentMessage = 'Steps generation done.';
+        contentMessage = 'Steps generation done. Proceeding step by step.';
         break;
 
       default:

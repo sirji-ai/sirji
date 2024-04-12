@@ -20,7 +20,7 @@ class RunServerMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "command": "Command to start server process."
+            "command": "Command to start server process. This command should be relative to the workspace root folder."
         })
 
     def description(self):
