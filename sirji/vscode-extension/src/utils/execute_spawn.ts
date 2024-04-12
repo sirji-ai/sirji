@@ -15,8 +15,6 @@ function constructResponse(success: boolean, output: string): string {
 export async function executeSpawn(command: string, workspaceRootPath: string): Promise<string> {
   let successResp = '';
   let errorResp = '';
-  const outputPath = path.join(workspaceRootPath, 'output.txt');
-  const output = fs.createWriteStream(outputPath, { flags: 'a' });
   const [cmd, ...args] = command.split(/\s+/);
 
   return new Promise(async (resolve, reject) => {
