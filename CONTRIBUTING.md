@@ -45,7 +45,17 @@ Open the folder in Visual Studio Code by running:
 code .
 ```
 
-### 4. Install Dependencies
+### 4. Local PyPI Packages
+
+Update `src/py_scripts/requirements.txt` with the following content, to use the local editable installations of the PyPI packages:
+
+```
+urllib3==1.25.11
+-e {{absolute path to cloned sirji repo}}/messages
+-e {{absolute path to cloned sirji repo}}/agents
+```
+
+### 5. Install Dependencies
 
 Install the project dependencies:
 
@@ -53,15 +63,15 @@ Install the project dependencies:
 npm install
 ```
 
-### 5. Compile TypeScript
+### 7. Compile TypeScript
 
 Compile the TypeScript code to JavaScript:
 
 ```zsh
-npm run compile
+npm run watch
 ```
 
-### 6. Run Sirji in Debug Mode
+### 8. Run Sirji in Debug Mode
 
 To start debugging the extension and see your changes in action, follow these steps:
 
@@ -77,7 +87,7 @@ To start debugging the extension and see your changes in action, follow these st
 
   - Press the **Start Debugging** button (the green play icon) to launch a new VS Code window (Extension Development Host) where the extension will be loaded.
 
-### 7. Activating Sirji
+### 9. Activating Sirji
 
 To activate the extension in the Extension Development Host:
 
@@ -95,6 +105,6 @@ To contribute to one of the PyPI packages (`sirji-agents`, `sirji-messages`, `si
 
 ## Questions or Issues?
 
-If you face any issues or have questions about contributing, don’t hesitate to open an issue in our GitHub repository. We're here to help and look forward to your contributions!
+If you run into any issues or have suggestions, please report them by following our [issue reporting guidelines](./ISSUES.md). Your reports help us make Sirji better for everyone.
 
 Thank you for considering contributing to Sirji. Happy coding!
