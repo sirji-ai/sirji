@@ -22,6 +22,7 @@ const loaderSvg = `
   </svg>
 `;
 
+const NON_SCROLLABLE_PANELS = ["chatTerminalTab"];
 let stepsArray = [];
 let totalStepsCompleted = 0;
 let coderTabInterval;
@@ -494,16 +495,22 @@ function updateTooltipTokenValues(tokenValues) {
 function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
   plannerLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("plannerTab");
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
   researcherLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("researcherTab");
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
   coderLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("coderTab");
 }
 
 function displayCoderTab(data) {
@@ -578,6 +585,18 @@ function showTab(tabName) {
   // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementById(tabName).style.display = 'block';
   document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+
+  // scroll to bottom
+  scrollToBottom(tabName);
+}
+
+function scrollToBottom(elementId) {
+  if (NON_SCROLLABLE_PANELS.includes(elementId)) {
+    return;
+  }
+
+  const domElement = document.getElementById(elementId);
+  domElement.scrollIntoView({ behavior:"smooth", block: "end" });
 }
 
 // Show the initial tab on page load
