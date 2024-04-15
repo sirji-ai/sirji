@@ -50,6 +50,8 @@ jobs:
           coverage report
 
       - name: Run tests and coverage (tools)
+        env:
+          SIRJI_WORKSPACE: '.'
         run: |
           cd tools
           source venv/bin/activate
