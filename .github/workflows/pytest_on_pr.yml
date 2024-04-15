@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - pytest-on-pr
     paths:
       - 'messages/**'
       - 'tools/**'
