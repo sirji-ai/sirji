@@ -2,7 +2,7 @@ from openai import OpenAI
 import os
 
 from sirji_messages import AgentSystemPromptFactory, message_parse, MessageParsingError, MessageValidationError
-from .model_providers import LLMProviderFactory 
+from .model_providers.factory import LLMProviderFactory 
 
 class SingletonMeta(type):
     """Singleton Meta Class for ensuring one instance creation."""
@@ -86,4 +86,4 @@ class LLMAgentBase(metaclass=SingletonMeta):
 
         model_provider = LLMProviderFactory.get_instance()
 
-        return model_provider.get_response(history)
+        return model_provider.get_response(history, self.logger)

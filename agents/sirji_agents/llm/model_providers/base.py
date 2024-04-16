@@ -7,5 +7,5 @@ class LLMProviderBase(ABC):
         self.model = model
 
     @abstractmethod
-    def get_response(self, messages):
+    def get_response(self, messages, logger):
         pass
