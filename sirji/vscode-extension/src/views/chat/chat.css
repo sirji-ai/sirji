@@ -149,7 +149,8 @@ textarea {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #302f2f;
+  /* background-color: #302f2f; */
+  background-color: var(--vscode-statusBarItem-remoteBackground);
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -177,7 +178,9 @@ textarea {
   width: -webkit-fill-available;
   top: 0px;
   padding: 0px 10px;
-  background-color: #1e1e1e;
+  z-index: 1;
+  /* background-color: #1e1e1e; */
+  background-color: var(--vscode-editor-background);
 }
 
 .right {
@@ -232,7 +235,6 @@ textarea {
   background-color: transparent;
   border-radius: 2px;
   padding: 2px 4px;
-  color: white;
   transition: background-color 0.5s ease-in-out; /* Add transition for background-color */
 }
 
@@ -587,12 +589,12 @@ label {
 }
 
 .tab-button:hover {
-  color: #ffffff;
+  color: var(--vscode-list-hoverForeground);
 }
 
 .tab-button.active {
-  color: #ffffff;
-  border-bottom: 1px solid #2f79ce;
+  color: var(--vscode-list-hoverForeground);
+  border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
 }
 
 .tooltip-body{
@@ -617,9 +619,15 @@ label {
   color: #9d9d9d;
 }
 
+.toolbar-icon{
+  svg > path {
+    fill: var(--vscode-activityBar-inactiveForeground)
+  }
+}
+
 .toolbar-icon:hover {
   svg > path {
-    fill: #a1a1a1;
+    fill: var(--vscode-activityBar-foreground);
   }
 }
 
