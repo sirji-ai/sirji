@@ -15,7 +15,7 @@ class SingletonMeta(type):
 
 
 class LLMAgentBase(metaclass=SingletonMeta):
-    def __init__(self, agent_enum, logger, provider):
+    def __init__(self, agent_enum, logger):
         
         self.agent_enum = agent_enum
         self.logger = logger
