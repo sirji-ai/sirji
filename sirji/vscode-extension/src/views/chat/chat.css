@@ -243,6 +243,7 @@ textarea {
   font-weight: 400;
   line-height: 12.1px;
   text-align: left;
+  padding: 1px 2px;
   background-color: transparent;
   transition: background-color 0.5s ease-in-out; /* Add transition for background-color */
 }
@@ -514,6 +515,10 @@ label {
   visibility: visible;
   opacity: 1;
 }
+  
+.tokensContainer:hover .text {
+  color: var(--vscode-list-hoverForeground);
+}
 
 .tokens {
   color: white;
@@ -687,8 +692,8 @@ label {
 
 /*  tabs-container-css */
 .tabs-container {
-  min-width: 25%;
-  width: 25%;
+  min-width: 40%;
+  width: 40%;
   height: 100vh;
   border-left: 3px solid var(--vscode-sideBarSectionHeader-border);
   overflow-y: auto; 

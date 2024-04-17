@@ -412,7 +412,7 @@ function displayPlannedSteps(steps) {
 
 function setProgress(x, y) {
   const progressText = document.getElementById('progressText');
-  progressText.textContent = `(${x}/${y})`;
+  progressText.textContent = `STEPS (${x}/${y})`;
 }
 
 function disableSendButton(disable, message) {
