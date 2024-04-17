@@ -45,14 +45,14 @@ document.getElementById('closeSettings').onclick = function () {
   closeSettings();
 };
 
-// Planner modal
-document.getElementById('progressCircle').addEventListener('click', () => {
-  document.getElementById('plannerModal').style.display = 'flex';
-});
+// // Planner modal
+// document.getElementById('progressCircle').addEventListener('click', () => {
+//   document.getElementById('plannerModal').style.display = 'flex';
+// });
 
-document.getElementById('closePlanner').addEventListener('click', () => {
-  document.getElementById('plannerModal').style.display = 'none';
-});
+// document.getElementById('closePlanner').addEventListener('click', () => {
+//   document.getElementById('plannerModal').style.display = 'none';
+// });
 
 // IMP: Acquire the VS Code API
 const vscode = acquireVsCodeApi();
@@ -170,6 +170,19 @@ function adjustTextAreaHeight() {
   userInput.style.height = minHeight + 'px';
   const newHeight = Math.min(maxHeight, Math.max(userInput.scrollHeight, minHeight));
   userInput.style.height = newHeight + 'px';
+
+  updateMessageContainerHeight();
+}
+
+function updateMessageContainerHeight() {
+  const chatContainer = document.getElementById('chatContainer');
+  
+  const inputontainerHeight = document.getElementById("inputContainer").offsetHeight;
+  const headerHeight = document.getElementById("jHeader").offsetHeight;
+
+  const totalHeight = inputontainerHeight + headerHeight; 
+  
+  chatContainer.style.height = `calc(100vh - ${totalHeight}px)`;
 }
 
 function displayMessage(msg, sender, allowUserInput) {
@@ -600,7 +613,7 @@ function scrollToBottom(elementId) {
 }
 
 // Show the initial tab on page load
-showTab('chatTerminalTab');
+showTab('coderTab');
 
 
 updateIconColors();
@@ -609,3 +622,28 @@ vscode.postMessage({
   type: 'webViewReady',
   content: true,
 });
+
+
+const sidebar = document.getElementById('jSidebar');
+const handle = document.getElementById('jResizeHandle');
+
+let startX;
+let startWidth;
+
+handle.addEventListener('mousedown', function(e) {
+    startX = e.clientX;
+    startWidth = parseInt(document.defaultView.getComputedStyle(sidebar).width, 10);
+
+    document.documentElement.addEventListener('mousemove', mouseMoveHandler);
+    document.documentElement.addEventListener('mouseup', mouseUpHandler);
+});
+
+function mouseMoveHandler(e) {
+    const newWidth = startWidth + startX - e.clientX;
+    sidebar.style.width = Math.max(newWidth, 250) + 'px';
+}
+
+function mouseUpHandler() {
+    document.documentElement.removeEventListener('mousemove', mouseMoveHandler);
+    document.documentElement.removeEventListener('mouseup', mouseUpHandler);
+}

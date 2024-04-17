@@ -37,8 +37,8 @@ html {
 #chatContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  margin-top: 45px;
+  height: calc(100vh - 102px);
+  /* margin-top: 45px; */
 }
 
 #messageContainer {
@@ -51,7 +51,7 @@ html {
 
 .user-message:last-child,
 .bot-message:last-child {
-  margin-bottom: 70px;
+  margin-bottom: 20px;
 }
 
 /* Adjusted message styles for flexible width  */
@@ -121,16 +121,19 @@ html {
 }
 
 /* Input container fixed at the bottom */
+.fixed-bottom{
+  position: sticky;
+  bottom: 0;
+  left: 0;
+}
+
 #inputContainer {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   padding: 10px;
   background: #f1f1f1;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  /* width: 100%; */
   box-sizing: border-box;
 }
 
@@ -175,11 +178,19 @@ textarea {
   gap: 10px;
   position: fixed;
   height: 46px;
-  width: -webkit-fill-available;
   top: 0px;
   padding: 0px 10px;
   z-index: 1;
   /* background-color: #1e1e1e; */
+  background-color: var(--vscode-editor-background);
+}
+
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  padding: 0px 10px;
   background-color: var(--vscode-editor-background);
 }
 
@@ -586,6 +597,7 @@ label {
 .tab-button {
   color: #9d9d9d;
   cursor: pointer;
+  padding: 5px 3px;
 }
 
 .tab-button:hover {
@@ -595,6 +607,16 @@ label {
 .tab-button.active {
   color: var(--vscode-list-hoverForeground);
   border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
+}
+
+.chat-tab-button{
+  color: var(--vscode-list-hoverForeground);
+  padding: 5px 3px;
+  border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
+}
+
+.chat-tab-button:hover {
+  color: var(--vscode-list-hoverForeground);
 }
 
 .tooltip-body{
@@ -655,4 +677,35 @@ label {
   100%{
     opacity: 0;
   }
+}
+
+.column-view {
+  display: flex;
+  height: 100%;
+}
+
+/*  tabs-container-css */
+.tabs-container {
+  min-width: 25%;
+  height: 100vh;
+  border-left: 3px solid;
+  padding-left: 10px;
+  overflow-y: auto; 
+  position: relative; 
+}
+
+/* chat-termianl-css */
+.chat-termianl-container {
+  min-width: 25%;
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.resize-handle {
+  width: 5px;
+  cursor: ew-resize;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -2px; 
 }
