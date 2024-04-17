@@ -28,7 +28,7 @@
                   d="M1 0C0.447715 0 0 0.447715 0 1V5C0 5.55228 0.447715 6 1 6H6H11H21C21.5523 6 22 5.55228 22 5V1C22 0.447715 21.5523 0 21 0H11H6H1ZM5 1H2H1V2V4V5H2H5V1ZM6 5H7H10H11V4V2V1H10H7H6V2V4V5ZM12 1V5H20H21V4V2V1H20H12Z"
                   fill="white" />
               </svg>
-              <div class="tokens tab-button" id="jTokensUsed">0 tokens</div>
+              <div class="tokens text" id="jTokensUsed">0 tokens</div>
               <div class="tooltip">
                 <div class="tooltip-body">
                   <div class="tooltip-text" id="jPromptTokensUsed">Prompt Tokens - 0 | $0</div>
@@ -47,12 +47,12 @@
             </div>
           </div>
         </div>
-      
+    
         <!-- chat messages container -->
         <div id="chatContainer">
           <div id="messageContainer"></div>
         </div>
-
+    
         <!-- input container -->
         <div id="inputContainer">
           <textarea id="userInput" placeholder="Type a message..."></textarea>
@@ -63,36 +63,50 @@
       <!--  tasks and log panels  -->
       <div class="tabs-container" id="jSidebar">
         <div class="resize-handle" id="jResizeHandle"></div>
-        <div class="fixedHeader">
+        <div class="header" id="jHeader">
           <div class="left">
-            <div class="tab-button active" data-tab="coderTab">CODER</div>
-            <div class="tab-button" data-tab="plannerTab">PLANNER</div>
-            <div class="tab-button" data-tab="researcherTab">RESEARCHER</div>
+            <div class="tab-button active" data-tab="steps">STEPS <span id="progressText"></span></div>
+            <div class="tab-button" data-tab="logs">LOGS</div>
           </div>
         </div>
-      
-        <div id="plannerTab" class="tab p-20">
-          <div id="plannerLogs" class="pt-45">
-            <div class="text-inactive">This is where the logs from the planner will be displayed.</div>
+    
+        <div id="stepsTab" class="tab active pl-10">
+          <div id="stepsList" class="steps-panel-view">
+            <div class="text-inactive">This is where the steps for the task will be displayed.</div>
           </div>
         </div>
-      
-        <div id="coderTab" class="tab active p-20">
-          <div id="coderLogs" class="pt-45">
-            <div class="text-inactive">This is where the logs from the coder will be displayed.</div>
+    
+        <div id="logsTab" class="tab">
+          <div class="nested-tabs-container">
+            <div class="nested-header" id="jHeader">
+              <div class="left">
+                <div class="log-tab-button active" data-tab="coder">CODER</div>
+                <div class="log-tab-button" data-tab="planner">PLANNER</div>
+                <div class="log-tab-button" data-tab="researcher">RESEARCHER</div>
+              </div>
+            </div>
+        
+            <div id="plannerTab" class="log-tab">
+              <div id="plannerLogs" class="panel-view">
+                <div class="text-inactive">This is where the logs from the planner will be displayed.</div>
+              </div>
+            </div>
+        
+            <div id="coderTab" class="log-tab active">
+              <div id="coderLogs" class="panel-view">
+                <div class="text-inactive">This is where the logs from the coder will be displayed.</div>
+              </div>
+            </div>
+        
+            <div id="researcherTab" class="log-tab">
+              <div id="researcherLogs" class="panel-view">
+                <div class="text-inactive">This is where the logs from the researcher will be displayed.</div>
+              </div>
+            </div>
           </div>
-        </div>
-      
-        <div id="researcherTab" class="tab p-20">
-          <div id="researcherLogs" class="pt-45">
-            <div class="text-inactive">This is where the logs from the researcher will be displayed.</div>
-          </div>
-        </div>
+        </div>    
       </div>
-    
     </div>
-
-    
 
     <div id="plannerModal" class="modal">
       <div class="modal-body">

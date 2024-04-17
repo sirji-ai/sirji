@@ -22,7 +22,6 @@ const loaderSvg = `
   </svg>
 `;
 
-const NON_SCROLLABLE_PANELS = ["chatTerminalTab"];
 let stepsArray = [];
 let totalStepsCompleted = 0;
 let coderTabInterval;
@@ -380,9 +379,9 @@ function updateStepStatus(message, status) {
 
 function displayPlannedSteps(steps) {
   setProgress(totalStepsCompleted, steps.length);
-  document.getElementById('progressCircle').style.visibility = 'visible';
+  // document.getElementById('progressCircle').style.visibility = 'visible';
   stepsArray = steps;
-  const listElement = document.getElementById('plannerStepsList');
+  const listElement = document.getElementById('stepsList');
   listElement.innerHTML = '';
 
   if (!steps) {
@@ -400,7 +399,7 @@ function displayPlannedSteps(steps) {
     const stepDescription = step.description;
 
     if (step.status === 'started') {
-      listItem.innerHTML = `<div class="loader"></div><label>${stepDescription}</label>`;
+      listItem.innerHTML = `<div class="loader-wrapper"><div class="loader"></div></div><label>${stepDescription}</label>`;
     } else {
       listItem.innerHTML = `
       <input type="checkbox" class="checkbox" id="checkbox-${index}" ${step.status === 'completed' ? 'checked' : ''}>
@@ -413,10 +412,7 @@ function displayPlannedSteps(steps) {
 
 function setProgress(x, y) {
   const progressText = document.getElementById('progressText');
-  progressText.textContent = `${x} of ${y} tasks done`;
-
-  const progressTextInsideModal = document.getElementById('progressTextInsideModal');
-  progressTextInsideModal.textContent = `${x} of ${y} tasks done`;
+  progressText.textContent = `(${x}/${y})`;
 }
 
 function disableSendButton(disable, message) {
@@ -509,27 +505,25 @@ function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
   plannerLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("plannerTab");
+  scrollToBottom("plannerLogs");
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
   researcherLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("researcherTab");
+  scrollToBottom("researcherLogs");
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
   coderLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("coderTab");
+  scrollToBottom("coderLogs");
 }
 
 function displayCoderTab(data) {
-  // showTab("coderTab");
   const coderTab = document.getElementById('coderTab');
-  // coderTab.innerHTML = data;
 
   coderTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestCoderLogs' });
@@ -537,9 +531,7 @@ function displayCoderTab(data) {
 }
 
 function displayPlannerTab(data) {
-  // showTab("plannerTab");
   const plannerTab = document.getElementById('plannerTab');
-  // plannerTab.innerHTML = data;
 
   plannerTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestPlannerLogs' });
@@ -547,9 +539,7 @@ function displayPlannerTab(data) {
 }
 
 function displayResearcherTab(data) {
-  // showTab("researcherTab");
   const researcherTab = document.getElementById('researcherTab');
-  // researcherTab.innerHTML = data;
 
   researcherTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestResearcherLogs' });
@@ -580,40 +570,49 @@ tabButtons.forEach(function (button) {
   });
 });
 
-function showTab(tabName) {
+const logTabButtons = document.querySelectorAll('.log-tab-button');
+
+logTabButtons.forEach(function (button) {
+  button.addEventListener('click', function () {
+    const tabName = this.getAttribute('data-tab');
+    showTab(tabName, "log-tab", "log-tab-button");
+  });
+});
+
+
+function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button") {
   let i, tabcontent, tablinks;
 
   // Get all elements with class="tab" and hide them
-  tabcontent = document.getElementsByClassName('tab');
+  tabcontent = document.getElementsByClassName(tabClassName);
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = 'none';
   }
 
   // Get all elements with class="tab-button" and remove the class "active"
-  tablinks = document.getElementsByClassName('tab-button');
+  tablinks = document.getElementsByClassName(tabButtonClassName);
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].classList.remove('active');
   }
 
   // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = 'block';
+  document.getElementById(`${tabName}Tab`).style.display = 'block';
   document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
 
   // scroll to bottom
-  scrollToBottom(tabName);
+  scrollToBottom(`${tabName}Logs`);
 }
 
 function scrollToBottom(elementId) {
-  if (NON_SCROLLABLE_PANELS.includes(elementId)) {
-    return;
-  }
-
   const domElement = document.getElementById(elementId);
-  domElement.scrollIntoView({ behavior:"smooth", block: "end" });
-}
 
-// Show the initial tab on page load
-showTab('coderTab');
+  if (!domElement) {
+    return;
+  };
+  
+  domElement.scrollTop = domElement.scrollHeight + 25;
+
+}
 
 
 updateIconColors();
