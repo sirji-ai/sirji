@@ -26,7 +26,7 @@ jobs:
       - name: Install VSCE
         run: npm install -g vsce
 
-      - name: Install VSCE
+      - name: Install OVSX
         run: npm install -g ovsx
 
       - name: Get package.json version
