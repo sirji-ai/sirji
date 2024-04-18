@@ -28,7 +28,7 @@ jobs:
 
       - name: Get package.json version
         id: get_version
-        run: echo "::set-output name=version::$(node -e 'console.log(require("./package.json").version)')"
+        run: echo "::set-output name=version::$(node -e 'console.log(require("./sirji/vscode-extension/package.json").version)')"
 
       - name: Change directory and run all scripts
         run: |
