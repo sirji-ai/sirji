@@ -57,9 +57,9 @@ jobs:
           AWS_REGION: us-east-1
           AWS_S3_BUCKET: raised-staging-web-assets
 
-      # - name: Publish Extension
-      #   run: |
-      #     cd sirji/vscode-extension
-      #     npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
-      #   env:
-      #     VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
+      - name: Publish Extension
+        run: |
+          cd sirji/vscode-extension
+          npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
+        env:
+          VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
