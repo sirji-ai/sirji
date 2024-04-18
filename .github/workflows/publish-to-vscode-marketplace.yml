@@ -33,7 +33,7 @@ jobs:
 
           echo "Installing dependencies"
           npm install
-          echo "Running prepublishing steps"
+          echo "Running pre publishing steps"
           npm run vscode:prepublish
 
           echo "Running pre-pack steps"
@@ -42,13 +42,20 @@ jobs:
           echo "Packaging extension"
           npm run package
 
-        shell: bash
-      
-      # Uncomment the following to enable publishing
+      - name: Upload to S3
+        run: |
+          echo "Uploading to S3"
+          aws s3 cp sirji/vscode-extension/extension.vsix s3://${AWS_S3_BUCKET}/extension.vsix
+          echo "File uploaded to S3 bucket: https://s3.${AWS_REGION}.amazonaws.com/${AWS_S3_BUCKET}/extension.vsix"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+          AWS_S3_BUCKET: raised-staging-web-assets
+
       # - name: Publish Extension
       #   run: |
       #     cd sirji/vscode-extension
       #     npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
       #   env:
       #     VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
-      #   shell: bash
