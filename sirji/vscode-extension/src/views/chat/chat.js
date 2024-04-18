@@ -680,6 +680,8 @@ function drag(event) {
 function destroy(e) {
   document.documentElement.removeEventListener('mousemove', drag, false);
   document.documentElement.removeEventListener('mouseup', destroy, false);
+
+  toggleTabsArrowOnResize();
 }
 
 const jTabsButtonsContainerEl = document.getElementById('jTabsButtonsContainer');
@@ -694,7 +696,9 @@ function toggleTabsArrowOnResize() {
   }
 }
 
-window.addEventListener("resize", toggleTabsArrowOnResize);
+window.addEventListener("resize", function () {
+  setup();
+});
 
 jTabsButtonsContainerEl.addEventListener("scroll", function () {
   const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
