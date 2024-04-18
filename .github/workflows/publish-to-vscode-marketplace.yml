@@ -26,6 +26,10 @@ jobs:
       - name: Install VSCE
         run: npm install -g vsce
 
+      - name: Get package.json version
+        id: get_version
+        run: echo "::set-output name=version::$(node -e 'console.log(require("./package.json").version)')"
+
       - name: Change directory and run all scripts
         run: |
           echo "Changing directory to sirji/vscode-extension"
@@ -45,8 +49,8 @@ jobs:
       - name: Upload to S3
         run: |
           echo "Uploading to S3"
-          aws s3 cp sirji/vscode-extension/extension.vsix s3://${AWS_S3_BUCKET}/extension.vsix
-          echo "File uploaded to S3 bucket: https://s3.${AWS_REGION}.amazonaws.com/${AWS_S3_BUCKET}/extension.vsix"
+          aws s3 cp sirji/vscode-extension/sirji-${{ steps.get_version.outputs.version }}.vsix s3://${{ secrets.AWS_S3_BUCKET }}/sirji-${{ steps.get_version.outputs.version }}.vsix
+          echo "File uploaded to S3 bucket: https://s3.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_S3_BUCKET }}/sirji-${{ steps.get_version.outputs.version }}.vsix"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
