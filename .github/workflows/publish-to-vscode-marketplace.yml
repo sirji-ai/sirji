@@ -28,7 +28,7 @@ jobs:
         run: npm install -g vsce
 
       - name: Install dependencies
-        run: npm install
+        run: pwd && npm install
       
       - name: Compile and Copy Files
         run: npm run vscode:prepublish
