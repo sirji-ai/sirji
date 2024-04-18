@@ -686,17 +686,26 @@ label {
 }
 
 .column-view {
-  display: flex;
-  height: 100%;
+  display: grid;
+  grid-gap:0px;
+  grid-template-columns:60vw 40vw;
+  grid-template-areas:"left right";
+  height:100vh;
 }
 
 /*  tabs-container-css */
 .tabs-container {
   min-width: 40%;
+  max-width: 75%;
   width: 40%;
   height: 100vh;
   overflow-y: auto; 
-  position: relative; 
+  grid-area:right;
+  background: black;
+  color: white;
+  position: absolute;
+  right:0;
+  min-height:100%;
   padding-left: 5px;
   background-color: var(--vscode-sideBar-background);
 }
@@ -705,19 +714,31 @@ label {
 .chat-termianl-container {
   min-width: 25%;
   width: 60%;
-  /* flex-grow: 1; */
   height: 100vh;
+  max-width: 60%;
+  grid-area:left;
+  position: absolute;
+  min-height:100%;
 }
 
 .resize-handle {
   width: 5px;
-  height: 100vh;
-  cursor: col-resize;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -2px; 
+  left: 0px;
+  height: 100%;
+  background: var(--vscode-sideBarSectionHeader-border);
   border-left: 3px solid var(--vscode-sideBarSectionHeader-border);
+  vertical-align: top;
+  position: absolute;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.resize-handle:hover {
+  background: var(--vscode-sideBarSectionHeader-border);
+  cursor: col-resize;
 }
 
 .nested-header{
@@ -830,4 +851,9 @@ label {
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
+}
+
+*,*:before,*:after  {
+  box-sizing: inherit;
+  -webkit-tap-highlight-color: transparent;
 }

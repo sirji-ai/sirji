@@ -637,53 +637,50 @@ function debounce(func, delay) {
   };
 }
 
-const sidebar = document.getElementById('jSidebar');
-const handle = document.getElementById('jResizeHandle');
+const jLeft = document.getElementById('jLeft');
+const jRight = document.getElementById('jRight');
+const jResizeHandle = document.getElementById('jResizeHandle');
+const jWrap = document.getElementById('jWrap');
+const winWidth = window.innerWidth;
+const winHeight = window.innerHeight;
 
-let startX;
-let startWidth;
-let isResizing = false; 
+document.addEventListener('DOMContentLoaded', function (event) {
+  jLeft.style.width = winWidth / 1 + 'px';
+  jRight.style.width = winWidth / 3 + 'px';
 
-handle.addEventListener('mousedown', function (e) {
-  startX = e.clientX;
-  startWidth = parseInt(document.defaultView.getComputedStyle(sidebar).width, 10);
-  isResizing = true; 
+  rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
+  jResizeHandle.style.right = rStartWidth - 4 + 'px';
 
-  e.preventDefault();
-
-  document.documentElement.addEventListener('mousemove', mouseMoveHandler);
-  document.documentElement.addEventListener('mouseup', mouseUpHandler);
-
-  sidebar.style.transition = 'width 0.3s ease'; 
+  jResizeHandle.addEventListener('mousedown', setup, false);
 });
 
-function mouseMoveHandler(e) {
-  if (!isResizing) {
-    return;
-  } 
+let StartX, rStartWidth, lStartWidth;
 
-  debounce(() => {
-    const newWidth = startWidth + startX - e.clientX;
-    sidebar.style.width = Math.max(newWidth, 250) + 'px';
+function setup(event) {
+  StartX = event.clientX;
+  rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
+  lStartWidth = parseInt(window.getComputedStyle(jLeft).width, 10);
 
-    toggleTabsArrowOnResize();
-  }, 10)(); 
-
-  e.preventDefault();
+  document.documentElement.addEventListener('mousemove', drag, false);
+  document.documentElement.addEventListener('mouseup', destroy, false);
 }
 
-function mouseUpHandler() {
-  if (!isResizing) {
-    return;
-  } 
-  isResizing = false; 
+function drag(event) {
+  event.preventDefault();
+
+  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px',(rStartWidth - event.clientX + StartX) + 'px';
+	jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
+  jLeft.style.width = (lStartWidth + event.clientX - StartX) + 'px';
   
-  document.documentElement.removeEventListener('mousemove', mouseMoveHandler);
-  document.documentElement.removeEventListener('mouseup', mouseUpHandler);
+  jResizeHandle.style.right = (rStartWidth - event.clientX + StartX - 4) + 'px';
 
-  sidebar.style.transition = '';
+  toggleTabsArrowOnResize();
 }
 
+function destroy(e) {
+  document.documentElement.removeEventListener('mousemove', drag, false);
+  document.documentElement.removeEventListener('mouseup', destroy, false);
+}
 
 const jTabsButtonsContainerEl = document.getElementById('jTabsButtonsContainer');
 const jTabButtonsEl = document.getElementById('jTabButtons');
