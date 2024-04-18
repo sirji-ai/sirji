@@ -46,7 +46,7 @@ html {
   flex-direction: column;
   padding: 20px;
   overflow-y: auto;
-  flex-grow: 1;
+  /* flex-grow: 1; */
 }
 
 .user-message:last-child,
@@ -704,8 +704,9 @@ label {
 
 /* chat-termianl-css */
 .chat-termianl-container {
-  min-width: 25%;
-  flex-grow: 1;
+  min-width: 40%;
+  width: 60%;
+  /* flex-grow: 1; */
   height: 100vh;
 }
 
