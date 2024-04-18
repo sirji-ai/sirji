@@ -44,14 +44,14 @@ document.getElementById('closeSettings').onclick = function () {
   closeSettings();
 };
 
-// Planner modal
-document.getElementById('progressCircle').addEventListener('click', () => {
-  document.getElementById('plannerModal').style.display = 'flex';
-});
+// // Planner modal
+// document.getElementById('progressCircle').addEventListener('click', () => {
+//   document.getElementById('plannerModal').style.display = 'flex';
+// });
 
-document.getElementById('closePlanner').addEventListener('click', () => {
-  document.getElementById('plannerModal').style.display = 'none';
-});
+// document.getElementById('closePlanner').addEventListener('click', () => {
+//   document.getElementById('plannerModal').style.display = 'none';
+// });
 
 // IMP: Acquire the VS Code API
 const vscode = acquireVsCodeApi();
@@ -169,6 +169,19 @@ function adjustTextAreaHeight() {
   userInput.style.height = minHeight + 'px';
   const newHeight = Math.min(maxHeight, Math.max(userInput.scrollHeight, minHeight));
   userInput.style.height = newHeight + 'px';
+
+  updateMessageContainerHeight();
+}
+
+function updateMessageContainerHeight() {
+  const chatContainer = document.getElementById('chatContainer');
+  
+  const inputontainerHeight = document.getElementById("inputContainer").offsetHeight;
+  const headerHeight = document.getElementById("jHeader").offsetHeight;
+
+  const totalHeight = inputontainerHeight + headerHeight; 
+  
+  chatContainer.style.height = `calc(100vh - ${totalHeight}px)`;
 }
 
 function displayMessage(msg, sender, allowUserInput) {
@@ -366,9 +379,9 @@ function updateStepStatus(message, status) {
 
 function displayPlannedSteps(steps) {
   setProgress(totalStepsCompleted, steps.length);
-  document.getElementById('progressCircle').style.visibility = 'visible';
+  // document.getElementById('progressCircle').style.visibility = 'visible';
   stepsArray = steps;
-  const listElement = document.getElementById('plannerStepsList');
+  const listElement = document.getElementById('stepsList');
   listElement.innerHTML = '';
 
   if (!steps) {
@@ -386,7 +399,7 @@ function displayPlannedSteps(steps) {
     const stepDescription = step.description;
 
     if (step.status === 'started') {
-      listItem.innerHTML = `<div class="loader"></div><label>${stepDescription}</label>`;
+      listItem.innerHTML = `<div class="loader-wrapper"><div class="loader"></div></div><label>${stepDescription}</label>`;
     } else {
       listItem.innerHTML = `
       <input type="checkbox" class="checkbox" id="checkbox-${index}" ${step.status === 'completed' ? 'checked' : ''}>
@@ -399,10 +412,7 @@ function displayPlannedSteps(steps) {
 
 function setProgress(x, y) {
   const progressText = document.getElementById('progressText');
-  progressText.textContent = `${x} of ${y} tasks done`;
-
-  const progressTextInsideModal = document.getElementById('progressTextInsideModal');
-  progressTextInsideModal.textContent = `${x} of ${y} tasks done`;
+  progressText.textContent = `STEPS (${x}/${y})`;
 }
 
 function disableSendButton(disable, message) {
@@ -494,22 +504,26 @@ function updateTooltipTokenValues(tokenValues) {
 function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
   plannerLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("plannerLogs");
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
   researcherLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("researcherLogs");
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
   coderLogs.innerText = data;
+  // scroll to bottom
+  scrollToBottom("coderLogs");
 }
 
 function displayCoderTab(data) {
-  // showTab("coderTab");
   const coderTab = document.getElementById('coderTab');
-  // coderTab.innerHTML = data;
 
   coderTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestCoderLogs' });
@@ -517,9 +531,7 @@ function displayCoderTab(data) {
 }
 
 function displayPlannerTab(data) {
-  // showTab("plannerTab");
   const plannerTab = document.getElementById('plannerTab');
-  // plannerTab.innerHTML = data;
 
   plannerTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestPlannerLogs' });
@@ -527,9 +539,7 @@ function displayPlannerTab(data) {
 }
 
 function displayResearcherTab(data) {
-  // showTab("researcherTab");
   const researcherTab = document.getElementById('researcherTab');
-  // researcherTab.innerHTML = data;
 
   researcherTabInterval = setInterval(() => {
     vscode.postMessage({ type: 'requestResearcherLogs' });
@@ -560,28 +570,52 @@ tabButtons.forEach(function (button) {
   });
 });
 
-function showTab(tabName) {
+const logTabButtons = document.querySelectorAll('.log-tab-button');
+
+logTabButtons.forEach(function (button) {
+  button.addEventListener('click', function () {
+    const tabName = this.getAttribute('data-tab');
+    showTab(tabName, "log-tab", "log-tab-button");
+  });
+});
+
+
+function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button") {
   let i, tabcontent, tablinks;
 
   // Get all elements with class="tab" and hide them
-  tabcontent = document.getElementsByClassName('tab');
+  tabcontent = document.getElementsByClassName(tabClassName);
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = 'none';
   }
 
   // Get all elements with class="tab-button" and remove the class "active"
-  tablinks = document.getElementsByClassName('tab-button');
+  tablinks = document.getElementsByClassName(tabButtonClassName);
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].classList.remove('active');
   }
 
   // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = 'block';
+  document.getElementById(`${tabName}Tab`).style.display = 'block';
   document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+
+  // scroll to bottom
+  scrollToBottom(`${tabName}Logs`);
+
+  // adjust the tabs 
+  toggleTabsArrowOnResize();
 }
 
-// Show the initial tab on page load
-showTab('chatTerminalTab');
+function scrollToBottom(elementId) {
+  const domElement = document.getElementById(elementId);
+
+  if (!domElement) {
+    return;
+  };
+  
+  domElement.scrollTop = domElement.scrollHeight + 25;
+
+}
 
 
 updateIconColors();
@@ -590,3 +624,92 @@ vscode.postMessage({
   type: 'webViewReady',
   content: true,
 });
+
+function debounce(func, delay) {
+  let timer;
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+const jLeft = document.getElementById('jLeft');
+const jRight = document.getElementById('jRight');
+const jResizeHandle = document.getElementById('jResizeHandle');
+const jWrap = document.getElementById('jWrap');
+const winWidth = window.innerWidth;
+const winHeight = window.innerHeight;
+
+document.addEventListener('DOMContentLoaded', function (event) {
+  jLeft.style.width = winWidth / 1 + 'px';
+  jRight.style.width = winWidth / 3 + 'px';
+
+  rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
+  jResizeHandle.style.right = rStartWidth - 4 + 'px';
+
+  jResizeHandle.addEventListener('mousedown', setup, false);
+});
+
+let StartX, rStartWidth, lStartWidth;
+
+function setup(event) {
+  StartX = event.clientX;
+  rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
+  lStartWidth = parseInt(window.getComputedStyle(jLeft).width, 10);
+
+  document.documentElement.addEventListener('mousemove', drag, false);
+  document.documentElement.addEventListener('mouseup', destroy, false);
+}
+
+function drag(event) {
+  event.preventDefault();
+
+  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px',(rStartWidth - event.clientX + StartX) + 'px';
+	jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
+  jLeft.style.width = (lStartWidth + event.clientX - StartX) + 'px';
+  
+  jResizeHandle.style.right = (rStartWidth - event.clientX + StartX - 4) + 'px';
+
+  toggleTabsArrowOnResize();
+}
+
+function destroy(e) {
+  document.documentElement.removeEventListener('mousemove', drag, false);
+  document.documentElement.removeEventListener('mouseup', destroy, false);
+
+  toggleTabsArrowOnResize();
+}
+
+const jTabsButtonsContainerEl = document.getElementById('jTabsButtonsContainer');
+const jTabButtonsEl = document.getElementById('jTabButtons');
+const jArrowSvg = document.getElementById('jArrowSvg');
+
+function toggleTabsArrowOnResize() {
+  if (jTabsButtonsContainerEl.offsetWidth < jTabButtonsEl.offsetWidth) {
+    jArrowSvg.style.display = 'flex';
+  } else {
+    jArrowSvg.style.display = 'none';
+  }
+}
+
+window.addEventListener("resize", function () {
+  setup();
+});
+
+jTabsButtonsContainerEl.addEventListener("scroll", function () {
+  const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
+
+  if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
+    jArrowSvg.style.display = "none";
+  } else {
+    jArrowSvg.style.display = "flex";
+  }
+});
+
+jArrowSvg.onclick = function () {
+  jTabsButtonsContainerEl.scrollLeft = 999999;
+};
