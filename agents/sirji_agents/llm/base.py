@@ -2,7 +2,7 @@ from openai import OpenAI
 import os
 
 from sirji_messages import AgentSystemPromptFactory, message_parse, MessageParsingError, MessageValidationError
-
+from .model_providers.factory import LLMProviderFactory 
 
 class SingletonMeta(type):
     """Singleton Meta Class for ensuring one instance creation."""
@@ -16,12 +16,7 @@ class SingletonMeta(type):
 
 class LLMAgentBase(metaclass=SingletonMeta):
     def __init__(self, agent_enum, logger):
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
-        if api_key is None:
-            raise ValueError(
-                "OpenAI API key is not set as an environment variable")
-
-        self.client = OpenAI(api_key=api_key)
+        
         self.agent_enum = agent_enum
         self.logger = logger
 
@@ -89,18 +84,6 @@ class LLMAgentBase(metaclass=SingletonMeta):
         for message in conversation:
             history.append({"role": message['role'], "content": message['content']})
 
-        chat_completion = self.client.chat.completions.create(
-            messages=history,
-            model="gpt-4-turbo",
-            temperature=0,
-            max_tokens=4095,
-        )
+        model_provider = LLMProviderFactory.get_instance()
 
-        response_message = chat_completion.choices[0].message.content
-
-        # Get the total tokens used in the response
-        prompt_tokens = chat_completion.usage.prompt_tokens
-        completion_tokens = chat_completion.usage.completion_tokens
-        self.logger.info(f"Raw response from Chat Completions API: \n{response_message}\n\n\n")
-
-        return response_message, prompt_tokens, completion_tokens
+        return model_provider.get_response(history, self.logger)
