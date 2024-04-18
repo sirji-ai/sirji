@@ -695,16 +695,15 @@ label {
   min-width: 40%;
   width: 40%;
   height: 100vh;
-  border-left: 3px solid var(--vscode-sideBarSectionHeader-border);
   overflow-y: auto; 
   position: relative; 
-
+  padding-left: 5px;
   background-color: var(--vscode-sideBar-background);
 }
 
 /* chat-termianl-css */
 .chat-termianl-container {
-  min-width: 40%;
+  min-width: 25%;
   width: 60%;
   /* flex-grow: 1; */
   height: 100vh;
@@ -712,11 +711,13 @@ label {
 
 .resize-handle {
   width: 5px;
+  height: 100vh;
   cursor: col-resize;
   position: absolute;
   top: 0;
   bottom: 0;
   left: -2px; 
+  border-left: 3px solid var(--vscode-sideBarSectionHeader-border);
 }
 
 .nested-header{

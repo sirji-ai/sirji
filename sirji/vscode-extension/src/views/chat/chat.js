@@ -625,50 +625,62 @@ vscode.postMessage({
   content: true,
 });
 
+function debounce(func, delay) {
+  let timer;
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
 const sidebar = document.getElementById('jSidebar');
 const handle = document.getElementById('jResizeHandle');
 
 let startX;
 let startWidth;
-let isResizing = false; // Variable to track resizing state
+let isResizing = false; 
 
 handle.addEventListener('mousedown', function (e) {
   startX = e.clientX;
   startWidth = parseInt(document.defaultView.getComputedStyle(sidebar).width, 10);
-  isResizing = true; // Set resizing state to true when mouse is pressed
+  isResizing = true; 
 
-  // Prevent text selection during resize
   e.preventDefault();
 
   document.documentElement.addEventListener('mousemove', mouseMoveHandler);
   document.documentElement.addEventListener('mouseup', mouseUpHandler);
 
-  // Add CSS transition for smooth resizing
-  sidebar.style.transition = 'width 0.3s ease'; // Adjust the duration and timing function as needed
+  sidebar.style.transition = 'width 0.3s ease'; 
 });
 
 function mouseMoveHandler(e) {
   if (!isResizing) {
     return;
-  } // Exit if resizing state is false
-  const newWidth = startWidth + startX - e.clientX;
-  sidebar.style.width = Math.max(newWidth, 250) + 'px';
+  } 
 
-  toggleTabsArrowOnResize();
+  debounce(() => {
+    const newWidth = startWidth + startX - e.clientX;
+    sidebar.style.width = Math.max(newWidth, 250) + 'px';
 
-  // Prevent text selection during resize
+    toggleTabsArrowOnResize();
+  }, 10)(); 
+
   e.preventDefault();
 }
 
 function mouseUpHandler() {
   if (!isResizing) {
     return;
-  } // Exit if resizing state is false
-  isResizing = false; // Reset resizing state to false when mouse is released
+  } 
+  isResizing = false; 
+  
   document.documentElement.removeEventListener('mousemove', mouseMoveHandler);
   document.documentElement.removeEventListener('mouseup', mouseUpHandler);
 
-  // Reset CSS transition for smooth resizing after mouseup
   sidebar.style.transition = '';
 }
 
