@@ -601,6 +601,9 @@ function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button
 
   // scroll to bottom
   scrollToBottom(`${tabName}Logs`);
+
+  // adjust the tabs 
+  toggleTabsArrowOnResize();
 }
 
 function scrollToBottom(elementId) {
@@ -651,6 +654,8 @@ function mouseMoveHandler(e) {
   const newWidth = startWidth + startX - e.clientX;
   sidebar.style.width = Math.max(newWidth, 250) + 'px';
 
+  toggleTabsArrowOnResize();
+
   // Prevent text selection during resize
   e.preventDefault();
 }
@@ -667,3 +672,31 @@ function mouseUpHandler() {
   sidebar.style.transition = '';
 }
 
+
+const jTabsButtonsContainerEl = document.getElementById('jTabsButtonsContainer');
+const jTabButtonsEl = document.getElementById('jTabButtons');
+const jArrowSvg = document.getElementById('jArrowSvg');
+
+function toggleTabsArrowOnResize() {
+  if (jTabsButtonsContainerEl.offsetWidth < jTabButtonsEl.offsetWidth) {
+    jArrowSvg.style.display = 'flex';
+  } else {
+    jArrowSvg.style.display = 'none';
+  }
+}
+
+window.addEventListener("resize", toggleTabsArrowOnResize);
+
+jTabsButtonsContainerEl.addEventListener("scroll", function () {
+  const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
+
+  if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
+    jArrowSvg.style.display = "none";
+  } else {
+    jArrowSvg.style.display = "flex";
+  }
+});
+
+jArrowSvg.onclick = function () {
+  jTabsButtonsContainerEl.scrollLeft = 999999;
+};
