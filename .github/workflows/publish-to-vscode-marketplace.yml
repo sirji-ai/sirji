@@ -26,6 +26,9 @@ jobs:
       - name: Install VSCE
         run: npm install -g vsce
 
+      - name: Install OVSX
+        run: npm install -g ovsx
+
       - name: Get package.json version
         id: get_version
         run: echo "::set-output name=version::$(node -e 'console.log(require("./sirji/vscode-extension/package.json").version)')"
@@ -46,20 +49,16 @@ jobs:
           echo "Packaging extension"
           npm run package
 
-      - name: Upload to S3
-        run: |
-          echo "Uploading to S3"
-          aws s3 cp sirji/vscode-extension/sirji-${{ steps.get_version.outputs.version }}.vsix s3://$AWS_S3_BUCKET/sirji-${{ steps.get_version.outputs.version }}.vsix --acl public-read
-          echo "File uploaded to S3 bucket: https://s3.$AWS_REGION.amazonaws.com/$AWS_S3_BUCKET/sirji-${{ steps.get_version.outputs.version }}.vsix"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
-          AWS_S3_BUCKET: raised-staging-web-assets
-
-      - name: Publish Extension
-        run: |
+      - name: Publish Extension To VS Marketplace
+        run:
           cd sirji/vscode-extension
           npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
         env:
-          VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
+          VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}        
+
+      - name: Publish Extension To Open VSX
+        run: |
+          cd sirji/vscode-extension
+          ovsx publish sirji-${{ steps.get_version.outputs.version }}.vsix -p ${{ secrets.OPEN_VSX_ACCESS_TOKEN }}
+        env:
+          OPEN_VSX_ACCESS_TOKEN: ${{ secrets.OPEN_VSX_ACCESS_TOKEN }}
