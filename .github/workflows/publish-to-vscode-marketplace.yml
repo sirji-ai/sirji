@@ -1,9 +1,12 @@
 name: Publish Sirji VS Code Extension
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to release from'
+        required: true
+        default: 'main'
 
 jobs:
   deploy:
@@ -19,7 +22,7 @@ jobs:
           node-version: '18'
 
       - name: Change directory to extension
-        run: cd sirji/vscode-extension
+        run: cd sirji/vscode-extension && pwd
 
       - name: Install VSCE
         run: npm install -g vsce
@@ -36,7 +39,7 @@ jobs:
       - name: Package Extension
         run: npm run package
 
-      - name: Publish Extension
-        run: npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
-        env:
-          VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
+      # - name: Publish Extension
+      #   run: npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
+      #   env:
+      #     VS_MARKETPLACE_PAT: ${{ secrets.VS_MARKETPLACE_PAT }}
