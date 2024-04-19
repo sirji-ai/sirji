@@ -503,7 +503,8 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.READ_FILES:
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILEPATHS);
+              const filePaths = JSON.parse(parsedMessage.FILEPATHS);
+              const readFileContentRes = await readContent(oThis.workspaceRootPath, filePaths);
               rawMessage = readFileContentRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
@@ -583,7 +584,7 @@ export class Facilitator {
         break;
 
       case ACTION_ENUM.READ_FILES:
-        contentMessage = `Reading Files: ${parsedMessage.FILEPATHSFILENAME}`;
+        contentMessage = `Reading Files: ${parsedMessage.FILEPATHS}`;
         break;
 
       case ACTION_ENUM.READ_DIR:
