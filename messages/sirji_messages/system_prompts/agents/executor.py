@@ -1,4 +1,5 @@
 import textwrap
+import os
 
 from sirji_messages import AgentEnum, ActionEnum
 
@@ -22,8 +23,8 @@ class ExecutorSystemPrompt(AgentSystemPromptBase):
         return ""  # This will never be called.
 
     def capabilities(self):
-        return textwrap.dedent("""
-          - Interact with macOS terminal.
+        return textwrap.dedent(f"""
+          - Interact with {os.name} terminal.
           - Run server like continuous process using {ActionEnum.RUN_SERVER.name} action.
           - Create or update files using {ActionEnum.CREATE_FILE.name} action.
           - Read content from a single file using {ActionEnum.READ_FILE.name} action.
