@@ -26,10 +26,8 @@ const MEDIA_MIME_TYPES = [
   // 'application/vnd.oasis.opendocument.presentation' // OpenDocument Presentation
 ];
 
-export async function readContent(workspaceRootPath: string, inputPath: string): Promise<string> {
-  let fullPath = path.join(workspaceRootPath, inputPath);
-
-  function shouldSkip(name: string): boolean {
+export async function readContent(workspaceRootPath: string, inputPaths: string[]): Promise<string> {
+  async function shouldSkip(name: string): Promise<boolean> {
     return SKIP_LIST.includes(name);
   }
 
@@ -63,8 +61,7 @@ export async function readContent(workspaceRootPath: string, inputPath: string):
       let results = [];
 
       for (const file of files) {
-        // Skip logic implementation
-        if (shouldSkip(file.name)) {
+        if (await shouldSkip(file.name)) {
           continue; // Skips current iteration if name matches any in SKIP_LIST
         }
 
@@ -83,18 +80,22 @@ export async function readContent(workspaceRootPath: string, inputPath: string):
     }
   }
 
-  try {
-    const stats = await fs.stat(fullPath);
+  let result = '';
+  for (const inputPath of inputPaths) {
+    try {
+      const fullPath = path.join(workspaceRootPath, inputPath);
+      const stats = await fs.stat(fullPath);
 
-    if (stats.isDirectory()) {
-      return readDirectory(fullPath);
-    } else {
-      return readFile(fullPath);
+      if (stats.isDirectory()) {
+        result += await readDirectory(fullPath);
+      } else {
+        result += await readFile(fullPath);
+      }
+    } catch (e) {
+      const errorMessage = `Failed to read the path ${inputPath}. Error: ${e}`;
+      console.error(errorMessage);
+      result += errorMessage;
     }
-  } catch (e) {
-    const errorMessage = `Failed to read the path. Error: ${e}`;
-    return errorMessage;
   }
+  return result;
 }
-
-readContent('/Users/vaibhavdighe/workspace/sirji', 'test').then(console.log).catch(console.error);

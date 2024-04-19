@@ -495,15 +495,15 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.READ_DIR:
-              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              const readDirContentRes = await readContent(oThis.workspaceRootPath, [parsedMessage.DIRPATH]);
               rawMessage = readDirContentRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
               break;
 
-            case ACTION_ENUM.READ_FILE:
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILENAME);
+            case ACTION_ENUM.READ_FILES:
+              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILEPATHS);
               rawMessage = readFileContentRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
@@ -582,8 +582,8 @@ export class Facilitator {
         contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
         break;
 
-      case ACTION_ENUM.READ_FILE:
-        contentMessage = `Reading File: ${parsedMessage.FILENAME}`;
+      case ACTION_ENUM.READ_FILES:
+        contentMessage = `Reading Files: ${parsedMessage.FILEPATHSFILENAME}`;
         break;
 
       case ACTION_ENUM.READ_DIR:

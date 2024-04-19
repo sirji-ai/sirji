@@ -9,7 +9,7 @@ permissions_dict = {
         ActionEnum.EXECUTE_COMMAND,
         ActionEnum.RUN_SERVER,
         ActionEnum.INSTALL_PACKAGE,
-        ActionEnum.READ_FILE,
+        ActionEnum.READ_FILES,
         ActionEnum.READ_DIR,
         ActionEnum.READ_DIR_STRUCTURE
     },
