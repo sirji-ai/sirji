@@ -23,6 +23,7 @@ from .actions.train_using_url import TrainUsingUrlMessage
 from .actions.feedback import FeedbackMessage
 from .actions.training_output import TrainingOutputMessage
 from .actions.read_dir import ReadDirMessage
+from .actions.read_dir_structure import ReadDirStructureMessage
 from .actions.read_file import ReadFileMessage
 
 
@@ -64,6 +65,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.FEEDBACK: FeedbackMessage,
         ActionEnum.TRAINING_OUTPUT: TrainingOutputMessage,
         ActionEnum.READ_DIR: ReadDirMessage,
-        ActionEnum.READ_FILE: ReadFileMessage
+        ActionEnum.READ_FILE: ReadFileMessage,
+        ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage
     }
 

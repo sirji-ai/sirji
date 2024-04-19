@@ -11,6 +11,7 @@ import { openBrowser } from './open_browser';
 import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
 import { readContent } from './read_content';
+import { readDirectoryStructure } from './read_directory_structure';
 import { executeTask } from './execute_task';
 import { executeSpawn } from './execute_spawn';
 
@@ -509,6 +510,14 @@ export class Facilitator {
               };
               break;
 
+            case ACTION_ENUM.READ_DIR_STRUCTURE:
+              const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              rawMessage = readDirStructureRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
+              break;
+
             default:
               console.log('Execution default', parsedMessage);
               oThis.chatPanel?.webview.postMessage({
@@ -579,6 +588,10 @@ export class Facilitator {
 
       case ACTION_ENUM.READ_DIR:
         contentMessage = `Reading Files in Folder (and its Sub-Folders): ${parsedMessage.DIRPATH}`;
+        break;
+
+      case ACTION_ENUM.READ_DIR_STRUCTURE:
+        contentMessage = `Reading Directory Structure: ${parsedMessage.DIRPATH}`;
         break;
 
       case ACTION_ENUM.TRAIN_USING_URL:

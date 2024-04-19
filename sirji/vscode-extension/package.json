@@ -67,6 +67,7 @@
     "publish": "vsce publish"
   },
   "devDependencies": {
+    "@types/mime-types": "^2.1.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/vscode": "^1.80.2",
@@ -78,5 +79,8 @@
     "eslint": "^8.56.0",
     "nodemon": "^3.1.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "mime-types": "2.1.35"
   }
 }

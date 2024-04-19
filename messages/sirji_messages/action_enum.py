@@ -25,3 +25,4 @@ class ActionEnum(Enum):
     TRAINING_OUTPUT = auto()
     READ_FILE = auto()
     READ_DIR = auto()
+    READ_DIR_STRUCTURE = auto()
