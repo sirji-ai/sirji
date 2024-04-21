@@ -104,13 +104,16 @@ This milestone enhances Sirji's capabilities by introducing:
 - **Agent Extendability:** Agents can publish their skills and the allowed incoming & outgoing messages. Custom agents can be modifications of existing ones or completely new implementations written from scratch.
 
 ### Accessibility Milestone
-**Goal**: Allow users to experience Sirji without an OpenAI account.
+**Goal**: Allow users to experience Sirji with or without an OpenAI API key.
 
 The following are the key highlights:
-- **Account Creation:** Users must create an account on Sirji and will be added to a waitlist.
-- **API Key:** After clearing the waitlist, users receive a Sirji API key, necessary for accessing services like LLM Embedding and LLM Inference via proxy APIs.
-- **Rate Limiting:** Implement rate limits on the number of tokens consumed daily by a single API key.
-- **Feedback System:** Develop a system to collect user feedback.
+- Enable users to use Sirji seamlessly, with or without an OpenAI API key:
+  - **Users with their own OpenAI key** can simply enter it into the extension and start using Sirji.
+  - **Users without an OpenAI API key** can utilize Sirji's proxy APIs:
+    - **Account Creation:** Users must create an account on Sirji and will be placed on a waitlist. After advancing from the waitlist, they can simply start using Sirji, accessing services like LLM Embedding and LLM Inference via proxy APIs.
+    - **Rate Limiting:** Implement rate limits on the daily number of tokens a user consumes.
+- Develop a system to collect user feedback.
+
 
 ### Updated Architecture Diagram
 ![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
