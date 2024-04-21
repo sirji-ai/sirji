@@ -80,6 +80,33 @@ The tools for crawling URLs (converting them into markdowns), searching for term
 
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
+## Roadmap
+The [roadmap](https://github.com/orgs/sirji-ai/projects/5/views/1) outlines the key milestones we plan to achieve by May 20th, 2024: Reliability, Extendability, and Accessibility.
+
+### Reliability Milestone
+The VS Code extension has enhanced Sirji's usability, but our extensive testing has identified several issues:
+- Sirji often indicates that it has solved the problem even when it hasn’t fully implemented the expected functionalities.
+- Unable to debug web errors, Sirji relies on manual error reporting by users.
+- Incorrectly claims tasks like installing MongoDB are "outside of my capability."
+- Sometimes installs system-wide packages like Python or creates files outside the designated workspace without user consent.
+
+**Goal:** Improve Sirji's reliability in handling a diverse range of software problems.
+
+### Extendability - Custom Recipes and Custom Agents Milestone
+This milestone enhances Sirji's capabilities by enabling community-driven customization and flexibility:
+- **Custom Recipes and Agents:** Enable the community to develop custom recipes, which are guidelines for how agents interact, and to create custom agents.
+- **Orchestration:** Utilize both standard and user-generated recipes, along with agents' published skills, to manage task assignments and agent invocations.
+- **Agent Flexibility:** Agents can publish their skills and their allowed incoming & outgoing messages. Custom agents may be modifications of existing ones or completely new implementations written from scratch.
+
+### Accessibility Milestone
+- **Account Creation:** Users must create an account on Sirji and will be added to a waitlist.
+- **API Key:** After clearing the waitlist, users receive a Sirji API key necessary for accessing services like LLM Embedding and LLM Inference via proxy APIs.
+- **Rate Limiting:** Implement rate limits on the number of tokens consumed daily by a single API key.
+- **Feedback System:** Develop a system to collect user feedback.
+
+### Updated Architecture Diagram
+![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
+
 ## Contributing
 
 We welcome contributions to Sirji! If you're interested in helping improve this VS Code extension, please take a look at our [Contributing Guidelines](./CONTRIBUTING.md) for more information on how to get started.
