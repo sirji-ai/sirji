@@ -34,14 +34,11 @@ Additionally, Sirji sets up your local or remote development environment by inst
 
 ## Demo Video
 
-```
-Create a fully interactive website for playing the Tic-Tac-Toe game.
-```
+Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
 
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank">https://www.youtube.com/watch?v=DC_gmz04Ovs</a>
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
 
-<a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/fff071a6-f019-4797-ad44-55d7670e819f" alt="Tic Tac Toe game by Sirji"></a>
-
+<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
 
 ## Prerequisites
 
