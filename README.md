@@ -113,6 +113,7 @@ The following are the key highlights:
     - **Account Creation:** Users must create an account on Sirji and will be placed on a waitlist. After advancing from the waitlist, they can simply start using Sirji, accessing services like LLM Embedding and LLM Inference via proxy APIs.
     - **Rate Limiting:** Implement rate limits on the daily number of tokens a user consumes.
 - Develop a system to collect user feedback.
+- Ensure that Sirji runs on Windows and Linux.
 
 
 ### Updated Architecture Diagram
