@@ -24,17 +24,13 @@
 
 ## Sirji
 
-Sirji is a Visual Studio Code extension that works as an AI software development agent.
+Sirji is an agentic AI framework that helps developers solve software problems faster. These problems can range from building greenfield web applications to resolving GitHub issues, writing test cases, generating documentation, conducting code reviews, and much more.
 
-It is a virtual software developer that includes individual agents for planning, coding, researching, and executing projects.
+Sirji uses either standard or user-generated recipes, along with the skills published by the agents, to orchestrate task assignments and agent invocations. A recipe is a set of instructions or tips suggesting how the agents will interact with each other. An agent publishes its skills along with its allowed incoming and outgoing messages. Custom agents can be either modified versions of a base agent or completely new implementations written from scratch.
 
-Sirji solves users’ problem statements ranging from a new greenfield project to an existing brownfield project where it enhances existing code, fixes bugs, and writes test cases.
+Sirji is currently made available as a Visual Studio Code extension. This extension provides an interactive chat interface within your IDE, through which you can submit your problem statement and provide feedback to Sirji. The extension takes advantage of the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
-The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
-
-It provides an interactive chat interface through which users submit their problem statements, answer questions, and provide feedback to Sirji.
-
-Additionally and most importantly, Sirji sets up your local development environment by installing system-level packages as well as programming language-specific dependencies. It later executes the generated code in your local development environment.
+Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It also executes the generated code in your local or remote development environment.
 
 ## Demo Video
 
