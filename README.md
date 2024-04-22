@@ -79,44 +79,16 @@ The tools for crawling URLs (converting them into markdowns), searching for term
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
 ## Roadmap
-The upcoming [roadmap](https://github.com/orgs/sirji-ai/projects/5/views/1) outlines the plan to achieve Reliability, Extendability, and Accessibility by May 20, 2024.
+We are calling our next release the ‘Core’ Release (ONGOING. ETA - May 20).
 
-### Reliability Milestone
-**Goal**: Improve Sirji's reliability in solving software problems.
+Here is the link to the ‘Core’ release’s roadmap: https://github.com/orgs/sirji-ai/projects/5
 
-The VS Code extension has enhanced Sirji's usability, but our extensive testing has identified several issues:
-- Sirji often indicates that it has solved the problem even when it has not fully implemented the expected functionalities.
-- Unable to debug web errors, Sirji relies on manual error reporting by users.
-- It incorrectly claims that tasks like installing MongoDB are "outside of my capability."
-- Sometimes, it installs system-wide packages like Python or creates files outside the designated workspace without user consent.
+This is a significant release focused on the following key areas:
+- **User accounts**: Users will be required to create an account with Sirji. They can either bring their own LLM key or subscribe to a free but rate-limited Developer plan.
+- **Improve reliability**: The first version of the VS Code extension improved usability, but after using it ourselves for a while, we identified several issues and limitations ranging from incomplete solutions to a lack of web debugging capabilities. We are addressing these issues to make Sirji more reliable in solving software problems.
+- **Custom agents and recipes**: We are developing the framework to enable users to create and use custom agents and recipes (instructions on how the agents interact). This involves enhancing the orchestration functionality and refactoring existing base agents.
 
-To solve these issues, we have identified the following changes:
-- Introduce a QA Agent and a Code Review Agent.
-- Add workspace and OS awareness along with improved accessibility.
-- Generate more elaborated epics and user stories.
-
-### Extendability - Recipes and Custom Agents Milestone
-**Goal**: Achieve community-driven customization and flexibility to solve a wide range of software problems.
-
-This milestone enhances Sirji's capabilities by introducing:
-- **Recipes and Custom Agents:** Enable the community to develop custom recipes, which are guidelines for how agents interact, and to create custom agents.
-- **Orchestration:** Utilize recipes, along with agents' published skills, to manage task assignments and agent invocations.
-- **Agent Extendability:** Agents can publish their skills and the allowed incoming & outgoing messages. Custom agents can be modifications of existing ones or completely new implementations written from scratch.
-
-### Accessibility Milestone
-**Goal**: Allow users to experience Sirji with or without an OpenAI API key.
-
-The following are the key highlights:
-- Enable users to use Sirji seamlessly, with or without an OpenAI API key:
-  - **Users with their own OpenAI key** can simply enter it into the extension and start using Sirji.
-  - **Users without an OpenAI API key** can utilize Sirji's proxy APIs:
-    - **Account Creation:** Users must create an account on Sirji and will be placed on a waitlist. After advancing from the waitlist, they can simply start using Sirji, accessing services like LLM Embedding and LLM Inference via proxy APIs.
-    - **Rate Limiting:** Implement rate limits on the daily number of tokens a user consumes.
-- Develop a system to collect user feedback.
-- Ensure that Sirji runs on Windows and Linux.
-
-
-### Updated Architecture Diagram
+### Architecture Diagram (Post Core Release)
 ![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
 
 ## Contributing
