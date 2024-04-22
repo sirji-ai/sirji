@@ -26,9 +26,11 @@
 
 Sirji is an agentic AI framework that helps developers solve software problems faster. These problems can range from building greenfield web applications to resolving GitHub issues, writing test cases, generating documentation, conducting code reviews, and much more.
 
-Sirji is currently made available as a Visual Studio Code extension. This extension provides an interactive chat interface within your IDE, through which you can submit your problem statement and provide feedback to Sirji. The extension takes advantage of the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+Right now, we have implemented Sirji as a VS Code extension. It lives where developers work. It provides an interactive chat interface, through which you can submit your problem statement and provide feedback. It takes advantage of the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
 Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It also executes the generated code in your local or remote development environment.
+
+In the next release, we will be making Sirji extendable, building it as a framework where the community can write custom agents having specialized skills, which would generate better results than a generic agent.
 
 ## Demo Video
 
@@ -40,7 +42,7 @@ Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="
 
 ## Prerequisites
 
-Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize.
+Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize ([Issue #44](https://github.com/sirji-ai/sirji/issues/44)).
 
 Make sure you have installed all of the following prerequisites on your machine:
 
@@ -90,6 +92,22 @@ This is a significant release focused on the following key areas:
 
 ### Architecture Diagram (Post Core Release)
 ![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
+
+## FAQ
+
+### Why Do Developers Need Sirji?
+
+As developers, we aim to dedicate more time to high-impact activities, such as understanding requirements, finalizing architecture, and designing database schemas. We also strive to liberate ourselves from writing routine code—like models, migrations, and routes—and from the ongoing task of keeping test cases and documentation up to date.
+
+When adopting a new tech stack, it often takes time to familiarize ourselves with its concepts. Moreover, we frequently encounter runtime issues, such as missing packages or modules and errors that, while typically simple to resolve, are time-consuming.
+
+### How Is Sirji Different from GitHub Copilot?
+
+We are enthusiastic users and fans of GitHub Copilot, which assists us in writing code and resolving issues. However, Copilot’s contextual awareness is quite limited. To use it, we must first open the specific code file requiring changes and then activate Copilot. This becomes cumbersome in large projects spanning multiple repositories, particularly if developers are unsure where to begin. Additionally, Copilot is limited to the context of the current file, unless other files are explicitly mentioned in the comments.
+
+Furthermore, Copilot does not facilitate the process of getting code to run on our machines, which can require considerable effort and distract from more impactful tasks.
+
+These are all the problems and limitations we want to solve with Sirji, and in the process, build something that we will use ourselves.
 
 ## Contributing
 
