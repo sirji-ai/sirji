@@ -18,7 +18,7 @@ function getPythonPath(workspaceRootPath: string, venvPath: string): string {
 
   if (fs.existsSync(venvPath)) {
     // Determine the correct path for the Python executable based on the OS
-    const pythonExecutable = os.platform() === 'win32' ? 'python.exe' : 'bin/python3';
+    const pythonExecutable = os.platform() === 'win32' ? 'scripts/python.exe' : 'bin/python3';
 
     // Generate the full path to the Python executable inside the virtual environment
     pythonPath = path.join(venvPath, pythonExecutable);

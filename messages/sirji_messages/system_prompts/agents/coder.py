@@ -1,4 +1,5 @@
 import textwrap
+import os
 
 from sirji_messages import AgentEnum, ActionEnum
 
@@ -45,7 +46,7 @@ class CoderSystemPrompt(AgentSystemPromptBase):
                 - Ensure that you don't create any file/folder outside of workspace root folder, i.e. './'
                 - Read the GitHub files by first cloning the repository and then reading the files at once.
             - Ensure while responding with {ActionEnum.EXECUTE_COMMAND.name} action or {ActionEnum.INSTALL_PACKAGE.name} action:
-                - Command must be compatible with macOS.
+                - Command must be compatible with {os.name}.
                 - Command must be sufficiently chained. For example: 'source venv/bin/activate && pip install openai', 'cd server && npm run start'
             - Always make sure:
                 - To respond with the {ActionEnum.RUN_SERVER.name} action to run a server like continuous process.

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Constants } from './constants';
+import * as os from 'os';
 
 let currentTaskExecution: any = null;
 
@@ -29,10 +30,14 @@ export async function executeTask(command: string, workspaceRootPath: string, si
 
     const tempFileRelativePath = path.join(Constants.HISTORY_FOLDER, sirjiRunId, tempFileName);
     const tempFilePath = path.join(workspaceRootPath, tempFileRelativePath);
-    
+
     let tempFileContent = '';
 
-    command = `(${command}) 2>&1 | tee "${tempFilePath}"`;
+    if (os.platform() === 'win32') {
+      command = `${command} > "${tempFilePath}" 2>&1`;
+    } else {
+      command = `(${command}) 2>&1 | tee "${tempFilePath}"`;
+    }
 
     const shellExecution = new vscode.ShellExecution(command);
     const taskDefinition = { type: 'shell' };
