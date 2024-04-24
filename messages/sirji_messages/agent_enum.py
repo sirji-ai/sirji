@@ -8,6 +8,7 @@ class AgentEnum(Enum):
         member.full_name = name
         return member
 
+    ORCHESTRATOR = (0, "Orchestrator")
     CODER = (1, "Coding Agent")
     PLANNER = (2, "Planning Agent")
     EXECUTOR = (3, "Execution Agent")

@@ -3,7 +3,9 @@ import * as fs from 'fs/promises';
 
 const SKIP_LIST = ['__pycache__', '.git', '.github', '.gitlab', '.vscode', '.idea', 'node_modules', '.DS_Store', 'venv', '.venv', '.sass-cache', 'dist', 'out', 'build', 'logs', '.npm', 'temp', 'tmp'];
 
-export async function readDirectoryStructure(workspaceRootPath: string, inputPath: string): Promise<string> {
+export async function readDirectoryStructure(workspaceRootPath: string, body: string): Promise<string> {
+  const inputPath = body.split('Directory:')[1];
+
   let fullPath = path.join(workspaceRootPath, inputPath);
 
   function shouldSkip(name: string): boolean {

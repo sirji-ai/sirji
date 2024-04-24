@@ -14,6 +14,8 @@ import { readContent } from './read_content';
 import { readDirectoryStructure } from './read_directory_structure';
 import { executeTask } from './execute_task';
 import { executeSpawn } from './execute_spawn';
+import { appendToSharedResourcesIndex } from './append_to_shared_resources_index';
+import { readSharedResourcesIndex } from './read_shared_resource_index';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -283,7 +285,7 @@ export class Facilitator {
     }
   }
 
-  private async initFacilitation(rawMessage: string, parsedMessage: any) {
+  async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
@@ -449,6 +451,9 @@ export class Facilitator {
           break;
 
         case ACTOR_ENUM.EXECUTOR:
+          parsedMessage = {
+            TO: parsedMessage.FROM
+          };
           switch (parsedMessage.ACTION) {
             case ACTION_ENUM.OPEN_BROWSER:
               //TODO:Implement this
@@ -456,67 +461,47 @@ export class Facilitator {
               console.log('Browse', parsedMessage);
               break;
 
-            case ACTION_ENUM.INSTALL_PACKAGE:
-              const installPackageCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
-              rawMessage = installPackageCommandRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              console.log('installPackageCommandRes', installPackageCommandRes);
-              break;
-
             case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
-
+              const executedCommandRes = await executeSpawn(parsedMessage.BODY, oThis.workspaceRootPath);
               rawMessage = executedCommandRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
               console.log('executedCommandRes', executedCommandRes);
               break;
 
             case ACTION_ENUM.RUN_SERVER:
-              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath, oThis.sirjiRunId);
-
+              const runServerRes = await executeTask(parsedMessage.BODY, oThis.workspaceRootPath, oThis.sirjiRunId);
               rawMessage = runServerRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
               console.log('runServerRes', runServerRes);
               break;
 
             case ACTION_ENUM.CREATE_FILE:
-              const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
+              const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.BODY);
               rawMessage = createFileRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
               console.log('Create', createFileRes);
               break;
 
             case ACTION_ENUM.READ_DIR:
-              const readDirContentRes = await readContent(oThis.workspaceRootPath, [parsedMessage.DIRPATH]);
+              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, true);
               rawMessage = readDirContentRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
               break;
 
             case ACTION_ENUM.READ_FILES:
-              const filePaths = JSON.parse(parsedMessage.FILEPATHS);
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, filePaths);
+              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, false);
               rawMessage = readFileContentRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
               break;
 
             case ACTION_ENUM.READ_DIR_STRUCTURE:
-              const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.BODY);
               rawMessage = readDirStructureRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
+              break;
+
+            case ACTION_ENUM.APPEND_TO_SHARED_RESOURCES_INDEX:
+              const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.workspaceRootPath, parsedMessage.BODY, parsedMessage.FROM);
+              rawMessage = appendToSharedResourcesIndexRes;
+              break;
+
+            case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
+              const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.workspaceRootPath);
+              rawMessage = readSharedResourcesIndexRes;
               break;
 
             default:
@@ -705,3 +690,23 @@ export class Facilitator {
     });
   }
 }
+
+const fsObj = new Facilitator('test');
+const rawMsg = `***
+FROM: AGENT_PM
+TO: EXECUTOR
+ACTION: EXECUTE_COMMAND
+SUMMARY: Get the list of folders in present working directory
+BODY:
+ls -l
+***`;
+
+const parsedMsg = {
+  FROM: 'AGENT_PM',
+  TO: ACTOR_ENUM.EXECUTOR,
+  ACTION: ACTION_ENUM.EXECUTE_COMMAND,
+  SUMMARY: 'Get the list of folders in present working directory',
+  BODY: 'ls -l'
+};
+
+fsObj.initFacilitation(rawMsg, parsedMsg);

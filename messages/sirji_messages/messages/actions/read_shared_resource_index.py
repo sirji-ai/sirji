@@ -4,11 +4,11 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class TrainUsingSearchTermMessage(BaseMessages):
+class AppendToSharedResourceIndexMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.TRAIN_USING_SEARCH_TERM.name
-        self.to_agent = AgentEnum.RESEARCHER.name
+        self.action = ActionEnum.READ_SHARED_RESOURCE_INDEX.name
+        self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
 
@@ -17,8 +17,8 @@ class TrainUsingSearchTermMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{A concise summary to be displayed to the user for the action to be performed.}}",
             "body": textwrap.dedent("""
-            Term: {{search term}}
+            Empty
             """)})
 
     def description(self):
-        return "Train using a search term:"
+        return "To read the shared resource index."

@@ -26,7 +26,7 @@ const MEDIA_MIME_TYPES = [
   // 'application/vnd.oasis.opendocument.presentation' // OpenDocument Presentation
 ];
 
-export async function readContent(workspaceRootPath: string, inputPaths: string[]): Promise<string> {
+export async function readContent(workspaceRootPath: string, body: string, isDirectory: boolean): Promise<string> {
   async function shouldSkip(name: string): Promise<boolean> {
     return SKIP_LIST.includes(name);
   }
@@ -81,6 +81,15 @@ export async function readContent(workspaceRootPath: string, inputPaths: string[
   }
 
   let result = '';
+  let inputPaths = [];
+
+  if (isDirectory) {
+    const directoryPath = body.split('Directory:')[1];
+    inputPaths.push(directoryPath);
+  } else {
+    const filePaths = body.split('File paths:')[1];
+    inputPaths = JSON.parse(filePaths);
+  }
   for (const inputPath of inputPaths) {
     try {
       const fullPath = path.join(workspaceRootPath, inputPath);

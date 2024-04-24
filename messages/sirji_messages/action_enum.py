@@ -2,9 +2,11 @@ from enum import Enum, auto
 
 
 class ActionEnum(Enum):
-    ACKNOWLEDGE = auto()
     ANSWER = auto()
+    INVOKE_AGENT = auto()
     EXECUTE_COMMAND = auto()
+    APPEND_TO_SHARED_RESOURCES_INDEX = auto()
+    READ_SHARED_RESOURCE_INDEX = auto()
     RUN_SERVER = auto()
     CREATE_FILE = auto()
     GENERATE_STEPS = auto()
