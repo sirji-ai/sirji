@@ -36,6 +36,8 @@ It Utilizes:
 - OpenAI Chat Completions API
 - OpenAI Assistants API
 
+It also supports the usage of local models via Ollama in a similar manner.
+
 This package communicates with models and RAG assistants.
 
 ## Installation
@@ -80,7 +82,7 @@ export SIRJI_MODEL_PROVIDER_API_KEY='API key to be use for LLM inference'
 
 ### Research Agent
 
-### Initialization
+#### Initialization
 
 ```python
 from sirji_agents import ResearchAgent

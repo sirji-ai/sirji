@@ -155,7 +155,7 @@ function sendBotMessage(message, allowUserInput) {
 function onInputChange(event) {
   removRecentUserLoader();
   adjustTextAreaHeight();
-  
+
   // Check if "Command" key (Mac) or "Ctrl" key (Windows/Linux) and "Enter" key are pressed
   if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
     sendUserMessage();
@@ -175,12 +175,12 @@ function adjustTextAreaHeight() {
 
 function updateMessageContainerHeight() {
   const chatContainer = document.getElementById('chatContainer');
-  
+
   const inputontainerHeight = document.getElementById("inputContainer").offsetHeight;
   const headerHeight = document.getElementById("jHeader").offsetHeight;
 
-  const totalHeight = inputontainerHeight + headerHeight; 
-  
+  const totalHeight = inputontainerHeight + headerHeight;
+
   chatContainer.style.height = `calc(100vh - ${totalHeight}px)`;
 }
 
@@ -195,7 +195,7 @@ function displayMessage(msg, sender, allowUserInput) {
   chatListContainerElement.appendChild(messageElement);
 
   if (sender === "bot" && allowUserInput) {
-    displayMessage("Waiting for your input", "user", true); 
+    displayMessage("Waiting for your input", "user", true);
   }
 
   chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight + 10;
@@ -215,7 +215,7 @@ function removRecentUserLoader() {
 
 function createMessageElement(msg, sender, allowUserInput) {
   removeAllLoaderInstanceFromDOM("message-loader");
-  
+
   const chatElement = document.createElement('div');
 
 
@@ -271,7 +271,7 @@ function createMessageElement(msg, sender, allowUserInput) {
       chatElement.appendChild(loaderElement);
     }
   }
-  
+
   return chatElement;
 }
 
@@ -294,13 +294,29 @@ function closeSettings() {
 }
 
 function saveSettings() {
+  const modelProvider = document.getElementById('SIRJI_MODEL_PROVIDER').value.trim();
+  const modelName = document.getElementById('SIRJI_MODEL').value.trim();
   const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
 
   let isValid = true;
 
   document.getElementById('save_settings_error').textContent = '';
 
-  if (!openAIKey) {
+  if (modelProvider != 'openai' || modelProvider != 'ollama') {
+    document.getElementById('SIRJI_MODEL_PROVIDER_ERROR').textContent = 'Sirji currently supports only OpenAI or Ollama as LLM Providers.';
+    isValid = false;
+  } else {
+    document.getElementById('SIRJI_MODEL_PROVIDER_ERROR').textContent = '';
+  }
+
+  if (!modelName) {
+    isValid = false;
+    document.getElementById('SIRJI_MODEL_ERROR').textContent = 'Please input the OpenAI or Ollama model name according to the respective Model Provider.';
+  } else {
+    document.getElementById('SIRJI_MODEL_ERROR').textContent = '';
+  }
+
+  if (modelProvider == 'openai' && !openAIKey) {
     document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = 'OpenAI API Key is required.';
     isValid = false;
   } else {
@@ -313,6 +329,8 @@ function saveSettings() {
     saveButton.disabled = true;
 
     const settings = {
+      SIRJI_MODEL_PROVIDER: modelProvider,
+      SIRJI_MODEL: modelName,
       SIRJI_OPENAI_API_KEY: openAIKey,
     };
 
@@ -458,13 +476,13 @@ function toggleProgressTextColor() {
 
 function convertNumber(number) {
   if (number >= 1000000) {
-      return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 100000) {
-      return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 1000) {
-      return (Math.ceil(number / 1000)).toFixed(1).replace('.0', '') + 'K';
+    return (Math.ceil(number / 1000)).toFixed(1).replace('.0', '') + 'K';
   } else {
-      return ""; // Don't show tokens less than 1K
+    return ""; // Don't show tokens less than 1K
   }
 }
 
@@ -612,7 +630,7 @@ function scrollToBottom(elementId) {
   if (!domElement) {
     return;
   };
-  
+
   domElement.scrollTop = domElement.scrollHeight + 25;
 
 }
@@ -668,10 +686,10 @@ function setup(event) {
 function drag(event) {
   event.preventDefault();
 
-  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px',(rStartWidth - event.clientX + StartX) + 'px';
-	jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
+  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px', (rStartWidth - event.clientX + StartX) + 'px';
+  jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
   jLeft.style.width = (lStartWidth + event.clientX - StartX) + 'px';
-  
+
   jResizeHandle.style.right = (rStartWidth - event.clientX + StartX - 4) + 'px';
 
   toggleTabsArrowOnResize();
