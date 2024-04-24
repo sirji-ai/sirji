@@ -67,6 +67,24 @@ playwright install
 
 ## Usage
 
+### Local Usage
+
+1. Ensure Ollama(https://ollama.ai) is installed.
+2. Choose your Ollama-supported model from https://ollama.ai/library.
+Download the LLM you want to use with Sirji like:
+```sh
+ollama pull deepseek-coder:latest
+```
+3. In a terminal, run -
+```sh
+ollama serve
+```
+4. In Sirji's Environment Variables settings, set the following variables -
+- `SIRJI_MODEL_PROVIDER` = `ollama`
+- `SIRJI_MODEL` = name of the model you pulled from Ollama (e.g. `deepseek-coder:latest`, `gemma:2b`, etc.)
+- `SIRJI_OPENAI_API_KEY` does not matter in this case, so you can leave it to default or blank.
+
+
 ### Environment Variables
 
 Ensure that following environment variables are set:
