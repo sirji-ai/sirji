@@ -302,7 +302,7 @@ function saveSettings() {
 
   document.getElementById('save_settings_error').textContent = '';
 
-  if (modelProvider != 'openai' | modelProvider != 'ollama') {
+  if (modelProvider != 'openai' || modelProvider != 'ollama') {
     document.getElementById('SIRJI_MODEL_PROVIDER_ERROR').textContent = 'Sirji currently supports only OpenAI or Ollama as LLM Providers.';
     isValid = false;
   } else {
@@ -316,7 +316,7 @@ function saveSettings() {
     document.getElementById('SIRJI_MODEL_ERROR').textContent = '';
   }
 
-  if (modelProvider == 'openai' & !openAIKey) {
+  if (modelProvider == 'openai' && !openAIKey) {
     document.getElementById('SIRJI_OPENAI_API_KEY_ERROR').textContent = 'OpenAI API Key is required.';
     isValid = false;
   } else {
