@@ -11,6 +11,7 @@ import { openBrowser } from './open_browser';
 import { executeCommand } from './execute_command';
 import { createFile } from './create_file';
 import { readContent } from './read_content';
+import { readDirectoryStructure } from './read_directory_structure';
 import { executeTask } from './execute_task';
 import { executeSpawn } from './execute_spawn';
 
@@ -494,16 +495,25 @@ export class Facilitator {
               break;
 
             case ACTION_ENUM.READ_DIR:
-              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              const readDirContentRes = await readContent(oThis.workspaceRootPath, [parsedMessage.DIRPATH]);
               rawMessage = readDirContentRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
               break;
 
-            case ACTION_ENUM.READ_FILE:
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILENAME);
+            case ACTION_ENUM.READ_FILES:
+              const filePaths = JSON.parse(parsedMessage.FILEPATHS);
+              const readFileContentRes = await readContent(oThis.workspaceRootPath, filePaths);
               rawMessage = readFileContentRes;
+              parsedMessage = {
+                TO: ACTOR_ENUM.CODER
+              };
+              break;
+
+            case ACTION_ENUM.READ_DIR_STRUCTURE:
+              const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.DIRPATH);
+              rawMessage = readDirStructureRes;
               parsedMessage = {
                 TO: ACTOR_ENUM.CODER
               };
@@ -573,12 +583,16 @@ export class Facilitator {
         contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
         break;
 
-      case ACTION_ENUM.READ_FILE:
-        contentMessage = `Reading File: ${parsedMessage.FILENAME}`;
+      case ACTION_ENUM.READ_FILES:
+        contentMessage = `Reading Files: ${parsedMessage.FILEPATHS}`;
         break;
 
       case ACTION_ENUM.READ_DIR:
         contentMessage = `Reading Files in Folder (and its Sub-Folders): ${parsedMessage.DIRPATH}`;
+        break;
+
+      case ACTION_ENUM.READ_DIR_STRUCTURE:
+        contentMessage = `Reading Directory Structure: ${parsedMessage.DIRPATH}`;
         break;
 
       case ACTION_ENUM.TRAIN_USING_URL:

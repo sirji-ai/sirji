@@ -27,8 +27,9 @@ class ExecutorSystemPrompt(AgentSystemPromptBase):
           - Interact with {os.name} terminal.
           - Run server like continuous process using {ActionEnum.RUN_SERVER.name} action.
           - Create or update files using {ActionEnum.CREATE_FILE.name} action.
-          - Read content from a single file using {ActionEnum.READ_FILE.name} action.
+          - Read content from a single file using {ActionEnum.READ_FILES.name} action.
           - Read the content from all files in a directory and all its subdirectories at once (separated by a divider) using {ActionEnum.READ_DIR.name} action.
+          - Read the structure of a directory using {ActionEnum.READ_DIR_STRUCTURE.name} action.                     
           - Install required dependencies/packages/libraries using {ActionEnum.INSTALL_PACKAGE.name} action.
           - Execute code and command using {ActionEnum.EXECUTE_COMMAND.name} action. Chained commands (using &&) are not supported.
           """)

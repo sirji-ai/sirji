@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class ReadFileMessage(BaseMessages):
+class ReadFilesMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.READ_FILE.name
+        self.action = ActionEnum.READ_FILES.name
         self.from_agent = AgentEnum.CODER.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
@@ -15,12 +15,12 @@ class ReadFileMessage(BaseMessages):
 
     def template_payload_part(self):
         return textwrap.dedent("""
-          FILENAME: {file_name}
+          FILEPATHS: {file_paths}
           """)
 
     def sample(self):
         return self.generate({
-            "file_name": "File name along with the path relative to the workspace root folder.",
+            "file_paths": "Array of file names along with the path relative to the workspace root folder.",
         })
 
     def description(self):
@@ -28,4 +28,4 @@ class ReadFileMessage(BaseMessages):
 
     @staticmethod
     def custom_properties():
-        return ['FILENAME']
+        return ['FILEPATHS']
