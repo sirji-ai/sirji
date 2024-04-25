@@ -4,7 +4,7 @@ setup(
     name='sirji-agents',
     version='0.0.21',
     author='Sirji',
-    description='Research, Coding and Planning agents used by Sirji.',
+    description='Orchestration Agent, Research Agent, and Generic Agent components of the Sirji AI agentic framework.',
     license='MIT',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

@@ -78,7 +78,7 @@ class Orchestrator():
 
         return model_provider.get_response(history, logger)
 
-    def system_prompt(self):
+    def __system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "Orchestration Agent," a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR
