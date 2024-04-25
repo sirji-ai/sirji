@@ -65,6 +65,23 @@ Make sure you have installed all of the following prerequisites on your machine:
 
 Also, you will need an OpenAI API key to access the GPT-4 Turbo model.
 
+### Local Usage
+
+1. Ensure [Ollama](https://ollama.ai) is installed.
+2. Choose your Ollama-supported model from [Ollama Model Library](https://ollama.ai/library).
+Download the LLM you want to use with Sirji like:
+```sh
+ollama pull deepseek-coder:latest
+```
+3. In a terminal, run -
+```sh
+ollama serve
+```
+4. After installing Sirji as described in the next step, in Sirji's Environment Variables settings, set the following variables -
+- `SIRJI_MODEL_PROVIDER` = `ollama`
+- `SIRJI_MODEL` = name of the model you pulled from Ollama (e.g. `deepseek-coder:latest`, `gemma:2b`, etc.)
+- `SIRJI_OPENAI_API_KEY` does not matter in this case, so you can leave it to default or blank.
+
 ## Installation
 
 You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
