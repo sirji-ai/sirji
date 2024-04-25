@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { randomBytes } from 'crypto';
 import path from 'path';
+import os from 'os';
 
 import { renderView } from './render_view';
 import { MaintainHistory } from './maintain_history';
@@ -29,6 +30,9 @@ export class Facilitator {
   private isPlannerTabShown: Boolean = false;
   private isResearcherTabShown: Boolean = false;
   private isCoderTabShown: Boolean = false;
+  private sessionManager: MaintainHistory | undefined;
+  private isFirstUserMessage: Boolean = true;
+  private sharedResourcesFolderPath: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -47,9 +51,6 @@ export class Facilitator {
 
     // Setup secret manager
     await oThis.setupSecretManager();
-
-    // Setup History Manager
-    // oThis.setupHistoryManager();
 
     // Open Chat Panel
     oThis.openChatViewPanel();
@@ -80,11 +81,38 @@ export class Facilitator {
     }
   }
 
-  private setupHistoryManager() {
+  private async setupHistoryManager() {
     const oThis = this;
     oThis.historyManager = new MaintainHistory();
 
     oThis.historyManager.createHistoryFolder(oThis.workspaceRootPath, oThis.sirjiRunId);
+
+    let sessionManager = new MaintainHistory();
+
+    let rootPath = os.homedir();
+
+    oThis.context?.globalState.update('SIRJI_INSTALLATION_DIR', rootPath);
+
+    let sessionFolderPath = path.join(rootPath, 'Documents', 'Sirji', Constants.SESSIONS);
+    let conversationFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'conversations');
+    let inputFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'inputs');
+    oThis.sharedResourcesFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'shared_resources');
+    let constantsFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'constants.json');
+    let recipeFolderPath = path.join(rootPath, 'Documents', 'Sirji', 'recipe.json');
+
+    sessionManager.createHistoryFolder(sessionFolderPath, oThis.sirjiRunId);
+    sessionManager.createHistoryFolder(conversationFolderPath, oThis.sirjiRunId);
+    sessionManager.createHistoryFolder(inputFolderPath, oThis.sirjiRunId);
+    sessionManager.createHistoryFolder(oThis.sharedResourcesFolderPath, oThis.sirjiRunId);
+    sessionManager.createHistoryFolder(constantsFolderPath, oThis.sirjiRunId);
+
+    sessionManager.writeFile(
+      recipeFolderPath,
+      JSON.stringify({
+        prescribed_tasks: ['Write epics and user stories.', 'Write architecture components.', 'Implement the epic & user stories using the architecture components.'],
+        tips: ['Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user.']
+      })
+    );
   }
 
   private async setupSecretManager() {
@@ -272,7 +300,29 @@ export class Facilitator {
 
       case 'userMessage':
         if (!oThis.historyManager) {
-          oThis.setupHistoryManager();
+          await oThis.setupHistoryManager();
+        }
+
+        if (oThis.isFirstUserMessage) {
+          const sharedResourcesIndexFilePath = path.join(oThis.sharedResourcesFolderPath, 'index.json');
+          const problemStatementFilePath = path.join(oThis.sharedResourcesFolderPath, 'problem_statement.txt');
+
+          oThis.historyManager?.writeFile(problemStatementFilePath, message.content);
+          oThis.historyManager?.writeFile(
+            sharedResourcesIndexFilePath,
+            JSON.stringify({
+              'shared_resources/SIRJI/problem.txt': {
+                description: 'Problem statement from the user.',
+                created_by: 'SIRJI'
+              }
+            })
+          );
+
+          oThis.isFirstUserMessage = false;
+
+          await oThis.initFacilitation(message.content, {
+            TO: ACTOR_ENUM.ORCHESTRATOR
+          });
         }
 
         await oThis.initFacilitation(message.content, {
@@ -292,238 +342,253 @@ export class Facilitator {
     while (keepFacilitating) {
       console.log('inside while loop', parsedMessage);
       const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PYTHON_INPUT_FILE);
-      switch (parsedMessage.TO) {
-        case ACTOR_ENUM.CODER:
-          if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedSteps',
-              content: parsedMessage.PARSED_STEPS
-            });
-          }
 
-          if (!oThis.isCoderTabShown) {
-            oThis.isCoderTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showCoderTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId,
-                logs: oThis.readCoderLogs()
-              }
-            });
-          }
+      if (parsedMessage.ACTION === 'INVOKE_AGENT') {
+        try {
+          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
+        } catch (error) {}
+      } else {
+        switch (parsedMessage.TO) {
+          case ACTOR_ENUM.ORCHESTRATOR:
+            try {
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestrator.py'));
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+            }
+            break;
 
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+          case ACTOR_ENUM.CODER:
+            if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
+              oThis.chatPanel?.webview.postMessage({
+                type: 'plannedSteps',
+                content: parsedMessage.PARSED_STEPS
+              });
+            }
 
-          oThis.toCoderRelayToChatPanel(parsedMessage);
+            if (!oThis.isCoderTabShown) {
+              oThis.isCoderTabShown = true;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'showCoderTab',
+                content: {
+                  sirjiRunId: oThis.sirjiRunId,
+                  logs: oThis.readCoderLogs()
+                }
+              });
+            }
 
-          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
+            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
+            oThis.toCoderRelayToChatPanel(parsedMessage);
 
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
+            const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
 
-          const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
+            const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
 
-          const lastCoderMessage: any = coderConversationContent.conversations[coderConversationContent.conversations.length - 1];
+            try {
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+            }
 
-          console.log('lastCoderMessage', lastCoderMessage);
+            const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
 
-          rawMessage = lastCoderMessage?.content;
+            const lastCoderMessage: any = coderConversationContent.conversations[coderConversationContent.conversations.length - 1];
 
-          parsedMessage = lastCoderMessage?.parsed_content;
+            console.log('lastCoderMessage', lastCoderMessage);
 
-          oThis.fromCoderRelayToChatPanel(parsedMessage);
+            rawMessage = lastCoderMessage?.content;
 
-          break;
+            parsedMessage = lastCoderMessage?.parsed_content;
 
-        case ACTOR_ENUM.RESEARCHER:
-          if (!oThis.isResearcherTabShown) {
-            oThis.isResearcherTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showResearcherTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId
-              }
-            });
-          }
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+            oThis.fromCoderRelayToChatPanel(parsedMessage);
 
-          const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
+            break;
 
-          const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
+          case ACTOR_ENUM.RESEARCHER:
+            if (!oThis.isResearcherTabShown) {
+              oThis.isResearcherTabShown = true;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'showResearcherTab',
+                content: {
+                  sirjiRunId: oThis.sirjiRunId
+                }
+              });
+            }
+            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
+            const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
 
-          const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
+            const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
 
-          const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
+            try {
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+            }
 
-          console.log('lastResearcherMessage', lastResearcherMessage);
+            const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
 
-          rawMessage = lastResearcherMessage?.content;
+            const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
 
-          parsedMessage = lastResearcherMessage?.parsed_content;
+            console.log('lastResearcherMessage', lastResearcherMessage);
 
-          break;
+            rawMessage = lastResearcherMessage?.content;
 
-        case ACTOR_ENUM.PLANNER:
-          if (!oThis.isPlannerTabShown) {
-            oThis.isPlannerTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showPlannerTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId
-              }
-            });
-          }
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+            parsedMessage = lastResearcherMessage?.parsed_content;
 
-          const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
+            break;
 
-          const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
+          case ACTOR_ENUM.PLANNER:
+            if (!oThis.isPlannerTabShown) {
+              oThis.isPlannerTabShown = true;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'showPlannerTab',
+                content: {
+                  sirjiRunId: oThis.sirjiRunId
+                }
+              });
+            }
+            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
 
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
+            const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
 
-          const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
+            const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
 
-          const lastPlannerMessage: any = plannerConversationContent.conversations[plannerConversationContent.conversations.length - 1];
+            try {
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+            }
 
-          console.log('lastPlannerMessage', lastPlannerMessage);
+            const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
 
-          rawMessage = lastPlannerMessage?.content;
+            const lastPlannerMessage: any = plannerConversationContent.conversations[plannerConversationContent.conversations.length - 1];
 
-          parsedMessage = lastPlannerMessage?.parsed_content;
+            console.log('lastPlannerMessage', lastPlannerMessage);
 
-          break;
+            rawMessage = lastPlannerMessage?.content;
 
-        case ACTOR_ENUM.USER:
-          if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedStepStart',
-              content: parsedMessage.DETAILS
-            });
+            parsedMessage = lastPlannerMessage?.parsed_content;
 
-            rawMessage = 'sure';
-            parsedMessage = {
-              TO: ACTOR_ENUM.CODER
-            };
-          }
+            break;
 
-          if (parsedMessage.ACTION === ACTION_ENUM.STEP_COMPLETED) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedStepComplete',
-              content: parsedMessage.DETAILS
-            });
+          case ACTOR_ENUM.USER:
+            if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
+              oThis.chatPanel?.webview.postMessage({
+                type: 'plannedStepStart',
+                content: parsedMessage.DETAILS
+              });
 
-            rawMessage = 'sure';
-            parsedMessage = {
-              TO: ACTOR_ENUM.CODER
-            };
-          }
+              rawMessage = 'sure';
+              parsedMessage = {
+                TO: parsedMessage.FROM
+              };
+            }
 
-          if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
-            keepFacilitating = false;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'solutionCompleted',
-              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
-            });
-          }
+            if (parsedMessage.ACTION === ACTION_ENUM.STEP_COMPLETED) {
+              oThis.chatPanel?.webview.postMessage({
+                type: 'plannedStepComplete',
+                content: parsedMessage.DETAILS
+              });
 
-          if (parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
-            keepFacilitating = false;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'botMessage',
-              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
-            });
-          }
-          break;
+              rawMessage = 'sure';
+              parsedMessage = {
+                TO: parsedMessage.FROM
+              };
+            }
 
-        case ACTOR_ENUM.EXECUTOR:
-          parsedMessage = {
-            TO: parsedMessage.FROM
-          };
-          switch (parsedMessage.ACTION) {
-            case ACTION_ENUM.OPEN_BROWSER:
-              //TODO:Implement this
-              openBrowser(parsedMessage.URL);
-              console.log('Browse', parsedMessage);
-              break;
+            if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
+              keepFacilitating = false;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'solutionCompleted',
+                content: { message: parsedMessage.DETAILS, allowUserMessage: true }
+              });
+            }
 
-            case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandRes = await executeSpawn(parsedMessage.BODY, oThis.workspaceRootPath);
-              rawMessage = executedCommandRes;
-              console.log('executedCommandRes', executedCommandRes);
-              break;
-
-            case ACTION_ENUM.RUN_SERVER:
-              const runServerRes = await executeTask(parsedMessage.BODY, oThis.workspaceRootPath, oThis.sirjiRunId);
-              rawMessage = runServerRes;
-              console.log('runServerRes', runServerRes);
-              break;
-
-            case ACTION_ENUM.CREATE_FILE:
-              const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.BODY);
-              rawMessage = createFileRes;
-              console.log('Create', createFileRes);
-              break;
-
-            case ACTION_ENUM.READ_DIR:
-              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, true);
-              rawMessage = readDirContentRes;
-              break;
-
-            case ACTION_ENUM.READ_FILES:
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, false);
-              rawMessage = readFileContentRes;
-              break;
-
-            case ACTION_ENUM.READ_DIR_STRUCTURE:
-              const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.BODY);
-              rawMessage = readDirStructureRes;
-              break;
-
-            case ACTION_ENUM.APPEND_TO_SHARED_RESOURCES_INDEX:
-              const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.workspaceRootPath, parsedMessage.BODY, parsedMessage.FROM);
-              rawMessage = appendToSharedResourcesIndexRes;
-              break;
-
-            case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
-              const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.workspaceRootPath);
-              rawMessage = readSharedResourcesIndexRes;
-              break;
-
-            default:
-              console.log('Execution default', parsedMessage);
+            if (parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
+              keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
-                content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+                content: { message: parsedMessage.DETAILS, allowUserMessage: true }
               });
-              keepFacilitating = false;
-              break;
-          }
+            }
+            break;
 
-          break;
+          case ACTOR_ENUM.EXECUTOR:
+            parsedMessage = {
+              TO: parsedMessage.FROM
+            };
+            switch (parsedMessage.ACTION) {
+              case ACTION_ENUM.OPEN_BROWSER:
+                //TODO:Implement this
+                openBrowser(parsedMessage.URL);
+                console.log('Browse', parsedMessage);
+                break;
 
-        default:
-          console.log('Actor default', parsedMessage);
-          oThis.chatPanel?.webview.postMessage({
-            type: 'botMessage',
-            content: { message: `Received message with unknown TO: ${parsedMessage.TO}. Raw message: ${rawMessage}`, allowUserMessage: true }
-          });
-          keepFacilitating = false;
-          break;
+              case ACTION_ENUM.EXECUTE_COMMAND:
+                const executedCommandRes = await executeSpawn(parsedMessage.BODY, oThis.workspaceRootPath);
+                rawMessage = executedCommandRes;
+                console.log('executedCommandRes', executedCommandRes);
+                break;
+
+              case ACTION_ENUM.RUN_SERVER:
+                const runServerRes = await executeTask(parsedMessage.BODY, oThis.workspaceRootPath, oThis.sirjiRunId);
+                rawMessage = runServerRes;
+                console.log('runServerRes', runServerRes);
+                break;
+
+              case ACTION_ENUM.CREATE_FILE:
+                const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.BODY);
+                rawMessage = createFileRes;
+                console.log('Create', createFileRes);
+                break;
+
+              case ACTION_ENUM.READ_DIR:
+                const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, true);
+                rawMessage = readDirContentRes;
+                break;
+
+              case ACTION_ENUM.READ_FILES:
+                const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, false);
+                rawMessage = readFileContentRes;
+                break;
+
+              case ACTION_ENUM.READ_DIR_STRUCTURE:
+                const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.BODY);
+                rawMessage = readDirStructureRes;
+                break;
+
+              case ACTION_ENUM.APPEND_TO_SHARED_RESOURCES_INDEX:
+                const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.workspaceRootPath, parsedMessage.BODY, parsedMessage.FROM);
+                rawMessage = appendToSharedResourcesIndexRes;
+                break;
+
+              case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
+                const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.workspaceRootPath);
+                rawMessage = readSharedResourcesIndexRes;
+                break;
+
+              default:
+                console.log('Execution default', parsedMessage);
+                oThis.chatPanel?.webview.postMessage({
+                  type: 'botMessage',
+                  content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+                });
+                keepFacilitating = false;
+                break;
+            }
+
+            break;
+
+          default:
+            console.log('Actor default', parsedMessage);
+            try {
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
+            } catch (error) {}
+
+            keepFacilitating = false;
+            break;
+        }
       }
 
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
@@ -690,23 +755,3 @@ export class Facilitator {
     });
   }
 }
-
-const fsObj = new Facilitator('test');
-const rawMsg = `***
-FROM: AGENT_PM
-TO: EXECUTOR
-ACTION: EXECUTE_COMMAND
-SUMMARY: Get the list of folders in present working directory
-BODY:
-ls -l
-***`;
-
-const parsedMsg = {
-  FROM: 'AGENT_PM',
-  TO: ACTOR_ENUM.EXECUTOR,
-  ACTION: ACTION_ENUM.EXECUTE_COMMAND,
-  SUMMARY: 'Get the list of folders in present working directory',
-  BODY: 'ls -l'
-};
-
-fsObj.initFacilitation(rawMsg, parsedMsg);
