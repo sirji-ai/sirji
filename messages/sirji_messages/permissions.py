@@ -39,7 +39,6 @@ permissions_dict = {
     (AgentEnum.USER, AgentEnum.CODER): (
         ActionEnum.PROBLEM_STATEMENT,
         ActionEnum.ANSWER,
-        ActionEnum.ACKNOWLEDGE,
         ActionEnum.FEEDBACK
     )
 }

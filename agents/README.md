@@ -78,6 +78,28 @@ export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4-turbo
 export SIRJI_MODEL_PROVIDER_API_KEY='API key to be use for LLM inference'
 ```
 
+### Orchestration Agent
+
+```python
+recipe = {
+  "prescribed_tasks": [
+    "Write epics and user stories.",
+    "Write architecture components.",
+    "Implement the epic & user stories using the architecture components."
+  ],
+  "tips": [
+    "Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user."
+  ]
+}
+
+from sirji_agents import Orchestrator
+
+agent = Orchestrator(recipe, [])
+
+history = []
+response_message, history, prompt_tokens, completion_tokens = agent.message("", history)
+```
+
 ### Research Agent
 
 ### Initialization

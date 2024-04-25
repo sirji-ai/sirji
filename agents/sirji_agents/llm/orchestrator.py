@@ -5,7 +5,7 @@ import os
 from sirji_tools.logger import p_logger as logger
 
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError
-from .model_providers.factory import LLMProviderFactory 
+from .model_providers.factory import LLMProviderFactory
 
 class Orchestrator():
     def __init__(self, recipe, installed_agents):
@@ -78,12 +78,11 @@ class Orchestrator():
 
         return model_provider.get_response(history, logger)
 
-    def __system_prompt(self):
+    def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "Orchestration Agent," a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR
-            Your OS (refered as SIRJI_OS later): {os.name}
-            """)
+            Your OS (refered as SIRJI_OS later): {os.name}""")
 
         instructions = textwrap.dedent(f"""
             Instructions:
@@ -97,23 +96,24 @@ class Orchestrator():
 
         # TODO: Remove the following hardcoding
 
-        formatted_installed_agents = textwrap.dedent(f"""Agent Name: Product Manager
-            Agent ID: agent_pm
+        formatted_installed_agents = textwrap.dedent(f"""
+            Agent Name: Product Manager
+            Agent ID: PRODUCT_MANAGER
             Skills:
             - Generation of epics and user stories for the problem statement.
 
             Agent Name: Architect
-            Agent ID: agent_a
+            Agent ID: ARCHITECT
             Skills:
             - Generation of architecture components.
 
             Agent Name: Coder
-            Agent ID: agent_c
+            Agent ID: CODER
             Skills:
-            - Develop end-to-end working code for the epic & user stories, making use of the finalized architecture components.
-            """)
+            - Develop end-to-end working code for the epic & user stories, making use of the finalized architecture components.""")
         
-        allowed_response_templates = textwrap.dedent(f"""To invoke an agent, please respond with the text below, including the starting and ending '***', and ensure there is no commentary above or below:
+        allowed_response_templates = textwrap.dedent(f"""
+            To invoke an agent, please respond with the text below, including the starting and ending '***', and ensure there is no commentary above or below:
             ***
             FROM: {{Your Agent ID}}
             TO: {{Installed Agent ID}}
@@ -123,7 +123,7 @@ class Orchestrator():
             {{Purpose of invocation}}
             ***""")
         
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}\n{formatted_installed_agents}\n{allowed_response_templates}"
+        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{formatted_installed_agents}\n{allowed_response_templates}".strip()
     def __format_recipe(self):
         formatted = "Recipe:\n"
         # Adding prescribed tasks with enumeration
