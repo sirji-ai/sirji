@@ -1,20 +1,20 @@
 {
-   "id": "PRODUCT_MANAGER",  
-   "name": "Product Manager Agent",
-   "llm": {
-     "provider": "openai",
-     "model": "gpt-3.5-turbo"
-   },
-   "skills": [
-        {
-            "skill": "Generation of epics and user stories for the problem statement.",
-            "implementation_instructions": [
-                "Read problem statement from shared_resources.",
-                "Elaborate the problem statement into epics & user stories and then finalize with USER. Elaboration must include detailed screen elements and interactions, without leaving anything abstract. Finalization involves discussion with USER, getting feedback, adjusting according to the feedback and again asking question by showing the updated epics and user stories.",
-                "Respond with QUESTION ACTION to the USER to get a finalization on. The message details should look like: \"\nHere are the detailed epics and user stories based on your problem statement:\n\n <<detailed epics and user stories>> \n\n<<confirmation question for the user>>\". Keep asking QUESTION until finalized, showing the updated epics & user stories.",
-                "Write the finalized epics and user stories by saving it to shared resources in shared_resources/{{Your Agent ID}} folder.",
-                "Append the above created file in the shared resources' index."
-             ]
-        }
-    ]
+  "id": "PRODUCT_MANAGER",
+  "name": "Product Manager Agent",
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-3.5-turbo"
+  },
+  "skills": [
+    {
+      "skill": "Generation of epics and user stories for the problem statement.",
+      "sub_tasks": [
+        "Read problem statement from shared_resources.",
+        "Elaborate the problem statement into epics & user stories and then finalize with USER. Elaboration must include detailed screen elements and interactions, without leaving anything abstract. Finalization involves discussion with USER, getting feedback, adjusting according to the feedback and again asking question by showing the updated epics and user stories.",
+        "Respond with QUESTION ACTION to the USER to get a finalization on. The message details should look like: \"\nHere are the detailed epics and user stories based on your problem statement:\n\n <<detailed epics and user stories>> \n\n<<confirmation question for the user>>\". Keep asking QUESTION until finalized, showing the updated epics & user stories.",
+        "Write the finalized epics and user stories by saving it to shared resources in shared_resources/{{Your Agent ID}} folder.",
+        "Append the above created file in the shared resources' index."
+      ]
+    }
+  ]
 }
