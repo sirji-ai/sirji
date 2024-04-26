@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export async function appendToSharedResourcesIndex(workspaceRootPath: string, body: string, agentId: string): Promise<string> {
+export async function appendToSharedResourcesIndex(sharedResourcesFolderPath: string, messageBody: string, agentId: string): Promise<string> {
   try {
-    const fileName = '.sirji/shared_resources/index.json';
-    const [filePathString, filePathContentDescription] = body.split('---');
+    const [filePathString, filePathContentDescription] = messageBody.split('---');
     const filePath = filePathString.replace('File path:', '').trim();
 
     let fileDescription = '';
@@ -20,7 +19,7 @@ export async function appendToSharedResourcesIndex(workspaceRootPath: string, bo
       }
     };
 
-    const uri = vscode.Uri.file(path.join(workspaceRootPath, fileName));
+    const uri = vscode.Uri.file(path.join(sharedResourcesFolderPath, 'index.json'));
 
     const directoryPath = path.dirname(uri.fsPath);
     if (!fs.existsSync(directoryPath)) {

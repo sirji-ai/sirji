@@ -3,7 +3,7 @@ import os
 import json
 import textwrap
 from sirji_messages import MessageFactory, ActionEnum, AgentEnum
-from sirji_agents import Agent
+from sirji_agents import GenericAgent
 
 class AgentRunner:    
     def _get_workspace_folder(self):
@@ -12,13 +12,6 @@ class AgentRunner:
             raise ValueError(
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
-    
-    def _get_run_id_folder(self):
-        run_id = os.environ.get("SIRJI_RUN_ID")
-        if run_id is None:
-            raise ValueError(
-                "SIRJI_RUN_ID is not set as an environment variable")
-        return run_id
 
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
@@ -60,33 +53,30 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, recipe, installed_agents): 
-        agent = Agent(recipe, installed_agents)
+    def process_message(self, message_str, conversations, config, shared_resources_index): 
+        agent = GenericAgent(config, shared_resources_index)
         return agent.message(message_str, conversations)
         
     def main(self, agent_id):  
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
-        sirji_run_id = os.environ.get("SIRJI_RUN_ID")
+        sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
         
-        input_file_path = os.path.join(sirji_installation_dir, 'Documents', 'Sirji', 'sessions', sirji_run_id, 'inputs', f'{agent_id}.json')
-     
-        conversation_file_path = os.path.join(sirji_installation_dir, 'Documents', 'Sirji', 'sessions', sirji_run_id, 'conversations', f'{agent_id}.json')
-
-        recipe_file_path = os.path.join(sirji_installation_dir, 'Documents', 'Sirji', 'sessions', sirji_run_id, 'recipes', f'{agent_id}.json')
+        input_file_path = os.path.join(sirji_run_path, 'inputs', f'{agent_id}.json')
+        conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
+        shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
         
-        installed_agent_folder = os.path.join(sirji_installation_dir, 'Documents', 'Sirji', 'agents')
-
+        agent_config_path = os.path.join(sirji_installation_dir, 'installed_agents', f'{agent_id}.json')
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
-        recipe_file_contents = self.read_input_file(recipe_file_path)
-        recipe = json.loads(recipe_file_contents)
+        config_file_contents = self.read_input_file(agent_config_path)
+        config = json.loads(config_file_contents)
 
-        installed_agent_folder_contents = self.read_input_file(installed_agent_folder)
-        installed_agents = json.loads(installed_agent_folder_contents)
+        shared_resources_index_contents = self.read_input_file(shared_resources_index_path)
+        shared_resources_index = json.loads(shared_resources_index_contents)
 
-        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, recipe, installed_agents)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index)
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed

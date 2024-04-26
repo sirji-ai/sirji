@@ -28,7 +28,8 @@ export async function executeTask(command: string, workspaceRootPath: string, si
   return new Promise(async (resolve, reject) => {
     const tempFileName = `output.txt`;
 
-    const tempFileRelativePath = path.join(Constants.HISTORY_FOLDER, sirjiRunId, tempFileName);
+    // TODO: Create this in the Sirji run path
+    const tempFileRelativePath = path.join(workspaceRootPath, tempFileName);
     const tempFilePath = path.join(workspaceRootPath, tempFileRelativePath);
 
     let tempFileContent = '';

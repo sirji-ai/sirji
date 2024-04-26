@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import { randomBytes } from 'crypto';
 import path from 'path';
 import os from 'os';
+import * as fs from 'fs';
 
 import { renderView } from './render_view';
 import { MaintainHistory } from './maintain_history';
-import { invokeAgent } from './invoke_agent';
+import { spawnAdapter } from './adapter_wrapper';
 import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 import { openBrowser } from './open_browser';
@@ -34,6 +35,8 @@ export class Facilitator {
   private isFirstUserMessage: Boolean = true;
   private sharedResourcesFolderPath: string = '';
   private lastMessageFrom: string = '';
+  private sirjiInstallationFolderPath: string = '';
+  private sirjiRunFolderPath: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -47,8 +50,8 @@ export class Facilitator {
     // Setup workspace
     await oThis.selectWorkspace();
 
-    // Setup Environment
-    await oThis.setupEnvironment();
+    // Setup folders for run, installed_agents, etc.
+    await oThis.initializeFolders();
 
     // Setup secret manager
     await oThis.setupSecretManager();
@@ -57,11 +60,6 @@ export class Facilitator {
     oThis.openChatViewPanel();
 
     return oThis.chatPanel;
-  }
-
-  private async setupEnvironment() {
-    const oThis = this;
-    oThis.sirjiRunId = randomBytes(16).toString('hex');
   }
 
   private async selectWorkspace(): Promise<void> {
@@ -82,36 +80,43 @@ export class Facilitator {
     }
   }
 
-  private async setupHistoryManager() {
+  private async initializeFolders() {
     const oThis = this;
-    oThis.historyManager = new MaintainHistory();
 
-    oThis.historyManager.createHistoryFolder(oThis.workspaceRootPath, oThis.sirjiRunId);
+    oThis.sirjiRunId = randomBytes(16).toString('hex');
 
     let sessionManager = new MaintainHistory();
 
     let rootPath = os.homedir();
 
-    let sessionFolderPath = path.join(rootPath, 'Documents', 'Sirji', Constants.SESSIONS);
-    let conversationFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'conversations');
-    let inputFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'inputs');
-    oThis.sharedResourcesFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'shared_resources');
-    let constantsFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'constants.json');
-    let recipeFolderPath = path.join(rootPath, 'Documents', 'Sirji', 'recipe.json');
+    console.log('-------root path--------', rootPath);
 
-    sessionManager.createHistoryFolder(sessionFolderPath, oThis.sirjiRunId);
-    sessionManager.createHistoryFolder(conversationFolderPath, oThis.sirjiRunId);
-    sessionManager.createHistoryFolder(inputFolderPath, oThis.sirjiRunId);
-    sessionManager.createHistoryFolder(oThis.sharedResourcesFolderPath, oThis.sirjiRunId);
-    sessionManager.createHistoryFolder(constantsFolderPath, oThis.sirjiRunId);
+    // TODO: Check if Documents folder is the correct place to store in Windows and Linux.
+    let sirjiInstallationFolderPath = path.join(rootPath, 'Documents', 'Sirji');
+    oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
 
-    sessionManager.writeFile(
-      recipeFolderPath,
-      JSON.stringify({
-        prescribed_tasks: ['Write epics and user stories.', 'Write architecture components.', 'Implement the epic & user stories using the architecture components.'],
-        tips: ['Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user.']
-      })
-    );
+    let sessionFolderPath = path.join(sirjiInstallationFolderPath, Constants.SESSIONS);
+    let runFolderPath =  path.join(sessionFolderPath, oThis.sirjiRunId)
+    oThis.sirjiRunFolderPath = runFolderPath;
+
+    let conversationFolderPath = path.join(runFolderPath, 'conversations');
+    let inputsFolderPath = path.join(runFolderPath, 'inputs');
+    oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
+    
+    let constantsFilePath = path.join(runFolderPath, 'constants.json');
+    let recipeFilePath = path.join(sirjiInstallationFolderPath, 'recipe.json');
+    let installedAgentsFolderPath = path.join(sirjiInstallationFolderPath, 'installed_agents');
+
+    // TODO: Rename createHistoryFolder to createFolder
+    fs.mkdirSync(runFolderPath, { recursive: true });
+    fs.mkdirSync(conversationFolderPath, { recursive: true });
+    fs.mkdirSync(inputsFolderPath, { recursive: true });
+    fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
+
+    // TODO: save the oThis.workspaceRootPath to constants.json
+
+    // TODO: if recipe file is not already present, then copy the contents of defaults/recipe.json
+    // TODO: copy all files from defaults/agents to installedAgentsFolderPath
   }
 
   private async setupSecretManager() {
@@ -119,6 +124,20 @@ export class Facilitator {
 
     oThis.secretManager = new SecretStorage(oThis.context);
     await oThis.retrieveSecret();
+  }
+
+  private openChatViewPanel() {
+    const oThis = this;
+
+    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.sirjiRunId);
+
+    oThis.chatPanel.webview.onDidReceiveMessage(
+      async (message: any) => {
+        await oThis.handleMessagesFromChatPanel(message);
+      },
+      undefined,
+      (oThis.context || {}).subscriptions
+    );
   }
 
   private async retrieveSecret() {
@@ -131,8 +150,7 @@ export class Facilitator {
     const oThis = this;
 
     let responseContent;
-    let rootPath = os.homedir();
-    data.SIRJI_INSTALLATION_DIR = rootPath;
+    data.SIRJI_INSTALLATION_DIR = oThis.sirjiInstallationFolderPath;
 
     try {
       await oThis.secretManager?.storeSecret(Constants.ENV_VARS_KEY, JSON.stringify(data));
@@ -156,24 +174,10 @@ export class Facilitator {
     });
   }
 
-  private openChatViewPanel() {
-    const oThis = this;
-
-    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.sirjiRunId);
-
-    oThis.chatPanel.webview.onDidReceiveMessage(
-      async (message: any) => {
-        await oThis.handleMessagesFromChatPanel(message);
-      },
-      undefined,
-      (oThis.context || {}).subscriptions
-    );
-  }
-
   private async readCoderLogs() {
     const oThis = this;
 
-    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'coder.log');
+    const coderConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'coder.log');
 
     let coderLogFileContent = '';
 
@@ -191,7 +195,7 @@ export class Facilitator {
   private async readPlannerLogs() {
     const oThis = this;
 
-    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'planner.log');
+    const plannerConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'planner.log');
 
     let plannerLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(plannerConversationFilePath)) {
@@ -208,7 +212,7 @@ export class Facilitator {
   private async readResearcherLogs() {
     const oThis = this;
 
-    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'researcher.log');
+    const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'researcher.log');
 
     let researcherLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(researcherConversationFilePath)) {
@@ -264,9 +268,9 @@ export class Facilitator {
     const oThis = this;
 
     try {
-      await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
         '--venv',
-        path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
+        path.join(oThis.sirjiInstallationFolderPath, 'venv')
       ]);
     } catch (error) {
       oThis.sendErrorToChatPanel(error);
@@ -298,21 +302,19 @@ export class Facilitator {
         break;
 
       case 'userMessage':
-        if (!oThis.historyManager) {
-          await oThis.setupHistoryManager();
-        }
-
         if (oThis.isFirstUserMessage) {
           const sharedResourcesIndexFilePath = path.join(oThis.sharedResourcesFolderPath, 'index.json');
-          const problemStatementFilePath = path.join(oThis.sharedResourcesFolderPath, 'problem_statement.txt');
+          
+          let creatorAgent = 'SIRJI';
+          let problemStatementFilePath = path.join(oThis.sharedResourcesFolderPath, creatorAgent, 'problem.txt')
 
           oThis.historyManager?.writeFile(problemStatementFilePath, message.content);
           oThis.historyManager?.writeFile(
             sharedResourcesIndexFilePath,
             JSON.stringify({
-              'shared_resources/SIRJI/problem.txt': {
-                description: 'Problem statement from the user.',
-                created_by: 'SIRJI'
+              [problemStatementFilePath]: {
+                description: 'Problem statement from the SIRJI_USER.',
+                created_by: creatorAgent
               }
             })
           );
@@ -343,13 +345,13 @@ export class Facilitator {
     while (keepFacilitating) {
       if (parsedMessage.ACTION === 'INVOKE_AGENT') {
         try {
-          await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
+          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
         } catch (error) {}
       } else {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
             try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py'));
+              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py'));
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
@@ -443,7 +445,7 @@ export class Facilitator {
           default:
             console.log('Actor default', parsedMessage);
             try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
+              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
             } catch (error) {}
 
             keepFacilitating = false;
@@ -564,26 +566,35 @@ export class Facilitator {
   private async calculateTotalTokensUsed() {
     const oThis = this;
 
-    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
-    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
-    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
+    // TODO - we need to read the conversation files of all the agents
 
-    const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
-    const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
-    const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
+    // const coderConversationFilePath = path.join(oThis.sirjiRunId, Constants.CODER_JSON_FILE);
+    // const researcherConversationFilePath = path.join(oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
+    // const plannerConversationFilePath = path.join(oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
 
-    const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
+    // const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
+    // const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
+    // const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
 
-    const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
+    // const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
 
-    const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-    const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+    // const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
+
+    // const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+    // const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+
+    // return {
+    //   total_prompt_tokens: totalPromptTokens,
+    //   total_completion_tokens: totalCompletionTokens,
+    //   total_prompt_tokens_value: totalPromptTokensValueInDollar,
+    //   total_completion_tokens_value: totalCompletionTokensValueInDollar
+    // };
 
     return {
-      total_prompt_tokens: totalPromptTokens,
-      total_completion_tokens: totalCompletionTokens,
-      total_prompt_tokens_value: totalPromptTokensValueInDollar,
-      total_completion_tokens_value: totalCompletionTokensValueInDollar
+      total_prompt_tokens: 0,
+      total_completion_tokens: 0,
+      total_prompt_tokens_value: 0,
+      total_completion_tokens_value: 0
     };
   }
 

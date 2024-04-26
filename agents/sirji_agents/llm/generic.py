@@ -98,7 +98,7 @@ class GenericAgent():
         shared_resources = textwrap.dedent(f"""
             Shared Resources:
             Shared Resources folder is a common folder where all agents store their outputs and document these in an index.json file within the folder.
-            Shared Resources folder absolute location (refered as SHARED_RESOURCES_FOLDER): {os.environ.get('SIRJI_INSTALLATION_DIR')}/sessions/{os.environ.get('SIRJI_RUN_ID')}/shared_resources
+            Shared Resources folder absolute location (refered as SHARED_RESOURCES_FOLDER): {os.environ.get('SIRJI_RUN_PATH')}/shared_resources
             index.json: A file within the SHARED_RESOURCES_FOLDER that keeps track of all files written by agents along with their descriptions.""")
 
         instructions = textwrap.dedent(f"""

@@ -2,8 +2,6 @@ import path from 'path';
 
 export const Constants = {
   ENV_VARS_KEY: 'sirjiSecrets',
-  HISTORY_FOLDER: '.sirji',
-  PYHTON_VENV_FOLDER: getPythonVenvPath(),
   CODER_JSON_FILE: 'coder.json',
   PLANNER_JSON_FILE: 'planner.json',
   RESEARCHER_JSON_FILE: 'researcher.json',
@@ -12,10 +10,6 @@ export const Constants = {
   COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS: 30,
   SESSIONS: 'sessions'
 };
-
-function getPythonVenvPath(): string {
-  return path.join('.sirji', 'venv');
-}
 
 export const ACTION_ENUM = {
   //user and coder conversations

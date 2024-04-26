@@ -66,8 +66,8 @@ playwright install
 Ensure that following environment variables are set:
 
 ```zsh
-export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace. Note that a .sirji folder will be created inside it."
-export SIRJI_RUN_ID='Unique alphanumeric ID for each run. Note that a sub folder named by this ID will be created inside of .sirji folder to store logs, etc.'
+export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace."
+export SIRJI_RUN_PATH='Folder path containing run related logs, etc.'
 export SIRJI_OPENAI_API_KEY='OpenAI API key for Chat Completions API and Assistants API'
 export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai".'
 export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4-turbo".'

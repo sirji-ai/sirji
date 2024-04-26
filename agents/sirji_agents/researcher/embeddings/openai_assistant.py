@@ -37,7 +37,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             # Provide a way to output this updated init_payload
             logger.info(f"New assistant created with ID: {self.assistant_id}")
 
-        self.index_file_path = os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), 'researcher', 'file_index.json')
+        self.index_file_path = os.path.join(self._get_run_path(), 'researcher', 'file_index.json')
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
@@ -89,11 +89,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
 
-    def _get_run_id_folder(self):
-        run_id = os.environ.get("SIRJI_RUN_ID")
+    def _get_run_path(self):
+        run_id = os.environ.get("SIRJI_RUN_PATH")
         if run_id is None:
             raise ValueError(
-                "SIRJI_RUN_ID is not set as an environment variable")
+                "SIRJI_RUN_PATH is not set as an environment variable")
         return run_id
     
     def _create_assistant(self):

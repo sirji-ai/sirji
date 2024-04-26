@@ -6,7 +6,7 @@ from sirji_agents import ResearchAgent
 
 class ResearchAgentRunner:
     def get_workplace_file_path(self, filename):
-        return os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), filename)
+        return os.path.join(self._get_run_path(), filename)
     
     def _get_workspace_folder(self):
         workspace = os.environ.get("SIRJI_WORKSPACE")
@@ -15,11 +15,11 @@ class ResearchAgentRunner:
                 "SIRJI_WORKSPACE is not set as an environment variable")
         return workspace
     
-    def _get_run_id_folder(self):
-        run_id = os.environ.get("SIRJI_RUN_ID")
+    def _get_run_path(self):
+        run_id = os.environ.get("SIRJI_RUN_PATH")
         if run_id is None:
             raise ValueError(
-                "SIRJI_RUN_ID is not set as an environment variable")
+                "SIRJI_RUN_PATH is not set as an environment variable")
         return run_id 
     
     def read_or_initialize_conversation_file(self, file_path):
