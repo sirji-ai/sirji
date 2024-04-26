@@ -1,0 +1,10 @@
+{
+  "prescribed_tasks": [
+    "Write epics and user stories.",
+    "Write architecture components.",
+    "Implement the epic & user stories using the architecture components."
+  ],
+  "tips": [
+    "Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user."
+  ]
+}
