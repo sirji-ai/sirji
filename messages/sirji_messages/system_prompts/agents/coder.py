@@ -21,12 +21,12 @@ class CoderSystemPrompt(AgentSystemPromptBase):
     # - Ensure that every code and command execution output is always written in a log file using packages like "tee" and execute in background using "nohup". For example: nohup command | tee <<log file name which can be used to check the output>> &
     def responsibilities(self):
         return textwrap.dedent(f"""
-            - Ensure you write a user story for the problem statement and get it finalized with the {AgentEnum.USER.name}:
+            - Ensure you write a user story for the problem statement and get it finalized with the {AgentEnum.SIRJI_USER.name}:
                 - First understand the given problem statement, write a user story by enhancing the requirements and features in problem statement.
                 - Make sure that key points, information and data is always present in the user story.
                 - Have the features listed as points in the user story.
                 - Then send this user story as a {ActionEnum.QUESTION.name} to get a confirmation on. The message details should look like: "\nHere's the user story based on your problem statement:\n\n <<user story>> \n\nDoes everything look good, or would you like any changes?"
-            - Once the user story is finalized, then ensure to prepare a list of architecture components needed (by considering the problem statement and the finalized user story) and get it finalized with the {AgentEnum.USER.name}:
+            - Once the user story is finalized, then ensure to prepare a list of architecture components needed (by considering the problem statement and the finalized user story) and get it finalized with the {AgentEnum.SIRJI_USER.name}:
                 - Prepare list of architecture components including things like:
                     - Programming language (example: Python, Node.js),
                     - Framework (example: Express, Flask),

@@ -24,14 +24,20 @@ class AgentRunner:
     def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens):
         with open(file_path, 'w') as file:
             json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
+            file.flush()
+            os.fsync(file.fileno())  # Ensure all internal buffers associated with the file are written to disk
 
     def read_input_file(self, input_file_path):
         with open(input_file_path, 'r') as file:
             contents = file.read()
-        return contents 
+        return contents
   
 
     def process_input_file(self, input_file_path, conversations):
+        if not os.path.exists(input_file_path):
+            with open(input_file_path, 'w') as file:
+                json.dump({}, file, indent=4)
+        
         with open(input_file_path, 'r') as file:
             contents = file.read()
             message_str = contents
@@ -93,10 +99,5 @@ class AgentRunner:
         self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process interactions.")
-    parser.add_argument("--agent_id", required=True, help="Agent Id")
- 
-    
-    args = parser.parse_args()
     agent_runner = AgentRunner()
-    agent_runner.main(args.agent_id)
+    agent_runner.main('ORCHESTRATOR')

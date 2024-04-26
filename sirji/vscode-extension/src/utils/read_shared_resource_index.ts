@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export async function readSharedResourcesIndex(workspaceRootPath: string): Promise<string> {
+export async function readSharedResourcesIndex(sharedResourcesFolderPath: string): Promise<string> {
   try {
-    const fileName = '.sirji/shared_resources/index.json';
+    const fileName = 'index.json';
 
-    const uri = vscode.Uri.file(path.join(workspaceRootPath, fileName));
+    const uri = vscode.Uri.file(path.join(sharedResourcesFolderPath, fileName));
 
     const directoryPath = path.dirname(uri.fsPath);
 

@@ -83,7 +83,7 @@ export class Facilitator {
   private async initializeFolders() {
     const oThis = this;
 
-    oThis.sirjiRunId = randomBytes(16).toString('hex');
+    oThis.sirjiRunId = Date.now().toString() + "_" + randomBytes(16).toString('hex');
 
     let sessionManager = new MaintainHistory();
 
@@ -150,7 +150,6 @@ export class Facilitator {
     const oThis = this;
 
     let responseContent;
-    data.SIRJI_INSTALLATION_DIR = oThis.sirjiInstallationFolderPath;
 
     try {
       await oThis.secretManager?.storeSecret(Constants.ENV_VARS_KEY, JSON.stringify(data));
@@ -181,6 +180,7 @@ export class Facilitator {
 
     let coderLogFileContent = '';
 
+    // TODO: remove history manager.
     if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
       coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
       // return coderLogFileContent;
@@ -306,17 +306,21 @@ export class Facilitator {
           const sharedResourcesIndexFilePath = path.join(oThis.sharedResourcesFolderPath, 'index.json');
           
           let creatorAgent = 'SIRJI';
-          let problemStatementFilePath = path.join(oThis.sharedResourcesFolderPath, creatorAgent, 'problem.txt')
+          let creatorForlderPath = path.join(oThis.sharedResourcesFolderPath, creatorAgent);
+          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt')
 
-          oThis.historyManager?.writeFile(problemStatementFilePath, message.content);
-          oThis.historyManager?.writeFile(
+          fs.mkdirSync(creatorForlderPath, {recursive: true})
+          fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
+
+          fs.writeFileSync(
             sharedResourcesIndexFilePath,
             JSON.stringify({
               [problemStatementFilePath]: {
                 description: 'Problem statement from the SIRJI_USER.',
                 created_by: creatorAgent
               }
-            })
+            }),
+            'utf-8'
           );
 
           oThis.isFirstUserMessage = false;
@@ -325,8 +329,10 @@ export class Facilitator {
             TO: ACTOR_ENUM.ORCHESTRATOR
           });
         } else {
+          console.log('message.content--------', message.content);
           await oThis.initFacilitation(message.content, {
-            TO: oThis.lastMessageFrom
+            TO: oThis.lastMessageFrom,
+            FROM: ACTOR_ENUM.USER
           });
         }
 
@@ -341,12 +347,36 @@ export class Facilitator {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
-    oThis.lastMessageFrom = parsedMessage.FROM;
     while (keepFacilitating) {
+      oThis.lastMessageFrom = parsedMessage?.FROM;
+      console.log('rawMessage-------', rawMessage);
+      console.log('parsedMessage------', parsedMessage);
+      console.log('lastMessageFrom------', oThis.lastMessageFrom);
+
+      const inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+
       if (parsedMessage.ACTION === 'INVOKE_AGENT') {
+        let agent_id = parsedMessage.TO;
+
         try {
-          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
-        } catch (error) {}
+          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), ['--agent_id', agent_id]);
+        } catch (error) {
+          oThis.sendErrorToChatPanel(error);
+          keepFacilitating = false;
+        }
+
+        const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agent_id}.json`);
+        console.log('agentConversationFilePath------', agentConversationFilePath);
+
+        const conversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
+        const lastAgentMessage: any = conversationContent.conversations[conversationContent.conversations.length - 1];
+
+        console.log('------lastAgentMessage------', lastAgentMessage);
+
+        rawMessage = lastAgentMessage?.content;
+
+        parsedMessage = lastAgentMessage?.parsed_content;
+        fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
       } else {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
@@ -356,6 +386,21 @@ export class Facilitator {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
             }
+
+            const orchestratorConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'ORCHESTRATOR.json');
+            console.log('orchestratorConversationFilePath-----', orchestratorConversationFilePath);
+
+            let conversationContent = JSON.parse(fs.readFileSync(orchestratorConversationFilePath, 'utf-8'));
+
+            const lastOrchestratorMessage: any = conversationContent.conversations[conversationContent.conversations.length - 1];
+
+            console.log('lastCoderMessage', lastOrchestratorMessage);
+
+            rawMessage = lastOrchestratorMessage?.content;
+
+            parsedMessage = lastOrchestratorMessage?.parsed_content;
+
+            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
             break;
 
           case ACTOR_ENUM.USER:
@@ -363,7 +408,7 @@ export class Facilitator {
               keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
                 type: 'solutionCompleted',
-                content: { message: parsedMessage.DETAILS, allowUserMessage: true }
+                content: { message: parsedMessage.BODY, allowUserMessage: true }
               });
             }
 
@@ -371,15 +416,13 @@ export class Facilitator {
               keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
-                content: { message: parsedMessage.DETAILS, allowUserMessage: true }
+                content: { message: parsedMessage.BODY, allowUserMessage: true }
               });
             }
+            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
             break;
 
           case ACTOR_ENUM.EXECUTOR:
-            parsedMessage = {
-              TO: parsedMessage.FROM
-            };
             switch (parsedMessage.ACTION) {
               case ACTION_ENUM.OPEN_BROWSER:
                 //TODO:Implement this
@@ -421,12 +464,12 @@ export class Facilitator {
                 break;
 
               case ACTION_ENUM.APPEND_TO_SHARED_RESOURCES_INDEX:
-                const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.workspaceRootPath, parsedMessage.BODY, parsedMessage.FROM);
+                const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.sharedResourcesFolderPath, parsedMessage.BODY, parsedMessage.FROM);
                 rawMessage = appendToSharedResourcesIndexRes;
                 break;
 
               case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
-                const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.workspaceRootPath);
+                const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
                 rawMessage = readSharedResourcesIndexRes;
                 break;
 
@@ -440,15 +483,33 @@ export class Facilitator {
                 break;
             }
 
+            parsedMessage.TO = parsedMessage.FROM;
+
+            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
             break;
 
           default:
-            console.log('Actor default', parsedMessage);
-            try {
-              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
-            } catch (error) {}
+            let agent_id = parsedMessage.TO;
 
-            keepFacilitating = false;
+            try {
+              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), ['--agent_id', parsedMessage.TO]);
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+              keepFacilitating = false;
+            }
+
+            const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agent_id}.json`);
+
+            let genericAgentConversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
+            const lastAgentMessage: any = genericAgentConversationContent.conversations[genericAgentConversationContent.conversations.length - 1];
+
+            console.log('------lastAgentMessage------', lastAgentMessage);
+
+            rawMessage = lastAgentMessage?.content;
+
+            parsedMessage = lastAgentMessage?.parsed_content;
+            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+
             break;
         }
       }

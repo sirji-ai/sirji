@@ -84,7 +84,7 @@ is_allowed = validate_permission("CODER", "USER", "QUESTION")
 print(f"Is allowed: {is_allowed}")
 
 # Get a direct look at permissions dictionary for CODER sending to USER
-print(permissions_dict[(AgentEnum.CODER, AgentEnum.USER)])
+print(permissions_dict[(AgentEnum.CODER, AgentEnum.SIRJI_USER)])
 ```
 
 ### Handling Custom Exceptions

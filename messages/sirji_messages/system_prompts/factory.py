@@ -28,5 +28,5 @@ class AgentSystemPromptFactory(metaclass=MetaAgentSystemPromptFactory):
         AgentEnum.PLANNER: PlannerSystemPrompt,
         AgentEnum.RESEARCHER: ResearcherSystemPrompt,
         AgentEnum.EXECUTOR: ExecutorSystemPrompt,
-        AgentEnum.USER: UserSystemPrompt
+        AgentEnum.SIRJI_USER: UserSystemPrompt
     }

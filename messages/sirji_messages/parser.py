@@ -4,8 +4,8 @@ message_properties = ['FROM', 'TO', 'ACTION', 'SUMMARY', 'BODY']
 
 def parse(input_message):
     input_message = _discard_format_deviations(input_message)
-    _validate_message(input_message)
-    parsed_message = _parse_message(input_message)
+    lines = _validate_message(input_message)
+    parsed_message = _parse_message("\n".join(lines))
     # Check if the message has all the required properties.
     for prop in message_properties:
         if prop not in parsed_message:
@@ -26,6 +26,8 @@ def _discard_format_deviations(input_message):
     message_content = input_message[start_index:end_index+3].strip()
     message_suffix = input_message[end_index+3:].strip()
 
+    print(message_content)
+
     return message_content
 
 
@@ -38,6 +40,7 @@ def _validate_message(message):
     if len(lines) < 5:
         raise MessageValidationError(
             "Message does not meet the minimum length requirement")
+    return lines
 
 
 def _parse_message(raw_message):

@@ -13,4 +13,4 @@ class AgentEnum(Enum):
     PLANNER = (2, "Planning Agent")
     EXECUTOR = (3, "Execution Agent")
     RESEARCHER = (4, "Research Agent")
-    USER = (5, "End User")
+    SIRJI_USER = (5, "End User")

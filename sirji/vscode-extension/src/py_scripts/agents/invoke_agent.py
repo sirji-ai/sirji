@@ -27,8 +27,10 @@ class AgentRunner:
         with open(file_path, 'w') as file:
             json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
 
-    def read_input_file(self, input_file_path):
-        with open(input_file_path, 'r') as file:
+    def read_file(self, file_path):
+        print('---------')
+        print(file_path)
+        with open(file_path, 'r') as file:
             contents = file.read()
         return contents 
   
@@ -37,15 +39,15 @@ class AgentRunner:
         with open(input_file_path, 'r') as file:
             contents = file.read()
 
-        if conversations[-1]['parsed_content']['TO'] in [AgentEnum.USER.name, AgentEnum.EXECUTOR.name, AgentEnum.ORCHESTRATOR.name]:
-            last_action = conversations[-1]['parsed_content']
+        if len(conversations) > 1 and conversations[-1]['parsed_content']['TO'] in [AgentEnum.SIRJI_USER.name, AgentEnum.EXECUTOR.name, AgentEnum.ORCHESTRATOR.name]:
+            last_message = conversations[-1]['parsed_content']
             
             message_class = MessageFactory[ActionEnum.RESPONSE.name]
             message_str = message_class().generate({
-            "from_agent_id": "{last_action.TO}",
-            "to_agent_id": "{last_action.FROM}",
+            "from_agent_id": f"{last_message['TO']}",
+            "to_agent_id": f"{last_message['FROM']}",
             "summary": "EMPTY",
-            "body": textwrap.dedent("""
+            "body": textwrap.dedent(f"""
             {contents}
             """)})
         else:
@@ -61,7 +63,7 @@ class AgentRunner:
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
         
-        input_file_path = os.path.join(sirji_run_path, 'inputs', f'{agent_id}.json')
+        input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
         
@@ -70,10 +72,10 @@ class AgentRunner:
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
-        config_file_contents = self.read_input_file(agent_config_path)
+        config_file_contents = self.read_file(agent_config_path)
         config = json.loads(config_file_contents)
 
-        shared_resources_index_contents = self.read_input_file(shared_resources_index_path)
+        shared_resources_index_contents = self.read_file(shared_resources_index_path)
         shared_resources_index = json.loads(shared_resources_index_contents)
 
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index)

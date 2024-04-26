@@ -3,13 +3,17 @@ import os
 import json
 
 # TODO - log file should be dynamically created based on agent ID
-from sirji_tools.logger import c_logger as logger
+from sirji_tools.logger import p_logger as logger
 
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
     def __init__(self, config, shared_resources_index):
+
+        logger.info('---------inside generic agent-----------')
+        logger.info(config)
+        logger.info(shared_resources_index)
         
         self.config = config
         self.shared_resources_index = shared_resources_index

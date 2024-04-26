@@ -24,7 +24,7 @@ def test_system_prompt_factory_planner():
 
 def test_system_prompt_factory_user():
     # Noting here that User might not invoke prompts, but testing for completeness
-    assert isinstance(AgentSystemPromptFactory[AgentEnum.USER.name](
+    assert isinstance(AgentSystemPromptFactory[AgentEnum.SIRJI_USER.name](
     ), UserSystemPrompt), "Incorrect system prompt for USER"
 
 

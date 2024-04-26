@@ -4,10 +4,12 @@ import * as fs from 'fs';
 
 export async function createFile(workspaceRootPath: string, body: string): Promise<string> {
   try {
-    const [filePath, fileContent] = body.split('---');
-    const fileName = filePath.replace('File path:', '').trim();
+    const [filePathPart, fileContent] = body.split('---');
+    const filePath = filePathPart.replace('File path:', '').trim();
 
-    const uri = vscode.Uri.file(path.join(workspaceRootPath, fileName));
+    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(workspaceRootPath, filePath);
+
+    const uri = vscode.Uri.file(fullPath);
 
     const directoryPath = path.dirname(uri.fsPath);
     if (!fs.existsSync(directoryPath)) {

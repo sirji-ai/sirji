@@ -90,9 +90,14 @@ export async function readContent(workspaceRootPath: string, body: string, isDir
     const filePaths = body.split('File paths:')[1];
     inputPaths = JSON.parse(filePaths);
   }
+
+  console.log('-------inputPaths', inputPaths);
+
   for (const inputPath of inputPaths) {
     try {
-      const fullPath = path.join(workspaceRootPath, inputPath);
+      const fullPath = path.isAbsolute(inputPath) ? inputPath : path.join(workspaceRootPath, inputPath);
+
+      console.log('-------fullPath', fullPath);
       const stats = await fs.stat(fullPath);
 
       if (stats.isDirectory()) {

@@ -26,10 +26,15 @@ class Orchestrator():
     def __prepare_conversation(self, input_message, history):
         conversation = []
 
+        logger.info('Hello--------')
+        logger.info(history)
+
         if not history:
+            logger.info('Hello---11111-----')
             conversation.append(
                 {"role": "system", "content": self.__system_prompt()})
         else:
+            logger.info('Hello---2222-----')
             conversation = history
             parsed_input_message = message_parse(input_message)
             conversation.append({"role": "user", "content": input_message, "parsed_content": parsed_input_message})

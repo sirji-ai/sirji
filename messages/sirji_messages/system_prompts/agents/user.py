@@ -10,10 +10,10 @@ from .base import AgentSystemPromptBase
 class UserSystemPrompt(AgentSystemPromptBase):
 
     def name(self):
-        return AgentEnum.USER.full_name
+        return AgentEnum.SIRJI_USER.full_name
 
     def short_name(self):
-        return AgentEnum.USER.name
+        return AgentEnum.SIRJI_USER.name
 
     def intro(self):
         return ""  # This will never be called.

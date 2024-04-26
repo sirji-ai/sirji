@@ -8,7 +8,7 @@ class QuestionMessage(BaseMessages):
 
     def __init__(self):
         self.action = ActionEnum.QUESTION.name
-        self.to_agent = AgentEnum.USER.name
+        self.to_agent = AgentEnum.SIRJI_USER.name
 
         super().__init__()
 

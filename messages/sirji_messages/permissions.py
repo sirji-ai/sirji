@@ -20,7 +20,7 @@ permissions_dict = {
         ActionEnum.TRAIN_USING_URL,
         ActionEnum.INFER
     ),
-    (AgentEnum.CODER, AgentEnum.USER): (
+    (AgentEnum.CODER, AgentEnum.SIRJI_USER): (
         ActionEnum.QUESTION,
         ActionEnum.STEP_STARTED,
         ActionEnum.STEP_COMPLETED,
@@ -36,7 +36,7 @@ permissions_dict = {
         ActionEnum.RESPONSE,
         ActionEnum.TRAINING_OUTPUT
     ),
-    (AgentEnum.USER, AgentEnum.CODER): (
+    (AgentEnum.SIRJI_USER, AgentEnum.CODER): (
         ActionEnum.PROBLEM_STATEMENT,
         ActionEnum.ANSWER,
         ActionEnum.FEEDBACK

@@ -48,7 +48,7 @@ export const ACTION_ENUM = {
 };
 
 export const ACTOR_ENUM = {
-  USER: 'USER',
+  USER: 'SIRJI_USER',
   CODER: 'CODER',
   PLANNER: 'PLANNER',
   RESEARCHER: 'RESEARCHER',

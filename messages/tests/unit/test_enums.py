@@ -7,13 +7,13 @@ from sirji_messages import AgentEnum, ActionEnum
 def test_agent_enum_values_and_full_names():
     assert AgentEnum.CODER.value == 1, "CODER value mismatch"
     assert AgentEnum.CODER.full_name == "Coding Agent", "CODER full name mismatch"
-    assert AgentEnum.USER.value == 5, "USER value mismatch"
-    assert AgentEnum.USER.full_name == "End User", "USER full name mismatch"
+    assert AgentEnum.SIRJI_USER.value == 5, "USER value mismatch"
+    assert AgentEnum.SIRJI_USER.full_name == "End User", "USER full name mismatch"
 
 
 def test_agent_enum_names():
     assert AgentEnum.CODER.name == "CODER", "Incorrect name for CODER"
-    assert AgentEnum.USER.name == "USER", "Incorrect name for USER"
+    assert AgentEnum.SIRJI_USER.name == "USER", "Incorrect name for USER"
 
 # Test Cases for ActionEnum
 

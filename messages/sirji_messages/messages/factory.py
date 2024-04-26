@@ -13,6 +13,8 @@ from .actions.train_using_url import TrainUsingUrlMessage
 from .actions.read_dir import ReadDirMessage
 from .actions.read_dir_structure import ReadDirStructureMessage
 from .actions.read_files import ReadFilesMessage
+from .actions.append_to_shared_resource_index import AppendToSharedResourceIndexMessage
+from .actions.read_shared_resource_index import ReadSharedResourceIndexMessage
 
 
 class MetaMessageFactory(type):
@@ -42,6 +44,8 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
         ActionEnum.READ_DIR: ReadDirMessage,
         ActionEnum.READ_FILES: ReadFilesMessage,
-        ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage
+        ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage,
+        ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX: AppendToSharedResourceIndexMessage,
+        ActionEnum.READ_SHARED_RESOURCE_INDEX: ReadSharedResourceIndexMessage
     }
 

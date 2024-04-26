@@ -4,7 +4,7 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class AppendToSharedResourceIndexMessage(BaseMessages):
+class ReadSharedResourceIndexMessage(BaseMessages):
 
     def __init__(self):
         self.action = ActionEnum.READ_SHARED_RESOURCE_INDEX.name
