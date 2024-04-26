@@ -33,6 +33,7 @@ export class Facilitator {
   private sessionManager: MaintainHistory | undefined;
   private isFirstUserMessage: Boolean = true;
   private sharedResourcesFolderPath: string = '';
+  private lastMessageFrom: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -91,8 +92,6 @@ export class Facilitator {
 
     let rootPath = os.homedir();
 
-    oThis.context?.globalState.update('SIRJI_INSTALLATION_DIR', rootPath);
-
     let sessionFolderPath = path.join(rootPath, 'Documents', 'Sirji', Constants.SESSIONS);
     let conversationFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'conversations');
     let inputFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId, 'inputs');
@@ -132,6 +131,8 @@ export class Facilitator {
     const oThis = this;
 
     let responseContent;
+    let rootPath = os.homedir();
+    data.SIRJI_INSTALLATION_DIR = rootPath;
 
     try {
       await oThis.secretManager?.storeSecret(Constants.ENV_VARS_KEY, JSON.stringify(data));
@@ -233,8 +234,6 @@ export class Facilitator {
       }
     });
 
-    // Setup Python virtual env and Install dependencies
-
     try {
       await oThis.setupVirtualEnv();
     } catch (error) {
@@ -323,11 +322,12 @@ export class Facilitator {
           await oThis.initFacilitation(message.content, {
             TO: ACTOR_ENUM.ORCHESTRATOR
           });
+        } else {
+          await oThis.initFacilitation(message.content, {
+            TO: oThis.lastMessageFrom
+          });
         }
 
-        await oThis.initFacilitation(message.content, {
-          TO: ACTOR_ENUM.CODER
-        });
         break;
 
       default:
@@ -339,10 +339,8 @@ export class Facilitator {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
+    oThis.lastMessageFrom = parsedMessage.FROM;
     while (keepFacilitating) {
-      console.log('inside while loop', parsedMessage);
-      const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PYTHON_INPUT_FILE);
-
       if (parsedMessage.ACTION === 'INVOKE_AGENT') {
         try {
           await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'));
@@ -351,152 +349,14 @@ export class Facilitator {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
             try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestrator.py'));
+              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py'));
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
+              keepFacilitating = false;
             }
-            break;
-
-          case ACTOR_ENUM.CODER:
-            if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
-              oThis.chatPanel?.webview.postMessage({
-                type: 'plannedSteps',
-                content: parsedMessage.PARSED_STEPS
-              });
-            }
-
-            if (!oThis.isCoderTabShown) {
-              oThis.isCoderTabShown = true;
-              oThis.chatPanel?.webview.postMessage({
-                type: 'showCoderTab',
-                content: {
-                  sirjiRunId: oThis.sirjiRunId,
-                  logs: oThis.readCoderLogs()
-                }
-              });
-            }
-
-            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
-
-            oThis.toCoderRelayToChatPanel(parsedMessage);
-
-            const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
-
-            const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
-
-            try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
-            } catch (error) {
-              oThis.sendErrorToChatPanel(error);
-            }
-
-            const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
-
-            const lastCoderMessage: any = coderConversationContent.conversations[coderConversationContent.conversations.length - 1];
-
-            console.log('lastCoderMessage', lastCoderMessage);
-
-            rawMessage = lastCoderMessage?.content;
-
-            parsedMessage = lastCoderMessage?.parsed_content;
-
-            oThis.fromCoderRelayToChatPanel(parsedMessage);
-
-            break;
-
-          case ACTOR_ENUM.RESEARCHER:
-            if (!oThis.isResearcherTabShown) {
-              oThis.isResearcherTabShown = true;
-              oThis.chatPanel?.webview.postMessage({
-                type: 'showResearcherTab',
-                content: {
-                  sirjiRunId: oThis.sirjiRunId
-                }
-              });
-            }
-            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
-
-            const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
-
-            const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
-
-            try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
-            } catch (error) {
-              oThis.sendErrorToChatPanel(error);
-            }
-
-            const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
-
-            const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
-
-            console.log('lastResearcherMessage', lastResearcherMessage);
-
-            rawMessage = lastResearcherMessage?.content;
-
-            parsedMessage = lastResearcherMessage?.parsed_content;
-
-            break;
-
-          case ACTOR_ENUM.PLANNER:
-            if (!oThis.isPlannerTabShown) {
-              oThis.isPlannerTabShown = true;
-              oThis.chatPanel?.webview.postMessage({
-                type: 'showPlannerTab',
-                content: {
-                  sirjiRunId: oThis.sirjiRunId
-                }
-              });
-            }
-            oThis.historyManager?.writeFile(inputFilePath, rawMessage);
-
-            const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
-
-            const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
-
-            try {
-              await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
-            } catch (error) {
-              oThis.sendErrorToChatPanel(error);
-            }
-
-            const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
-
-            const lastPlannerMessage: any = plannerConversationContent.conversations[plannerConversationContent.conversations.length - 1];
-
-            console.log('lastPlannerMessage', lastPlannerMessage);
-
-            rawMessage = lastPlannerMessage?.content;
-
-            parsedMessage = lastPlannerMessage?.parsed_content;
-
             break;
 
           case ACTOR_ENUM.USER:
-            if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
-              oThis.chatPanel?.webview.postMessage({
-                type: 'plannedStepStart',
-                content: parsedMessage.DETAILS
-              });
-
-              rawMessage = 'sure';
-              parsedMessage = {
-                TO: parsedMessage.FROM
-              };
-            }
-
-            if (parsedMessage.ACTION === ACTION_ENUM.STEP_COMPLETED) {
-              oThis.chatPanel?.webview.postMessage({
-                type: 'plannedStepComplete',
-                content: parsedMessage.DETAILS
-              });
-
-              rawMessage = 'sure';
-              parsedMessage = {
-                TO: parsedMessage.FROM
-              };
-            }
-
             if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
               keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
@@ -505,7 +365,7 @@ export class Facilitator {
               });
             }
 
-            if (parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
+            if (parsedMessage.ACTION === ACTION_ENUM.QUESTION) {
               keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
