@@ -9,15 +9,8 @@ import { MaintainHistory } from './maintain_history';
 import { spawnAdapter } from './adapter_wrapper';
 import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
-import { openBrowser } from './open_browser';
-import { executeCommand } from './execute_command';
-import { createFile } from './create_file';
-import { readContent } from './read_content';
-import { readDirectoryStructure } from './read_directory_structure';
-import { executeTask } from './execute_task';
-import { executeSpawn } from './execute_spawn';
-import { appendToSharedResourcesIndex } from './append_to_shared_resources_index';
-import { readSharedResourcesIndex } from './read_shared_resource_index';
+
+import { Executor } from './executor/executor'
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -330,6 +323,10 @@ export class Facilitator {
           });
         } else {
           console.log('message.content--------', message.content);
+
+          const inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+          fs.writeFileSync(inputFilePath, message.content, 'utf-8');
+
           await oThis.initFacilitation(message.content, {
             TO: oThis.lastMessageFrom,
             FROM: ACTOR_ENUM.USER
@@ -423,69 +420,22 @@ export class Facilitator {
             break;
 
           case ACTOR_ENUM.EXECUTOR:
-            switch (parsedMessage.ACTION) {
-              case ACTION_ENUM.OPEN_BROWSER:
-                //TODO:Implement this
-                openBrowser(parsedMessage.URL);
-                console.log('Browse', parsedMessage);
-                break;
+            try {
+              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath)
+              const executorResp = await executor.perform();
 
-              case ACTION_ENUM.EXECUTE_COMMAND:
-                const executedCommandRes = await executeSpawn(parsedMessage.BODY, oThis.workspaceRootPath);
-                rawMessage = executedCommandRes;
-                console.log('executedCommandRes', executedCommandRes);
-                break;
+              rawMessage = executorResp.rawMessage;
+              parsedMessage = executorResp.parsedMessage;
 
-              case ACTION_ENUM.RUN_SERVER:
-                const runServerRes = await executeTask(parsedMessage.BODY, oThis.workspaceRootPath, oThis.sirjiRunId);
-                rawMessage = runServerRes;
-                console.log('runServerRes', runServerRes);
-                break;
-
-              case ACTION_ENUM.CREATE_FILE:
-                const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.BODY);
-                rawMessage = createFileRes;
-                console.log('Create', createFileRes);
-                break;
-
-              case ACTION_ENUM.READ_DIR:
-                const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, true);
-                rawMessage = readDirContentRes;
-                break;
-
-              case ACTION_ENUM.READ_FILES:
-                const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.BODY, false);
-                rawMessage = readFileContentRes;
-                break;
-
-              case ACTION_ENUM.READ_DIR_STRUCTURE:
-                const readDirStructureRes = await readDirectoryStructure(oThis.workspaceRootPath, parsedMessage.BODY);
-                rawMessage = readDirStructureRes;
-                break;
-
-              case ACTION_ENUM.APPEND_TO_SHARED_RESOURCES_INDEX:
-                const appendToSharedResourcesIndexRes = await appendToSharedResourcesIndex(oThis.sharedResourcesFolderPath, parsedMessage.BODY, parsedMessage.FROM);
-                rawMessage = appendToSharedResourcesIndexRes;
-                break;
-
-              case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
-                const readSharedResourcesIndexRes = await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
-                rawMessage = readSharedResourcesIndexRes;
-                break;
-
-              default:
+              fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+            } catch (error) {
                 console.log('Execution default', parsedMessage);
                 oThis.chatPanel?.webview.postMessage({
                   type: 'botMessage',
                   content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
                 });
-                keepFacilitating = false;
-                break;
+              keepFacilitating = false;
             }
-
-            parsedMessage.TO = parsedMessage.FROM;
-
-            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
             break;
 
           default:
@@ -687,3 +637,7 @@ export class Facilitator {
     });
   }
 }
+async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {
+  
+}
+

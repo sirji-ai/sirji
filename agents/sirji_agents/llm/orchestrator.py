@@ -32,7 +32,7 @@ class Orchestrator():
         if not history:
             logger.info('Hello---11111-----')
             conversation.append(
-                {"role": "system", "content": self.__system_prompt()})
+                {"role": "system", "content": self.system_prompt()})
         else:
             logger.info('Hello---2222-----')
             conversation = history
@@ -83,7 +83,7 @@ class Orchestrator():
 
         return model_provider.get_response(history, logger)
 
-    def __system_prompt(self):
+    def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "Orchestration Agent," a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR

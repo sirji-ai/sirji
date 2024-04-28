@@ -33,7 +33,7 @@ class GenericAgent():
 
         if not history:
             conversation.append(
-                {"role": "system", "content": self.__system_prompt()})
+                {"role": "system", "content": self.system_prompt()})
         else:
             conversation = history
         
@@ -84,7 +84,7 @@ class GenericAgent():
 
         return model_provider.get_response(history, logger)
 
-    def __system_prompt(self):
+    def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "{self.config['name']}", a component of the Sirji AI agentic framework.
             Your Agent ID: {self.config['id']}""")

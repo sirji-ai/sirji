@@ -39,7 +39,7 @@ class AgentRunner:
         with open(input_file_path, 'r') as file:
             contents = file.read()
 
-        if len(conversations) > 1 and conversations[-1]['parsed_content']['TO'] in [AgentEnum.SIRJI_USER.name, AgentEnum.EXECUTOR.name, AgentEnum.ORCHESTRATOR.name]:
+        if len(conversations) > 1 and conversations[-1]['parsed_content']['TO'] in [AgentEnum.SIRJI_USER.name, AgentEnum.ORCHESTRATOR.name]:
             last_message = conversations[-1]['parsed_content']
             
             message_class = MessageFactory[ActionEnum.RESPONSE.name]

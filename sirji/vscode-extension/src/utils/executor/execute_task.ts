@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Constants } from './constants';
 import * as os from 'os';
 
 let currentTaskExecution: any = null;
@@ -24,7 +23,7 @@ function constructResponse(isRunning: Boolean, tempFileRelativePath: string, tem
   return response;
 }
 
-export async function executeTask(command: string, workspaceRootPath: string, sirjiRunId: string): Promise<string> {
+export async function executeTask(command: string, workspaceRootPath: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const tempFileName = `output.txt`;
 
