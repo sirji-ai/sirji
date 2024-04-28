@@ -77,7 +77,7 @@ class AgentRunner:
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
 
-        input_file_path = os.path.join(sirji_run_path, 'inputs', f'{agent_id}.json')
+        input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
 

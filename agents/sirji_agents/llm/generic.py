@@ -150,7 +150,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: CREATE_FILE
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             File path: {{file path}}
             ---
@@ -168,7 +168,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: EXECUTE_COMMAND
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             {{command}}
             ***
@@ -184,7 +184,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: RUN_SERVER
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             {{command}}
             ***
@@ -199,7 +199,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: READ_FILES
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             File paths: {{Array of file paths}}
             ***
@@ -213,7 +213,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: APPEND_TO_SHARED_RESOURCES_INDEX
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             File path: {{file path of the shared resource file relative to the shared_resource folder}}
             ---
@@ -227,7 +227,7 @@ class GenericAgent():
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
             ACTION: READ_SHARED_RESOURCE_INDEX
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             Empty
             ***

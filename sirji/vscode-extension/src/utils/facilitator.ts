@@ -464,6 +464,8 @@ export class Facilitator {
         }
       }
 
+      oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
+
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
 
       oThis.chatPanel?.webview.postMessage({
@@ -476,68 +478,22 @@ export class Facilitator {
     }
   }
 
-  private fromCoderRelayToChatPanel(parsedMessage: any) {
+  private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
 
     let contentMessage = null;
 
-    if (!parsedMessage || !parsedMessage.ACTION) {
-      return;
-    }
-
-    switch (parsedMessage.ACTION) {
-      case ACTION_ENUM.GENERATE_STEPS:
-        contentMessage = 'Generating steps to solve the given problem statement.';
-        break;
-
-      case ACTION_ENUM.CREATE_FILE:
-        contentMessage = `Creating File: ${parsedMessage.FILENAME}`;
-        break;
-
-      case ACTION_ENUM.EXECUTE_COMMAND:
-        contentMessage = `Executing Command: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.RUN_SERVER:
-        contentMessage = `Running Server: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.INSTALL_PACKAGE:
-        contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.READ_FILES:
-        contentMessage = `Reading Files: ${parsedMessage.FILEPATHS}`;
-        break;
-
-      case ACTION_ENUM.READ_DIR:
-        contentMessage = `Reading Files in Folder (and its Sub-Folders): ${parsedMessage.DIRPATH}`;
-        break;
-
-      case ACTION_ENUM.READ_DIR_STRUCTURE:
-        contentMessage = `Reading Directory Structure: ${parsedMessage.DIRPATH}`;
-        break;
-
-      case ACTION_ENUM.TRAIN_USING_URL:
-        contentMessage = `Training Research Agent (RAG): Using contents from ${parsedMessage.URL}`;
-        break;
-
-      case ACTION_ENUM.INFER:
-        contentMessage = 'Inferring from the Research Agent based on trained knowledge';
-        break;
-
-      default:
-        break;
-    }
-
-    if (!contentMessage) {
-      return;
+    if (!parsedMessage || 
+      !parsedMessage.ACTION || 
+      !parsedMessage.SUMMARY.trim() || 
+      parsedMessage.SUMMARY.trim().toLowerCase() === "empty") {
+      return
     }
 
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: {
-        message: contentMessage,
+        message: parsedMessage.SUMMARY.trim(),
         allowUserMessage: false
       }
     });

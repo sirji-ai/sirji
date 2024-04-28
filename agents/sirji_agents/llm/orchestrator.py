@@ -118,12 +118,31 @@ class Orchestrator():
             - Develop end-to-end working code for the epic & user stories, making use of the finalized architecture components.""")
         
         allowed_response_templates = textwrap.dedent(f"""
+            Allowed Response Templates:
+
+            Invoke the SIRJI_USER for the following functions. Please respond with the following, including the starting and ending '***', with no commentary above or below.
+
+            Function 1. Inform About Solution Completed
+
+            Instructions:
+            - Empty
+
+            Response template:
+            ***
+            FROM: {{Your Agent ID}}
+            TO: SIRJI_USER
+            ACTION: SOLUTION_COMPLETE
+            SUMMARY: Empty
+            BODY:
+            {{Summarize what all was done for gettign the solution.}}
+            ***
+
             To invoke an agent, please respond with the text below, including the starting and ending '***', and ensure there is no commentary above or below:
             ***
             FROM: {{Your Agent ID}}
             TO: {{Installed Agent ID}}
             ACTION: INVOKE_AGENT
-            SUMMARY: {{A concise summary to be displayed to the user for the action to be performed.}}
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             {{Purpose of invocation}}
             ***""")
