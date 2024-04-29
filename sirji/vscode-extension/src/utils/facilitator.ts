@@ -30,6 +30,7 @@ export class Facilitator {
   private lastMessageFrom: string = '';
   private sirjiInstallationFolderPath: string = '';
   private sirjiRunFolderPath: string = '';
+  private inputFilePath: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -282,6 +283,10 @@ export class Facilitator {
     }
   }
 
+  private writeToFile(filePath: string, content: string, options: any = 'utf-8'): void {
+    fs.writeFileSync(filePath, content, options);
+  }
+
   private async handleMessagesFromChatPanel(message: any) {
     const oThis = this;
 
@@ -317,6 +322,8 @@ export class Facilitator {
           fs.mkdirSync(creatorForlderPath, { recursive: true });
           fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
 
+          oThis.writeToFile(problemStatementFilePath, message.content);
+
           fs.writeFileSync(
             sharedResourcesIndexFilePath,
             JSON.stringify({
@@ -336,8 +343,8 @@ export class Facilitator {
         } else {
           console.log('message.content--------', message.content);
 
-          const inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
-          fs.writeFileSync(inputFilePath, message.content, 'utf-8');
+          oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+          fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
 
           await oThis.initFacilitation(message.content, {
             TO: oThis.lastMessageFrom,
@@ -423,7 +430,7 @@ export class Facilitator {
 
             parsedMessage = lastOrchestratorMessage?.parsed_content;
 
-            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+            oThis.writeToFile(inputFilePath, rawMessage);
             break;
 
           case ACTOR_ENUM.USER:
@@ -442,7 +449,7 @@ export class Facilitator {
                 content: { message: parsedMessage.BODY, allowUserMessage: true }
               });
             }
-            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+            oThis.writeToFile(inputFilePath, rawMessage);
             break;
 
           case ACTOR_ENUM.EXECUTOR:
@@ -452,8 +459,7 @@ export class Facilitator {
 
               rawMessage = executorResp.rawMessage;
               parsedMessage = executorResp.parsedMessage;
-
-              fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+              oThis.writeToFile(inputFilePath, rawMessage);
             } catch (error) {
               console.log('Execution default', parsedMessage);
               oThis.chatPanel?.webview.postMessage({
@@ -491,8 +497,7 @@ export class Facilitator {
             rawMessage = lastAgentMessage?.content;
 
             parsedMessage = lastAgentMessage?.parsed_content;
-            fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
-
+            oThis.writeToFile(inputFilePath, rawMessage);
             break;
         }
       }
