@@ -6,6 +6,7 @@ def parse(input_message):
     input_message = _discard_format_deviations(input_message)
     lines = _validate_message(input_message)
     parsed_message = _parse_message("\n".join(lines))
+    parsed_message['BODY'] = parsed_message['BODY'].lstrip("\n")
     # Check if the message has all the required properties.
     for prop in message_properties:
         if prop not in parsed_message:
