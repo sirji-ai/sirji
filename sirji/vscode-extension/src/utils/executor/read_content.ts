@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as mimetype from 'mime-types';
@@ -51,6 +50,12 @@ const MEDIA_MIME_TYPES = [
 //       "BODY": "\n\nFile: ../../Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\n\nWrite a code for factorial of a number.\n\n---"
 //   }
 // },
+
+function isPathInsideRoot(rootPath: string, targetPath: string): boolean {
+  const resolvedRoot = path.resolve(rootPath);
+  const resolvedTarget = path.resolve(targetPath);
+  return resolvedTarget.startsWith(resolvedRoot);
+}
 
 export async function readContent(workspaceRootPath: string, body: string, isDirectory: boolean): Promise<string> {
   async function shouldSkip(name: string): Promise<boolean> {
@@ -110,7 +115,7 @@ export async function readContent(workspaceRootPath: string, body: string, isDir
   let inputPaths = [];
 
   if (isDirectory) {
-    const directoryPath = body.split('Directory:')[1];
+    const directoryPath = body.split('Directory:')[1].trim();
     inputPaths.push(directoryPath);
   } else {
     const filePaths = body.split('File paths:')[1];
@@ -122,6 +127,10 @@ export async function readContent(workspaceRootPath: string, body: string, isDir
   for (const inputPath of inputPaths) {
     try {
       const fullPath = path.isAbsolute(inputPath) ? inputPath : path.join(workspaceRootPath, inputPath);
+
+      if (!isPathInsideRoot(workspaceRootPath, fullPath)) {
+        throw new Error(`Path '${inputPath}' is not within the workspace root.`);
+      }
 
       console.log('-------fullPath', fullPath);
       const stats = await fs.stat(fullPath);

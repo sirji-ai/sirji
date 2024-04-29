@@ -34,9 +34,9 @@ export class Executor {
 
     switch (action) {
       case ACTION_ENUM.CREATE_WORKSPACE_FILE:
-        return await createFile(oThis.workspaceRootPath, oThis.parsedMessage.BODY);
+        return await createFile(oThis.workspaceRootPath, true, oThis.parsedMessage.BODY);
       case ACTION_ENUM.CREATE_SHARED_RESOURCE_FILE:
-        return await createFile(oThis.sharedResourcesFolderPath, oThis.parsedMessage.BODY);
+        return await createFile(oThis.sharedResourcesFolderPath, false, oThis.parsedMessage.BODY);
       case ACTION_ENUM.EXECUTE_COMMAND:
         return await executeSpawn(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
       case ACTION_ENUM.RUN_SERVER:

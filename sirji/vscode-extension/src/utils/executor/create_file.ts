@@ -2,15 +2,23 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-// TODO: Vaibhav - Validate if filepath is either inside Sirji installation folder or inside workspace folder. Only allow writes in these folders.
-export async function createFile(workspaceRootPath: string, body: string): Promise<string> {
+export async function createFile(rootPath: string, isWorkspaceRoot: boolean, body: string): Promise<string> {
   try {
     const [filePathPart, fileContent] = body.split('---');
     const filePath = filePathPart.replace('File path:', '').trim();
 
-    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(workspaceRootPath, filePath);
-
+    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(rootPath, filePath);
     const uri = vscode.Uri.file(fullPath);
+
+    if (isWorkspaceRoot) {
+      if (!isInsideWorkspace(uri.fsPath, rootPath)) {
+        throw new Error('File path is outside of the workspace folder tree. Write operation denied.');
+      }
+    } else {
+      if (path.isAbsolute(filePath)) {
+        throw new Error('Absolute file path is not allowed for shared resources. Write operation denied.');
+      }
+    }
 
     const directoryPath = path.dirname(uri.fsPath);
     if (!fs.existsSync(directoryPath)) {
@@ -27,4 +35,9 @@ export async function createFile(workspaceRootPath: string, body: string): Promi
     const errorMessage = `Failed to create or write to the file. Error: ${e}`;
     return errorMessage;
   }
+}
+
+function isInsideWorkspace(filePath: string, workspaceRootPath: string): boolean {
+  const relativePath = path.relative(workspaceRootPath, filePath);
+  return !relativePath.startsWith('..') && !path.isAbsolute(relativePath);
 }
