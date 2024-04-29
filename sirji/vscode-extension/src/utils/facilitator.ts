@@ -479,8 +479,6 @@ export class Facilitator {
   private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
 
-    let contentMessage = null;
-
     if (!parsedMessage || 
       !parsedMessage.ACTION || 
       !parsedMessage.SUMMARY.trim() || 
@@ -491,7 +489,7 @@ export class Facilitator {
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: {
-        message: parsedMessage.SUMMARY.trim(),
+        message: `${parsedMessage.FROM}: ${parsedMessage.SUMMARY.trim()}`,
         allowUserMessage: false
       }
     });

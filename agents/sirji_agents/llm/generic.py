@@ -87,7 +87,8 @@ class GenericAgent():
     def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "{self.config['name']}", a component of the Sirji AI agentic framework.
-            Your Agent ID: {self.config['id']}""")
+            Your Agent ID: {self.config['id']}
+            Your OS (refered as SIRJI_OS later): {os.name}""")
         
         response_specifications = textwrap.dedent(f"""
             Your Response:

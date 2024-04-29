@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+// TODO: Vaibhav - Validate if filepath is either inside Sirji installation folder or inside workspace folder. Only allow writes in these folders.
 export async function createFile(workspaceRootPath: string, body: string): Promise<string> {
   try {
     const [filePathPart, fileContent] = body.split('---');

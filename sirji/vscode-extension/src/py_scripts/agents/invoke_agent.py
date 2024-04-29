@@ -55,7 +55,8 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, config, shared_resources_index): 
+    def process_message(self, message_str, conversations, config, shared_resources_index):
+        # TODO: Kedar P1 - use llm provider and model from config
         agent = GenericAgent(config, shared_resources_index)
         return agent.message(message_str, conversations)
         

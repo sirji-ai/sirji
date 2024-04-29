@@ -92,6 +92,7 @@ class AgentRunner:
         recipe_file_contents = self.read_input_file(recipe_file_path)
         recipe = json.loads(recipe_file_contents)
 
+        # TODO: Kedar P1 - use llm provider and model from recipe
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, recipe, installed_agents)
         
         prompt_tokens += prompt_tokens_consumed
