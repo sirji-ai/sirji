@@ -57,7 +57,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets src/defaults out/",
     "watch-ts": "tsc -watch -p ./",
-    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets out/'",
+    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets src/defaults out/'",
     "watch": "concurrently npm:watch-*",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
