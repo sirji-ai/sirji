@@ -24,32 +24,37 @@
 
 ## Sirji
 
-Sirji is a Visual Studio Code extension that works as an AI software development agent.
+Sirji is an agentic AI framework that helps developers solve software problems faster. These problems can range from building greenfield web applications to resolving GitHub issues, writing test cases, generating documentation, conducting code reviews, and much more.
 
-It is a virtual software developer that includes individual agents for planning, coding, researching, and executing projects.
+Right now, we have implemented Sirji as a VS Code extension. It lives where developers work. It provides an interactive chat interface, through which you can submit your problem statement and provide feedback. It takes advantage of the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
-Sirji solves users’ problem statements ranging from a new greenfield project to an existing brownfield project where it enhances existing code, fixes bugs, and writes test cases.
+Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It also executes the generated code in your local or remote development environment.
 
-The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+In the next release, we will be making Sirji extendable, building it as a framework where the community can write custom agents having specialized skills, which would generate better results than a generic agent.
 
-It provides an interactive chat interface through which users submit their problem statements, answer questions, and provide feedback to Sirji.
+## Why Do Developers Need Sirji?
 
-Additionally and most importantly, Sirji sets up your local development environment by installing system-level packages as well as programming language-specific dependencies. It later executes the generated code in your local development environment.
+As developers, we aim to dedicate more time to high-impact activities, such as understanding requirements, finalizing architecture, and designing database schemas. We also strive to liberate ourselves from writing routine code—like models, migrations, and routes—and from the ongoing task of keeping test cases and documentation up to date.
+
+When adopting a new tech stack, it often takes time to familiarize ourselves with its concepts. Moreover, we frequently encounter runtime issues, such as missing packages or modules and errors that, while typically simple to resolve, are time-consuming.
+
+We are enthusiastic users and fans of GitHub Copilot, which assists us in writing code and resolving issues. However, Copilot’s contextual awareness is quite limited. To use it, we must first open the specific code file requiring changes and then activate Copilot. This becomes cumbersome in large projects spanning multiple repositories, particularly if developers are unsure where to begin. Additionally, Copilot is limited to the context of the current file, unless other files are explicitly mentioned in the comments.
+
+Furthermore, Copilot does not facilitate the process of getting code to run on our machines, which can require considerable effort and distract from more impactful tasks.
+
+These are all the problems and limitations we want to solve with Sirji, and in the process, build something that we will use ourselves.
 
 ## Demo Video
 
-```
-Create a fully interactive website for playing the Tic-Tac-Toe game.
-```
+Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
 
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank">https://www.youtube.com/watch?v=DC_gmz04Ovs</a>
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
 
-<a href="https://www.youtube.com/watch?v=DC_gmz04Ovs" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/fff071a6-f019-4797-ad44-55d7670e819f" alt="Tic Tac Toe game by Sirji"></a>
-
+<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
 
 ## Prerequisites
 
-Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize.
+Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize ([Issue #44](https://github.com/sirji-ai/sirji/issues/44)).
 
 Make sure you have installed all of the following prerequisites on your machine:
 
@@ -86,6 +91,19 @@ Communication among these agents is facilitated through a defined message protoc
 The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
 
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
+
+## Roadmap
+We are calling our next release the ‘Core’ Release (ONGOING. ETA - May 20).
+
+Here is the link to the ‘Core’ release’s roadmap: https://github.com/orgs/sirji-ai/projects/5
+
+This is a significant release focused on the following key areas:
+- **User accounts**: Users will be required to create an account with Sirji. They can either bring their own LLM key or subscribe to a free but rate-limited Developer plan.
+- **Improve reliability**: The first version of the VS Code extension improved usability, but after using it ourselves for a while, we identified several issues and limitations ranging from incomplete solutions to a lack of web debugging capabilities. We are addressing these issues to make Sirji more reliable in solving software problems.
+- **Custom agents and recipes**: We are developing the framework to enable users to create and use custom agents and recipes (instructions on how the agents interact). This involves enhancing the orchestration functionality and refactoring existing base agents.
+
+### Architecture Diagram (Post Core Release)
+![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
 
 ## Contributing
 
