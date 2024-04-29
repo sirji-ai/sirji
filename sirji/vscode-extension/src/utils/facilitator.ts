@@ -357,6 +357,7 @@ export class Facilitator {
 
     let keepFacilitating: Boolean = true;
     while (keepFacilitating) {
+      oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
       oThis.lastMessageFrom = parsedMessage?.FROM;
       console.log('rawMessage-------', rawMessage);
       console.log('parsedMessage------', parsedMessage);
@@ -495,8 +496,6 @@ export class Facilitator {
             break;
         }
       }
-
-      oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
 
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
 

@@ -11,7 +11,8 @@ def parse(input_message):
     for prop in message_properties:
         if prop not in parsed_message:
             raise MessageParsingError(f"Message does not contain {prop} property")
-    
+        
+   ##TODO: Vaibhav if action is not in recognized actions, raise an error
     return parsed_message
 
 def _discard_format_deviations(input_message):
