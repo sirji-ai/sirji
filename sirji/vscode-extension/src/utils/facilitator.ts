@@ -78,8 +78,6 @@ export class Facilitator {
 
     oThis.sirjiRunId = Date.now().toString() + "_" + randomBytes(16).toString('hex');
 
-    let sessionManager = new MaintainHistory();
-
     let rootPath = os.homedir();
 
     console.log('-------root path--------', rootPath);
@@ -93,7 +91,6 @@ export class Facilitator {
     oThis.sirjiRunFolderPath = runFolderPath;
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
-    let inputsFolderPath = path.join(runFolderPath, 'inputs');
     oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
     
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
@@ -103,13 +100,14 @@ export class Facilitator {
     // TODO: Rename createHistoryFolder to createFolder
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
-    fs.mkdirSync(inputsFolderPath, { recursive: true });
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
 
-    // TODO: save the oThis.workspaceRootPath to constants.json
+    // TODO Daksh: save the oThis.workspaceRootPath to constants.json
+    // {"workspace_folder": ""} - indent with 4 spaces.
 
-    // TODO: if recipe file is not already present, then copy the contents of defaults/recipe.json
-    // TODO: copy all files from defaults/agents to installedAgentsFolderPath
+    // Do the following 2 steps on every fresh installation (if recipe.json is not present)
+    // TODO Daksh P1: copy the contents of defaults/recipe.json
+    // TODO Daksh P1: copy all files from defaults/agents to installedAgentsFolderPath
   }
 
   private async setupSecretManager() {

@@ -30,7 +30,7 @@ def _discard_format_deviations(input_message):
 
     return message_content
 
-
+# TODO: Vaibhav P1 - remove starting \n from parsedMessage.BODY
 def _validate_message(message):
     message = message.strip()
     if not (message.startswith("***") and message.endswith("***")):
