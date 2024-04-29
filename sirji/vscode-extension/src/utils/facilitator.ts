@@ -10,7 +10,7 @@ import { spawnAdapter } from './adapter_wrapper';
 import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 
-import { Executor } from './executor/executor'
+import { Executor } from './executor/executor';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -76,7 +76,7 @@ export class Facilitator {
   private async initializeFolders() {
     const oThis = this;
 
-    oThis.sirjiRunId = Date.now().toString() + "_" + randomBytes(16).toString('hex');
+    oThis.sirjiRunId = Date.now().toString() + '_' + randomBytes(16).toString('hex');
 
     let rootPath = os.homedir();
 
@@ -87,12 +87,12 @@ export class Facilitator {
     oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
 
     let sessionFolderPath = path.join(sirjiInstallationFolderPath, Constants.SESSIONS);
-    let runFolderPath =  path.join(sessionFolderPath, oThis.sirjiRunId)
+    let runFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId);
     oThis.sirjiRunFolderPath = runFolderPath;
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
     oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
-    
+
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
     let recipeFilePath = path.join(sirjiInstallationFolderPath, 'recipe.json');
     let installedAgentsFolderPath = path.join(sirjiInstallationFolderPath, 'installed_agents');
@@ -102,12 +102,26 @@ export class Facilitator {
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
 
-    // TODO Daksh: save the oThis.workspaceRootPath to constants.json
-    // {"workspace_folder": ""} - indent with 4 spaces.
+    fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
 
-    // Do the following 2 steps on every fresh installation (if recipe.json is not present)
-    // TODO Daksh P1: copy the contents of defaults/recipe.json
-    // TODO Daksh P1: copy all files from defaults/agents to installedAgentsFolderPath
+    if (!fs.existsSync(recipeFilePath)) {
+      fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
+      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
+    }
+  }
+
+  private async copyDirectory(source: string, destination: string) {
+    if (!fs.existsSync(destination)) {
+      fs.mkdirSync(destination, { recursive: true });
+    }
+
+    let items = fs.readdirSync(source);
+
+    items.forEach((item) => {
+      let srcPath = path.join(source, item);
+      let destPath = path.join(destination, item);
+      fs.copyFileSync(srcPath, destPath);
+    });
   }
 
   private async setupSecretManager() {
@@ -295,12 +309,12 @@ export class Facilitator {
       case 'userMessage':
         if (oThis.isFirstUserMessage) {
           const sharedResourcesIndexFilePath = path.join(oThis.sharedResourcesFolderPath, 'index.json');
-          
+
           let creatorAgent = 'SIRJI';
           let creatorForlderPath = path.join(oThis.sharedResourcesFolderPath, creatorAgent);
-          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt')
+          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
 
-          fs.mkdirSync(creatorForlderPath, {recursive: true})
+          fs.mkdirSync(creatorForlderPath, { recursive: true });
           fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
 
           fs.writeFileSync(
@@ -354,7 +368,14 @@ export class Facilitator {
         let agent_id = parsedMessage.TO;
 
         try {
-          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), ['--agent_id', agent_id]);
+          await spawnAdapter(
+            oThis.context,
+            oThis.sirjiInstallationFolderPath,
+            oThis.sirjiRunFolderPath,
+            oThis.workspaceRootPath,
+            path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
+            ['--agent_id', agent_id]
+          );
         } catch (error) {
           oThis.sendErrorToChatPanel(error);
           keepFacilitating = false;
@@ -376,7 +397,13 @@ export class Facilitator {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
             try {
-              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py'));
+              await spawnAdapter(
+                oThis.context,
+                oThis.sirjiInstallationFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.workspaceRootPath,
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py')
+              );
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
@@ -419,7 +446,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath)
+              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;
@@ -427,11 +454,11 @@ export class Facilitator {
 
               fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
             } catch (error) {
-                console.log('Execution default', parsedMessage);
-                oThis.chatPanel?.webview.postMessage({
-                  type: 'botMessage',
-                  content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
-                });
+              console.log('Execution default', parsedMessage);
+              oThis.chatPanel?.webview.postMessage({
+                type: 'botMessage',
+                content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+              });
               keepFacilitating = false;
             }
             break;
@@ -440,7 +467,14 @@ export class Facilitator {
             let agent_id = parsedMessage.TO;
 
             try {
-              await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), ['--agent_id', parsedMessage.TO]);
+              await spawnAdapter(
+                oThis.context,
+                oThis.sirjiInstallationFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.workspaceRootPath,
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
+                ['--agent_id', parsedMessage.TO]
+              );
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
@@ -479,11 +513,10 @@ export class Facilitator {
   private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
 
-    if (!parsedMessage || 
-      !parsedMessage.ACTION || 
-      !parsedMessage.SUMMARY.trim() || 
-      parsedMessage.SUMMARY.trim().toLowerCase() === "empty") {
-      return
+    let contentMessage = null;
+
+    if (!parsedMessage || !parsedMessage.ACTION || !parsedMessage.SUMMARY.trim() || parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
+      return;
     }
 
     oThis.chatPanel?.webview.postMessage({
@@ -589,7 +622,4 @@ export class Facilitator {
     });
   }
 }
-async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {
-  
-}
-
+async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {}

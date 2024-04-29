@@ -1,3 +1,3 @@
 urllib3==1.25.11
--e /Users/kedar/workspace/sirji/messages
--e /Users/kedar/workspace/sirji/agents
+-e /Users/dakshbhardwaj/TS/sirji/sirji/messages
+-e /Users/dakshbhardwaj/TS/sirji/sirji/agents
