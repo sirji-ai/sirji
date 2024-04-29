@@ -5,7 +5,7 @@ import json
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
@@ -100,10 +100,10 @@ class GenericAgent():
                 - EXECUTOR
                 - ORCHESTRATOR""")
         
+        # Todo: Use action names from ActionEnum
         shared_resources = textwrap.dedent(f"""
             Shared Resources:
             Shared Resources folder is a common folder where all agents store their outputs and document these in an index.json file within the folder.
-            Shared Resources folder absolute location (refered as SHARED_RESOURCES_FOLDER): {os.environ.get('SIRJI_RUN_PATH')}/shared_resources
             index.json: A file within the SHARED_RESOURCES_FOLDER that keeps track of all files written by agents along with their descriptions.""")
 
         instructions = textwrap.dedent(f"""
@@ -111,6 +111,8 @@ class GenericAgent():
             - The ORCHESTRATOR is aware of your skills and has invoked you for a task after finding your skills align with the task's requirements.
             - Upon being invoked, identify which of your skills match the requirements of the task.
             - Execute the sub-tasks associated with each of these matching skills.
+            - Do not respond with two actions in the same response. Respond with one action at a time.
+            - Always use CREATE_SHARED_RESOURCE_FILE and READ_SHARED_RESOURCES_FILES to write and read files to and from the shared resources folder.                                             
             """)
 
         formatted_skills = self.__format_skills()
@@ -141,7 +143,7 @@ class GenericAgent():
             Allowed Response Templates TO EXECUTOR:
             Invoke the EXECUTOR for the following functions. Please respond with the following, including the starting and ending '***', with no commentary above or below.
 
-            Function 1. Create a File
+            Function 1. Create a File Inside Workspace Folder Only
 
             Instructions:
             - The file path must be relative to the workspace root.
@@ -150,7 +152,7 @@ class GenericAgent():
             ***
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
-            ACTION: CREATE_FILE
+            ACTION: CREATE_WORKSPACE_FILE
             SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             File path: {{file path}}
@@ -190,7 +192,7 @@ class GenericAgent():
             {{command}}
             ***
 
-            Function 4. Read Multiple Files
+            Function 4. Read Multiple Files From Workspace Folder Only
 
             Instructions:
             - The file paths must be relative to the workspace root.
@@ -199,16 +201,49 @@ class GenericAgent():
             ***
             FROM: {{Your Agent ID}}
             TO: EXECUTOR
-            ACTION: READ_FILES
+            ACTION: READ_WORKSPACE_FILES
             SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
             File paths: {{Array of file paths}}
             ***
 
-            Function 5. Register to the Shared Resource Index
+            Function 5. Create a File Inside Shared Resources Folder
+                                                                                                                                            
+            Instructions:
+            - The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'. 
+                                                                                    
+            Response template:
+            ***
+            FROM: {{Your Agent ID}}
+            TO: EXECUTOR
+            ACTION: CREATE_SHARED_RESOURCE_FILE
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
+            BODY:
+            File path: {{file path}}
+            ---
+            {{file contents}}
+            ***
+                                                     
+            Function 6. Read Multiple Files From Shared Resources
+
+            Instructions:
+            - The file paths must be in the following format: '{{Your Agent ID}}/{{file name}}'.
+
+            Response template:
+            ***
+            FROM: {{Your Agent ID}}
+            TO: EXECUTOR
+            ACTION: READ_SHARED_RESOURCES_FILES
+            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
+            BODY:
+            File paths: {{Array of file paths}}
+            ***
+                                         
+            Function 7. Register to the Shared Resource Index
             Instructions:
             - Ensure to register new shared resource files to the shared resources' index.
-
+            - The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'.
+                                         
             Response template:
             ***
             FROM: {{Your Agent ID}}
@@ -216,12 +251,12 @@ class GenericAgent():
             ACTION: APPEND_TO_SHARED_RESOURCES_INDEX
             SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
             BODY:
-            File path: {{file path of the shared resource file relative to the shared_resource folder}}
+            File path: {{file path}}
             ---
             {{Description of the shared resource file, to be used by other agents to know what it is about}}
             ***
 
-            Function 6. Read Shared Resource Index
+            Function 8. Read Shared Resource Index
 
             Response template:
             ***

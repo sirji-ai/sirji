@@ -319,6 +319,8 @@ export class Facilitator {
           let creatorForlderPath = path.join(oThis.sharedResourcesFolderPath, creatorAgent);
           let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
 
+          let problemStatementFilePathKey = path.join(creatorAgent, 'problem.txt');
+
           fs.mkdirSync(creatorForlderPath, { recursive: true });
           fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
 
@@ -327,7 +329,7 @@ export class Facilitator {
           fs.writeFileSync(
             sharedResourcesIndexFilePath,
             JSON.stringify({
-              [problemStatementFilePath]: {
+              [problemStatementFilePathKey]: {
                 description: 'Problem statement from the SIRJI_USER.',
                 created_by: creatorAgent
               }
