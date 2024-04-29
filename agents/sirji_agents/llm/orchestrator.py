@@ -99,8 +99,9 @@ class Orchestrator():
 
         formatted_recipe = self.__format_recipe()
 
-        # TODO: Remove the following hardcoding
-
+        # TODO: Vaibhav - Read all the agents from the installed agents folder to come up with the following.
+        # Using the file names from installed_agents first populate the variable applicable_agent_ids
+        # Then use applicable_agent_ids to create following.
         formatted_installed_agents = textwrap.dedent(f"""
             Agent Name: Product Manager
             Agent ID: PRODUCT_MANAGER
@@ -117,6 +118,7 @@ class Orchestrator():
             Skills:
             - Develop end-to-end working code for the epic & user stories, making use of the finalized architecture components.""")
         
+        # TODO: Vaibhav - The Allowed Response Templates part of the agent system prompt must be created dynamically.
         allowed_response_templates = textwrap.dedent(f"""
             Allowed Response Templates:
 
