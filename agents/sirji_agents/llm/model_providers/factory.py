@@ -14,6 +14,7 @@ class LLMProviderFactory:
             raise EnvironmentError("SIRJI_MODEL_PROVIDER_API_KEY is not set in environment variables.")
         
         if provider_name == 'openai':
+            print('Model used:', model)
             return OpenAIProvider(api_key, model)
         else:
             raise ValueError(f"Unsupported LLM provider: {provider_name}")

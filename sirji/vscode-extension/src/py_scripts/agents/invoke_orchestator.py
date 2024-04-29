@@ -92,7 +92,13 @@ class AgentRunner:
         recipe_file_contents = self.read_input_file(recipe_file_path)
         recipe = json.loads(recipe_file_contents)
 
-        # TODO: Kedar P1 - use llm provider and model from recipe
+        llm = recipe['llm']
+        
+        # Set SIRJI_MODEL_PROVIDER env var to llm.provider
+        os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
+        # Set SIRJI_MODEL env var to llm.model
+        os.environ['SIRJI_MODEL'] = llm['model']
+        
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, recipe, installed_agents)
         
         prompt_tokens += prompt_tokens_consumed

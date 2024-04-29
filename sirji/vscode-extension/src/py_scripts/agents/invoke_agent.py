@@ -60,7 +60,7 @@ class AgentRunner:
         agent = GenericAgent(config, shared_resources_index)
         return agent.message(message_str, conversations)
         
-    def main(self, agent_id):  
+    def main(self, agent_id):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
         
@@ -78,6 +78,13 @@ class AgentRunner:
 
         shared_resources_index_contents = self.read_file(shared_resources_index_path)
         shared_resources_index = json.loads(shared_resources_index_contents)
+
+        llm = config['llm']
+        
+        # Set SIRJI_MODEL_PROVIDER env var to llm.provider
+        os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
+        # Set SIRJI_MODEL env var to llm.model
+        os.environ['SIRJI_MODEL'] = llm['model']
 
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index)
         
