@@ -147,6 +147,7 @@ class GenericAgent():
 
             Instructions:
             - The file path must be relative to the workspace root.
+            - The file contents should never be enclosed within ``` starting and ending markers.
 
             Response template:
             ***
@@ -286,13 +287,36 @@ class GenericAgent():
         return f"{initial_intro}\n{response_specifications}\n{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}".strip()
     
     def __format_skills(self):
-        # Generating the formatted_skills for multiple skills
-        formatted_skills_multiple = "Here are your skills, along with their sub-tasks:\n"
+        output_text = ""
+        
+        # Check if 'definitions' exists in the config and is not empty
+        if "definitions" in self.config and self.config["definitions"]:
+            output_text += "The definitions to be used for executing sub-tasks of your skills:\n"
 
-        for skill in self.config["skills"]:
-            formatted_skills_multiple += "Skill: {}\n\nSub-tasks:\n".format(skill["skill"])
-            for sub_task in skill["sub_tasks"]:
-                formatted_skills_multiple += "- {}\n".format(sub_task)
-            formatted_skills_multiple += "\n"  # Adding a space between different skills for better readability
+            for key, value in self.config["definitions"].items():
+                output_text += f"- {key}: {value}\n"
+        
+        output_text += "\n"
+        
+        # Check if 'rules' exists in the config and is not empty
+        if "rules" in self.config and self.config["rules"]:
+            output_text += "The rules that must be followed for executing sub-tasks of your skills:\n"
+            for rule in self.config["rules"]:
+                output_text += f"- {rule}\n"
+        
+        output_text += "\n"
 
-        return formatted_skills_multiple
+        output_text += "Here are your skills with their sub-tasks:\n\n"
+        
+        # Check if 'skills' exists in the config and is not empty
+        if "skills" in self.config and self.config["skills"]:
+            for skill in self.config["skills"]:
+                output_text += f"Skill: {skill['skill']}\nSubtasks:\n"
+                for sub_task in skill["sub_tasks"]:
+                    output_text += f"- {sub_task}\n"
+                output_text += "\n"
+        else:
+            output_text += "- No skills provided.\n"
+
+        return output_text
+

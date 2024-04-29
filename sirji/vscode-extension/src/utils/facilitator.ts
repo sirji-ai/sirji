@@ -521,7 +521,11 @@ export class Facilitator {
 
     let contentMessage = null;
 
-    if (!parsedMessage || !parsedMessage.ACTION || !parsedMessage.SUMMARY.trim() || parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
+    if (!parsedMessage ||
+      !parsedMessage.ACTION || 
+      parsedMessage.TO == ACTOR_ENUM.USER ||
+      !parsedMessage.SUMMARY.trim() ||
+      parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
       return;
     }
 
