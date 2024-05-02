@@ -454,7 +454,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath);
+              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath, oThis.sirjiRunFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;

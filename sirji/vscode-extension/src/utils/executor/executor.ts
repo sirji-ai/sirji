@@ -13,13 +13,15 @@ export class Executor {
   private parsedMessage: any;
   private workspaceRootPath: any;
   private sharedResourcesFolderPath: any;
+  private sirjiRunFolderPath: any;
 
-  public constructor(parsedMessage: any, workspaceRootPath: any, sharedResourcesFolderPath: any) {
+  public constructor(parsedMessage: any, workspaceRootPath: any, sharedResourcesFolderPath: any, sirjiRunFolderPath: any) {
     const oThis = this;
 
     oThis.parsedMessage = parsedMessage;
     oThis.workspaceRootPath = workspaceRootPath;
     oThis.sharedResourcesFolderPath = sharedResourcesFolderPath;
+    oThis.sirjiRunFolderPath = sirjiRunFolderPath;
   }
 
   public async perform() {
@@ -40,7 +42,7 @@ export class Executor {
       case ACTION_ENUM.EXECUTE_COMMAND:
         return await executeSpawn(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
       case ACTION_ENUM.RUN_SERVER:
-        return await executeTask(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
+        return await executeTask(oThis.parsedMessage.BODY, oThis.sirjiRunFolderPath);
       case ACTION_ENUM.OPEN_BROWSER:
         openBrowser(oThis.parsedMessage.URL);
         return 'Done';

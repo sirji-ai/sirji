@@ -25,9 +25,8 @@ function constructResponse(isRunning: Boolean, tempFileRelativePath: string, tem
 
 export async function executeTask(command: string, workspaceRootPath: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    const tempFileName = `output.txt`;
+    const tempFileName = `output_${Date.now()}.txt`;
 
-    // TODO Daksh P1: Create this in the Sirji run path, make it inside the session folder
     const tempFileRelativePath = path.join(workspaceRootPath, tempFileName);
     const tempFilePath = path.join(workspaceRootPath, tempFileRelativePath);
 
