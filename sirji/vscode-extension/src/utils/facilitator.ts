@@ -83,7 +83,6 @@ export class Facilitator {
 
     console.log('-----rootPath------', rootPath);
 
-    // TODO Daksh P1: Check if Documents folder is the correct place to store in Windows and Linux. Explore options suggested by Sunil. //global storage URI and local storage URI
     let sirjiInstallationFolderPath = path.join(rootPath, 'Sirji');
     oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
 
