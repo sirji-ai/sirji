@@ -83,7 +83,7 @@ export class Facilitator {
 
     console.log('-------root path--------', rootPath);
 
-    // TODO Daksh P1: Check if Documents folder is the correct place to store in Windows and Linux. Explore options suggested by Sunil.
+    // TODO Daksh P1: Check if Documents folder is the correct place to store in Windows and Linux. Explore options suggested by Sunil. //global storage URI and local storage URI
     let sirjiInstallationFolderPath = path.join(rootPath, 'Documents', 'Sirji');
     oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
 
@@ -520,11 +520,7 @@ export class Facilitator {
 
     let contentMessage = null;
 
-    if (!parsedMessage ||
-      !parsedMessage.ACTION || 
-      parsedMessage.TO == ACTOR_ENUM.USER ||
-      !parsedMessage.SUMMARY.trim() ||
-      parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
+    if (!parsedMessage || !parsedMessage.ACTION || parsedMessage.TO == ACTOR_ENUM.USER || !parsedMessage.SUMMARY.trim() || parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
       return;
     }
 

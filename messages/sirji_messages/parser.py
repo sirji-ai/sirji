@@ -1,4 +1,5 @@
 from .custom_exceptions import MessageParsingError, MessageValidationError
+from .action_enum import ActionEnum
 
 message_properties = ['FROM', 'TO', 'ACTION', 'SUMMARY', 'BODY']
 
@@ -11,8 +12,10 @@ def parse(input_message):
     for prop in message_properties:
         if prop not in parsed_message:
             raise MessageParsingError(f"Message does not contain {prop} property")
-        
-   ##TODO: Vaibhav if action is not in recognized actions, raise an error
+           
+    if parsed_message['ACTION'] not in ActionEnum.__members__:
+        raise MessageValidationError(f"Action {parsed_message['ACTION']} is not recognized")
+
     return parsed_message
 
 def _discard_format_deviations(input_message):
