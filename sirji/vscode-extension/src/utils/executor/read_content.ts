@@ -25,30 +25,6 @@ const MEDIA_MIME_TYPES = [
   // 'application/vnd.oasis.opendocument.presentation' // OpenDocument Presentation
 ];
 
-// TODO: Vaibhav P1 - Look at ../.. in the executor response. It does not match with the absolute path, given in the action.
-// {
-//   "role": "assistant",
-//   "content": "***\nFROM: PRODUCT_MANAGER\nTO: EXECUTOR\nACTION: READ_FILES\nSUMMARY: Read problem statement\nBODY:\nFile paths: [\"/Users/kedar/Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\"]\n***",
-//   "parsed_content": {
-//       "FROM": "PRODUCT_MANAGER",
-//       "TO": "EXECUTOR",
-//       "ACTION": "READ_FILES",
-//       "SUMMARY": "Read problem statement",
-//       "BODY": "\nFile paths: [\"/Users/kedar/Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\"]"
-//   }
-// },
-// {
-//   "role": "user",
-//   "content": "***\nFROM: EXECUTOR\nTO: PRODUCT_MANAGER\nACTION: RESPONSE\nSUMMARY: Empty\nBODY: \n\nFile: ../../Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\n\nWrite a code for factorial of a number.\n\n---\n\n\n***",
-//   "parsed_content": {
-//       "FROM": "EXECUTOR",
-//       "TO": "PRODUCT_MANAGER",
-//       "ACTION": "RESPONSE",
-//       "SUMMARY": "Empty",
-//       "BODY": "\n\nFile: ../../Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\n\nWrite a code for factorial of a number.\n\n---"
-//   }
-// },
-
 function isPathInsideRoot(rootPath: string, targetPath: string): boolean {
   const resolvedRoot = path.resolve(rootPath);
   const resolvedTarget = path.resolve(targetPath);
