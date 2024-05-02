@@ -15,10 +15,13 @@ class ExecuteCommandMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
-            "summary": "{{A concise summary to be displayed to the user for the action to be performed.}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            {{command}}
-            """)})
+            {{command}}""")})
 
     def description(self):
-        return "To execute a command:"
+        return "Execute a Command, Install Packages, or Install Dependencies"
+    
+    def instructions(self):
+        return [ "The command must use the workspace root as the current working directory.",
+                 "The command must be sufficiently chained. For example, 'source venv/bin/activate && pip install openai', 'cd server && npm run start'."]

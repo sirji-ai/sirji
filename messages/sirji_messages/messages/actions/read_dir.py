@@ -15,10 +15,12 @@ class ReadDirMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
-            "summary": "{{A concise summary to be displayed to the user for the action to be performed.}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            Directory: {{Directory path}}
-            """)})
+            Directory: {{Directory path}}""")})
 
     def description(self):
-        return "To read the content from all files in a directory and all its subdirectories at once (separated by a divider):"
+        return "Read the content from all files in a directory and all its subdirectories at once (separated by a divider)"
+
+    def instructions(self):
+        return []

@@ -17,6 +17,13 @@ class BaseMessages(ABC):
         """
         pass
 
+    @abstractmethod
+    def instructions(self):
+        """
+        Instructions for the message.
+        """
+        pass
+
     def generate(self, obj):
 
         try:

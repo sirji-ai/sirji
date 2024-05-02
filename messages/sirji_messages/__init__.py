@@ -5,6 +5,7 @@ from .system_prompts.factory import AgentSystemPromptFactory
 from .custom_exceptions import MessageParsingError, MessageValidationError
 from .permissions import validate_permission, permissions_dict
 from .parser import parse as message_parse
+from .helper import generate_allowed_response_template
 
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     'validate_permission',
     'permissions_dict',
     'AgentSystemPromptFactory',
+    'generate_allowed_response_template'
 ]

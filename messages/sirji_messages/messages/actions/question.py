@@ -17,8 +17,10 @@ class QuestionMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "Empty",
             "body": textwrap.dedent("""
-            {{Question}}
-            """)})
+            {{Question}}""")})
 
     def description(self):
-        return "Ask questions to understand the problem statement better:"
+        return "Ask a question"
+    
+    def instructions(self):
+        return []

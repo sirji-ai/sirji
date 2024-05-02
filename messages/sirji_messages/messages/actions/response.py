@@ -17,8 +17,10 @@ class ResponseMessage(BaseMessages):
             "to_agent_id": "{{Your Agent ID}}",
             "summary": "Empty",
             "body": textwrap.dedent("""
-            {{Response}}
-            """)})
+            {{Response}}""")})
 
     def description(self):
-        return "The response output:"
+        return "The response output"
+    
+    def instructions(self):
+        return []

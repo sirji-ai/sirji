@@ -14,3 +14,4 @@ class AgentEnum(Enum):
     EXECUTOR = (3, "Execution Agent")
     RESEARCHER = (4, "Research Agent")
     SIRJI_USER = (5, "End User")
+    ANY = (6, "Any Agent")

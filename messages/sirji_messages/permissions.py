@@ -4,44 +4,26 @@ from sirji_messages import ActionEnum, AgentEnum
 # Key: (from_agent, to_agent)
 # Value: set of allowed actions between the agents
 permissions_dict = {
-    (AgentEnum.CODER, AgentEnum.EXECUTOR): {
-        ActionEnum.CREATE_FILE,
+    (AgentEnum.ANY, AgentEnum.EXECUTOR): {
+        ActionEnum.CREATE_WORKSPACE_FILE,
+        ActionEnum.CREATE_SHARED_RESOURCE_FILE,
         ActionEnum.EXECUTE_COMMAND,
         ActionEnum.RUN_SERVER,
-        ActionEnum.INSTALL_PACKAGE,
-        ActionEnum.READ_FILES,
+        ActionEnum.READ_WORKSPACE_FILES,
+        ActionEnum.READ_SHARED_RESOURCES_FILES,
         ActionEnum.READ_DIR,
-        ActionEnum.READ_DIR_STRUCTURE
+        ActionEnum.READ_DIR_STRUCTURE,
+        ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX,
+        ActionEnum.READ_SHARED_RESOURCE_INDEX
     },
-    (AgentEnum.CODER, AgentEnum.PLANNER): (
-        ActionEnum.GENERATE_STEPS
-    ),
-    (AgentEnum.CODER, AgentEnum.RESEARCHER): (
-        ActionEnum.TRAIN_USING_URL,
-        ActionEnum.INFER
-    ),
-    (AgentEnum.CODER, AgentEnum.SIRJI_USER): (
-        ActionEnum.QUESTION,
-        ActionEnum.STEP_STARTED,
-        ActionEnum.STEP_COMPLETED,
-        ActionEnum.SOLUTION_COMPLETE
-    ),
-    (AgentEnum.EXECUTOR, AgentEnum.CODER): (
-        ActionEnum.OUTPUT
-    ),
-    (AgentEnum.PLANNER, AgentEnum.CODER): (
-        ActionEnum.STEPS
-    ),
-    (AgentEnum.RESEARCHER, AgentEnum.CODER): (
-        ActionEnum.RESPONSE,
-        ActionEnum.TRAINING_OUTPUT
-    ),
-    (AgentEnum.SIRJI_USER, AgentEnum.CODER): (
-        ActionEnum.PROBLEM_STATEMENT,
-        ActionEnum.ANSWER,
-        ActionEnum.FEEDBACK
-    )
+    (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
+        ActionEnum.QUESTION
+    },
+    (AgentEnum.ANY, AgentEnum.ORCHESTRATOR): {
+        ActionEnum.RESPONSE
+    }
 }
+
 
 
 def validate_permission(from_str, to_str, action_str):

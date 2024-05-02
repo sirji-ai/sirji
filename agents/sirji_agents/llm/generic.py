@@ -5,7 +5,7 @@ import json
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, generate_allowed_response_template
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
@@ -116,172 +116,15 @@ class GenericAgent():
             """)
 
         formatted_skills = self.__format_skills()
-
-        # TODO P1: Vaibhav - The Allowed Response Templates part of the agent system prompt must be created dynamically.
         allowed_response_templates = textwrap.dedent("""
             Allowed Response Templates:
             Below are all the possible allowed "Response Template" formats for each of the allowed recipients. You must always respond using one of them.
-
-            Allowed Response Templates TO SIRJI_USER:
-            Invoke the SIRJI_USER for the following functions. Please respond with the following, including the starting and ending '***', with no commentary above or below.
-
-            Function 1. Ask a question
-
-            Instructions:
-            - Empty
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: SIRJI_USER
-            ACTION: QUESTION
-            SUMMARY: Empty
-            BODY:
-            {{Question}}
-            ***
-
-            Allowed Response Templates TO EXECUTOR:
-            Invoke the EXECUTOR for the following functions. Please respond with the following, including the starting and ending '***', with no commentary above or below.
-
-            Function 1. Create a File Inside Workspace Folder Only
-
-            Instructions:
-            - The file path must be relative to the workspace root.
-            - The file contents should never be enclosed within ``` starting and ending markers.
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: CREATE_WORKSPACE_FILE
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            File path: {{file path}}
-            ---
-            {{file contents}}
-            ***
-
-            Function 2. Execute a Command, Install Packages, or Install Dependencies
-
-            Instructions:
-            - The command must use the workspace root as the current working directory.
-            - The command must be sufficiently chained. For example, 'source venv/bin/activate && pip install openai', 'cd server && npm run start'.
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: EXECUTE_COMMAND
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            {{command}}
-            ***
-
-            Function 3: Run a Server or a Continuous Running Process
-
-            Instructions:
-            The command must use the workspace root as the current working directory.
-            The command must be sufficiently chained. For example, 'source my_env.sh && npm start'.
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: RUN_SERVER
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            {{command}}
-            ***
-
-            Function 4. Read Multiple Files From Workspace Folder Only
-
-            Instructions:
-            - The file paths must be relative to the workspace root.
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: READ_WORKSPACE_FILES
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            File paths: {{Array of file paths}}
-            ***
-
-            Function 5. Create a File Inside Shared Resources Folder
-                                                                                                                                            
-            Instructions:
-            - The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'. 
-                                                                                    
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: CREATE_SHARED_RESOURCE_FILE
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            File path: {{file path}}
-            ---
-            {{file contents}}
-            ***
-                                                     
-            Function 6. Read Multiple Files From Shared Resources
-
-            Instructions:
-            - The file paths must be in the following format: '{{Your Agent ID}}/{{file name}}'.
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: READ_SHARED_RESOURCES_FILES
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            File paths: {{Array of file paths}}
-            ***
-                                         
-            Function 7. Register to the Shared Resource Index
-            Instructions:
-            - Ensure to register new shared resource files to the shared resources' index.
-            - The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'.
-                                         
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: APPEND_TO_SHARED_RESOURCES_INDEX
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            File path: {{file path}}
-            ---
-            {{Description of the shared resource file, to be used by other agents to know what it is about}}
-            ***
-
-            Function 8. Read Shared Resource Index
-
-            Response template:
-            ***
-            FROM: {{Your Agent ID}}
-            TO: EXECUTOR
-            ACTION: READ_SHARED_RESOURCE_INDEX
-            SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
-            BODY:
-            Empty
-            ***
-
-            Allowed Response Templates TO ORCHESTRATOR:
-            Respond to the ORCHESTRATOR at the end of task completion. Please respond with the following, including the starting and ending '***', with no commentary above or below.
-
-            Response template:
-            ***
-            FROM: {{Installed Agent ID}}
-            TO: ORCHESTRATOR
-            ACTION: RESPONSE
-            SUMMARY: Empty
-            BODY:
-            {{Task update. Whether the task was done successfully or not. Any other details which you might think are necessary for ORCHESTRATOR to know of.}}
-            ***""")
+            """)
         
+        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.EXECUTOR) + '\n'
+        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ORCHESTRATOR) + '\n'
+    
         current_shared_resources_index = f"Current contents of shared resources' index.json:\n{json.dumps(self.shared_resources_index, indent=4)}"
         
         return f"{initial_intro}\n{response_specifications}\n{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}".strip()

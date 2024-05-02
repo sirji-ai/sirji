@@ -15,12 +15,15 @@ class AppendToSharedResourceIndexMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
-            "summary": "{{A concise summary to be displayed to the user for the action to be performed.}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
             File path: {{file path of the shared resource file relative to the shared_resource folder}}
             ---
-            {{Description of the shared resource file, to be used by other agents to know what it is about}}
-            """)})
+            {{Description of the shared resource file, to be used by other agents to know what it is about}}""")})
 
     def description(self):
-        return "To append to shared resource index:"
+        return "Register to the Shared Resource Index"
+    
+    def instructions(self):
+        return [ "Ensure to register new shared resource files to the shared resources' index.",
+                 "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]

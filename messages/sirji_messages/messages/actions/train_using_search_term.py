@@ -15,10 +15,12 @@ class TrainUsingSearchTermMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
-            "summary": "{{A concise summary to be displayed to the user for the action to be performed.}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            Term: {{search term}}
-            """)})
+            Term: {{search term}}""")})
 
     def description(self):
-        return "Train using a search term:"
+        return "Train using a search term"
+
+    def instructions(self):
+        return []
