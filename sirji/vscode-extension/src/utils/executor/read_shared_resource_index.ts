@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-// TODO: Vaibhav - Validate if filepath / dirpath is either inside Sirji installation folder or inside workspace folder. Only allow writes in these folders.
 export async function readSharedResourcesIndex(sharedResourcesFolderPath: string): Promise<string> {
   try {
     const fileName = 'index.json';

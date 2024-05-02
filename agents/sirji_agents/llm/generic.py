@@ -117,7 +117,7 @@ class GenericAgent():
 
         formatted_skills = self.__format_skills()
 
-        # TODO: Vaibhav - The Allowed Response Templates part of the agent system prompt must be created dynamically.
+        # TODO P1: Vaibhav - The Allowed Response Templates part of the agent system prompt must be created dynamically.
         allowed_response_templates = textwrap.dedent("""
             Allowed Response Templates:
             Below are all the possible allowed "Response Template" formats for each of the allowed recipients. You must always respond using one of them.

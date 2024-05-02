@@ -83,7 +83,7 @@ export class Facilitator {
 
     console.log('-------root path--------', rootPath);
 
-    // TODO: Check if Documents folder is the correct place to store in Windows and Linux.
+    // TODO Daksh P1: Check if Documents folder is the correct place to store in Windows and Linux. Explore options suggested by Sunil.
     let sirjiInstallationFolderPath = path.join(rootPath, 'Documents', 'Sirji');
     oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
 
@@ -98,7 +98,6 @@ export class Facilitator {
     let recipeFilePath = path.join(sirjiInstallationFolderPath, 'recipe.json');
     let installedAgentsFolderPath = path.join(sirjiInstallationFolderPath, 'installed_agents');
 
-    // TODO: Rename createHistoryFolder to createFolder
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
@@ -186,7 +185,7 @@ export class Facilitator {
 
     let coderLogFileContent = '';
 
-    // TODO: remove history manager.
+    // TODO P1: remove history manager.
     if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
       coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
       // return coderLogFileContent;

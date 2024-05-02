@@ -25,9 +25,7 @@ const MEDIA_MIME_TYPES = [
   // 'application/vnd.oasis.opendocument.presentation' // OpenDocument Presentation
 ];
 
-// TODO: Vaibhav - Validate if filepath / dirpath is either inside Sirji installation folder or inside workspace folder. Only allow writes in these folders.
-
-// TODO: Vaibhav - Look at ../.. in the executor response. It does not match with the absolute path, given in the action.
+// TODO: Vaibhav P1 - Look at ../.. in the executor response. It does not match with the absolute path, given in the action.
 // {
 //   "role": "assistant",
 //   "content": "***\nFROM: PRODUCT_MANAGER\nTO: EXECUTOR\nACTION: READ_FILES\nSUMMARY: Read problem statement\nBODY:\nFile paths: [\"/Users/kedar/Documents/Sirji/sessions/1714300311995_cbd960b33b0321d967a1baa32aefd094/shared_resources/SIRJI/problem.txt\"]\n***",
