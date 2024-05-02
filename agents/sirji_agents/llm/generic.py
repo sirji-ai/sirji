@@ -126,8 +126,10 @@ class GenericAgent():
         allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.ORCHESTRATOR) + '\n'
     
         current_shared_resources_index = f"Current contents of shared resources' index.json:\n{json.dumps(self.shared_resources_index, indent=4)}"
+
+        current_workspace_structure = f"Current workspace structure:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
         
-        return f"{initial_intro}\n{response_specifications}\n{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}".strip()
+        return f"{initial_intro}\n{response_specifications}\n{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}\n\n{current_workspace_structure}".strip()
     
     def __format_skills(self):
         output_text = ""

@@ -4,7 +4,7 @@ import * as fs from 'fs/promises';
 const SKIP_LIST = ['__pycache__', '.git', '.github', '.gitlab', '.vscode', '.idea', 'node_modules', '.DS_Store', 'venv', '.venv', '.sass-cache', 'dist', 'out', 'build', 'logs', '.npm', 'temp', 'tmp'];
 
 export async function readDirectoryStructure(workspaceRootPath: string, body: string): Promise<string> {
-  const inputPath = body.split('Directory:')[1];
+  const inputPath = body.split('Directory:')[1].trim();
 
   let fullPath = path.join(workspaceRootPath, inputPath);
 
@@ -37,3 +37,5 @@ export async function readDirectoryStructure(workspaceRootPath: string, body: st
 
   return readDirectory(fullPath);
 }
+
+readDirectoryStructure('/Users/vaibhavdighe/workspace/sirji/tools', 'Directory: /').then(console.log);

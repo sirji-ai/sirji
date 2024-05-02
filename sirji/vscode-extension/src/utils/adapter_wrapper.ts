@@ -5,8 +5,16 @@ import os from 'os';
 import { SecretStorage } from './secret_storage';
 import { Constants } from './constants';
 import fs from 'fs';
+import { readDirectoryStructure } from './executor/read_directory_structure';
 
-export async function spawnAdapter(context: vscode.ExtensionContext | undefined, sirjiInstallationPath: string, sirjiRunPath: string, workspaceRootPath: string, scriptPath: string, args: string[] = []): Promise<any> {
+export async function spawnAdapter(
+  context: vscode.ExtensionContext | undefined,
+  sirjiInstallationPath: string,
+  sirjiRunPath: string,
+  workspaceRootPath: string,
+  scriptPath: string,
+  args: string[] = []
+): Promise<any> {
   console.log('Executing command:', 'python3', [scriptPath, ...args].join(' '));
 
   const venvPath = path.join(sirjiInstallationPath, 'venv');
@@ -69,6 +77,6 @@ async function getEnvVars(context: vscode.ExtensionContext | undefined, sirjiIns
   envVars.SIRJI_INSTALLATION_DIR = sirjiInstallationPath;
   envVars.SIRJI_WORKSPACE = workspacePath;
   envVars.SIRJI_RUN_PATH = sirjiRunPath;
-
+  envVars.SIRJI_WORKSPACE_STRUCTURE = await readDirectoryStructure(workspacePath, 'Directory: /');
   return envVars;
 }

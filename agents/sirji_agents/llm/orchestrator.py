@@ -124,7 +124,9 @@ class Orchestrator():
         allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
         allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
         
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{formatted_installed_agents}\n{allowed_response_templates}".strip()
+        current_workspace_structure = f"Current workspace structure:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
+
+        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{formatted_installed_agents}\n{allowed_response_templates}\n{current_workspace_structure}".strip()
     def __format_recipe(self):
         formatted = "Recipe:\n"
         # Adding prescribed tasks with enumeration
