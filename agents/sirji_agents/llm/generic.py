@@ -121,9 +121,9 @@ class GenericAgent():
             Below are all the possible allowed "Response Template" formats for each of the allowed recipients. You must always respond using one of them.
             """)
         
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.EXECUTOR) + '\n'
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ORCHESTRATOR) + '\n'
+        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
+        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.ORCHESTRATOR) + '\n'
     
         current_shared_resources_index = f"Current contents of shared resources' index.json:\n{json.dumps(self.shared_resources_index, indent=4)}"
         

@@ -17,10 +17,10 @@ class SolutionCompleteMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            {{solution complete message}}""")})
+            {{Summarize what all was done for getting the solution.}}""")})
 
     def description(self):
-        return "Inform that the solution to the problem is complete"
+        return "Inform About Solution Completed"
 
     def instructions(self):
         return []

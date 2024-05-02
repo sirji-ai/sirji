@@ -17,6 +17,7 @@ from .actions.read_workspace_files import ReadWorkspaceFilesMessage
 from .actions.read_shared_resources_files import ReadSharedResourcesFilesMessage
 from .actions.append_to_shared_resource_index import AppendToSharedResourceIndexMessage
 from .actions.read_shared_resource_index import ReadSharedResourceIndexMessage
+from .actions.invoke_agent import InvokeAgentMessage
 
 
 class MetaMessageFactory(type):
@@ -35,6 +36,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
 
     # Map ActionTypes to their respective message classes
     _message_map = {
+        ActionEnum.INVOKE_AGENT: InvokeAgentMessage,
         ActionEnum.EXECUTE_COMMAND: ExecuteCommandMessage,
         ActionEnum.RUN_SERVER: RunServerMessage,
         ActionEnum.CREATE_WORKSPACE_FILE: CreateWorkspaceFileMessage,
