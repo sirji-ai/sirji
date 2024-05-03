@@ -8,7 +8,8 @@ import { appendToSharedResourcesIndex } from './append_to_shared_resources_index
 import { readSharedResourcesIndex } from './read_shared_resource_index';
 
 import { ACTION_ENUM } from '../constants';
-import { searchFile } from './search_file';
+import { searchFileInWorkspace } from './search_file_in_workspace';
+import { findAndReplaceInWorkspace } from './find_and_replace_in_workspace';
 
 export class Executor {
   private parsedMessage: any;
@@ -59,14 +60,18 @@ export class Executor {
         return await appendToSharedResourcesIndex(oThis.sharedResourcesFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
         return await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
-      case ACTION_ENUM.SEARCH_FILE:
-        return await searchFile(oThis.parsedMessage.BODY);
+      case ACTION_ENUM.SEARCH_FILE_IN_WORKSPACE:
+        //TODO: Replace the arguments with the actual values
+        return await searchFileInWorkspace('');
+      case ACTION_ENUM.FIND_AND_REPLACE_IN_WORKSPACE:
+        //TODO: Replace the arguments with the actual values
+        return await findAndReplaceInWorkspace(oThis.parsedMessage.BODY.searchText, oThis.parsedMessage.BODY.replacement, oThis.workspaceRootPath);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }
   }
 
-  private formatMessage(rawOutput: string) {
+  private formatMessage(rawOutput: any) {
     const oThis = this;
 
     const newParsedMessage = {
