@@ -92,20 +92,23 @@ export class Facilitator {
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
     oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
+    let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
 
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
-    let recipeFilePath = path.join(sirjiInstallationFolderPath, 'recipe.json');
-    let installedAgentsFolderPath = path.join(sirjiInstallationFolderPath, 'installed_agents');
+    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
+    let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
+    fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
 
     fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
 
     if (!fs.existsSync(recipeFilePath)) {
       fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
       await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
+      fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
     }
   }
 

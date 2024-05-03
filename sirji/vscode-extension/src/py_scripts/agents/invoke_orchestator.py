@@ -81,8 +81,8 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
 
-        recipe_file_path = os.path.join(sirji_installation_dir, 'recipe.json')
-        installed_agent_folder = os.path.join(sirji_installation_dir, 'installed_agents')
+        recipe_file_path = os.path.join(sirji_installation_dir, 'active_recipe', 'recipe.json')
+        installed_agent_folder = os.path.join(sirji_installation_dir, 'active_recipe', 'agents')
 
         installed_agents = self.read_agents_from_files(installed_agent_folder)
 
