@@ -8,6 +8,7 @@ import { appendToSharedResourcesIndex } from './append_to_shared_resources_index
 import { readSharedResourcesIndex } from './read_shared_resource_index';
 
 import { ACTION_ENUM } from '../constants';
+import { searchFile } from './search_file';
 
 export class Executor {
   private parsedMessage: any;
@@ -58,6 +59,8 @@ export class Executor {
         return await appendToSharedResourcesIndex(oThis.sharedResourcesFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
         return await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
+      case ACTION_ENUM.SEARCH_FILE:
+        return await searchFile(oThis.parsedMessage.BODY);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }
