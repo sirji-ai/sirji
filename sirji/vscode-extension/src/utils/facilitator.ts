@@ -11,6 +11,8 @@ import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 
 import { Executor } from './executor/executor';
+import { searchFileInWorkspace } from './executor/search_file_in_workspace';
+import { findAndReplaceInWorkspace } from './executor/find_and_replace_in_workspace';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -53,7 +55,20 @@ export class Facilitator {
     // Open Chat Panel
     oThis.openChatViewPanel();
 
+    await oThis.testFindAndReplaceFunction();
+
     return oThis.chatPanel;
+  }
+
+  private async testFindAndReplaceFunction() {
+    const oThis = this;
+
+    // sample body - """Find: {{Find this text}}---Replace: {{Replace with this text}}---Directory: {{Directory path}}"""
+    const body = 'Find: app---Replace: app1---Directory: express_app';
+
+    const result = await findAndReplaceInWorkspace(body);
+
+    console.log('result------', result);
   }
 
   private async selectWorkspace(): Promise<void> {

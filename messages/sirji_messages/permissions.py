@@ -14,7 +14,9 @@ permissions_dict = {
         ActionEnum.READ_DIR,
         ActionEnum.READ_DIR_STRUCTURE,
         ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX,
-        ActionEnum.READ_SHARED_RESOURCE_INDEX
+        ActionEnum.READ_SHARED_RESOURCE_INDEX,
+        ActionEnum.FIND_AND_REPLACE_IN_WORKSPACE,
+        ActionEnum.SEARCH_FILE_IN_WORKSPACE
     },
     (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
         ActionEnum.QUESTION

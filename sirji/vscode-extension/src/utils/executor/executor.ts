@@ -61,11 +61,9 @@ export class Executor {
       case ACTION_ENUM.READ_SHARED_RESOURCE_INDEX:
         return await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
       case ACTION_ENUM.SEARCH_FILE_IN_WORKSPACE:
-        //TODO: Replace the arguments with the actual values
-        return await searchFileInWorkspace('');
+        return await searchFileInWorkspace(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE_IN_WORKSPACE:
-        //TODO: Replace the arguments with the actual values
-        return await findAndReplaceInWorkspace(oThis.parsedMessage.BODY.searchText, oThis.parsedMessage.BODY.replacement, oThis.workspaceRootPath);
+        return await findAndReplaceInWorkspace(oThis.parsedMessage.BODY);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }

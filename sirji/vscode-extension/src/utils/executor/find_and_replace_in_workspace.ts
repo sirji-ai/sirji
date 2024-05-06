@@ -1,7 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-export const findAndReplaceInWorkspace = async (searchText: string, replacement: string, folderPath?: string, globPattern?: string, exclude: string = '**/node_modules/**') => {
+export const findAndReplaceInWorkspace = async (body: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+  const searchText = body.split('Find:')[1].split('---')[0].trim();
+  const replacement = body.split('Replace:')[1].split('---')[0].trim();
+  const folderPath = body.split('Directory:')[1].trim();
+
+  console.log(`Searching for files with pattern: ${searchText} in folder: ${folderPath} and replacing with: ${replacement}`);
+
   const basePath = folderPath ? `${folderPath}/` : '**/';
   const namePattern = '**/*.*';
   const pattern = `${basePath}${namePattern}`;
@@ -19,7 +25,7 @@ export const findAndReplaceInWorkspace = async (searchText: string, replacement:
       }
     }
 
-    console.log(`Found ${files.length} files with pattern: ${pattern}`);
+    console.log(`Found ${files.length} files with pattern: ${pattern}` + ` and ${foundFiles.length} files with search text: ${searchText}`);
 
     for (const file of foundFiles) {
       console.log(`Replacing in file: ${file.fsPath}`);
@@ -38,8 +44,10 @@ export const findAndReplaceInWorkspace = async (searchText: string, replacement:
       //close the file
       await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     }
+
+    return 'Done';
   } catch (error) {
     console.error(`Error replacing text in files: ${error}`);
-    vscode.window.showErrorMessage(`Error replacing text in files: ${error}`);
+    return 'Error while replacing text in files. error: ' + error;
   }
 };
