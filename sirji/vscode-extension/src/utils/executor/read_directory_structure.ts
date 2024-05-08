@@ -24,7 +24,7 @@ export async function readDirectoryStructure(workspaceRootPath: string, body: st
           }
           return readDirectory(filePath);
         } else {
-          return filePath + '\n';
+          return path.relative(workspaceRootPath, filePath) + '\n';
         }
       });
       const contents = await Promise.all(promises);
@@ -38,4 +38,4 @@ export async function readDirectoryStructure(workspaceRootPath: string, body: st
   return readDirectory(fullPath);
 }
 
-readDirectoryStructure('/Users/vaibhavdighe/workspace/sirji/tools', 'Directory: /').then(console.log);
+readDirectoryStructure('/Users/kirankamalakar/Documents/true-sparrow/sirji/tools', 'Directory: /').then(console.log);
