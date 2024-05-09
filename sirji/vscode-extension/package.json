@@ -67,6 +67,8 @@
     "publish": "vsce publish"
   },
   "devDependencies": {
+    "@types/babel__traverse": "^7.20.5",
+    "@types/esprima": "^4.0.6",
     "@types/mime-types": "^2.1.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
@@ -81,6 +83,8 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@babel/parser": "^7.24.5",
+    "@babel/traverse": "^7.24.5",
     "mime-types": "^2.1.35"
   }
 }

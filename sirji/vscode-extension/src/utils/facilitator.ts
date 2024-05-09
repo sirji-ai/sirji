@@ -11,8 +11,7 @@ import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 
 import { Executor } from './executor/executor';
-import { searchFileInWorkspace } from './executor/search_file_in_workspace';
-import { findAndReplaceInWorkspace } from './executor/find_and_replace_in_workspace';
+import { readDependencies } from './executor/read_file_dependencies';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -55,21 +54,22 @@ export class Facilitator {
     // Open Chat Panel
     oThis.openChatViewPanel();
 
-    await oThis.testFindAndReplaceFunction();
+    // await oThis.testReadFileDependencies();
 
     return oThis.chatPanel;
   }
 
-  private async testFindAndReplaceFunction() {
-    const oThis = this;
+  // private async testReadFileDependencies() {
+  //   const oThis = this;
 
-    // sample body - """Find: {{Find this text}}---Replace: {{Replace with this text}}---Directory: {{Directory path}}"""
-    const body = 'Find: app---Replace: app1---Directory: express_app';
+  //   console.log('in testReadFileDependencies workspaceRootPath:', oThis.workspaceRootPath);
 
-    const result = await findAndReplaceInWorkspace(body);
+  //   const filePaths = [path.join('routes', 'api', 'index.xml'), path.join('routes', 'api', 'users', 'index.js'), path.join('routes', 'helper.js'), path.join('docs', 'dbSchema.dbml')];
 
-    console.log('result------', result);
-  }
+  //   const dependencyMap = await findAllDependencies(filePaths, path.join(oThis.workspaceRootPath, 'raised-api'));
+
+  //   console.log('Unique Dependencies:', dependencyMap);
+  // }
 
   private async selectWorkspace(): Promise<void> {
     const oThis = this;
@@ -490,6 +490,18 @@ export class Facilitator {
 
           default:
             let agent_id = parsedMessage.TO;
+
+            if (parsedMessage.from === ACTOR_ENUM.SHORTLISTER) {
+              const readDependenciesResponse = await readDependencies(parsedMessage.BODY, oThis.workspaceRootPath);
+              let body = parsedMessage.BODY;
+              let startIndex = body.indexOf('[');
+              let endIndex = body.lastIndexOf(']');
+              let pathsString = body.substring(startIndex, endIndex + 1);
+              let pathsArray = JSON.parse(pathsString);
+              pathsArray.push(...readDependenciesResponse);
+              let updatedBody = body.substring(0, startIndex) + JSON.stringify(pathsArray) + body.substring(endIndex + 1);
+              parsedMessage.BODY = updatedBody;
+            }
 
             try {
               await spawnAdapter(
