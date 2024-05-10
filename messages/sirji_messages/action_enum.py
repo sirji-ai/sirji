@@ -27,5 +27,5 @@ class ActionEnum(Enum):
     READ_SHARED_RESOURCES_FILES = auto()
     READ_DIR = auto()
     READ_DIR_STRUCTURE = auto()
-    FIND_AND_REPLACE_IN_WORKSPACE = auto()
-    SEARCH_FILE_IN_WORKSPACE = auto()
+    FIND_AND_REPLACE = auto()
+    INSERT_TEXT = auto()

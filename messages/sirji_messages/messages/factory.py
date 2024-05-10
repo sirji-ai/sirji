@@ -18,8 +18,8 @@ from .actions.read_shared_resources_files import ReadSharedResourcesFilesMessage
 from .actions.append_to_shared_resource_index import AppendToSharedResourceIndexMessage
 from .actions.read_shared_resource_index import ReadSharedResourceIndexMessage
 from .actions.invoke_agent import InvokeAgentMessage
-from .actions.find_and_replace_in_workspace import FindAndReplaceInWorkspaceMessage
-from .actions.search_file_in_workspace import SearchFileInWorkspace
+from .actions.find_and_replace import FindAndReplace
+from .actions.insert_text import InsertText
 
 
 class MetaMessageFactory(type):
@@ -55,7 +55,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage,
         ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX: AppendToSharedResourceIndexMessage,
         ActionEnum.READ_SHARED_RESOURCE_INDEX: ReadSharedResourceIndexMessage,
-        ActionEnum.FIND_AND_REPLACE_IN_WORKSPACE: FindAndReplaceInWorkspaceMessage,
-        ActionEnum.SEARCH_FILE_IN_WORKSPACE: SearchFileInWorkspace
+        ActionEnum.FIND_AND_REPLACE: FindAndReplace,
+        ActionEnum.INSERT_TEXT: InsertText,
     }
 
