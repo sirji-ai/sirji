@@ -21,23 +21,28 @@ export const insertText = async (body: string, workspaceRootPath: string, globPa
     const document = await vscode.workspace.openTextDocument(filePath);
     const editor = await vscode.window.showTextDocument(document);
 
+    const range = new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length));
+    const text = document.getText(range);
+
+    const index = text.indexOf(searchText);
+    if (index === -1) {
+      console.error('Search text not found in the document.');
+      return 'Error: Search text not found';
+    }
+
+    const position = document.positionAt(index);
+    const line = position.line;
+
     await editor.edit((editBuilder) => {
-      let text = document.getText();
-
-      let safeSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`\\b${safeSearchText}\\b`, 'g');
-
       if (insertPosition.toLowerCase() === 'above') {
-        text = text.replace(regex, `${textToInsert}\n${searchText}`);
+        editBuilder.insert(new vscode.Position(line, 0), textToInsert + '\n');
       } else if (insertPosition.toLowerCase() === 'below') {
-        text = text.replace(regex, `${searchText}\n${textToInsert}`);
+        editBuilder.insert(new vscode.Position(line + 1, 0), textToInsert + '\n');
       }
-
-      editBuilder.replace(new vscode.Range(document.positionAt(0), document.positionAt(text.length)), text);
     });
 
     await document.save();
-    // await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     console.log('Text insertion completed in file:', filePath);
     return 'Done';
   } catch (error) {

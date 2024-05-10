@@ -19,9 +19,9 @@ class FindAndReplace(BaseMessages):
               "body": textwrap.dedent("""
                 FILE_PATH: {{File path}}                        
                 --- 
-                Find: {{Find this text}}    
+                FIND: {{Find this text}}    
                 ---                   
-                Replace: {{Replace with this text}}
+                REPLACE: {{Replace with this text}}
                 ---
             """)})
   
