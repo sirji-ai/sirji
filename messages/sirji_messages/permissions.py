@@ -21,7 +21,7 @@ permissions_dict = {
     (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
         ActionEnum.QUESTION
     },
-    (AgentEnum.ANY, AgentEnum.ORCHESTRATOR): {
+    (AgentEnum.ANY, AgentEnum.CALLER): {
         ActionEnum.RESPONSE
     },
     (AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER): {

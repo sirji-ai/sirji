@@ -9,7 +9,7 @@ from sirji_messages import message_parse, MessageParsingError, MessageValidation
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
-    def __init__(self, config, shared_resources_index):
+    def __init__(self, config, shared_resources_index, file_summaries=None):
 
         logger.info('---------inside generic agent-----------')
         logger.info(config)
@@ -17,6 +17,7 @@ class GenericAgent():
         
         self.config = config
         self.shared_resources_index = shared_resources_index
+        self.file_summaries = file_summaries
 
     def message(self, input_message, history=[]):
         conversation = self.__prepare_conversation(input_message, history)
@@ -85,6 +86,12 @@ class GenericAgent():
         return model_provider.get_response(history, logger)
 
     def system_prompt(self):
+        recipients = ['SIRJI_USER', 'EXECUTOR', '{{CALLER}}']
+
+        if "sub_agents" in self.config and self.config["sub_agents"]:
+            for sub_agent in self.config["sub_agents"]:
+                recipients.append(sub_agent["id"])
+
         initial_intro = textwrap.dedent(f"""
             You are an agent named "{self.config['name']}", a component of the Sirji AI agentic framework.
             Your Agent ID: {self.config['id']}
@@ -94,12 +101,12 @@ class GenericAgent():
             Your Response:
             - Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized.
             - Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers.
-            - Not conforming above rules will lead to response processing errors.
-            - Direct each response to one of these recipients (the 'TO' value in the response):
-                - SIRJI_USER
-                - EXECUTOR
-                - ORCHESTRATOR""")
+            - Not conforming above rules will lead to response processing errors.""")
         
+        response_specifications += "\n- Direct each response to one of these recipients (the 'TO' value in the response):\n"
+        for recipient in recipients:
+            response_specifications += f"   - {recipient}\n"
+
         # Todo: Use action names from ActionEnum
         shared_resources = textwrap.dedent(f"""
             Shared Resources:
@@ -108,7 +115,7 @@ class GenericAgent():
 
         instructions = textwrap.dedent(f"""
             Instructions:
-            - The ORCHESTRATOR is aware of your skills and has invoked you for a task after finding your skills align with the task's requirements.
+            - The {{CALLER}} is aware of your skills and has invoked you for a task after finding your skills align with the task's requirements.
             - Upon being invoked, identify which of your skills match the requirements of the task.
             - Execute the sub-tasks associated with each of these matching skills.
             - Do not respond with two actions in the same response. Respond with one action at a time.
@@ -121,15 +128,36 @@ class GenericAgent():
             Below are all the possible allowed "Response Template" formats for each of the allowed recipients. You must always respond using one of them.
             """)
         
+        if "sub_agents" in self.config and self.config["sub_agents"]:
+            for sub_agent in self.config["sub_agents"]:
+            
+                allowed_response_templates += textwrap.dedent(f"""
+                    Allowed Response Templates to {sub_agent['id']}:
+                    For invoking the {sub_agent['id']} use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
+                    
+                    Response template:
+                    ***
+                    FROM: {{Your Agent ID}}
+                    TO: {sub_agent['id']}
+                    ACTION: INVOKE_AGENT
+                    SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
+                    BODY:
+                    {{Purpose of invocation.}}
+                    ***""") + '\n'
+
         allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
         allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.ORCHESTRATOR) + '\n'
+        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
     
         current_shared_resources_index = f"Current contents of shared resources' index.json:\n{json.dumps(self.shared_resources_index, indent=4)}"
 
         current_workspace_structure = f"Current workspace structure:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
-        
-        return f"{initial_intro}\n{response_specifications}\n{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}\n\n{current_workspace_structure}".strip()
+
+        file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the workspace folder:\n\n'
+        if self.file_summaries is not None:
+            file_summaries = f"File Summaries:\n{json.dumps(self.file_summaries, indent=4)}"
+
+        return f"{initial_intro}\n{response_specifications}{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}\n\n{current_workspace_structure}\n\n{file_summaries}".strip()
     
     def __format_skills(self):
         output_text = ""
@@ -141,7 +169,7 @@ class GenericAgent():
             for key, value in self.config["definitions"].items():
                 output_text += f"- {key}: {value}\n"
         
-        output_text += "\n"
+            output_text += "\n"
         
         # Check if 'rules' exists in the config and is not empty
         if "rules" in self.config and self.config["rules"]:
@@ -149,7 +177,7 @@ class GenericAgent():
             for rule in self.config["rules"]:
                 output_text += f"- {rule}\n"
         
-        output_text += "\n"
+            output_text += "\n"
 
         output_text += "Here are your skills with their sub-tasks:\n\n"
         
@@ -163,8 +191,8 @@ class GenericAgent():
                     for sub_task in skill["sub_tasks"]:
                         output_text += f"- {sub_task}\n"
                     output_text += "\n"
-                elif "pseudo_code" in skill and skill["pseudo_code"]:
-                    output_text += f"You must follow following pseudo code:\n{skill["pseudo_code"]}"
+                elif "pseudo_code" in skill and skill['pseudo_code']:
+                    output_text += f"You must follow following pseudo code:\n{skill['pseudo_code']}"
 
         return output_text
 

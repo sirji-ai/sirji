@@ -122,7 +122,7 @@ class Orchestrator():
         # Adding prescribed tasks with enumeration
         formatted += "- Prescribed tasks\n"
         for index, task in enumerate(self.recipe["prescribed_tasks"], start=1):
-            formatted += f"   {index}. {task["task"]}\n"
+            formatted += f"   {index}. {task['task']}\n"
         # Adding tips
         formatted += "- Tips:\n"
         for tip in self.recipe["tips"]:
