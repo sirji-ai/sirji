@@ -9,7 +9,6 @@ import { readSharedResourcesIndex } from './read_shared_resource_index';
 
 import { ACTION_ENUM } from '../constants';
 import { searchFileInWorkspace } from './search_file_in_workspace';
-import { findAndReplaceInWorkspace } from './find_and_replace_in_workspace';
 import { findAndReplaceInWorkspaceFile } from './find_and_replace_in_workspace_file';
 import { insertText } from './insert_text';
 
