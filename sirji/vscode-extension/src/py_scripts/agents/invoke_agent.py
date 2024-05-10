@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import yaml
 import textwrap
 from sirji_messages import MessageFactory, ActionEnum, AgentEnum
 from sirji_agents import GenericAgent
@@ -67,13 +68,14 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
         
-        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.json')
+        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
         config_file_contents = self.read_file(agent_config_path)
-        config = json.loads(config_file_contents)
+        # config = json.loads(config_file_contents)
+        config = yaml.safe_load(config_file_contents)
 
         shared_resources_index_contents = self.read_file(shared_resources_index_path)
         shared_resources_index = json.loads(shared_resources_index_contents)
