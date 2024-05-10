@@ -10,6 +10,8 @@ import { readSharedResourcesIndex } from './read_shared_resource_index';
 import { ACTION_ENUM } from '../constants';
 import { searchFileInWorkspace } from './search_file_in_workspace';
 import { findAndReplaceInWorkspace } from './find_and_replace_in_workspace';
+import { findAndReplaceInWorkspaceFile } from './find_and_replace_in_workspace_file';
+import { insertText } from './insert_text';
 
 export class Executor {
   private parsedMessage: any;
@@ -62,8 +64,10 @@ export class Executor {
         return await readSharedResourcesIndex(oThis.sharedResourcesFolderPath);
       case ACTION_ENUM.SEARCH_FILE_IN_WORKSPACE:
         return await searchFileInWorkspace(oThis.parsedMessage.BODY);
-      case ACTION_ENUM.FIND_AND_REPLACE_IN_WORKSPACE:
-        return await findAndReplaceInWorkspace(oThis.parsedMessage.BODY);
+      case ACTION_ENUM.FIND_AND_REPLACE:
+        return await findAndReplaceInWorkspaceFile(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
+      case ACTION_ENUM.INSERT_TEXT:
+        return await insertText(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }

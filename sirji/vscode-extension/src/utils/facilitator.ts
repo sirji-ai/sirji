@@ -54,22 +54,8 @@ export class Facilitator {
     // Open Chat Panel
     oThis.openChatViewPanel();
 
-    // await oThis.testReadFileDependencies();
-
     return oThis.chatPanel;
   }
-
-  // private async testReadFileDependencies() {
-  //   const oThis = this;
-
-  //   console.log('in testReadFileDependencies workspaceRootPath:', oThis.workspaceRootPath);
-
-  //   const filePaths = [path.join('routes', 'api', 'index.xml'), path.join('routes', 'api', 'users', 'index.js'), path.join('routes', 'helper.js'), path.join('docs', 'dbSchema.dbml')];
-
-  //   const dependencyMap = await findAllDependencies(filePaths, path.join(oThis.workspaceRootPath, 'raised-api'));
-
-  //   console.log('Unique Dependencies:', dependencyMap);
-  // }
 
   private async selectWorkspace(): Promise<void> {
     const oThis = this;

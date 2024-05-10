@@ -12,7 +12,6 @@ export const findAndReplaceInWorkspace = async (body: string, globPattern?: stri
   const namePattern = '**/*.*';
   const pattern = `${basePath}${namePattern}`;
 
-  console.log(`Searching for files with pattern: ${pattern} and excluding: ${exclude} in folder: ${folderPath}`);
   try {
     const files = await vscode.workspace.findFiles(pattern, exclude);
     const foundFiles: vscode.Uri[] = [];
