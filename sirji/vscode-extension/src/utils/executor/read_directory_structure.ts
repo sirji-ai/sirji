@@ -37,5 +37,3 @@ export async function readDirectoryStructure(workspaceRootPath: string, body: st
 
   return readDirectory(fullPath);
 }
-
-readDirectoryStructure('/Users/kirankamalakar/Documents/true-sparrow/sirji/tools', 'Directory: /').then(console.log);

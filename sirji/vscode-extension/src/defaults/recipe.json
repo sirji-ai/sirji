@@ -4,11 +4,10 @@
     "model": "gpt-3.5-turbo"
   },
   "prescribed_tasks": [
-    "Write epics and user stories.",
-    "Write architecture components.",
-    "Implement the epic & user stories using the architecture components."
+    {
+      "task": "Develop robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions.",
+      "agent": "NODE_JS_API_CODER"
+    }
   ],
-  "tips": [
-    "Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user."
-  ]
+  "tips": []
 }

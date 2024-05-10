@@ -103,20 +103,10 @@ class Orchestrator():
         # Using the file names from installed_agents first populate the variable applicable_agent_ids
         # Then use applicable_agent_ids to create following.
         formatted_installed_agents = textwrap.dedent(f"""
-            Agent Name: Product Manager
-            Agent ID: PRODUCT_MANAGER
+            Agent Name: Node JS API Coder
+            Agent ID: NODE_JS_API_CODER
             Skills:
-            - Generation of epics and user stories for the problem statement.
-
-            Agent Name: Architect
-            Agent ID: ARCHITECT
-            Skills:
-            - Generation of architecture components.
-
-            Agent Name: Coder
-            Agent ID: CODER
-            Skills:
-            - Develop end-to-end working code for the epic & user stories, making use of the finalized architecture components.""")
+            - Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions.""")
         
         allowed_response_templates = textwrap.dedent(f"""
             Allowed Response Templates:""")
@@ -132,7 +122,7 @@ class Orchestrator():
         # Adding prescribed tasks with enumeration
         formatted += "- Prescribed tasks\n"
         for index, task in enumerate(self.recipe["prescribed_tasks"], start=1):
-            formatted += f"   {index}. {task}\n"
+            formatted += f"   {index}. {task["task"]}\n"
         # Adding tips
         formatted += "- Tips:\n"
         for tip in self.recipe["tips"]:

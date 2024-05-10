@@ -156,12 +156,15 @@ class GenericAgent():
         # Check if 'skills' exists in the config and is not empty
         if "skills" in self.config and self.config["skills"]:
             for skill in self.config["skills"]:
-                output_text += f"Skill: {skill['skill']}\nSubtasks:\n"
-                for sub_task in skill["sub_tasks"]:
-                    output_text += f"- {sub_task}\n"
-                output_text += "\n"
-        else:
-            output_text += "- No skills provided.\n"
+                output_text += f"Skill: {skill['skill']}\n"
+
+                if "sub_tasks" in skill and skill["sub_tasks"]:
+                    output_text += "Subtasks:\n"
+                    for sub_task in skill["sub_tasks"]:
+                        output_text += f"- {sub_task}\n"
+                    output_text += "\n"
+                elif "pseudo_code" in skill and skill["pseudo_code"]:
+                    output_text += f"You must follow following pseudo code:\n{skill["pseudo_code"]}"
 
         return output_text
 
