@@ -3,13 +3,11 @@ name: SHORTLISTER Agent
 llm:
   provider: openai
   model: gpt-3.5-turbo
-definitions: {}
-rules: []
 skills:
   - skill: "Shortlist what all files are required to solve the problem statement."
-    sub_tasks:
-      - "Begin by understanding the main issue or task described in the purpose of invocation that initiated this interaction."
-      - "Access and review any files mentioned in the purpose of invocation to gather necessary information."
-      - "Determine which files are crucial for understanding the standard coding practices involved, which ones require modifications, or which can serve as references for new files to be created. Consider all such files."
-      - "Always respond back to the caller who invoked you with action RESPONSE providing an array of file paths in the BODY."
-      - "Ensure that you only respond with the array of file paths and nothing else."
+    pseudo_code: |
+      1. Begin by understanding the main issue or task described in the purpose of invocation that initiated this interaction.
+      2. Access and review any files mentioned in the purpose of invocation to gather necessary information.
+      3. Determine which files are crucial for understanding the standard coding practices involved, which ones require modifications, or which can serve as references for new files to be created. Consider all such files.
+      4. Always respond back to the caller who invoked you with action RESPONSE providing an array of file paths in the BODY.
+      5. Ensure that you only respond with the array of file paths and nothing else.
