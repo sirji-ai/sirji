@@ -98,11 +98,14 @@ export class Facilitator {
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
     let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
     let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
+    let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
     fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
+    fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
+    fs.writeFileSync(path.join(fileSummariesFolderPath, 'index.json'), '{}', 'utf-8');
 
     fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
 
