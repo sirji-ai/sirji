@@ -56,19 +56,32 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, config, shared_resources_index):
-        agent = GenericAgent(config, shared_resources_index)
+    def process_message(self, message_str, conversations, config, shared_resources_index, file_summaries):
+        agent = GenericAgent(config, shared_resources_index, file_summaries)
         return agent.message(message_str, conversations)
         
     def main(self, agent_id):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
+        sirji_workspace = os.environ.get("SIRJI_WORKSPACE")
         
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
         
-        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
+        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.json')
+
+        file_summaries_folder_path = os.path.join(sirji_installation_dir, 'file_summaries')
+        file_summaries_file_path = os.path.join(file_summaries_folder_path, 'index.json')
+
+        with open(file_summaries_file_path, 'r') as file:
+            file_summaries_index = json.load(file)
+            file_summaries = file_summaries_index.get(sirji_workspace, '')
+            file_summaries_path = os.path.join(file_summaries_folder_path, file_summaries)
+
+        with open(file_summaries_path, 'r') as file:
+            file_summaries = file.read()
+
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
@@ -87,7 +100,7 @@ class AgentRunner:
         # Set SIRJI_MODEL env var to llm.model
         os.environ['SIRJI_MODEL'] = llm['model']
 
-        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index, file_summaries)
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed
