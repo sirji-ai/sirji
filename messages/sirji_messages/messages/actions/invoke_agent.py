@@ -14,7 +14,7 @@ class InvokeAgentMessage(BaseMessages):
 
     def sample(self):
         return self.generate({
-            "to_agent_id": "{{Installed Agent ID}}",
+            "to_agent_id": "{{To Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
             {{Purpose of invocation}}""")})

@@ -102,10 +102,6 @@ class GenericAgent():
             - Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized.
             - Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers.
             - Not conforming above rules will lead to response processing errors.""")
-        
-        response_specifications += "\n- Direct each response to one of these recipients (the 'TO' value in the response):\n"
-        for recipient in recipients:
-            response_specifications += f"   - {recipient}\n"
 
         # Todo: Use action names from ActionEnum
         shared_resources = textwrap.dedent(f"""
@@ -115,7 +111,7 @@ class GenericAgent():
 
         instructions = textwrap.dedent(f"""
             Instructions:
-            - The {{CALLER}} is aware of your skills and has invoked you for a task after finding your skills align with the task's requirements.
+            - You have the skill which match with the task's requirements.
             - Upon being invoked, identify which of your skills match the requirements of the task.
             - Execute the sub-tasks associated with each of these matching skills.
             - Do not respond with two actions in the same response. Respond with one action at a time.
@@ -155,7 +151,7 @@ class GenericAgent():
 
         file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the workspace folder:\n'
         if self.file_summaries is not None:
-            file_summaries += f"File Summaries:\n{json.dumps(self.file_summaries, indent=4)}"
+            file_summaries += f"File Summaries:\n{self.file_summaries}"
 
         return f"{initial_intro}\n{response_specifications}{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}\n\n{current_workspace_structure}\n\n{file_summaries}".strip()
     
@@ -179,7 +175,7 @@ class GenericAgent():
         
             output_text += "\n"
 
-        output_text += "Here are your skills with their sub-tasks:\n\n"
+        output_text += "Here are your skills details:\n\n"
         
         # Check if 'skills' exists in the config and is not empty
         if "skills" in self.config and self.config["skills"]:
@@ -192,7 +188,7 @@ class GenericAgent():
                         output_text += f"- {sub_task}\n"
                     output_text += "\n"
                 elif "pseudo_code" in skill and skill['pseudo_code']:
-                    output_text += f"You must follow following pseudo code:\n{skill['pseudo_code']}"
+                    output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
 
         return output_text
 

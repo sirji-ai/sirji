@@ -10,7 +10,7 @@ skills:
   - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
     pseudo_code: |
       1. Read and understand the new API requirement from the problem statement stored in shared resources.
-      2. Invoke SHORTLISTER to get list of file paths which need to be referred. Note that you must sanitize the file paths obtained in response by adding necessary extensions as seen in the workspace folder structure and use these sanitized file paths hereafter.
+      2. Invoke SHORTLISTER to get list of file paths which need to be referred for working on the problem statement. Note that you must sanitize the file paths obtained in response by adding necessary extensions as seen in the workspace folder structure and use these sanitized file paths hereafter.
       3. Take confirmation on the list of file paths:
           REPEAT
               Ask easy to read QUESTION to SIRJI_USER showing the list of sanitized file paths which will be referred, then asking for confirmation / feedback.
@@ -60,3 +60,5 @@ skills:
           - Write concrete code implementing the problem statement. Do not just conceptualize or outline or simulate it.
           - You can use INSERT_TEXT action to add content to an existing file.
           - Ensure that you do not make unintentional wipe out of remaining code in attempt to make your changes.
+sub_agents:
+    - id: SHORTLISTER

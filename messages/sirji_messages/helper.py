@@ -7,7 +7,7 @@ def generate_allowed_response_template(from_agent, to_agent):
         response_template += f'Allowed Response Templates TO {to_agent.name}:\n'
 
     if (from_agent, to_agent) == (AgentEnum.ANY, AgentEnum.CALLER):
-        response_template += f'Respond to the {to_agent.name} at the end of task completion. Please respond with the following, including the starting and ending \'***\', with no commentary above or below.'
+        response_template += f'Respond to the agent which invoked you, at the end of task completion. Please respond with the following, including the starting and ending \'***\', with no commentary above or below.'
     if (from_agent, to_agent) == (AgentEnum.ORCHESTRATOR, AgentEnum.ANY):
         response_template += f'To invoke an agent, please respond with the text below, including the starting and ending \'***\', and ensure there is no commentary above or below:'
     else:
@@ -26,7 +26,7 @@ def generate_allowed_response_template(from_agent, to_agent):
         
         if (from_agent, to_agent) == (AgentEnum.ANY, AgentEnum.CALLER):
             print('Inside if statement')
-            response_template += f'\nResponse template:{message_class().generate({"from_agent_id": "{{Installed Agent ID}}", "to_agent_id": AgentEnum.CALLER.name, "summary": "Empty", "body": "{{Task update. Whether the task was done successfully or not. Any other details which you might think are necessary for CALLER to know of.}}"})}'
+            response_template += f'\nResponse template:{message_class().generate({"from_agent_id": "{{Your Agent ID}}", "to_agent_id": "{{Agent ID of the invoker agent}}", "summary": "Empty", "body": "{{Task update. Whether the task was done successfully or not. Any other details which you might think are necessary for CALLER to know of.}}"})}'
         else:
             response_template += f'\nResponse template:{message_class().sample()}'
 
