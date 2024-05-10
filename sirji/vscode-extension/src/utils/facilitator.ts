@@ -105,7 +105,6 @@ export class Facilitator {
     fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
     fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
-    fs.writeFileSync(path.join(fileSummariesFolderPath, 'index.json'), '{}', 'utf-8');
 
     fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
 
@@ -468,6 +467,7 @@ export class Facilitator {
               parsedMessage = executorResp.parsedMessage;
               oThis.writeToFile(inputFilePath, rawMessage);
             } catch (error) {
+              console.log('error------', error);
               console.log('Execution default', parsedMessage);
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
@@ -480,8 +480,10 @@ export class Facilitator {
           default:
             let agent_id = parsedMessage.TO;
 
-            if (parsedMessage.from === ACTOR_ENUM.SHORTLISTER) {
+            if (parsedMessage.FROM === ACTOR_ENUM.SHORTLISTER) {
               const readDependenciesResponse = await readDependencies(parsedMessage.BODY, oThis.workspaceRootPath);
+              console.log('readDependenciesResponse------', readDependenciesResponse);
+              
               let body = parsedMessage.BODY;
               let startIndex = body.indexOf('[');
               let endIndex = body.lastIndexOf(']');
@@ -490,6 +492,10 @@ export class Facilitator {
               pathsArray.push(...readDependenciesResponse);
               let updatedBody = body.substring(0, startIndex) + JSON.stringify(pathsArray) + body.substring(endIndex + 1);
               parsedMessage.BODY = updatedBody;
+              let rawMessageParts = rawMessage.split('BODY:');
+              let updateRawMessage = rawMessageParts[0] + 'BODY:\n' + updatedBody + '\n***';
+              rawMessage = updateRawMessage;
+              oThis.writeToFile(inputFilePath, rawMessage);
             }
 
             try {

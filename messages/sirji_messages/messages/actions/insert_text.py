@@ -21,9 +21,9 @@ class InsertText(BaseMessages):
             ---
             FIND: {{Text to find}}
             ---
-            Insert Position: {{position to insert the text at {above/below} the found text}}
+            INSERT_POSITION: {{'above' or 'below'}}
             ---
-            REPLACE: {{Text to insert}}
+            TEXT_TO_INSERT: {{Text to insert}}
             ---
             """)})
     

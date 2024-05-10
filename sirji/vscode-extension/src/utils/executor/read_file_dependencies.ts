@@ -113,7 +113,7 @@ export const readDependencies = async (body: string, workspaceRootPath: string):
     .split(']')[0]
     .split(',')
     .map((filePath) => filePath.trim().slice(1, -1));
-
+  
   const allDependencies = new Set<string>();
 
   for (const filePath of filePaths) {

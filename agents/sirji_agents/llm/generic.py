@@ -86,12 +86,6 @@ class GenericAgent():
         return model_provider.get_response(history, logger)
 
     def system_prompt(self):
-        recipients = ['SIRJI_USER', 'EXECUTOR', '{{CALLER}}']
-
-        if "sub_agents" in self.config and self.config["sub_agents"]:
-            for sub_agent in self.config["sub_agents"]:
-                recipients.append(sub_agent["id"])
-
         initial_intro = textwrap.dedent(f"""
             You are an agent named "{self.config['name']}", a component of the Sirji AI agentic framework.
             Your Agent ID: {self.config['id']}

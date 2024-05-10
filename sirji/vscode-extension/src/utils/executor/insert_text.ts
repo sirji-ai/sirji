@@ -3,14 +3,14 @@ import * as fs from 'fs';
 import path from 'path';
 
 export const insertText = async (body: string, workspaceRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
-  const searchText = body.split('Find:')[1].split('---')[0].trim();
-  const replacement = body.split('Replace:')[1].split('---')[0].trim();
-  let filePath = body.split('FilePath:')[1].split('---')[0].trim();
-  let insertPosition = body.split('Insert Position:')[1].split('---')[0].trim();
+  const searchText = body.split('FIND:')[1].split('---')[0].trim();
+  const textToInsert = body.split('TEXT_TO_INSERT:')[1].split('---')[0].trim();
+  let filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
+  let insertPosition = body.split('INSERT_POSITION:')[1].split('---')[0].trim();
 
   filePath = path.join(workspaceRootPath, filePath);
 
-  console.log(`Inserting text in file: ${filePath} based on search text: '${searchText}' with replacement: '${replacement}' and insert position: '${insertPosition}'`);
+  console.log(`Inserting text in file: ${filePath} based on search text: '${searchText}' with replacement: '${textToInsert}' and insert position: '${insertPosition}'`);
 
   try {
     if (!fs.existsSync(filePath)) {
@@ -28,16 +28,16 @@ export const insertText = async (body: string, workspaceRootPath: string, globPa
       const regex = new RegExp(`\\b${safeSearchText}\\b`, 'g');
 
       if (insertPosition.toLowerCase() === 'above') {
-        text = text.replace(regex, `${replacement}\n${searchText}`);
+        text = text.replace(regex, `${textToInsert}\n${searchText}`);
       } else if (insertPosition.toLowerCase() === 'below') {
-        text = text.replace(regex, `${searchText}\n${replacement}`);
+        text = text.replace(regex, `${searchText}\n${textToInsert}`);
       }
 
       editBuilder.replace(new vscode.Range(document.positionAt(0), document.positionAt(text.length)), text);
     });
 
     await document.save();
-    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+    // await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     console.log('Text insertion completed in file:', filePath);
     return 'Done';
   } catch (error) {

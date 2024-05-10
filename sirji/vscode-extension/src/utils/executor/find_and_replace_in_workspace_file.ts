@@ -29,7 +29,7 @@ export const findAndReplaceInWorkspaceFile = async (body: string, workspaceRootP
       });
 
       await document.save();
-      await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+      // await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       console.log('Replacement done in file:', filePath);
       return 'Done';
     } else {
