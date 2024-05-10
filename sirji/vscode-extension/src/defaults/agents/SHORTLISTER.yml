@@ -6,14 +6,15 @@ llm:
 skills:
   - skill: "Shortlist what all files are required to solve the problem statement."
     pseudo_code: |
-      1. Begin by understanding the main issue or task described in the purpose of invocation that initiated this interaction.
-      2. Figure out shortlisted files:
-        CODE CONVENTION FILES:
-          - All those files, that should be looked into to know the code conventions and practices.
-          - For example, if we need a new service, an existing service file will help in knowing the code conventions.
-          - Only include one file of a kind. For example, for models, include only one model file.
-        IMPLEMENTATION FILES:
-          - All those files that need changes.
-        SHORTLISTED FILES = union of CODE CONVENTION FILES and IMPLEMENTATION FILES
-      3. Always respond back to the agent who invoked you with action RESPONSE providing an array containing SHORTLISTED FILES in the BODY.
-      4. Ensure that you only respond with the array of file paths and nothing else in the BODY.
+      1. Identify the Purpose:
+        - Determine the main task or issue from the purpose of the initial invocation.
+      2. Shortlist Files:
+        - Code Convention Files:
+          - Include files that demonstrate coding standards and practices relevant to the task (e.g., if a new service is needed, refer to an existing service file).
+          - Select only one example per file type (e.g., one model file).
+        - Implementation Files:
+          - Include all files that require modifications.
+        - Combine the lists above to form the list of shortlisted files.
+      3. Respond to the Invoking Agent:
+        - Send a response containing only the array of shortlisted file paths in the BODY.
+        - Ensure that you only respond with the array of file paths and nothing else in the BODY.
