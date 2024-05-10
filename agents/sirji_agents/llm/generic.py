@@ -151,11 +151,11 @@ class GenericAgent():
     
         current_shared_resources_index = f"Current contents of shared resources' index.json:\n{json.dumps(self.shared_resources_index, indent=4)}"
 
-        current_workspace_structure = f"Current workspace structure:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
+        current_workspace_structure = f"Recursive structure of the workspace folder:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
 
-        file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the workspace folder:\n\n'
+        file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the workspace folder:\n'
         if self.file_summaries is not None:
-            file_summaries = f"File Summaries:\n{json.dumps(self.file_summaries, indent=4)}"
+            file_summaries += f"File Summaries:\n{json.dumps(self.file_summaries, indent=4)}"
 
         return f"{initial_intro}\n{response_specifications}{shared_resources}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_shared_resources_index}\n\n{current_workspace_structure}\n\n{file_summaries}".strip()
     
