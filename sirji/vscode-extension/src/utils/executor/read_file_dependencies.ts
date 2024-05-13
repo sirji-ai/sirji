@@ -23,6 +23,15 @@ const resolvePath = (node: Node): string | null => {
     return node.value;
   } else if (node.type === 'Identifier') {
     return variableValues.get(node.name) || null;
+  } else if (node.type === 'TemplateLiteral') {
+    let resolvedPath = '';
+    for (const part of node.quasis) {
+      resolvedPath += part.value.raw;
+    }
+    if (resolvedPath.startsWith('/')) {
+      resolvedPath = resolvedPath.slice(1);
+    }
+    return resolvedPath;
   }
   return null;
 };
@@ -99,6 +108,11 @@ const extractDependencies = async (filePath: string, baseDir: string): Promise<s
           if (resolvedPath) {
             dependencies.add(getFileWithExtension(resolvedPath, baseDir));
           }
+        } else if (arg.type === 'TemplateLiteral') {
+          const resolvedPath = resolvePath(arg);
+          if (resolvedPath) {
+            dependencies.add(getFileWithExtension(resolvedPath, baseDir));
+          }
         }
       }
     }
@@ -113,7 +127,7 @@ export const readDependencies = async (body: string, workspaceRootPath: string):
     .split(']')[0]
     .split(',')
     .map((filePath) => filePath.trim().slice(1, -1));
-  
+
   const allDependencies = new Set<string>();
 
   for (const filePath of filePaths) {
