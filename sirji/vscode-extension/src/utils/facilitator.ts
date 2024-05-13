@@ -13,6 +13,9 @@ import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 import { Executor } from './executor/executor';
 import { readDependencies } from './executor/read_file_dependencies';
 
+import { AgentStackManager } from './agent_stack_manager';
+import { SessionManager } from './session_manager';
+
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
   private workspaceRootUri: any;
@@ -27,6 +30,7 @@ export class Facilitator {
   private isCoderTabShown: Boolean = false;
   private sessionManager: MaintainHistory | undefined;
   private isFirstUserMessage: Boolean = true;
+  private stackManager: AgentStackManager = new AgentStackManager();
   private sharedResourcesFolderPath: string = '';
   private lastMessageFrom: string = '';
   private sirjiInstallationFolderPath: string = '';
@@ -381,6 +385,12 @@ export class Facilitator {
       if (parsedMessage.ACTION === 'INVOKE_AGENT') {
         let agent_id = parsedMessage.TO;
 
+        oThis.stackManager.addAgentId(agent_id)
+        
+        let sessionId = '1234';
+        let agentCallstack = oThis.stackManager.getStack();
+
+
         try {
           await spawnAdapter(
             oThis.context,
@@ -388,14 +398,14 @@ export class Facilitator {
             oThis.sirjiRunFolderPath,
             oThis.workspaceRootPath,
             path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
-            ['--agent_id', agent_id]
+            ['--agent_id', agent_id, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
           );
         } catch (error) {
           oThis.sendErrorToChatPanel(error);
           keepFacilitating = false;
         }
 
-        const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agent_id}.json`);
+        const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);
         console.log('agentConversationFilePath------', agentConversationFilePath);
 
         const conversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
@@ -406,7 +416,12 @@ export class Facilitator {
         rawMessage = lastAgentMessage?.content;
 
         parsedMessage = lastAgentMessage?.parsed_content;
+
         fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
+
+        if(parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+          oThis.stackManager.removeLastAgentId();
+        }
       } else {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
@@ -498,6 +513,9 @@ export class Facilitator {
               oThis.writeToFile(inputFilePath, rawMessage);
             }
 
+            let sessionId = '1234';
+            let agentCallstack = oThis.stackManager.getStack();
+
             try {
               await spawnAdapter(
                 oThis.context,
@@ -505,14 +523,14 @@ export class Facilitator {
                 oThis.sirjiRunFolderPath,
                 oThis.workspaceRootPath,
                 path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
-                ['--agent_id', parsedMessage.TO]
+                ['--agent_id', parsedMessage.TO, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
               );
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
             }
 
-            const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agent_id}.json`);
+            const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);
 
             let genericAgentConversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
             const lastAgentMessage: any = genericAgentConversationContent.conversations[genericAgentConversationContent.conversations.length - 1];
@@ -523,6 +541,10 @@ export class Facilitator {
 
             parsedMessage = lastAgentMessage?.parsed_content;
             oThis.writeToFile(inputFilePath, rawMessage);
+
+            if(parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+              oThis.stackManager.removeLastAgentId();
+            }
             break;
         }
       }

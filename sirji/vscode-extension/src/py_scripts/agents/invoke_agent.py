@@ -60,13 +60,13 @@ class AgentRunner:
         agent = GenericAgent(config, shared_resources_index, file_summaries)
         return agent.message(message_str, conversations)
         
-    def main(self, agent_id):
+    def main(self, agent_id, agent_session_id, agent_callstack):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
         sirji_workspace = os.environ.get("SIRJI_WORKSPACE")
         
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
-        conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
+        conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
         shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
         
         agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
@@ -76,8 +76,8 @@ class AgentRunner:
 
         with open(file_summaries_file_path, 'r') as file:
             file_summaries_index = json.load(file)
-            file_summaries = file_summaries_index.get(sirji_workspace, '')
-            file_summaries_path = os.path.join(file_summaries_folder_path, file_summaries)
+            relative_path = file_summaries_index.get(sirji_workspace, '')
+            file_summaries_path = os.path.join(file_summaries_folder_path, relative_path)
 
         with open(file_summaries_path, 'r') as file:
             file_summaries = file.read()
@@ -109,8 +109,10 @@ class AgentRunner:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process interactions.")
     parser.add_argument("--agent_id", required=True, help="Agent Id")
+    parser.add_argument("--agent_session_id", required=True, help="Agent Session Id")
+    parser.add_argument("--agent_callstack", required=True, help="Agent Call Stack")
  
     
     args = parser.parse_args()
     agent_runner = AgentRunner()
-    agent_runner.main(args.agent_id)
+    agent_runner.main(args.agent_id, args.agent_session_id, args.agent_callstack)
