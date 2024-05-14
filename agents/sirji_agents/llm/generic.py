@@ -123,13 +123,26 @@ class GenericAgent():
             
                 allowed_response_templates += textwrap.dedent(f"""
                     Allowed Response Templates to {sub_agent['id']}:
-                    For invoking the {sub_agent['id']} use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
+                    For invoking the {sub_agent['id']}, in a fresh session, use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
                     
                     Response template:
                     ***
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
                     ACTION: INVOKE_AGENT
+                    SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
+                    BODY:
+                    {{Purpose of invocation.}}
+                    ***""") + '\n'
+                
+                allowed_response_templates += textwrap.dedent(f"""
+                    For invoking the {sub_agent['id']}, continuing over the existing session session, use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
+                    
+                    Response template:
+                    ***
+                    FROM: {{Your Agent ID}}
+                    TO: {sub_agent['id']}
+                    ACTION: INVOKE_AGENT_EXISTING_SESSION
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
                     {{Purpose of invocation.}}

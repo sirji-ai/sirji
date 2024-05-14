@@ -386,13 +386,15 @@ export class Facilitator {
 
       const inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
 
-      if (parsedMessage.ACTION === 'INVOKE_AGENT') {
+      if (parsedMessage.ACTION === 'INVOKE_AGENT' || parsedMessage.ACTION === 'INVOKE_AGENT_EXISTING_SESSION') {
         let agent_id = parsedMessage.TO;
 
         oThis.stackManager.addAgentId(agent_id)
-        
         let agentCallstack = oThis.stackManager.getStack();
-        let sessionId = oThis.sessionManager?.startNewSession(agentCallstack);
+        
+        let sessionId = (parsedMessage.ACTION === 'INVOKE_AGENT') ? 
+          oThis.sessionManager?.startNewSession(agentCallstack) :
+          oThis.sessionManager?.reuseSession(agentCallstack);
 
         try {
           await spawnAdapter(

@@ -4,6 +4,7 @@ from enum import Enum, auto
 class ActionEnum(Enum):
     ANSWER = auto()
     INVOKE_AGENT = auto()
+    INVOKE_AGENT_EXISTING_SESSION = auto()
     EXECUTE_COMMAND = auto()
     APPEND_TO_SHARED_RESOURCES_INDEX = auto()
     READ_SHARED_RESOURCE_INDEX = auto()

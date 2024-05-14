@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class InvokeAgentMessage(BaseMessages):
+class InvokeAgentExistingSessionMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.INVOKE_AGENT.name
+        self.action = ActionEnum.INVOKE_AGENT_EXISTING_SESSION.name
         self.from_agent = AgentEnum.ORCHESTRATOR.name
 
         super().__init__()
@@ -20,7 +20,7 @@ class InvokeAgentMessage(BaseMessages):
             {{Purpose of invocation}}""")})
 
     def description(self):
-        return "Invoke an agent in a fresh session"
+        return "Invoke an agent continuing on the existing session"
     
     def instructions(self):
         return []

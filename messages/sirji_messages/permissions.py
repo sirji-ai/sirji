@@ -28,8 +28,9 @@ permissions_dict = {
         ActionEnum.SOLUTION_COMPLETE
     },
     (AgentEnum.ORCHESTRATOR, AgentEnum.ANY): {
-        ActionEnum.INVOKE_AGENT
-    },
+        ActionEnum.INVOKE_AGENT,
+        ActionEnum.INVOKE_AGENT_EXISTING_SESSION
+    }
 }
 
 
