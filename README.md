@@ -63,7 +63,7 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-Also, you will need an OpenAI API key to access the GPT-4 Turbo model.
+Also, you will need an OpenAI API key to access the GPT-4o  model.
 
 ## Installation
 

@@ -105,7 +105,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             name="Research Assistant",
             instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
             tools=[{"type": "retrieval"}],
-            model="gpt-4-turbo",
+            model="gpt-4o",
         )
 
         logger.info("Completed creating a new assistant")

@@ -7,7 +7,7 @@ class LLMProviderFactory:
     def get_instance():
         # Reading from environment variables and setting defaults.
         provider_name = os.environ.get('SIRJI_MODEL_PROVIDER', 'openai').lower()
-        model = os.environ.get('SIRJI_MODEL', 'gpt-4-turbo')
+        model = os.environ.get('SIRJI_MODEL', 'gpt-4o')
         api_key = os.environ.get('SIRJI_MODEL_PROVIDER_API_KEY', os.environ.get('SIRJI_OPENAI_API_KEY'))
 
         if not api_key:
