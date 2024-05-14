@@ -2,19 +2,23 @@ id: SHORTLISTER
 name: SHORTLISTER Agent
 llm:
   provider: openai
-  model: gpt-4-turbo
+  model: gpt-4o
+definitions: {}
+rules: []
 skills:
-  - skill: "Shortlist what all files are required to solve the problem statement."
+  - skill: "Shortlist Essential Files, identifying primary files based on provided summaries and extracting dependencies, creating a comprehensive set of files that may require modifications or can serve as references to address the problem statement."
     pseudo_code: |
-      1. Identify the Purpose:
-        - Determine the main task or issue from the purpose of the initial invocation.
-      2. Shortlist Files:
-        - Code Convention Files:
-          - Include files that demonstrate coding standards and practices relevant to the task (e.g., if a new service is needed, refer to an existing service file).
-          - Select only one example per file type (e.g., one model file).
-        - Implementation Files:
-          - Include all files that require modifications.
-        - Combine the lists above to form the list of shortlisted files.
-      3. Respond to the Invoking Agent:
-        - Send a response containing only the array of shortlisted file paths in the BODY.
-        - Ensure that you only respond with the array of file paths and nothing else in the BODY.
+      - Read the problem statement from shared resources to understand the requirements.
+      - Utilize the following definitions and subroutine to confirm the list of file paths:
+        DEFINITIONS:
+        - "Target for Modification" file paths are those that might require modifications to meet the requirements.
+        - "Reference for New Development" file paths are those that might contain well-written source code that will serve as a template or guide for the coding style, patterns, and practices expected in new files.
+        SUBROUTINE:
+          REPEAT
+              i. EXTRACT_DEPENDENCIES by sending the "Target for Modification" and "Reference for New Development" file paths to the EXECUTOR.
+              ii. Sanitize the dependency file paths by adding file extensions, for the files without the extension, referencing the workspace folder structure. Failure to do so will cause errors in further steps. Use these sanitized file paths henceforth. 
+              iii. QUESTION SIRJI_USER requesting confirmation or feedback on the combined list of "Target for Modification", "Reference for New Development" files, and fetched dependencies of those files, presented without individual category headings.
+              iv. IF SIRJI_USER provides feedback for changes THEN MODIFY the appropriate list of file categories based on feedback, referencing the workspace folder structure. Continue to the next iteration, as feedback was given in the current iteration.
+          UNTIL SIRJI_USER confirms the list of file paths or does not want to do any further chnages in the list
+      - Store the confirmed list of essential file paths in shared resources, clearly grouped under the categories: "Target for Modification", "Reference for New Development", and "Dependency".
+      - Respond back to the agent who invoked you, detailing your actions in the BODY.
