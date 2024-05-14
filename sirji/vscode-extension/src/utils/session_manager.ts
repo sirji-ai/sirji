@@ -14,7 +14,7 @@ export class SessionManager {
         this.filePath = filePath;
     }
 
-    public startNewSession(callStack: string): void {
+    public startNewSession(callStack: string): string {
         const newSession: Session = {
             sessionId: uuidv4(),
             callStack: callStack,
@@ -23,6 +23,8 @@ export class SessionManager {
         const data = this.readSessionsFile();
         data.sessions.push(newSession);
         this.writeSessionsFile(data);
+
+        return newSession.sessionId;
     }
 
     public reuseSession(callStack: string): string | null {
@@ -32,6 +34,7 @@ export class SessionManager {
             filteredSessions.sort((a: Session, b: Session) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
             return filteredSessions[0].sessionId;
         }
+        
         return null;
     }
 

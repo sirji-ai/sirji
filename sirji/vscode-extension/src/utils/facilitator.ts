@@ -28,9 +28,9 @@ export class Facilitator {
   private isPlannerTabShown: Boolean = false;
   private isResearcherTabShown: Boolean = false;
   private isCoderTabShown: Boolean = false;
-  private sessionManager: MaintainHistory | undefined;
   private isFirstUserMessage: Boolean = true;
   private stackManager: AgentStackManager = new AgentStackManager();
+  private sessionManager: SessionManager | null = null;
   private sharedResourcesFolderPath: string = '';
   private lastMessageFrom: string = '';
   private sirjiInstallationFolderPath: string = '';
@@ -99,6 +99,7 @@ export class Facilitator {
     oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
     let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
 
+    let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
     let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
     let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
@@ -111,6 +112,9 @@ export class Facilitator {
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
     fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
+    
+    fs.writeFileSync(agentSessionsFilePath, JSON.stringify({sessions: []}, null, 4), 'utf-8');
+    oThis.sessionManager = new SessionManager(agentSessionsFilePath);
 
     if (!fs.existsSync(recipeFilePath)) {
       fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
@@ -387,9 +391,8 @@ export class Facilitator {
 
         oThis.stackManager.addAgentId(agent_id)
         
-        let sessionId = '1234';
         let agentCallstack = oThis.stackManager.getStack();
-
+        let sessionId = oThis.sessionManager?.startNewSession(agentCallstack);
 
         try {
           await spawnAdapter(
@@ -513,8 +516,8 @@ export class Facilitator {
               oThis.writeToFile(inputFilePath, rawMessage);
             }
 
-            let sessionId = '1234';
             let agentCallstack = oThis.stackManager.getStack();
+            let sessionId = oThis.sessionManager?.reuseSession(agentCallstack);
 
             try {
               await spawnAdapter(

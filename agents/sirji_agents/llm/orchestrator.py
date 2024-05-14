@@ -26,15 +26,12 @@ class Orchestrator():
     def __prepare_conversation(self, input_message, history):
         conversation = []
 
-        logger.info('Hello--------')
         logger.info(history)
 
         if not history:
-            logger.info('Hello---11111-----')
             conversation.append(
                 {"role": "system", "content": self.system_prompt()})
         else:
-            logger.info('Hello---2222-----')
             conversation = history
             parsed_input_message = message_parse(input_message)
             conversation.append({"role": "user", "content": input_message, "parsed_content": parsed_input_message})
@@ -85,46 +82,39 @@ class Orchestrator():
 
     def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
-            You are an agent named "Orchestration Agent," a component of the Sirji AI agentic framework.
+            You are an agent named "Orchestration Agent", a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR
             Your OS (refered as SIRJI_OS later): {os.name}""")
 
         instructions = textwrap.dedent(f"""
             Instructions:
-            - Manage the task workflow by interpreting the "recipe," which outlines a series of prescribed tasks.
-            - Identify the most suitable agent (from the available options) for each task based on their skills.
-            - Activate the selected agent.
-            - Utilize the "tips" provided in the recipe to manage scenarios that require deviation from the prescribed task order.`
+            - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
+            - Processed sequentially over the prescribed tasks.
+            - For each task, invoke the agent specified in the recipe alogside the task, explaining the task in the BODY of the invocation.
             """)
 
         formatted_recipe = self.__format_recipe()
 
-        # TODO: Read all the agents from the installed agents folder to come up with the following.
-        # Using the file names from installed_agents first populate the variable applicable_agent_ids
-        # Then use applicable_agent_ids to create following.
-        formatted_installed_agents = textwrap.dedent(f"""
-            Agent Name: Node JS API Coder
-            Agent ID: NODE_JS_API_CODER
-            Skills:
-            - Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions.""")
-        
         allowed_response_templates = textwrap.dedent(f"""
             Allowed Response Templates:""")
         
         allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
         allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
-        
-        current_workspace_structure = f"Current workspace structure:\n{os.environ.get('SIRJI_WORKSPACE_STRUCTURE')}"
 
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{formatted_installed_agents}\n{allowed_response_templates}\n{current_workspace_structure}".strip()
+        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates}".strip()
     def __format_recipe(self):
         formatted = "Recipe:\n"
         # Adding prescribed tasks with enumeration
         formatted += "- Prescribed tasks\n"
         for index, task in enumerate(self.recipe["prescribed_tasks"], start=1):
             formatted += f"   {index}. {task['task']}\n"
+            formatted += f"      Agent to invoke: {task['agent']}\n"
+        
         # Adding tips
-        formatted += "- Tips:\n"
-        for tip in self.recipe["tips"]:
-            formatted += f"   - {tip}\n"
+        if "tips" in self.recipe and self.recipe["tips"]:
+            formatted += "- Tips:\n"
+            for tip in self.recipe["tips"]:
+                formatted += f"   - {tip['tip']}\n"
+                formatted += f"      Agent to invoke: {tip['agent']}\n"
+        
         return formatted
