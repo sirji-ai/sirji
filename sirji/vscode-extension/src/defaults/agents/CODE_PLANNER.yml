@@ -1,0 +1,40 @@
+id: CODE_PLANNER
+name: Code Planner
+llm:
+  provider: openai
+  model: gpt-4o
+
+skills:
+  - skill: 'Generate detailed steps which include summaries and get user validation on the steps.'
+    pseudo_code: |
+      1. Read the problem statement from the shared resources.
+      2. Read the list of finalized files from shared resources. These files were shortlisted by the earlier and most probably will need changes for solving the problem statement or will serve as reference point 
+      for knowing the coding conventions.
+      3. Read the content of the finalized files.
+      4. Generate detailed steps by using below templates and following the specified rules:
+          
+          READ DOCUMENTATION STEP TEMPLATE:
+              Reference document file paths: {{reference file paths to refer to the coding requirements}}
+              Summary of what to refer: {{Summary of what to refer}}
+
+          IMPLEMENTATION STEP TEMPLATE:
+              Reference file path: {{reference file path to refer to the coding conventions}}
+              File to be changed / created: {{file path}}
+              Change summary: {{detailed change summary}}
+
+          Follow these rules while generating steps:
+              - The first step must be about reading relevant documentation files from the workspace folder. Example: OpenAPI specifications, DBML file, sequence diagrams, README, etc. This step must confirm strictly to the READ DOCUMENTATION STEP TEMPLATE.
+              - You must add IMPLEMENTATION STEPs for referring (for creating new files) or editing the finalized shortlisted files.
+              - The steps must be detailed enough to be followed by an independent developer.
+              - Do not add steps for unit tests and integration tests.
+
+      5. Make sure to confirm the generated steps with the user by adding the steps in body of response template:
+          REPEAT
+              Ask user to review the steps and provide feedback or confirmation.
+              IF user suggests changes THEN
+                  Modify the list of steps based on feedback.
+                  Ask user to review the modified steps.
+              END IF
+          UNTIL user confirms the steps.
+
+      6. Store the finalized steps in shared resources.
