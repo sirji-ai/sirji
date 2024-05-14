@@ -11,7 +11,6 @@ permissions_dict = {
         ActionEnum.RUN_SERVER,
         ActionEnum.READ_WORKSPACE_FILES,
         ActionEnum.READ_SHARED_RESOURCES_FILES,
-        ActionEnum.READ_DIR,
         ActionEnum.READ_DIR_STRUCTURE,
         ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX,
         ActionEnum.READ_SHARED_RESOURCE_INDEX,

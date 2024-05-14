@@ -49,8 +49,6 @@ export class Executor {
       case ACTION_ENUM.OPEN_BROWSER:
         openBrowser(oThis.parsedMessage.URL);
         return 'Done';
-      case ACTION_ENUM.READ_DIR:
-        return await readContent(oThis.workspaceRootPath, oThis.parsedMessage.BODY, true);
       case ACTION_ENUM.READ_WORKSPACE_FILES:
         return await readContent(oThis.workspaceRootPath, oThis.parsedMessage.BODY, false);
       case ACTION_ENUM.READ_SHARED_RESOURCES_FILES:

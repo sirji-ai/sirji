@@ -11,7 +11,6 @@ from .actions.response import ResponseMessage
 from .actions.solution_complete import SolutionCompleteMessage
 from .actions.train_using_search_term import TrainUsingSearchTermMessage
 from .actions.train_using_url import TrainUsingUrlMessage
-from .actions.read_dir import ReadDirMessage
 from .actions.read_dir_structure import ReadDirStructureMessage
 from .actions.read_workspace_files import ReadWorkspaceFilesMessage
 from .actions.read_shared_resources_files import ReadSharedResourcesFilesMessage
@@ -51,7 +50,6 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.SOLUTION_COMPLETE: SolutionCompleteMessage,
         ActionEnum.TRAIN_USING_SEARCH_TERM: TrainUsingSearchTermMessage,
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
-        ActionEnum.READ_DIR: ReadDirMessage,
         ActionEnum.READ_WORKSPACE_FILES: ReadWorkspaceFilesMessage,
         ActionEnum.READ_SHARED_RESOURCES_FILES: ReadSharedResourcesFilesMessage,
         ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage,

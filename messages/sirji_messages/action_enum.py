@@ -26,7 +26,6 @@ class ActionEnum(Enum):
     TRAINING_OUTPUT = auto()
     READ_WORKSPACE_FILES = auto()
     READ_SHARED_RESOURCES_FILES = auto()
-    READ_DIR = auto()
     READ_DIR_STRUCTURE = auto()
     FIND_AND_REPLACE = auto()
     INSERT_TEXT = auto()
