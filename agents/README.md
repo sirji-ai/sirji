@@ -70,7 +70,7 @@ export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace.
 export SIRJI_RUN_PATH='Folder path containing run related logs, etc.'
 export SIRJI_OPENAI_API_KEY='OpenAI API key for Chat Completions API and Assistants API'
 export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai".'
-export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4-turbo".'
+export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4o".'
 export SIRJI_MODEL_PROVIDER_API_KEY='API key to be use for LLM inference.'
 export SIRJI_INSTALLATION_DIR='Absolute path of the Sirji installation directory.'
 ```
@@ -134,7 +134,7 @@ config = {
   "name": "Coding Agent",
   "llm": {
     "provider": "openai",
-    "model": "gpt-4"
+    "model": "gpt-4o"
   },
   "skills": [
     {

@@ -2,7 +2,7 @@ id: CODER
 name: Coding Agent
 llm:
   provider: openai
-  model: gpt-4
+  model: gpt-4o
 definitions: {}
 rules:
   - "Ensure that you don't create any file/folder outside of workspace root folder, i.e. './'"
