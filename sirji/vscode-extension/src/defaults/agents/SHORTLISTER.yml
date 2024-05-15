@@ -1,10 +1,8 @@
 id: SHORTLISTER
-name: SHORTLISTER Agent
+name: Shortlister
 llm:
   provider: openai
   model: gpt-4o
-definitions: {}
-rules: []
 skills:
   - skill: "Shortlist Essential Files, identifying primary files based on provided summaries and extracting dependencies, creating a comprehensive set of files that may require modifications or can serve as references to address the problem statement."
     pseudo_code: |

@@ -5,36 +5,46 @@ llm:
   model: gpt-4o
 
 skills:
-  - skill: 'Generate detailed steps which include summaries and get user validation on the steps.'
+  - skill: Generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in shared resources.
     pseudo_code: |
       1. Read the problem statement from the shared resources.
-      2. Read the list of finalized files from shared resources. These files were shortlisted by the earlier and most probably will need changes for solving the problem statement or will serve as reference point 
-      for knowing the coding conventions.
-      3. Read the content of the finalized files.
-      4. Generate detailed steps by using below templates and following the specified rules:
+      2. Read the list of essential file paths from shared resources. These file paths were shortlisted earlier and fall under one of these categories: "Target for Modification", "Reference for New Development", and "Dependency".
+      3. Read the content of the essential files.
+      4. Using the understanding from the essential files, generate detailed steps using the templates below and adhering to the specified rules:
           
           READ DOCUMENTATION STEP TEMPLATE:
-              Reference document file paths: {{reference file paths to refer to the coding requirements}}
-              Summary of what to refer: {{Summary of what to refer}}
+            Reference document file paths: {{reference file paths to refer to the coding requirements}}
+            Summary of what to refer: {{Summary of what to refer}}
 
           IMPLEMENTATION STEP TEMPLATE:
-              Reference file path: {{reference file path to refer to the coding conventions}}
-              File to be changed / created: {{file path}}
-              Change summary: {{detailed change summary}}
+            Reference file path: {{reference file path to refer}}
+            File to be changed/created: {{file path}}
+            Change summary: {{detailed change summary}}
 
-          Follow these rules while generating steps:
-              - The first step must be about reading relevant documentation files from the workspace folder. Example: OpenAPI specifications, DBML file, sequence diagrams, README, etc. This step must confirm strictly to the READ DOCUMENTATION STEP TEMPLATE.
-              - You must add IMPLEMENTATION STEPs for referring (for creating new files) or editing the finalized shortlisted files.
-              - The steps must be detailed enough to be followed by an independent developer.
-              - Do not add steps for unit tests and integration tests.
+          General rules:
+            - First step must be READ DOCUMENTATION STEP
+            - Next steps must be IMPLEMENTATION STEPs
 
-      5. Make sure to confirm the generated steps with the user by adding the steps in body of response template:
+          Rules for generating READ DOCUMENTATION STEP:
+            - Must involve reading relevant documentation files from the workspace folder, such as OpenAPI specifications, DBML files, sequence diagrams, READMEs, etc.
+            - Must strictly conform to the READ DOCUMENTATION STEP TEMPLATE.
+
+          Rules for generating IMPLEMENTATION STEPs:
+            - Reference file path must refer to well-written source code that will serve as a template or guide for the coding style, patterns, and practices expected in new files.
+            - Change summary must be detailed enough to be independently executed by a developer.
+            - Must strictly conform to the IMPLEMENTATION STEP TEMPLATE.
+            - Do not include steps for unit tests and integration tests.
+      5. Confirm the generated steps with the SIRJI_USER by including these steps in the response template:
           REPEAT
-              Ask user to review the steps and provide feedback or confirmation.
-              IF user suggests changes THEN
+              Ask the SIRJI_USER to review the steps and provide feedback or confirmation.
+              IF the SIRJI_USER suggests changes THEN
                   Modify the list of steps based on feedback.
-                  Ask user to review the modified steps.
+                  Ask the SIRJI_USER to review the modified steps.
               END IF
-          UNTIL user confirms the steps.
-
-      6. Store the finalized steps in shared resources.
+          UNTIL the SIRJI_USER confirms the steps.
+      6. Store a document (called as "planner output") in share resources having the following sections:
+        - Your detailed understandaing of the problem statement
+        - Relevant contents of the documentation needed to solve the problem statement
+        - List of finalized implementation steps
+        - Subset of file summaries corresponding to the finalized files
+      7. Respond back to the agent who invoked you, detailing your actions in the BODY.

@@ -6,59 +6,18 @@ llm:
   provider: openai
   model: gpt-4o
 
+sub_agents:
+    - id: SHORTLISTER
+    - id: CODE_PLANNER
+    - id: CODE_STEP_EXECUTOR
+
 skills:
   - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
     pseudo_code: |
-      1. Read and understand the new API requirement from the problem statement stored in shared resources.
-      2. Invoke SHORTLISTER to get list of file paths which need to be referred for working on the problem statement. Note that you must sanitize the file paths obtained in response by adding necessary extensions as seen in the workspace folder structure and use these sanitized file paths hereafter.
-      3. Take confirmation on the list of file paths:
-          REPEAT
-              Ask easy to read QUESTION to SIRJI_USER showing the list of sanitized file paths which will be referred, then asking for confirmation / feedback.
-          
-              IF SIRJI_USER suggests changes THEN
-                  MODIFY list of file paths based on feedback, taking reference from the workspace folder structure.
-                  Ask easy to read QUESTION to SIRJI_USER showing the modified list of sanitized file paths which will be referred, then asking for confirmation / feedback.
-              END IF
-          UNTIL SIRJI_USER confirms
-      4. Read finalized shorlisted files for these purposes:
-          - The documentation files are for implementation specifications.
-          - OpenAPI specifications are to understand the API route, parameter and response specifications.
-          - DBML file is for any needed database changes.
-          - Sequence diagram and other docuements give the implementation details.
-          - Rest of the code files are for understanding the conding conventions.
-      5. After understanding the implementation specifications and coding conventions, you must generate and finalize steps.
-      6. Generate and finalize steps for problem solving:
-      
-          READ DOCUEMNTATION STEP TEMPLATE:
-              Reference document file paths: {{reference file paths to refer the coding requirements}}
-              Summary of what to refer: {{Summary of what to refer}}
-      
-          IMPLEMENTATION STEP TEMPLATE:
-              Reference file path: {{reference file path to refer the coding conventions}}
-              File to be changed / created: {{file path}}
-              Change summary: {{detailed change summary}}
-      
-          Follow these rules while genererating steps:
-              - The first step should be about reading relevant documentation files from the workspace folder. Example: OpenAPI specifications, DBML file, sequence diagrams, README, etc. This step must conform strictly to the READ DOCUEMNTATION STEP TEMPLATE.
-              - You must add IMPLEMENTATION STEPs for referring (for creating new files) or editing the finalized shortlisted files.
-              - Instruct to use INSERT_TEXT action for steps which need modification.
-              - Do not add steps for unit tests and integration tests.
-      
-          Take confirmation on the generated list of steps:
-              REPEAT
-                  Ask easy to read QUESTION to SIRJI_USER showing the list of steps, then asking for confirmation / feedback.
-      
-                  IF SIRJI_USER suggests changes THEN
-                      MODIFY list of steps based on feedback.
-                      Ask easy to read QUESTION to SIRJI_USER showing the modified list of steps, then asking for confirmation / feedback.
-                  END IF
-              UNTIL SIRJI_USER confirms
-      7. Implement the problem statement working on the finalized steps.
-          - Never leave the implementation partial, always have complete implementation. For example, if you use a new method or property of an already existing class, you should first create it.
-          - Ensure that the implementation for all the steps is complete before responding back to the ORCHESTRATOR.
-          - Follow the coding conventions and practices used in the existing code.
-          - Write concrete code implementing the problem statement. Do not just conceptualize or outline or simulate it.
-          - You can use INSERT_TEXT action to add content to an existing file.
-          - Ensure that you do not make unintentional wipe out of remaining code in attempt to make your changes.
-sub_agents:
-    - id: SHORTLISTER
+      1. Read the problem statement from shared resources to understand the requirements.
+      2. INVOKE_AGENT SHORTLISTER to shortlist essential files, identifying primary files based on provided summaries and extracting dependencies, creating a comprehensive set of files that may require modifications or can serve as references to address the problem statement.
+      3. INVOKE_AGENT CODE_PLANNER to generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in shared resources.
+      4. Fetch the fresh contents of shared resource index, in order to get paths to shared resources created by CODE_PLANNER.
+      5. Read the planner output having the generated steps from shared resources.
+      6. Loop over the generated steps and INVOKE_AGENT CODE_STEP_EXECUTOR to work on each step of the iteration, passing the current step in the BODY as purpose of invocation.
+      7. Respond back to the agent who invoked you, detailing your actions in the BODY.
