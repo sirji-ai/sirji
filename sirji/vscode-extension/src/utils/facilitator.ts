@@ -11,7 +11,7 @@ import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 
 import { Executor } from './executor/executor';
-import { readDependencies } from './executor/read_file_dependencies';
+import { readDependencies } from './executor/extract_file_dependencies';
 
 import { AgentStackManager } from './agent_stack_manager';
 import { SessionManager } from './session_manager';
@@ -112,8 +112,8 @@ export class Facilitator {
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
     fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
-    
-    fs.writeFileSync(agentSessionsFilePath, JSON.stringify({sessions: []}, null, 4), 'utf-8');
+
+    fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
 
     if (!fs.existsSync(recipeFilePath)) {
@@ -389,12 +389,10 @@ export class Facilitator {
       if (parsedMessage.ACTION === 'INVOKE_AGENT' || parsedMessage.ACTION === 'INVOKE_AGENT_EXISTING_SESSION') {
         let agent_id = parsedMessage.TO;
 
-        oThis.stackManager.addAgentId(agent_id)
+        oThis.stackManager.addAgentId(agent_id);
         let agentCallstack = oThis.stackManager.getStack();
-        
-        let sessionId = (parsedMessage.ACTION === 'INVOKE_AGENT') ? 
-          oThis.sessionManager?.startNewSession(agentCallstack) :
-          oThis.sessionManager?.reuseSession(agentCallstack);
+
+        let sessionId = parsedMessage.ACTION === 'INVOKE_AGENT' ? oThis.sessionManager?.startNewSession(agentCallstack) : oThis.sessionManager?.reuseSession(agentCallstack);
 
         try {
           await spawnAdapter(
@@ -424,7 +422,7 @@ export class Facilitator {
 
         fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
 
-        if(parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+        if (parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
           oThis.stackManager.removeLastAgentId();
         }
       } else {
@@ -500,24 +498,6 @@ export class Facilitator {
           default:
             let agent_id = parsedMessage.TO;
 
-            if (parsedMessage.FROM === ACTOR_ENUM.SHORTLISTER) {
-              const readDependenciesResponse = await readDependencies(parsedMessage.BODY, oThis.workspaceRootPath);
-              console.log('readDependenciesResponse------', readDependenciesResponse);
-              
-              let body = parsedMessage.BODY;
-              let startIndex = body.indexOf('[');
-              let endIndex = body.lastIndexOf(']');
-              let pathsString = body.substring(startIndex, endIndex + 1);
-              let pathsArray = JSON.parse(pathsString);
-              pathsArray.push(...readDependenciesResponse);
-              let updatedBody = body.substring(0, startIndex) + JSON.stringify(pathsArray) + body.substring(endIndex + 1);
-              parsedMessage.BODY = updatedBody;
-              let rawMessageParts = rawMessage.split('BODY:');
-              let updateRawMessage = rawMessageParts[0] + 'BODY:\n' + updatedBody + '\n***';
-              rawMessage = updateRawMessage;
-              oThis.writeToFile(inputFilePath, rawMessage);
-            }
-
             let agentCallstack = oThis.stackManager.getStack();
             let sessionId = oThis.sessionManager?.reuseSession(agentCallstack);
 
@@ -547,7 +527,7 @@ export class Facilitator {
             parsedMessage = lastAgentMessage?.parsed_content;
             oThis.writeToFile(inputFilePath, rawMessage);
 
-            if(parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+            if (parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
               oThis.stackManager.removeLastAgentId();
             }
             break;

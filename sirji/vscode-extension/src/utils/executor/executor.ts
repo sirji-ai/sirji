@@ -11,6 +11,7 @@ import { ACTION_ENUM } from '../constants';
 import { searchFileInWorkspace } from './search_file_in_workspace';
 import { findAndReplaceInWorkspaceFile } from './find_and_replace_in_workspace_file';
 import { insertText } from './insert_text';
+import { readDependencies } from './extract_file_dependencies';
 
 export class Executor {
   private parsedMessage: any;
@@ -65,6 +66,8 @@ export class Executor {
         return await findAndReplaceInWorkspaceFile(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
       case ACTION_ENUM.INSERT_TEXT:
         return await insertText(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
+      case ACTION_ENUM.EXTRACT_DEPENDENCIES:
+        return await readDependencies(oThis.parsedMessage.BODY, oThis.workspaceRootPath);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }

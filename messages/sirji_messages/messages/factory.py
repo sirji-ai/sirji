@@ -20,6 +20,7 @@ from .actions.invoke_agent import InvokeAgentMessage
 from .actions.invoke_agent_existing_session import InvokeAgentExistingSessionMessage
 from .actions.find_and_replace import FindAndReplace
 from .actions.insert_text import InsertText
+from .actions.extract_dependencies import ExtractDependenciesMessage
 
 
 class MetaMessageFactory(type):
@@ -57,5 +58,6 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.READ_SHARED_RESOURCE_INDEX: ReadSharedResourceIndexMessage,
         ActionEnum.FIND_AND_REPLACE: FindAndReplace,
         ActionEnum.INSERT_TEXT: InsertText,
+        ActionEnum.EXTRACT_DEPENDENCIES: ExtractDependenciesMessage
     }
 

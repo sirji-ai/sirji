@@ -29,3 +29,4 @@ class ActionEnum(Enum):
     READ_DIR_STRUCTURE = auto()
     FIND_AND_REPLACE = auto()
     INSERT_TEXT = auto()
+    EXTRACT_DEPENDENCIES = auto()
