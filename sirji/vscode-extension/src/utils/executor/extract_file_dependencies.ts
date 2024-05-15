@@ -1,9 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import glob from 'glob-promise';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import { Node, Identifier, StringLiteral, BinaryExpression } from '@babel/types';
+
+interface DependencyMap {
+  [file: string]: string[];
+}
 
 const variableValues = new Map<string, string>();
 
@@ -53,46 +56,38 @@ const safePathResolve = (baseDir: string, relativePath: string): string => {
   return resolvedPath;
 };
 
-const getAllFilePaths = async (dir: string): Promise<string[]> => {
-  try {
-    const pattern = '**/*'; // Default pattern to match all files
-    const fullPathPattern = path.join(dir, pattern);
-    const files = await glob(fullPathPattern, { ignore: ['**/node_modules/**'] });
-    return files;
-  } catch (err: any) {
-    throw new Error(`Error fetching files: ${err.message}`);
+const getFileWithExtension = (filePath: string, baseDir: string): string => {
+  if (!filePath.startsWith('.')) {
+    return filePath;
   }
-};
 
-const getFileWithExtension = (filePath: string, baseDir: string, allFilePaths: string[]): string => {
-  const absolutePath = safePathResolve(baseDir, filePath); 
-  
-  let maxMatchLength = 0;
-  let bestMatch = '';
+  const absolutePath = safePathResolve(baseDir, filePath);
+  const possibleExtensions = ['.js', '.ts'];
 
-  allFilePaths.forEach(currentPath => {
-    const currentAbsolutePath = path.resolve(baseDir, currentPath);
-    if (currentAbsolutePath.includes(absolutePath) && absolutePath.length > maxMatchLength) {
-      maxMatchLength = absolutePath.length;
-      bestMatch = currentAbsolutePath;
+  let finalPath = absolutePath;
+
+  for (let ext of possibleExtensions) {
+    let testedPath = absolutePath + ext;
+    if (fs.existsSync(testedPath)) {
+      finalPath = testedPath;
+      break;
     }
-  });
-
-  if (bestMatch) {
-    return path.relative(baseDir, bestMatch);
   }
 
-  return '';
+  return path.relative(baseDir, finalPath);
 };
 
 const extractDependencies = async (filePath: string, baseDir: string): Promise<string[]> => {
+  if (!fs.existsSync(filePath) || !filePath.endsWith('.js')) {
+    console.log(`Skipping non-existent or non-JS/TS file: ${filePath}`);
+    return [];
+  }
+
   const code = await readCode(filePath);
   const ast = parser.parse(code, {
     sourceType: 'module',
     plugins: ['dynamicImport']
   });
-
-  const allFilePaths = await getAllFilePaths(baseDir);
 
   let dependencies = new Set<string>();
 
@@ -107,25 +102,16 @@ const extractDependencies = async (filePath: string, baseDir: string): Promise<s
       if (node.callee.type === 'Identifier' && node.callee.name === 'require' && node.arguments.length === 1 && node.arguments[0].type !== 'SpreadElement') {
         const arg = node.arguments[0];
         if (arg.type === 'StringLiteral') {
-          const fileWithExtension = getFileWithExtension(arg.value, baseDir, allFilePaths);
-          if (fileWithExtension) {
-            dependencies.add(fileWithExtension);
-          }
+          dependencies.add(getFileWithExtension(arg.value, baseDir));
         } else if (arg.type === 'BinaryExpression' && arg.operator === '+') {
           const resolvedPath = resolvePath(arg);
           if (resolvedPath) {
-            const fileWithExtension = getFileWithExtension(resolvedPath, baseDir, allFilePaths);
-            if (fileWithExtension) {
-              dependencies.add(fileWithExtension);
-            }
+            dependencies.add(getFileWithExtension(resolvedPath, baseDir));
           }
         } else if (arg.type === 'TemplateLiteral') {
           const resolvedPath = resolvePath(arg);
           if (resolvedPath) {
-            const fileWithExtension = getFileWithExtension(resolvedPath, baseDir, allFilePaths);
-            if (fileWithExtension) {
-              dependencies.add(fileWithExtension);
-            }
+            dependencies.add(getFileWithExtension(resolvedPath, baseDir));
           }
         }
       }
