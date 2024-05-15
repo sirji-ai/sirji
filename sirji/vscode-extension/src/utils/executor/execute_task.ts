@@ -23,12 +23,12 @@ function constructResponse(isRunning: Boolean, tempFileRelativePath: string, tem
   return response;
 }
 
-export async function executeTask(command: string, workspaceRootPath: string): Promise<string> {
+export async function executeTask(command: string, projectRootPath: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const tempFileName = `output_${Date.now()}.txt`;
 
-    const tempFileRelativePath = path.join(workspaceRootPath, tempFileName);
-    const tempFilePath = path.join(workspaceRootPath, tempFileRelativePath);
+    const tempFileRelativePath = path.join(projectRootPath, tempFileName);
+    const tempFilePath = path.join(projectRootPath, tempFileRelativePath);
 
     let tempFileContent = '';
 

@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
 
-export const findAndReplaceInWorkspaceFile = async (body: string, workspaceRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+export const findAndReplaceInProjectFile = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
   const searchText = body.split('FIND:')[1].split('---')[0].trim();
   const replacement = body.split('REPLACE:')[1].split('---')[0].trim();
   let filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
-  filePath = path.join(workspaceRootPath, filePath);
+  filePath = path.join(projectRootPath, filePath);
 
   console.log(`Searching for files with pattern: ${searchText} in folder: ${filePath} and replacing with: ${replacement}`);
 

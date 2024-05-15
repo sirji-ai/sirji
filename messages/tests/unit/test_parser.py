@@ -56,7 +56,7 @@ def test_message_parse_permission_denied_error():
     ```
     FROM: USER
     TO: CODER
-    ACTION: CREATE_WORKSPACE_FILE
+    ACTION: CREATE_PROJECT_FILE
     DETAILS: Attempting an unauthorized action.
     ```
     """

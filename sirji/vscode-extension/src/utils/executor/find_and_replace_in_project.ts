@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-export const findAndReplaceInWorkspace = async (body: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+export const findAndReplaceInProject = async (body: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
   const searchText = body.split('Find:')[1].split('---')[0].trim();
   const replacement = body.split('Replace:')[1].split('---')[0].trim();
   const folderPath = body.split('Directory:')[1].trim();

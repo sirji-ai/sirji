@@ -5,11 +5,11 @@ from sirji_messages import ActionEnum, AgentEnum
 # Value: set of allowed actions between the agents
 permissions_dict = {
     (AgentEnum.ANY, AgentEnum.EXECUTOR): {
-        ActionEnum.CREATE_WORKSPACE_FILE,
+        ActionEnum.CREATE_PROJECT_FILE,
         ActionEnum.CREATE_SHARED_RESOURCE_FILE,
         ActionEnum.EXECUTE_COMMAND,
         ActionEnum.RUN_SERVER,
-        ActionEnum.READ_WORKSPACE_FILES,
+        ActionEnum.READ_PROJECT_FILES,
         ActionEnum.READ_SHARED_RESOURCES_FILES,
         ActionEnum.READ_DIR_STRUCTURE,
         ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX,

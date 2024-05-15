@@ -5,7 +5,7 @@ llm:
   model: gpt-4o
 definitions: {}
 rules:
-  - "Ensure that you don't create any file/folder outside of workspace root folder, i.e. './'"
+  - "Ensure that you don't create any file/folder outside of project root folder, i.e. './'"
   - "Follow secure software development practices while generating code."
   - "Run commands which are compatible with SIRJI_OS."
   - "Once the code is written, if the requires a server make sure to start/restart the server."

@@ -4,12 +4,12 @@ import json
 from sirji_agents import Orchestrator
 
 class AgentRunner:
-    def _get_workspace_folder(self):
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-        if workspace is None:
+    def _get_project_folder(self):
+        project_folder = os.environ.get("SIRJI_PROJECT")
+        if project_folder is None:
             raise ValueError(
-                "SIRJI_WORKSPACE is not set as an environment variable")
-        return workspace
+                "SIRJI_PROJECT is not set as an environment variable")
+        return project_folder
 
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:

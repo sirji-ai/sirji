@@ -63,7 +63,7 @@ playwright install
 Ensure that following environment variables are set:
 
 ```zsh
-export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace."
+export SIRJI_PROJECT="Absolute folder path for Sirji to use as it's project folder."
 export SIRJI_RUN_PATH='Folder having run specific logs, etc.'
 ```
 
@@ -76,7 +76,7 @@ from sirji_tools import crawl_urls
 
 urls = ['https://www.google.com', 'https://www.yahoo.com']
 
-crawl_urls(urls, 'workspace/researcher')
+crawl_urls(urls, 'project/researcher')
 ```
 
 ### Search

@@ -7,13 +7,13 @@ const SKIP_LIST = new Set<string>([
   'dist', 'out', 'build', 'logs', '.npm', 'temp', 'tmp'
 ]);
 
-export async function readDirectoryStructure(workspaceRootPath: string, body: string): Promise<string> {
+export async function readDirectoryStructure(projectRootPath: string, body: string): Promise<string> {
   const inputPath = body.split('Directory:')[1].trim();
-  const fullPath = path.join(workspaceRootPath, inputPath);
+  const fullPath = path.join(projectRootPath, inputPath);
 
   async function readGitignore(): Promise<void> {
     try {
-      const gitignorePath = path.join(workspaceRootPath, '.gitignore');
+      const gitignorePath = path.join(projectRootPath, '.gitignore');
       const data = await fs.readFile(gitignorePath, 'utf8');
       const gitignoreEntries = data.split('\n')
                                    .map(entry => entry.trim())
@@ -43,7 +43,7 @@ export async function readDirectoryStructure(workspaceRootPath: string, body: st
           }
           return readDirectory(filePath);
         } else {
-          return path.relative(workspaceRootPath, filePath) + '\n';
+          return path.relative(projectRootPath, filePath) + '\n';
         }
       });
       const contents = await Promise.all(promises);

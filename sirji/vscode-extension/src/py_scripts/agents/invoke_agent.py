@@ -7,12 +7,12 @@ from sirji_messages import MessageFactory, ActionEnum, AgentEnum
 from sirji_agents import GenericAgent
 
 class AgentRunner:    
-    def _get_workspace_folder(self):
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-        if workspace is None:
+    def _get_project_folder(self):
+        project_folder = os.environ.get("SIRJI_PROJECT")
+        if project_folder is None:
             raise ValueError(
-                "SIRJI_WORKSPACE is not set as an environment variable")
-        return workspace
+                "SIRJI_PROJECT is not set as an environment variable")
+        return project_folder
 
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
@@ -63,7 +63,7 @@ class AgentRunner:
     def main(self, agent_id, agent_session_id, agent_callstack):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
-        sirji_workspace = os.environ.get("SIRJI_WORKSPACE")
+        sirji_project_folder = os.environ.get("SIRJI_PROJECT")
         
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
@@ -76,7 +76,7 @@ class AgentRunner:
 
         with open(file_summaries_file_path, 'r') as file:
             file_summaries_index = json.load(file)
-            relative_path = file_summaries_index.get(sirji_workspace, '')
+            relative_path = file_summaries_index.get(sirji_project_folder, '')
             file_summaries_path = os.path.join(file_summaries_folder_path, relative_path)
 
         with open(file_summaries_path, 'r') as file:

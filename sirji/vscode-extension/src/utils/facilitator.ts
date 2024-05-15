@@ -18,8 +18,8 @@ import { SessionManager } from './session_manager';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
-  private workspaceRootUri: any;
-  private workspaceRootPath: any;
+  private projectRootUri: any;
+  private projectRootPath: any;
   private sirjiRunId: string = '';
   private chatPanel: vscode.WebviewPanel | undefined;
   private secretManager: SecretStorage | undefined;
@@ -46,8 +46,8 @@ export class Facilitator {
   public async init() {
     const oThis = this;
 
-    // Setup workspace
-    await oThis.selectWorkspace();
+    // Setup Project Folder
+    await oThis.selectProjectFolder();
 
     // Setup folders for run, installed_agents, etc.
     await oThis.initializeFolders();
@@ -61,15 +61,15 @@ export class Facilitator {
     return oThis.chatPanel;
   }
 
-  private async selectWorkspace(): Promise<void> {
+  private async selectProjectFolder(): Promise<void> {
     const oThis = this;
 
-    oThis.workspaceRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
-    oThis.workspaceRootPath = oThis.workspaceRootUri ? oThis.workspaceRootUri.fsPath : null;
+    oThis.projectRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
+    oThis.projectRootPath = oThis.projectRootUri ? oThis.projectRootUri.fsPath : null;
 
-    if (!oThis.workspaceRootUri) {
+    if (!oThis.projectRootUri) {
       // Prompt user to open a folder
-      const openFolderMsg = 'No workspace/folder is open. Please open a folder to proceed.';
+      const openFolderMsg = 'No project folder is open. Please open a folder to proceed.';
       await vscode.window.showErrorMessage(openFolderMsg, 'Open Folder').then(async (selection) => {
         if (selection === 'Open Folder') {
           await vscode.commands.executeCommand('workbench.action.files.openFolder');
@@ -111,7 +111,7 @@ export class Facilitator {
     fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
-    fs.writeFileSync(constantsFilePath, JSON.stringify({ workspace_folder: oThis.workspaceRootPath }, null, 4), 'utf-8');
+    fs.writeFileSync(constantsFilePath, JSON.stringify({ project_folder: oThis.projectRootPath }, null, 4), 'utf-8');
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
@@ -147,7 +147,7 @@ export class Facilitator {
   private openChatViewPanel() {
     const oThis = this;
 
-    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.sirjiRunId);
+    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.projectRootUri, oThis.projectRootPath, oThis.sirjiRunId);
 
     oThis.chatPanel.webview.onDidReceiveMessage(
       async (message: any) => {
@@ -250,9 +250,9 @@ export class Facilitator {
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: {
-        message: 'Hello, I am Sirji. Please wait while i am setting up the workspace...',
+        message: 'Hello, I am Sirji. Please wait while I am getting initialized...',
         allowUserMessage: false,
-        messageInputText: 'Sirji> is setting up the workspace... Please wait...'
+        messageInputText: 'Sirji> is getting initialized... Please wait...'
       }
     });
 
@@ -286,7 +286,7 @@ export class Facilitator {
     const oThis = this;
 
     try {
-      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.workspaceRootPath, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
         '--venv',
         path.join(oThis.sirjiInstallationFolderPath, 'venv')
       ]);
@@ -399,7 +399,7 @@ export class Facilitator {
             oThis.context,
             oThis.sirjiInstallationFolderPath,
             oThis.sirjiRunFolderPath,
-            oThis.workspaceRootPath,
+            oThis.projectRootPath,
             path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
             ['--agent_id', agent_id, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
           );
@@ -433,7 +433,7 @@ export class Facilitator {
                 oThis.context,
                 oThis.sirjiInstallationFolderPath,
                 oThis.sirjiRunFolderPath,
-                oThis.workspaceRootPath,
+                oThis.projectRootPath,
                 path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py')
               );
             } catch (error) {
@@ -478,7 +478,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.workspaceRootPath, oThis.sharedResourcesFolderPath, oThis.sirjiRunFolderPath);
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.sharedResourcesFolderPath, oThis.sirjiRunFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;
@@ -506,7 +506,7 @@ export class Facilitator {
                 oThis.context,
                 oThis.sirjiInstallationFolderPath,
                 oThis.sirjiRunFolderPath,
-                oThis.workspaceRootPath,
+                oThis.projectRootPath,
                 path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
                 ['--agent_id', parsedMessage.TO, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
               );

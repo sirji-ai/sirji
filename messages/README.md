@@ -122,26 +122,6 @@ action = ActionEnum['ACKNOWLEDGE']
 agent = AgentEnum['CODER']
 ```
 
-### Factories for Dynamic Message and Prompt Creation
-
-Utilize factories (`MessageFactory`, `AgentSystemPromptFactory`) to instantiate message and prompt classes dynamically based on enums. It simplifies creating custom messages or retrieving specific system prompts without hardcoding class names.
-
-```python
-from sirji_messages import MessageFactory, ActionEnum, AgentSystemPromptFactory, AgentEnum
-
-# Message class instantiation from an action enum
-message_class = MessageFactory[ActionEnum.INFORM.name]
-print(f"Sample INFORM message:\n{message_class().sample()}")
-
-# Generate message using passed template variables
-generated_messages = message_class().generate({"details": "Some sample information."})
-print(f"Generated INFORM message:\n{generated_messages}")
-
-# System prompt class instantiation from an agent enum
-prompt_class = AgentSystemPromptFactory[AgentEnum.CODER.name]
-print(f"CODER system prompt: {prompt_class().system_prompt()}")
-```
-
 ## For Contributors
 
 1. Fork and clone the repository.

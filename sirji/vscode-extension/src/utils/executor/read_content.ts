@@ -31,7 +31,7 @@ function isPathInsideRoot(rootPath: string, targetPath: string): boolean {
   return resolvedTarget.startsWith(resolvedRoot);
 }
 
-export async function readContent(workspaceRootPath: string, body: string, isDirectory: boolean): Promise<string> {
+export async function readContent(projectRootPath: string, body: string, isDirectory: boolean): Promise<string> {
   async function shouldSkip(name: string): Promise<boolean> {
     return SKIP_LIST.includes(name);
   }
@@ -40,7 +40,7 @@ export async function readContent(workspaceRootPath: string, body: string, isDir
     try {
       const fileMimetype = mimetype.lookup(filePath);
       let content = null;
-      const relativePath = path.relative(workspaceRootPath, filePath);
+      const relativePath = path.relative(projectRootPath, filePath);
 
       const stats = await fs.stat(filePath);
       if (stats.size > 102400) {
@@ -100,10 +100,10 @@ export async function readContent(workspaceRootPath: string, body: string, isDir
 
   for (const inputPath of inputPaths) {
     try {
-      const fullPath = path.isAbsolute(inputPath) ? inputPath : path.join(workspaceRootPath, inputPath);
+      const fullPath = path.isAbsolute(inputPath) ? inputPath : path.join(projectRootPath, inputPath);
 
-      if (!isPathInsideRoot(workspaceRootPath, fullPath)) {
-        throw new Error(`Path '${inputPath}' is not within the workspace root.`);
+      if (!isPathInsideRoot(projectRootPath, fullPath)) {
+        throw new Error(`Path '${inputPath}' is not within the project root.`);
       }
 
       console.log('-------fullPath', fullPath);

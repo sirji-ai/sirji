@@ -121,7 +121,7 @@ const extractDependencies = async (filePath: string, baseDir: string): Promise<s
   return Array.from(dependencies);
 };
 
-export const readDependencies = async (body: string, workspaceRootPath: string): Promise<string[]> => {
+export const readDependencies = async (body: string, projectRootPath: string): Promise<string[]> => {
   const filePaths = body
     .split('[')[1]
     .split(']')[0]
@@ -132,8 +132,8 @@ export const readDependencies = async (body: string, workspaceRootPath: string):
 
   for (const filePath of filePaths) {
     try {
-      const fullPath = path.resolve(workspaceRootPath, filePath);
-      const dependencies = await extractDependencies(fullPath, workspaceRootPath);
+      const fullPath = path.resolve(projectRootPath, filePath);
+      const dependencies = await extractDependencies(fullPath, projectRootPath);
       dependencies.forEach((dep) => allDependencies.add(dep));
     } catch (error) {
       console.log(`Error processing ${filePath}: ${error}`);

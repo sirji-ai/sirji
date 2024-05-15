@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-export async function searchFileInWorkspace(body: string, fileType: string = '*', maxResults: number = 10, exclude: string = '**/node_modules/**'): Promise<vscode.Uri[]> {
+export async function searchFileInProject(body: string, fileType: string = '*', maxResults: number = 10, exclude: string = '**/node_modules/**'): Promise<vscode.Uri[]> {
   const searchText = body.split('Search:')[1].split('---')[0].trim();
   const folderPath = body.split('Directory:')[1].trim();
 

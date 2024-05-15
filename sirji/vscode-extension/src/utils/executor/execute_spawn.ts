@@ -12,14 +12,14 @@ function constructResponse(success: boolean, output: string): string {
 }
 
 // let sirjiTerminal: vscode.Terminal | undefined;
-export async function executeSpawn(command: string, workspaceRootPath: string): Promise<string> {
+export async function executeSpawn(command: string, projectRootPath: string): Promise<string> {
   let successResp = '';
   let errorResp = '';
   const [cmd, ...args] = command.split(/\s+/);
 
   return new Promise(async (resolve, reject) => {
     const child = spawn(cmd, args, {
-      cwd: workspaceRootPath,
+      cwd: projectRootPath,
       shell: true
     });
 

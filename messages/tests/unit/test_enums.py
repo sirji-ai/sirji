@@ -21,7 +21,7 @@ def test_agent_enum_names():
 def test_action_enum_auto_values():
     # Test specific actions to ensure their auto-generated values are distinct
     assert ActionEnum.ACKNOWLEDGE.value != ActionEnum.ANSWER.value, "ACKNOWLEDGE and ANSWER values should not be equal"
-    assert ActionEnum.EXECUTE_COMMAND.value != ActionEnum.CREATE_WORKSPACE_FILE.value, "EXECUTE_COMMAND and CREATE_WORKSPACE_FILE values should not be equal"
+    assert ActionEnum.EXECUTE_COMMAND.value != ActionEnum.CREATE_PROJECT_FILE.value, "EXECUTE_COMMAND and CREATE_PROJECT_FILE values should not be equal"
 
 
 def test_action_enum_membership():

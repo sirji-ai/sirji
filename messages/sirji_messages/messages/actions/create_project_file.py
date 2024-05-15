@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class CreateWorkspaceFileMessage(BaseMessages):
+class CreateProjectFileMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.CREATE_WORKSPACE_FILE.name
+        self.action = ActionEnum.CREATE_PROJECT_FILE.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -22,9 +22,9 @@ class CreateWorkspaceFileMessage(BaseMessages):
             {{file contents}}""")})
 
     def description(self):
-        return "Create a File Inside Workspace Folder Only"
+        return "Create a File Inside Project Folder Only"
     
     def instructions(self):
-        return [ "The file path must be relative to the workspace root.",
+        return [ "The file path must be relative to the project root.",
                  "The file contents should never be enclosed within ``` starting and ending markers."]
 

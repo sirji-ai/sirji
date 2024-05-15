@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
 
-export const insertText = async (body: string, workspaceRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+export const insertText = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
   const searchText = body.split('FIND:')[1].split('---')[0].trim();
   const textToInsert = body.split('TEXT_TO_INSERT:')[1].split('---')[0].trim();
   let filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
   let insertPosition = body.split('INSERT_POSITION:')[1].split('---')[0].trim();
 
-  filePath = path.join(workspaceRootPath, filePath);
+  filePath = path.join(projectRootPath, filePath);
 
   console.log(`Inserting text in file: ${filePath} based on search text: '${searchText}' with replacement: '${textToInsert}' and insert position: '${insertPosition}'`);
 

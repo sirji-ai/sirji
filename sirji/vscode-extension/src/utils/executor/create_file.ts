@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export async function createFile(rootPath: string, isWorkspaceRoot: boolean, body: string): Promise<string> {
+export async function createFile(rootPath: string, isProjectRoot: boolean, body: string): Promise<string> {
   try {
     const [filePathPart, fileContent] = body.split('---');
     const filePath = filePathPart.replace('File path:', '').trim();
@@ -10,9 +10,9 @@ export async function createFile(rootPath: string, isWorkspaceRoot: boolean, bod
     const fullPath = path.isAbsolute(filePath) ? filePath : path.join(rootPath, filePath);
     const uri = vscode.Uri.file(fullPath);
 
-    if (isWorkspaceRoot) {
-      if (!isInsideWorkspace(uri.fsPath, rootPath)) {
-        throw new Error('File path is outside of the workspace folder tree. Write operation denied.');
+    if (isProjectRoot) {
+      if (!isInsideProject(uri.fsPath, rootPath)) {
+        throw new Error('File path is outside of the project folder tree. Write operation denied.');
       }
     } else {
       if (path.isAbsolute(filePath)) {
@@ -37,7 +37,7 @@ export async function createFile(rootPath: string, isWorkspaceRoot: boolean, bod
   }
 }
 
-function isInsideWorkspace(filePath: string, workspaceRootPath: string): boolean {
-  const relativePath = path.relative(workspaceRootPath, filePath);
+function isInsideProject(filePath: string, projectRootPath: string): boolean {
+  const relativePath = path.relative(projectRootPath, filePath);
   return !relativePath.startsWith('..') && !path.isAbsolute(relativePath);
 }

@@ -23,5 +23,5 @@ class ExecuteCommandMessage(BaseMessages):
         return "Execute a Command, Install Packages, or Install Dependencies"
     
     def instructions(self):
-        return [ "The command must use the workspace root as the current working directory.",
+        return [ "The command must use the project root as the current working directory.",
                  "The command must be sufficiently chained. For example, 'source venv/bin/activate && pip install openai', 'cd server && npm run start'."]

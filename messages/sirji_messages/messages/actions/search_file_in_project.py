@@ -1,12 +1,13 @@
 import textwrap
-from sirji_messages import AgentEnum, ActionEnum
 
+from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
-class FindAndReplaceInWorkspaceMessage(BaseMessages):
+
+class SearchFileInProject(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.FIND_AND_REPLACE_IN_WORKSPACE.name
+        self.action = ActionEnum.SEARCH_FILE_IN_PROJECT.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -16,14 +17,12 @@ class FindAndReplaceInWorkspaceMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            Find: {{Find this text}}
-            ---                        
-            Replace: {{Replace with this text}}
+            Search: {{Search term}}
             ---
             Directory: {{Directory path}}""")})
 
     def description(self):
-        return "Find and Replace text in all files in a directory and all its subdirectories"
+        return "Search for a file in a directory and all its subdirectories"
 
     def instructions(self):
         return []

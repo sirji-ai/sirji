@@ -39,12 +39,12 @@ class ResearchAgent:
         elif action == ActionEnum.INFER.name:
             return self._handle_infer(parsed_message)
         
-    def _get_workspace_folder(self):
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-        if workspace is None:
+    def _get_project_folder(self):
+        project_folder = os.environ.get("SIRJI_PROJECT")
+        if project_folder is None:
             raise ValueError(
-                "SIRJI_WORKSPACE is not set as an environment variable")
-        return workspace
+                "SIRJI_PROJECT is not set as an environment variable")
+        return project_folder
     
     def _get_run_path(self):
         run_path = os.environ.get("SIRJI_RUN_PATH")

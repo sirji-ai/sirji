@@ -8,12 +8,12 @@ class ResearchAgentRunner:
     def get_workplace_file_path(self, filename):
         return os.path.join(self._get_run_path(), filename)
     
-    def _get_workspace_folder(self):
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-        if workspace is None:
+    def _get_project_folder(self):
+        project_folder = os.environ.get("SIRJI_PROJECT")
+        if project_folder is None:
             raise ValueError(
-                "SIRJI_WORKSPACE is not set as an environment variable")
-        return workspace
+                "SIRJI_PROJECT is not set as an environment variable")
+        return project_folder
     
     def _get_run_path(self):
         run_id = os.environ.get("SIRJI_RUN_PATH")

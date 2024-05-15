@@ -11,7 +11,7 @@ export async function spawnAdapter(
   context: vscode.ExtensionContext | undefined,
   sirjiInstallationPath: string,
   sirjiRunPath: string,
-  workspaceRootPath: string,
+  projectRootPath: string,
   scriptPath: string,
   args: string[] = []
 ): Promise<any> {
@@ -19,7 +19,7 @@ export async function spawnAdapter(
 
   const venvPath = path.join(sirjiInstallationPath, 'venv');
   const pythonPath = getPythonPath(venvPath);
-  const envVars = await getEnvVars(context, sirjiInstallationPath, workspaceRootPath, sirjiRunPath);
+  const envVars = await getEnvVars(context, sirjiInstallationPath, projectRootPath, sirjiRunPath);
 
   console.log('---------env vars', envVars);
 
@@ -71,12 +71,12 @@ function getPythonPath(venvPath: string): string {
   return pythonPath;
 }
 
-async function getEnvVars(context: vscode.ExtensionContext | undefined, sirjiInstallationPath: string, workspacePath: string, sirjiRunPath: string): Promise<any> {
+async function getEnvVars(context: vscode.ExtensionContext | undefined, sirjiInstallationPath: string, projectRootPath: string, sirjiRunPath: string): Promise<any> {
   const secretManager = new SecretStorage(context);
   const envVars = JSON.parse((await secretManager.retrieveSecret(Constants.ENV_VARS_KEY)) || '{}');
   envVars.SIRJI_INSTALLATION_DIR = sirjiInstallationPath;
-  envVars.SIRJI_WORKSPACE = workspacePath;
+  envVars.SIRJI_PROJECT = projectRootPath;
   envVars.SIRJI_RUN_PATH = sirjiRunPath;
-  envVars.SIRJI_WORKSPACE_STRUCTURE = await readDirectoryStructure(workspacePath, 'Directory: /');
+  envVars.SIRJI_PROJECT_STRUCTURE = await readDirectoryStructure(projectRootPath, 'Directory: /');
   return envVars;
 }

@@ -1,13 +1,12 @@
 import textwrap
-
 from sirji_messages import AgentEnum, ActionEnum
+
 from .base import BaseMessages
 
-
-class ReadWorkspaceFilesMessage(BaseMessages):
+class FindAndReplaceInProjectMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.READ_WORKSPACE_FILES.name
+        self.action = ActionEnum.FIND_AND_REPLACE_IN_PROJECT.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -17,10 +16,14 @@ class ReadWorkspaceFilesMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            File paths: {{Array of file paths}}""")})
-    
+            Find: {{Find this text}}
+            ---                        
+            Replace: {{Replace with this text}}
+            ---
+            Directory: {{Directory path}}""")})
+
     def description(self):
-        return "Read Multiple Files From Workspace Folder Only"
-    
+        return "Find and Replace text in all files in a directory and all its subdirectories"
+
     def instructions(self):
-        return [ "The file paths must be relative to the workspace root."]
+        return []

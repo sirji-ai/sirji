@@ -22,5 +22,5 @@ class ExtractDependenciesMessage(BaseMessages):
         return "Extract Dependencies of The Specified Files"
     
     def instructions(self):
-        return [ "The file path must be relative to the workspace root."]
+        return [ "The file path must be relative to the project root."]
 

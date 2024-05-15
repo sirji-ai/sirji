@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class SearchFileInWorkspace(BaseMessages):
+class ReadProjectFilesMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.SEARCH_FILE_IN_WORKSPACE.name
+        self.action = ActionEnum.READ_PROJECT_FILES.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -17,12 +17,10 @@ class SearchFileInWorkspace(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            Search: {{Search term}}
-            ---
-            Directory: {{Directory path}}""")})
-
+            File paths: {{Array of file paths}}""")})
+    
     def description(self):
-        return "Search for a file in a directory and all its subdirectories"
-
+        return "Read Multiple Files From Project Folder Only"
+    
     def instructions(self):
-        return []
+        return [ "The file paths must be relative to the project root."]

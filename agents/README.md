@@ -66,7 +66,7 @@ playwright install
 Ensure that following environment variables are set:
 
 ```zsh
-export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace."
+export SIRJI_PROJECT="Absolute folder path for Sirji to use as it's project folder."
 export SIRJI_RUN_PATH='Folder path containing run related logs, etc.'
 export SIRJI_OPENAI_API_KEY='OpenAI API key for Chat Completions API and Assistants API'
 export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai".'
@@ -143,7 +143,7 @@ config = {
         "Read problem statement, epics & user stories and architecture components from shared_resources.",
         "Write concrete code and not just conceptualize or outline or simulate it.",
         "Follow secure software development practices while generating code.",
-        "Ensure that you don't create any file/folder outside of workspace root folder, i.e. './'",
+        "Ensure that you don't create any file/folder outside of project folder, i.e. './'",
         "Install programming language-specific packages or libraries in local folders, utilizing tools such as venv for installing Python dependencies and package.json for managing Node.js dependencies.",
         "Verify whether a system-level command is already installed to avoid triggering the installation of packages that are already in place.",
         "Always execute the code and evaluate the response output. If the response has errors, solve them before moving ahead."

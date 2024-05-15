@@ -26,7 +26,7 @@ skills:
             - Next steps must be IMPLEMENTATION STEPs
 
           Rules for generating READ DOCUMENTATION STEP:
-            - Must involve reading relevant documentation files from the workspace folder, such as OpenAPI specifications, DBML files, sequence diagrams, READMEs, etc.
+            - Must involve reading relevant documentation files from the project folder, such as OpenAPI specifications, DBML files, sequence diagrams, READMEs, etc.
             - Must strictly conform to the READ DOCUMENTATION STEP TEMPLATE.
 
           Rules for generating IMPLEMENTATION STEPs:

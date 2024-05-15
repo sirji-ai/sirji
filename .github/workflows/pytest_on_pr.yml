@@ -50,7 +50,7 @@ jobs:
 
       - name: Run tests and coverage (tools)
         env:
-          SIRJI_WORKSPACE: '.'
+          SIRJI_PROJECT: '.'
           SIRJI_RUN_PATH: './abcd1234'
         run: |
           cd tools

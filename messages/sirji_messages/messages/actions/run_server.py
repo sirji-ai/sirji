@@ -23,7 +23,7 @@ class RunServerMessage(BaseMessages):
         return "Run a Server or a Continuous Running Process"
     
     def instructions(self):
-        return [ "The command must use the workspace root as the current working directory.",
+        return [ "The command must use the project root as the current working directory.",
                  "The command must be sufficiently chained. For example, 'source my_env.sh && npm start'."]
 
 
