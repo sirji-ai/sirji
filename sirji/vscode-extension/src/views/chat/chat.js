@@ -155,7 +155,7 @@ function sendBotMessage(message, allowUserInput) {
 function onInputChange(event) {
   removRecentUserLoader();
   adjustTextAreaHeight();
-  
+
   // Check if "Command" key (Mac) or "Ctrl" key (Windows/Linux) and "Enter" key are pressed
   if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
     sendUserMessage();
@@ -175,12 +175,12 @@ function adjustTextAreaHeight() {
 
 function updateMessageContainerHeight() {
   const chatContainer = document.getElementById('chatContainer');
-  
-  const inputontainerHeight = document.getElementById("inputContainer").offsetHeight;
-  const headerHeight = document.getElementById("jHeader").offsetHeight;
 
-  const totalHeight = inputontainerHeight + headerHeight; 
-  
+  const inputontainerHeight = document.getElementById('inputContainer').offsetHeight;
+  const headerHeight = document.getElementById('jHeader').offsetHeight;
+
+  const totalHeight = inputontainerHeight + headerHeight;
+
   chatContainer.style.height = `calc(100vh - ${totalHeight}px)`;
 }
 
@@ -194,15 +194,15 @@ function displayMessage(msg, sender, allowUserInput) {
   // Defer the scrolling a bit to ensure layout updates
   chatListContainerElement.appendChild(messageElement);
 
-  if (sender === "bot" && allowUserInput) {
-    displayMessage("Waiting for your input", "user", true); 
+  if (sender === 'bot' && allowUserInput) {
+    displayMessage('Waiting for your input', 'user', true);
   }
 
   chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight + 10;
 }
 
 function removRecentUserLoader() {
-  const userMessages = document.querySelectorAll(".user-input-waiting");
+  const userMessages = document.querySelectorAll('.user-input-waiting');
 
   if (userMessages.length <= 0) {
     return;
@@ -214,10 +214,9 @@ function removRecentUserLoader() {
 }
 
 function createMessageElement(msg, sender, allowUserInput) {
-  removeAllLoaderInstanceFromDOM("message-loader");
-  
-  const chatElement = document.createElement('div');
+  removeAllLoaderInstanceFromDOM('message-loader');
 
+  const chatElement = document.createElement('div');
 
   // Construct user message HTML format
   if (sender === 'user') {
@@ -271,7 +270,7 @@ function createMessageElement(msg, sender, allowUserInput) {
       chatElement.appendChild(loaderElement);
     }
   }
-  
+
   return chatElement;
 }
 
@@ -458,13 +457,17 @@ function toggleProgressTextColor() {
 
 function convertNumber(number) {
   if (number >= 1000000) {
-      return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 100000) {
-      return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 1000) {
-      return (Math.ceil(number / 1000)).toFixed(1).replace('.0', '') + 'K';
+    return (
+      Math.ceil(number / 1000)
+        .toFixed(1)
+        .replace('.0', '') + 'K'
+    );
   } else {
-      return ""; // Don't show tokens less than 1K
+    return ''; // Don't show tokens less than 1K
   }
 }
 
@@ -505,21 +508,21 @@ function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
   plannerLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("plannerLogs");
+  scrollToBottom('plannerLogs');
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
   researcherLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("researcherLogs");
+  scrollToBottom('researcherLogs');
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
   coderLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("coderLogs");
+  scrollToBottom('coderLogs');
 }
 
 function displayCoderTab(data) {
@@ -575,12 +578,11 @@ const logTabButtons = document.querySelectorAll('.log-tab-button');
 logTabButtons.forEach(function (button) {
   button.addEventListener('click', function () {
     const tabName = this.getAttribute('data-tab');
-    showTab(tabName, "log-tab", "log-tab-button");
+    showTab(tabName, 'log-tab', 'log-tab-button');
   });
 });
 
-
-function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button") {
+function showTab(tabName, tabClassName = 'tab', tabButtonClassName = 'tab-button') {
   let i, tabcontent, tablinks;
 
   // Get all elements with class="tab" and hide them
@@ -602,7 +604,7 @@ function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button
   // scroll to bottom
   scrollToBottom(`${tabName}Logs`);
 
-  // adjust the tabs 
+  // adjust the tabs
   toggleTabsArrowOnResize();
 }
 
@@ -611,12 +613,10 @@ function scrollToBottom(elementId) {
 
   if (!domElement) {
     return;
-  };
-  
+  }
+
   domElement.scrollTop = domElement.scrollHeight + 25;
-
 }
-
 
 updateIconColors();
 
@@ -668,11 +668,11 @@ function setup(event) {
 function drag(event) {
   event.preventDefault();
 
-  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px',(rStartWidth - event.clientX + StartX) + 'px';
-	jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
-  jLeft.style.width = (lStartWidth + event.clientX - StartX) + 'px';
-  
-  jResizeHandle.style.right = (rStartWidth - event.clientX + StartX - 4) + 'px';
+  (jWrap.style.gridTemplateAreas = lStartWidth + event.clientX - StartX + 'px'), rStartWidth - event.clientX + StartX + 'px';
+  jRight.style.width = rStartWidth - event.clientX + StartX + 'px';
+  jLeft.style.width = lStartWidth + event.clientX - StartX + 'px';
+
+  jResizeHandle.style.right = rStartWidth - event.clientX + StartX - 4 + 'px';
 
   toggleTabsArrowOnResize();
 }
@@ -696,20 +696,58 @@ function toggleTabsArrowOnResize() {
   }
 }
 
-window.addEventListener("resize", function () {
+window.addEventListener('resize', function () {
   setup();
 });
 
-jTabsButtonsContainerEl.addEventListener("scroll", function () {
+jTabsButtonsContainerEl.addEventListener('scroll', function () {
   const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
 
   if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
-    jArrowSvg.style.display = "none";
+    jArrowSvg.style.display = 'none';
   } else {
-    jArrowSvg.style.display = "flex";
+    jArrowSvg.style.display = 'flex';
   }
 });
 
 jArrowSvg.onclick = function () {
   jTabsButtonsContainerEl.scrollLeft = 999999;
 };
+
+// Tokens modal
+const jTokensButton = document.getElementById('jTokensButton');
+const jTokensModal = document.getElementById('jTokensModal');
+const jCloseTokensModalButton = document.getElementById('jCloseTokensModalButton');
+const jTabsBackdrop = document.getElementById('jTabsBackdrop');
+let isOpen = false;
+
+function tokensButtonClickhandler(e) {
+  if (isOpen) {
+    closeTokensModal();
+  } else {
+    openTokensModal();
+  }
+}
+
+function openTokensModal() {
+  jTokensModal.style.display = 'flex';
+  jTabsBackdrop.style.display = 'flex';
+  document.body.addEventListener('click', modalClickHandler);
+  isOpen = !isOpen;
+}
+
+function closeTokensModal() {
+  jTokensModal.style.display = 'none';
+  jTabsBackdrop.style.display = 'none';
+  document.body.removeEventListener('click', modalClickHandler);
+  isOpen = !isOpen;
+}
+
+function modalClickHandler(event) {
+  if (event.target.classList.contains('backdrop')) {
+    closeTokensModal();
+  }
+}
+
+jCloseTokensModalButton.addEventListener('click', closeTokensModal);
+jTokensButton.addEventListener('click', tokensButtonClickhandler);
