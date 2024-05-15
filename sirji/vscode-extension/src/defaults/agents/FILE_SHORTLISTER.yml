@@ -1,5 +1,5 @@
-id: SHORTLISTER
-name: Shortlister
+id: FILE_SHORTLISTER
+name: File Shortlister
 llm:
   provider: openai
   model: gpt-4o
