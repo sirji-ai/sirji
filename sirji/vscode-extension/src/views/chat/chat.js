@@ -719,6 +719,7 @@ const jTokensButton = document.getElementById('jTokensButton');
 const jTokensModal = document.getElementById('jTokensModal');
 const jCloseTokensModalButton = document.getElementById('jCloseTokensModalButton');
 const jTabsBackdrop = document.getElementById('jTabsBackdrop');
+const jBackdrop = document.getElementById('jBackdrop');
 let isOpen = false;
 
 function tokensButtonClickhandler(e) {
@@ -732,6 +733,7 @@ function tokensButtonClickhandler(e) {
 function openTokensModal() {
   jTokensModal.style.display = 'flex';
   jTabsBackdrop.style.display = 'flex';
+  jBackdrop.style.display = 'flex';
   document.body.addEventListener('click', modalClickHandler);
   isOpen = !isOpen;
 }
@@ -739,6 +741,7 @@ function openTokensModal() {
 function closeTokensModal() {
   jTokensModal.style.display = 'none';
   jTabsBackdrop.style.display = 'none';
+  jBackdrop.style.display = 'none';
   document.body.removeEventListener('click', modalClickHandler);
   isOpen = !isOpen;
 }
