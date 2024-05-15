@@ -4,7 +4,7 @@ from sirji_messages import ActionEnum
 from .actions.execute_command import ExecuteCommandMessage
 from .actions.run_server import RunServerMessage
 from .actions.create_project_file import CreateProjectFileMessage
-from .actions.create_shared_resource_file import CreateSharedResourceFileMessage
+from .actions.create_agent_output_file import CreateAgentOutputFileMessage
 from .actions.infer import InferMessage
 from .actions.question import QuestionMessage
 from .actions.response import ResponseMessage
@@ -13,9 +13,9 @@ from .actions.train_using_search_term import TrainUsingSearchTermMessage
 from .actions.train_using_url import TrainUsingUrlMessage
 from .actions.read_dir_structure import ReadDirStructureMessage
 from .actions.read_project_files import ReadProjectFilesMessage
-from .actions.read_shared_resources_files import ReadSharedResourcesFilesMessage
-from .actions.append_to_shared_resource_index import AppendToSharedResourceIndexMessage
-from .actions.read_shared_resource_index import ReadSharedResourceIndexMessage
+from .actions.read_agent_output_files import ReadAgentOutputFilesMessage
+from .actions.append_to_agent_output_index import AppendToAgentOutputIndexMessage
+from .actions.read_agent_output_index import ReadAgentOutputIndexMessage
 from .actions.invoke_agent import InvokeAgentMessage
 from .actions.invoke_agent_existing_session import InvokeAgentExistingSessionMessage
 from .actions.find_and_replace import FindAndReplace
@@ -44,7 +44,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.EXECUTE_COMMAND: ExecuteCommandMessage,
         ActionEnum.RUN_SERVER: RunServerMessage,
         ActionEnum.CREATE_PROJECT_FILE: CreateProjectFileMessage,
-        ActionEnum.CREATE_SHARED_RESOURCE_FILE: CreateSharedResourceFileMessage,
+        ActionEnum.CREATE_AGENT_OUTPUT_FILE: CreateAgentOutputFileMessage,
         ActionEnum.INFER: InferMessage,
         ActionEnum.QUESTION: QuestionMessage,
         ActionEnum.RESPONSE: ResponseMessage,
@@ -52,10 +52,10 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.TRAIN_USING_SEARCH_TERM: TrainUsingSearchTermMessage,
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
         ActionEnum.READ_PROJECT_FILES: ReadProjectFilesMessage,
-        ActionEnum.READ_SHARED_RESOURCES_FILES: ReadSharedResourcesFilesMessage,
+        ActionEnum.READ_AGENT_OUTPUT_FILES: ReadAgentOutputFilesMessage,
         ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage,
-        ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX: AppendToSharedResourceIndexMessage,
-        ActionEnum.READ_SHARED_RESOURCE_INDEX: ReadSharedResourceIndexMessage,
+        ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX: AppendToAgentOutputIndexMessage,
+        ActionEnum.READ_AGENT_OUTPUT_INDEX: ReadAgentOutputIndexMessage,
         ActionEnum.FIND_AND_REPLACE: FindAndReplace,
         ActionEnum.INSERT_TEXT: InsertText,
         ActionEnum.EXTRACT_DEPENDENCIES: ExtractDependenciesMessage

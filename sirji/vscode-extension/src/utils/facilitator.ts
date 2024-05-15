@@ -31,7 +31,7 @@ export class Facilitator {
   private isFirstUserMessage: Boolean = true;
   private stackManager: AgentStackManager = new AgentStackManager();
   private sessionManager: SessionManager | null = null;
-  private sharedResourcesFolderPath: string = '';
+  private agentOutputFolderPath: string = '';
   private lastMessageFrom: string = '';
   private sirjiInstallationFolderPath: string = '';
   private sirjiRunFolderPath: string = '';
@@ -96,7 +96,7 @@ export class Facilitator {
     oThis.sirjiRunFolderPath = runFolderPath;
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
-    oThis.sharedResourcesFolderPath = path.join(runFolderPath, 'shared_resources');
+    oThis.agentOutputFolderPath = path.join(runFolderPath, 'agent_output');
     let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
 
     let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
@@ -107,7 +107,7 @@ export class Facilitator {
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
-    fs.mkdirSync(oThis.sharedResourcesFolderPath, { recursive: true });
+    fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
     fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
@@ -325,10 +325,10 @@ export class Facilitator {
 
       case 'userMessage':
         if (oThis.isFirstUserMessage) {
-          const sharedResourcesIndexFilePath = path.join(oThis.sharedResourcesFolderPath, 'index.json');
+          const agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
 
           let creatorAgent = 'SIRJI';
-          let creatorForlderPath = path.join(oThis.sharedResourcesFolderPath, creatorAgent);
+          let creatorForlderPath = path.join(oThis.agentOutputFolderPath, creatorAgent);
           let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
 
           let problemStatementFilePathKey = path.join(creatorAgent, 'problem.txt');
@@ -339,7 +339,7 @@ export class Facilitator {
           oThis.writeToFile(problemStatementFilePath, message.content);
 
           fs.writeFileSync(
-            sharedResourcesIndexFilePath,
+            agentOutputIndexFilePath,
             JSON.stringify({
               [problemStatementFilePathKey]: {
                 description: 'Problem statement from the SIRJI_USER.',
@@ -478,7 +478,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.sharedResourcesFolderPath, oThis.sirjiRunFolderPath);
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;

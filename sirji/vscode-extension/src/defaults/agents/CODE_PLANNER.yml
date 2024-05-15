@@ -5,10 +5,10 @@ llm:
   model: gpt-4o
 
 skills:
-  - skill: Generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in shared resources.
+  - skill: Generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in Agent Output Folder.
     pseudo_code: |
-      1. Read the problem statement from the shared resources.
-      2. Read the list of essential file paths from shared resources. These file paths were shortlisted earlier and fall under one of these categories: "Target for Modification", "Reference for New Development", and "Dependency".
+      1. Read the problem statement from the Agent Output Folder.
+      2. Read the list of essential file paths from Agent Output Folder. These file paths were shortlisted earlier and fall under one of these categories: "Target for Modification", "Reference for New Development", and "Dependency".
       3. Read the content of the essential files.
       4. Using the understanding from the essential files, generate detailed steps using the templates below and adhering to the specified rules:
           
@@ -42,7 +42,7 @@ skills:
                   Ask the SIRJI_USER to review the modified steps.
               END IF
           UNTIL the SIRJI_USER confirms the steps.
-      6. Store a document (called as "planner output") in share resources having the following sections:
+      6. Store a document (called as "planner output") in Agent Output Folder having the following sections:
         - Your detailed understandaing of the problem statement
         - Relevant contents of the documentation needed to solve the problem statement
         - List of finalized implementation steps

@@ -13,7 +13,6 @@ rules:
 skills:
   - skill: "Finalize Epics and User Story"
     sub_tasks:
-      - "Read problem statement from shared_resources."
+      - "Read problem statement from Agent Output Folder."
       - "Elaborate the problem statement into epics & then send the 'Proposal' to SIRJI_USER to get 'Finalization'."
-      - "Write the finalized epics and user stories by saving it to shared resources in shared_resources/{{Your Agent ID}} folder."
-      - "Append the above created file in the shared resources' index."
+      - "Write the finalized epics and user stories by saving it to Agent Output Folder."

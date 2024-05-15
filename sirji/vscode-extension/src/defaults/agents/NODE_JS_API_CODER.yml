@@ -14,10 +14,10 @@ sub_agents:
 skills:
   - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
     pseudo_code: |
-      1. Read the problem statement from shared resources to understand the requirements.
+      1. Read the problem statement from Agent Output Folder to understand the requirements.
       2. INVOKE_AGENT SHORTLISTER to shortlist essential files, identifying primary files based on provided summaries and extracting dependencies, creating a comprehensive set of files that may require modifications or can serve as references to address the problem statement.
-      3. INVOKE_AGENT CODE_PLANNER to generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in shared resources.
-      4. Fetch the fresh contents of shared resource index, in order to get paths to shared resources created by CODE_PLANNER.
-      5. Read the planner output having the generated steps from shared resources.
+      3. INVOKE_AGENT CODE_PLANNER to generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in Agent Output Folder.
+      4. Fetch the fresh contents of Agent Output Index, in order to get paths to files created by CODE_PLANNER inside of Agent Output Folder.
+      5. Read the planner output having the generated steps from Agent Output Folder.
       6. Loop over the generated steps and INVOKE_AGENT CODE_STEP_EXECUTOR to work on each step of the iteration, passing the current step in the BODY as purpose of invocation.
       7. Respond back to the agent who invoked you, detailing your actions in the BODY.

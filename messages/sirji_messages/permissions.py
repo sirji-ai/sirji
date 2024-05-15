@@ -6,14 +6,14 @@ from sirji_messages import ActionEnum, AgentEnum
 permissions_dict = {
     (AgentEnum.ANY, AgentEnum.EXECUTOR): {
         ActionEnum.CREATE_PROJECT_FILE,
-        ActionEnum.CREATE_SHARED_RESOURCE_FILE,
+        ActionEnum.CREATE_AGENT_OUTPUT_FILE,
         ActionEnum.EXECUTE_COMMAND,
         ActionEnum.RUN_SERVER,
         ActionEnum.READ_PROJECT_FILES,
-        ActionEnum.READ_SHARED_RESOURCES_FILES,
+        ActionEnum.READ_AGENT_OUTPUT_FILES,
         ActionEnum.READ_DIR_STRUCTURE,
-        ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX,
-        ActionEnum.READ_SHARED_RESOURCE_INDEX,
+        ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX,
+        ActionEnum.READ_AGENT_OUTPUT_INDEX,
         ActionEnum.FIND_AND_REPLACE,
         ActionEnum.INSERT_TEXT,
         ActionEnum.EXTRACT_DEPENDENCIES

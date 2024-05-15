@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class ReadSharedResourcesFilesMessage(BaseMessages):
+class ReadAgentOutputFilesMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.READ_SHARED_RESOURCES_FILES.name
+        self.action = ActionEnum.READ_AGENT_OUTPUT_FILES.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -20,7 +20,7 @@ class ReadSharedResourcesFilesMessage(BaseMessages):
             File paths: {{Array of file paths}}""")})
     
     def description(self):
-        return "Read Multiple Files From Shared Resources"
+        return "Read Multiple Files From Agent Output Folder"
     
     def instructions(self):
         return [ "The file paths must be in the following format: '{{Your Agent ID}}/{{file name}}'."]

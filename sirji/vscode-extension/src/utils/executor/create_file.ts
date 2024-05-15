@@ -16,7 +16,7 @@ export async function createFile(rootPath: string, isProjectRoot: boolean, body:
       }
     } else {
       if (path.isAbsolute(filePath)) {
-        throw new Error('Absolute file path is not allowed for shared resources. Write operation denied.');
+        throw new Error('Absolute file path is not allowed while creating file in Agent Output Folder. Write operation denied.');
       }
     }
 

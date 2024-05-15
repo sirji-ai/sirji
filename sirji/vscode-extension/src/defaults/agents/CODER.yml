@@ -12,7 +12,7 @@ rules:
 skills:
   - skill: "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components."
     sub_tasks:
-      - "Read problem statement, epics & user stories and architecture components from shared_resources."
+      - "Read problem statement, epics & user stories and architecture components from Agent Output Folder."
       - "Write concrete code implementing the epics & user stories and the problem statement. Do not just conceptualize or outline or simulate it."
       - "Install programming language-specific packages or libraries in local folders, utilizing tools such as venv for installing Python dependencies and package.json for managing Node.js dependencies."
       - "Verify whether a system-level command is already installed to avoid triggering the installation of packages that are already in place."

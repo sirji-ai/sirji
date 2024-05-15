@@ -140,7 +140,7 @@ config = {
     {
       "skill": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components.",
       "sub_tasks": [
-        "Read problem statement, epics & user stories and architecture components from shared_resources.",
+        "Read problem statement, epics & user stories and architecture components from agent output folder.",
         "Write concrete code and not just conceptualize or outline or simulate it.",
         "Follow secure software development practices while generating code.",
         "Ensure that you don't create any file/folder outside of project folder, i.e. './'",
@@ -152,16 +152,16 @@ config = {
   ]
 }
 
-shared_resources_index = {
-  "shared_resources/SIRJI/problem.txt": {
+agent_output_folder_index = {
+  "SIRJI/problem.txt": {
     "description": "Problem statement from the user.",
     "created_by": "SIRJI"
   },
-  "shared_resources/PRODUCT_MANAGER/finalized_epics_user_stories.txt": {
+  "PRODUCT_MANAGER/finalized_epics_user_stories.txt": {
     "description": "Finalized Epics and User Stories for the Tic-Tac-Toe game with AI opponent.",
     "created_by": "PRODUCT_MANAGER"
   },
-  "shared_resources/ARCHITECT/finalized_architecture_components.txt": {
+  "ARCHITECT/finalized_architecture_components.txt": {
     "description": "Finalized architecture components for the Tic-Tac-Toe game with AI opponent.",
     "created_by": "ARCHITECT"
   }
@@ -169,7 +169,7 @@ shared_resources_index = {
 
 from sirji_agents import GenericAgent
 
-agent = GenericAgent(config, shared_resources_index)
+agent = GenericAgent(config, agent_output_folder_index)
 
 history = []
 message_str = "***\nFROM: ORCHESTRATOR\nTO: CODER\nACTION: INVOKE_AGENT\nSUMMARY: Implement the epic & user stories using the architecture components.\nBODY:\nPImplement the epic & user stories using the architecture components.\n***"

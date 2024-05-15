@@ -9,7 +9,7 @@ llm:
 skills:
   - skill: "Implement a step by reading the planner output and reference files, modifying or creating files according to the specified changes."
     pseudo_code: |
-      1. Read the planner output having the generated steps from shared resources.
+      1. Read the planner output having the generated steps from Agent Output Folder.
       2. Read the reference file specified in the "current step" (specified in the BODY of message which invoked you) from the project folder.
       3. Read the file to be changed from the project folder. If this file is not found, this is a new file to be created.
       4. Implement the changes needed for the current step, following the below given rules:

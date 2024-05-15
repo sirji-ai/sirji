@@ -56,8 +56,8 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, config, shared_resources_index, file_summaries):
-        agent = GenericAgent(config, shared_resources_index, file_summaries)
+    def process_message(self, message_str, conversations, config, agent_output_index, file_summaries):
+        agent = GenericAgent(config, agent_output_index, file_summaries)
         return agent.message(message_str, conversations)
         
     def main(self, agent_id, agent_session_id, agent_callstack):
@@ -67,7 +67,7 @@ class AgentRunner:
         
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
-        shared_resources_index_path = os.path.join(sirji_run_path, 'shared_resources', 'index.json')
+        agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
         
         agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
 
@@ -90,8 +90,8 @@ class AgentRunner:
         # config = json.loads(config_file_contents)
         config = yaml.safe_load(config_file_contents)
 
-        shared_resources_index_contents = self.read_file(shared_resources_index_path)
-        shared_resources_index = json.loads(shared_resources_index_contents)
+        agent_output_index_contents = self.read_file(agent_output_index_path)
+        agent_output_index = json.loads(agent_output_index_contents)
 
         llm = config['llm']
         
@@ -100,7 +100,7 @@ class AgentRunner:
         # Set SIRJI_MODEL env var to llm.model
         os.environ['SIRJI_MODEL'] = llm['model']
 
-        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, shared_resources_index, file_summaries)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, agent_output_index, file_summaries)
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed

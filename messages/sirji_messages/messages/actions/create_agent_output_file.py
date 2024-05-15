@@ -3,10 +3,10 @@ import textwrap
 from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
-class CreateSharedResourceFileMessage(BaseMessages):
+class CreateAgentOutputFileMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.CREATE_SHARED_RESOURCE_FILE.name
+        self.action = ActionEnum.CREATE_AGENT_OUTPUT_FILE.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -21,7 +21,7 @@ class CreateSharedResourceFileMessage(BaseMessages):
             {{file contents}}""")})
 
     def description(self):
-        return "Create a File Inside Shared Resources Folder"
+        return "Create a File Inside Agent Output Folder"
     
     def instructions(self):
         return [ "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]

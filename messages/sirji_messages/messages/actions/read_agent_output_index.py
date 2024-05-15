@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class ReadSharedResourceIndexMessage(BaseMessages):
+class ReadAgentOutputIndexMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.READ_SHARED_RESOURCE_INDEX.name
+        self.action = ActionEnum.READ_AGENT_OUTPUT_INDEX.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -20,7 +20,7 @@ class ReadSharedResourceIndexMessage(BaseMessages):
             Empty""")})
 
     def description(self):
-        return "Read Shared Resource Index"
+        return "Read Agent Output Index"
 
     def instructions(self):
         return []

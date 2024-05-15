@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export async function appendToSharedResourcesIndex(sharedResourcesFolderPath: string, messageBody: string, agentId: string): Promise<string> {
+export async function appendToAgentOutputsIndex(agentOutputFolderPath: string, messageBody: string, agentId: string): Promise<string> {
   try {
     const [filePathString, filePathContentDescription] = messageBody.split('---');
     const filePath = filePathString.replace('File path:', '').trim();
@@ -19,7 +19,7 @@ export async function appendToSharedResourcesIndex(sharedResourcesFolderPath: st
       }
     };
 
-    const uri = vscode.Uri.file(path.join(sharedResourcesFolderPath, 'index.json'));
+    const uri = vscode.Uri.file(path.join(agentOutputFolderPath, 'index.json'));
 
     const directoryPath = path.dirname(uri.fsPath);
     if (!fs.existsSync(directoryPath)) {
@@ -40,9 +40,9 @@ export async function appendToSharedResourcesIndex(sharedResourcesFolderPath: st
 
     await vscode.workspace.fs.writeFile(uri, content);
 
-    console.log(`Shared resource index updated successfully: ${uri.fsPath}`);
+    console.log(`Agent Output Index updated successfully: ${uri.fsPath}`);
 
-    return 'Updated shared resources index file.';
+    return 'Updated agent output index file.';
   } catch (e) {
     const errorMessage = `Failed to create or write to the file. Error: ${e}`;
     return errorMessage;

@@ -4,10 +4,10 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class AppendToSharedResourceIndexMessage(BaseMessages):
+class AppendToAgentOutputIndexMessage(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.APPEND_TO_SHARED_RESOURCES_INDEX.name
+        self.action = ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -17,13 +17,13 @@ class AppendToSharedResourceIndexMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            File path: {{file path of the shared resource file relative to the shared_resource folder}}
+            File path: {{file path of the agent output file relative to the Agent Output Folder}}
             ---
-            {{Description of the shared resource file, to be used by other agents to know what it is about}}""")})
+            {{Description of the agent output file, to be used by other agents to know what it is about}}""")})
 
     def description(self):
-        return "Register to the Shared Resource Index"
+        return "Register to the Agent Output Index"
     
     def instructions(self):
-        return [ "Ensure to register new shared resource files to the shared resources' index.",
+        return [ "Ensure to register new agent output files to the Agent Output Index.",
                  "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]
