@@ -67,7 +67,7 @@ class GenericAgent():
                     raise e
                 logger.info(f"Requesting LLM to resend the message in correct format.\n")
                 conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                conversation.append({"role": "user", "content": "Error obtained in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors."})
+                conversation.append({"role": "user", "content": "Error in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors."})
             except Exception as e:
                 logger.info(f"Generic error while parsing message. Error: {e}\n")
                 raise e
