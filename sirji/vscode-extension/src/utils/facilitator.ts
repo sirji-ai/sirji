@@ -395,14 +395,14 @@ export class Facilitator {
         let sessionId = parsedMessage.ACTION === 'INVOKE_AGENT' ? oThis.sessionManager?.startNewSession(agentCallstack) : oThis.sessionManager?.reuseSession(agentCallstack);
 
         try {
-          await spawnAdapter(
-            oThis.context,
-            oThis.sirjiInstallationFolderPath,
-            oThis.sirjiRunFolderPath,
-            oThis.projectRootPath,
-            path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
-            ['--agent_id', agent_id, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
-          );
+          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), [
+            '--agent_id',
+            agent_id,
+            '--agent_callstack',
+            agentCallstack,
+            '--agent_session_id',
+            sessionId
+          ]);
         } catch (error) {
           oThis.sendErrorToChatPanel(error);
           keepFacilitating = false;
@@ -489,7 +489,7 @@ export class Facilitator {
               console.log('Execution default', parsedMessage);
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
-                content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+                content: { message: `An error occurred during the execution of the Python script: ${error}`, allowUserMessage: true }
               });
               keepFacilitating = false;
             }
