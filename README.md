@@ -80,6 +80,9 @@ The Orchestrator is the central component in the Sirji framework, responsible fo
 ### Agent Sessions
 An agent can be invoked in either a fresh session or asked to continue an existing session. When invoked in a new session, it starts with a new system prompt and does not retain the context from the previous session. Sessions help keep the context focused on specific tasks.
 
+### Messaging Protocol
+The messaging protocol defines how the response from an LLM inference for an agent should appear. It specifies the recipient-specific allowed Response Templates. These Response Templates also adhere to an interface that mandates the presence of keys: FROM, TO, BODY, SUMMARY, and ACTION. The BODY may contain an ACTION-specific information schema.
+
 ### Project Folder
 The Project Folder is the primary directory for accessing all user-specific project files, including code files, documentation, and other relevant resources. When initializing Sirji, the user selects this folder as the primary workspace for the project.
 
@@ -91,19 +94,36 @@ The Agent Output Index is an index file for the Agent Output Folder that keeps t
 
 ### PyPI Packages
 
-The Planning Agent, Coding Agent, and Research Agent are developed within the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo). <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
+We have published following 3 PyPI packages, implementing different responsibilities. These packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
-Communication among these agents is facilitated through a defined message protocol. The Message Factory (responsible for creating, reading, updating, and deleting messages according to the message protocol) and the permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo).<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+#### sirji-agents <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
-The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+[`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo) is a PyPI package that implements the following components of the Sirji AI agentic framework:
+- **Orchestrator**: The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
+- **Generic Agent**: Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
+- **Research Agent**: Utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
-All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
+#### sirji-messages <a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+
+[`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo) is a PyPI package that implements the Sirji messaging protocol with the following highlights:
+- **Message Factory**: A factory that provides a Message class for a given action.
+- **Message Parser**: Parse structured message strings into Python dictionaries for easy access to the message components.
+- **Allowed Response Templates**: Provides the part of the system prompt describing allowed Response Templates for a given agent pair.
+- **Custom Exceptions**: A set of custom exceptions thrown by the message parser.
+- **Enums for Agents and Actions**: Provides easy auto-completion while writing code.
+
+#### sirji-tools <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+
+[`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo) implements these tools:
+- Crawling (downloading web pages to markdown files)
+- Searching on Google
+- Custom Logging
 
 ### Architecture Diagram
 ![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
 
 ## Roadmap
-We are calling our next release the ‘Core’ Release (ONGOING. ETA - May 20).
+We are calling our next release the ‘Core’ Release (ONGOING).
 
 Here is the link to the ‘Core’ release’s roadmap: https://github.com/orgs/sirji-ai/projects/5
 
