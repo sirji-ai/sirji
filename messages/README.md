@@ -70,7 +70,8 @@ message_str = message_class().generate({
             "from_agent_id": "EXECUTOR",
             "to_agent_id": "CODER",
             "summary": "Empty",
-            "body": "Done.")
+            "body": "Done."})
+            
 print(f"Generated RESPONSE message:\n{message_str}")
 ```
 
@@ -82,13 +83,13 @@ Parse structured message strings into Python dictionaries for easy access to the
 from sirji_messages import message_parse
 
 # Example message string to parse
-message_str = """```
+message_str = """***
 FROM: EXECUTOR
 TO: CODER
 ACTION: RESPONSE
 SUMMARY: Welcome to sirji-messages
 BODY: Welcome to sirji-messages. Here's how you can start.
-```"""
+***"""
 
 # Parsing the message
 message = message_parse(message_str)
