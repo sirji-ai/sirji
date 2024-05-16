@@ -1,15 +1,7 @@
 import textwrap
 from abc import ABC, abstractmethod
 
-
 class BaseMessages(ABC):
-
-    @abstractmethod
-    def template_payload_part(self):
-        """
-        Message template's payload part which is custom to the message action.
-        """
-        pass
 
     @abstractmethod
     def sample(self):
@@ -25,27 +17,35 @@ class BaseMessages(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
-    def custom_properties():
+    def instructions(self):
         """
-        List of custom properties of the message.
+        Instructions for the message.
         """
         pass
 
     def generate(self, obj):
+
+        try:
+            if self.to_agent:
+                obj["to_agent_id"] = self.to_agent
+        except AttributeError:
+            pass
+
+        try:
+            if self.from_agent:
+                obj["from_agent_id"] = self.from_agent
+        except AttributeError:
+            pass
+            
         return self.template().format(**obj)
-
-    def template_prefix_part(self):
-        return textwrap.dedent(f"""
-            ```
-            FROM: {self.from_agent}
-            TO: {self.to_agent}
-            ACTION: {self.action}""")
-
-    def template_suffix_part(self):
-        return textwrap.dedent(f"""```
-            """)
-
+    
     def template(self):
-        return self.template_prefix_part() + self.template_payload_part() + self.template_suffix_part()
+        return textwrap.dedent(f"""
+            ***
+            FROM: {{from_agent_id}}
+            TO: {{to_agent_id}}
+            ACTION: {self.action}
+            SUMMARY: {{summary}}
+            BODY: {{body}}
+            ***""")

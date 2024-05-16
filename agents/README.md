@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Sirji is an Open Source AI Software Development Agent.</em>
+  <em>Sirji is an agentic AI framework for software development.</em>
 </p>
 
 <p align="center">
@@ -25,18 +25,14 @@
 
 ## Sirji Agents
 
-`sirji-agents` is a PyPI package that implements three key agents for Sirji:
+`sirji-agents` is a PyPI package that implements the following components of the Sirji AI agentic framework:
+- **Orchestrator**: The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
+- **Generic Agent**: Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
+- **Research Agent**: Utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
-- Coding Agent
-- Planning Agent
-- Research Agent
-
-It Utilizes:
-
+By default, it utilizes:
 - OpenAI Chat Completions API
 - OpenAI Assistants API
-
-This package communicates with models and RAG assistants.
 
 ## Installation
 
@@ -67,18 +63,117 @@ playwright install
 
 ### Environment Variables
 
-Ensure that following environment variables are set:
+Ensure that the following environment variables are set:
 
 ```zsh
-export SIRJI_WORKSPACE="Absolute folder path for Sirji to use as it's workspace. Note that a .sirji folder will be created inside it."
-export SIRJI_RUN_ID='Unique alphanumeric ID for each run. Note that a sub folder named by this ID will be created inside of .sirji folder to store logs, etc.'
+export SIRJI_PROJECT="Absolute folder path for Sirji to use as its project folder."
+export SIRJI_INSTALLATION_DIR='Absolute path of the Sirji installation directory.'
+export SIRJI_RUN_PATH='Folder path containing run related logs, etc.'
 export SIRJI_OPENAI_API_KEY='OpenAI API key for Chat Completions API and Assistants API'
-export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai"'
-export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4-turbo"'
-export SIRJI_MODEL_PROVIDER_API_KEY='API key to be use for LLM inference'
+export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai".'
+export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4o".'
+export SIRJI_MODEL_PROVIDER_API_KEY='API key to be used for LLM inference.'
+```
+
+### Orchestrator
+
+The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
+
+```python
+# Following is a sample recipe
+recipe = {
+  "prescribed_tasks": [
+    {
+      "task": "Write epics and user stories.",
+      "agent": "PRODUCT_MANAGER"
+    },
+    {
+      "task": "Write architecture components.",
+      "agent": "ARCHITECT"
+    },
+    {
+      "task": "Implement the epic & user stories using the architecture components.",
+      "agent": "CODER"
+    }
+  ],
+  "tips": [
+    {
+      "deviation": "Architecture components are not in sync with the epics and user stories.",
+      "agent": "PRODUCT_MANAGER",
+      "task": "Make the epics and user stories consistent with the architecture components."
+    }
+  ]
+}
+
+from sirji_agents import Orchestrator
+
+agent = Orchestrator(recipe)
+
+# History is the array of LLM conversations till now
+history = []
+
+# Input message string
+message_str = ""
+response_message, history, prompt_tokens, completion_tokens = agent.message(message_str, history)
+```
+
+### Generic Agent
+
+Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
+
+```python
+# Convert the agent.yml file to a Python dictionary
+config = {
+  "id": "CODER",
+  "name": "Coding Agent",
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o"
+  },
+  "skills": [
+    {
+      "skill": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components.",
+      "sub_tasks": [
+        "Read problem statement, epics & user stories and architecture components from agent output folder.",
+        "Write concrete code and not just conceptualize or outline or simulate it.",
+        "Follow secure software development practices while generating code.",
+        "Ensure that you don't create any file/folder outside of project folder, i.e. './'",
+        "Install programming language-specific packages or libraries in local folders, utilizing tools such as venv for installing Python dependencies and package.json for managing Node.js dependencies.",
+        "Verify whether a system-level command is already installed to avoid triggering the installation of packages that are already in place.",
+        "Always execute the code and evaluate the response output. If the response has errors, solve them before moving ahead."
+      ]
+    }
+  ]
+}
+
+agent_output_folder_index = {
+  "SIRJI/problem.txt": {
+    "description": "Problem statement from the user.",
+    "created_by": "SIRJI"
+  },
+  "PRODUCT_MANAGER/finalized_epics_user_stories.txt": {
+    "description": "Finalized Epics and User Stories for the Tic-Tac-Toe game with AI opponent.",
+    "created_by": "PRODUCT_MANAGER"
+  },
+  "ARCHITECT/finalized_architecture_components.txt": {
+    "description": "Finalized architecture components for the Tic-Tac-Toe game with AI opponent.",
+    "created_by": "ARCHITECT"
+  }
+}
+
+from sirji_agents import GenericAgent
+
+agent = GenericAgent(config, agent_output_folder_index)
+
+history = []
+message_str = "***\nFROM: ORCHESTRATOR\nTO: CODER\nACTION: INVOKE_AGENT\nSUMMARY: Implement the epic & user stories using the architecture components.\nBODY:\nPImplement the epic & user stories using the architecture components.\n***"
+
+response_message, history, prompt_tokens, completion_tokens = agent.message(message_str, history)
 ```
 
 ### Research Agent
+
+The Research Agent utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
 ### Initialization
 
@@ -103,7 +198,16 @@ Some example message handling usages are given below.
 from sirji_messages import MessageFactory, ActionEnum
 
 message_class = MessageFactory[ActionEnum.TRAIN_USING_URL.name]
-message_str = message_class().generate({"url": "https://finance.yahoo.com/quote/API/"})
+
+body = {
+    "URL": "https://www.w3schools.com/python/python_json.asp"
+}
+
+message_str = message_class().generate({
+            "from_agent_id": "Id of the agent, who is invoking the action",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": body
+        })
 
 researcher.message(message_str)
 ```
@@ -114,58 +218,14 @@ researcher.message(message_str)
 from sirji_messages import MessageFactory, ActionEnum
 
 message_class = MessageFactory[ActionEnum.INFER.name]
-message_str = message_class().generate({"details": "How to use yahoo finance api?"})
-
+infer_query = "What is the capital of India?"
+message_str = message_class().generate({
+            "from_agent_id": "Id of the agent, who is invoking the action",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": infer_query
+        })  
+        
 response, total_tokens = researcher.message(message_str)
-```
-
-### Coding Agent
-
-```python
-from sirji_agents import CodingAgent
-
-# Initialize Coding Agent
-coder = CodingAgent()
-
-# Construct a message for problem statement
-from sirji_messages import MessageFactory, ActionEnum
-message_class = MessageFactory[ActionEnum.PROBLEM_STATEMENT.name]
-message_str = message_class().generate({"details": "Create a python executable file to find out the factorial of a number"})
-
-# At the beginning, history is empty
-coder_history = []
-
-# call the Coder and update the history variable
-response_message, coder_history, prompt_tokens, completion_tokens = coder.message(message_str, coder_history)
-
-# Now in the new history:
-# coder_history[0] is the system prompt
-# coder_history[1] is the message from User to Coder passing the problem statement
-# coder_history[2] is the response from the LLM inference
-
-# Persist the history variable for future use.
-```
-
-### Planning Agent
-
-```python
-from sirji_agents import PlanningAgent
-
-# Initialize Planning Agent
-planner = PlanningAgent()
-
-# Construct a message for generate steps message
-from sirji_messages import MessageFactory, ActionEnum
-message_class = MessageFactory[ActionEnum.GENERATE_STEPS.name]
-message_str = message_class().generate({"details": "Create a python executable file to find out the factorial of a number"})
-
-# In the actual flow, this message_str will be obtained as a response from Coder.
-
-# At the beginning, history is empty
-planner_history = []
-
-# call the Planner and update the history variable
-response_message, planner_history, prompt_tokens, completion_tokens = planner.message(message_str, planner_history)
 ```
 
 ## For Contributors
@@ -187,7 +247,7 @@ playwright install
 
 ## Running Tests and Coverage Analysis
 
-TODO
+TODO - Introduce test cases.
 
 ## License
 

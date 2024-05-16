@@ -37,7 +37,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             # Provide a way to output this updated init_payload
             logger.info(f"New assistant created with ID: {self.assistant_id}")
 
-        self.index_file_path = os.path.join(self._get_workspace_folder(), '.sirji', self._get_run_id_folder(), 'researcher', 'file_index.json')
+        self.index_file_path = os.path.join(self._get_run_path(), 'researcher', 'file_index.json')
 
         # Load or initialize the index file
         self.index_data = self._load_or_initialize_index_file()
@@ -82,18 +82,18 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         return ""
 
-    def _get_workspace_folder(self):
-        workspace = os.environ.get("SIRJI_WORKSPACE")
-        if workspace is None:
+    def _get_project_folder(self):
+        project_folder = os.environ.get("SIRJI_PORJECT")
+        if project_folder is None:
             raise ValueError(
-                "SIRJI_WORKSPACE is not set as an environment variable")
-        return workspace
+                "SIRJI_PORJECT is not set as an environment variable")
+        return project_folder
 
-    def _get_run_id_folder(self):
-        run_id = os.environ.get("SIRJI_RUN_ID")
+    def _get_run_path(self):
+        run_id = os.environ.get("SIRJI_RUN_PATH")
         if run_id is None:
             raise ValueError(
-                "SIRJI_RUN_ID is not set as an environment variable")
+                "SIRJI_RUN_PATH is not set as an environment variable")
         return run_id
     
     def _create_assistant(self):
@@ -105,7 +105,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             name="Research Assistant",
             instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
             tools=[{"type": "retrieval"}],
-            model="gpt-4-turbo",
+            model="gpt-4o",
         )
 
         logger.info("Completed creating a new assistant")

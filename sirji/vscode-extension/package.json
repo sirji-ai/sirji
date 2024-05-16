@@ -2,7 +2,7 @@
   "name": "sirji",
   "displayName": "Sirji",
   "description": "Sirji is an AI Software Development Agent.",
-  "version": "0.0.7",
+  "version": "0.0.12",
   "publisher": "TrueSparrow",
   "icon": "out/assets/sirji.png",
   "repository": {
@@ -55,9 +55,9 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets out/",
+    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets src/defaults out/",
     "watch-ts": "tsc -watch -p ./",
-    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets out/'",
+    "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets src/defaults out/'",
     "watch": "concurrently npm:watch-*",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
@@ -67,8 +67,12 @@
     "publish": "vsce publish"
   },
   "devDependencies": {
+    "@types/babel__traverse": "^7.20.5",
+    "@types/esprima": "^4.0.6",
+    "@types/mime-types": "^2.1.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/uuid": "^9.0.8",
     "@types/vscode": "^1.80.2",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
@@ -78,5 +82,11 @@
     "eslint": "^8.56.0",
     "nodemon": "^3.1.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.5",
+    "@babel/traverse": "^7.24.5",
+    "mime-types": "^2.1.35",
+    "uuid": "^9.0.1"
   }
 }

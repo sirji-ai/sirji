@@ -1,0 +1,5 @@
+id: ORCHESTRATOR
+name: Orchestrator
+llm:
+  provider: openai
+  model: gpt-3.5-turbo

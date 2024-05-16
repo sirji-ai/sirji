@@ -8,24 +8,19 @@ class SolutionCompleteMessage(BaseMessages):
 
     def __init__(self):
         self.action = ActionEnum.SOLUTION_COMPLETE.name
-        self.from_agent = AgentEnum.CODER.name
-        self.to_agent = AgentEnum.USER.name
+        self.to_agent = AgentEnum.SIRJI_USER.name
 
         super().__init__()
 
-    def template_payload_part(self):
-        return textwrap.dedent("""
-          DETAILS: {details}
-          """)
-
     def sample(self):
         return self.generate({
-            "details": "A concise message to inform that the solution is complete."
-        })
+            "from_agent_id": "{{Your Agent ID}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": textwrap.dedent("""
+            {{Summarize what all was done for getting the solution.}}""")})
 
     def description(self):
-        return "To inform that the solution to the problem is complete:"
+        return "Inform About Solution Completed"
 
-    @staticmethod
-    def custom_properties():
-        return ['DETAILS']
+    def instructions(self):
+        return []

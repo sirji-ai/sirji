@@ -8,24 +8,22 @@ class RunServerMessage(BaseMessages):
 
     def __init__(self):
         self.action = ActionEnum.RUN_SERVER.name
-        self.from_agent = AgentEnum.CODER.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
 
-    def template_payload_part(self):
-        return textwrap.dedent("""
-          COMMAND: {command}
-          """)
-
     def sample(self):
         return self.generate({
-            "command": "Command to start server process. This command should be relative to the workspace root folder."
-        })
+            "from_agent_id": "{{Your Agent ID}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": textwrap.dedent("""
+            {{command}}""")})
 
     def description(self):
-        return "To start server process:"
+        return "Run a Server or a Continuous Running Process"
+    
+    def instructions(self):
+        return [ "The command must use the project root as the current working directory.",
+                 "The command must be sufficiently chained. For example, 'source my_env.sh && npm start'."]
 
-    @staticmethod
-    def custom_properties():
-        return ['COMMAND']
+

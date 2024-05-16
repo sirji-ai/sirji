@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import * as fs from 'fs';
 
-export function renderView(context: vscode.ExtensionContext | undefined, view: string, workspaceRootUri: any, workspaceRootPath: any, sirjiRunId: string): vscode.WebviewPanel {
+export function renderView(context: vscode.ExtensionContext | undefined, view: string, projectRootUri: any, projectRootPath: any, sirjiRunId: string): vscode.WebviewPanel {
   let viewDetails: any;
 
   if (view === 'chat') {

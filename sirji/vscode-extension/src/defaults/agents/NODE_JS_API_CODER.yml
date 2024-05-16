@@ -1,0 +1,18 @@
+id: NODE_JS_API_CODER
+
+name: Node JS API Coder
+
+llm:
+  provider: openai
+  model: gpt-4o
+
+sub_agents:
+    - id: CODE_PLANNER
+    - id: CODE_WRITER
+
+skills:
+  - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
+    pseudo_code: |
+      1. INVOKE_AGENT CODE_PLANNER to analyze problem statements, identify relevant files, thoroughly review their contents, identify relevant dependencies, thoroughly review their contents too, and create a detailed implementation guide.
+      2. INVOKE_AGENT CODE_WRITER to read the implementation guide, extract necessary file changes, apply these modifications to the project files.
+      3. Respond back to the agent who invoked you, detailing your actions in the BODY.

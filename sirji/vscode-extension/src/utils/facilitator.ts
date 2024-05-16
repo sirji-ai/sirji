@@ -1,23 +1,25 @@
 import * as vscode from 'vscode';
 import { randomBytes } from 'crypto';
 import path from 'path';
+import os from 'os';
+import * as fs from 'fs';
 
 import { renderView } from './render_view';
 import { MaintainHistory } from './maintain_history';
-import { invokeAgent } from './invoke_agent';
+import { spawnAdapter } from './adapter_wrapper';
 import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
-import { openBrowser } from './open_browser';
-import { executeCommand } from './execute_command';
-import { createFile } from './create_file';
-import { readContent } from './read_content';
-import { executeTask } from './execute_task';
-import { executeSpawn } from './execute_spawn';
+
+import { Executor } from './executor/executor';
+import { readDependencies } from './executor/extract_file_dependencies';
+
+import { AgentStackManager } from './agent_stack_manager';
+import { SessionManager } from './session_manager';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
-  private workspaceRootUri: any;
-  private workspaceRootPath: any;
+  private projectRootUri: any;
+  private projectRootPath: any;
   private sirjiRunId: string = '';
   private chatPanel: vscode.WebviewPanel | undefined;
   private secretManager: SecretStorage | undefined;
@@ -26,6 +28,14 @@ export class Facilitator {
   private isPlannerTabShown: Boolean = false;
   private isResearcherTabShown: Boolean = false;
   private isCoderTabShown: Boolean = false;
+  private isFirstUserMessage: Boolean = true;
+  private stackManager: AgentStackManager = new AgentStackManager();
+  private sessionManager: SessionManager | null = null;
+  private agentOutputFolderPath: string = '';
+  private lastMessageFrom: string = '';
+  private sirjiInstallationFolderPath: string = '';
+  private sirjiRunFolderPath: string = '';
+  private inputFilePath: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -36,17 +46,14 @@ export class Facilitator {
   public async init() {
     const oThis = this;
 
-    // Setup workspace
-    await oThis.selectWorkspace();
+    // Setup Project Folder
+    await oThis.selectProjectFolder();
 
-    // Setup Environment
-    await oThis.setupEnvironment();
+    // Setup folders for run, installed_agents, etc.
+    await oThis.initializeFolders();
 
     // Setup secret manager
     await oThis.setupSecretManager();
-
-    // Setup History Manager
-    // oThis.setupHistoryManager();
 
     // Open Chat Panel
     oThis.openChatViewPanel();
@@ -54,20 +61,15 @@ export class Facilitator {
     return oThis.chatPanel;
   }
 
-  private async setupEnvironment() {
-    const oThis = this;
-    oThis.sirjiRunId = randomBytes(16).toString('hex');
-  }
-
-  private async selectWorkspace(): Promise<void> {
+  private async selectProjectFolder(): Promise<void> {
     const oThis = this;
 
-    oThis.workspaceRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
-    oThis.workspaceRootPath = oThis.workspaceRootUri ? oThis.workspaceRootUri.fsPath : null;
+    oThis.projectRootUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : null;
+    oThis.projectRootPath = oThis.projectRootUri ? oThis.projectRootUri.fsPath : null;
 
-    if (!oThis.workspaceRootUri) {
+    if (!oThis.projectRootUri) {
       // Prompt user to open a folder
-      const openFolderMsg = 'No workspace/folder is open. Please open a folder to proceed.';
+      const openFolderMsg = 'No project folder is open. Please open a folder to proceed.';
       await vscode.window.showErrorMessage(openFolderMsg, 'Open Folder').then(async (selection) => {
         if (selection === 'Open Folder') {
           await vscode.commands.executeCommand('workbench.action.files.openFolder');
@@ -77,11 +79,62 @@ export class Facilitator {
     }
   }
 
-  private setupHistoryManager() {
+  private async initializeFolders() {
     const oThis = this;
-    oThis.historyManager = new MaintainHistory();
 
-    oThis.historyManager.createHistoryFolder(oThis.workspaceRootPath, oThis.sirjiRunId);
+    oThis.sirjiRunId = Date.now().toString() + '_' + randomBytes(16).toString('hex');
+
+    let rootPath = oThis.context?.globalStorageUri.path || '';
+
+    console.log('-----rootPath------', rootPath);
+
+    let sirjiInstallationFolderPath = path.join(rootPath, 'Sirji');
+    oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
+
+    let sessionFolderPath = path.join(sirjiInstallationFolderPath, Constants.SESSIONS);
+    let runFolderPath = path.join(sessionFolderPath, oThis.sirjiRunId);
+    oThis.sirjiRunFolderPath = runFolderPath;
+
+    let conversationFolderPath = path.join(runFolderPath, 'conversations');
+    oThis.agentOutputFolderPath = path.join(runFolderPath, 'agent_output');
+    let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
+
+    let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
+    let constantsFilePath = path.join(runFolderPath, 'constants.json');
+    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
+    let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
+    let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
+
+    fs.mkdirSync(runFolderPath, { recursive: true });
+    fs.mkdirSync(conversationFolderPath, { recursive: true });
+    fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
+    fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
+    fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
+
+    fs.writeFileSync(constantsFilePath, JSON.stringify({ project_folder: oThis.projectRootPath }, null, 4), 'utf-8');
+
+    fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
+    oThis.sessionManager = new SessionManager(agentSessionsFilePath);
+
+    if (!fs.existsSync(recipeFilePath)) {
+      fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
+      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
+      fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
+    }
+  }
+
+  private async copyDirectory(source: string, destination: string) {
+    if (!fs.existsSync(destination)) {
+      fs.mkdirSync(destination, { recursive: true });
+    }
+
+    let items = fs.readdirSync(source);
+
+    items.forEach((item) => {
+      let srcPath = path.join(source, item);
+      let destPath = path.join(destination, item);
+      fs.copyFileSync(srcPath, destPath);
+    });
   }
 
   private async setupSecretManager() {
@@ -89,6 +142,20 @@ export class Facilitator {
 
     oThis.secretManager = new SecretStorage(oThis.context);
     await oThis.retrieveSecret();
+  }
+
+  private openChatViewPanel() {
+    const oThis = this;
+
+    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.projectRootUri, oThis.projectRootPath, oThis.sirjiRunId);
+
+    oThis.chatPanel.webview.onDidReceiveMessage(
+      async (message: any) => {
+        await oThis.handleMessagesFromChatPanel(message);
+      },
+      undefined,
+      (oThis.context || {}).subscriptions
+    );
   }
 
   private async retrieveSecret() {
@@ -124,27 +191,14 @@ export class Facilitator {
     });
   }
 
-  private openChatViewPanel() {
-    const oThis = this;
-
-    oThis.chatPanel = renderView(oThis.context, 'chat', oThis.workspaceRootUri, oThis.workspaceRootPath, oThis.sirjiRunId);
-
-    oThis.chatPanel.webview.onDidReceiveMessage(
-      async (message: any) => {
-        await oThis.handleMessagesFromChatPanel(message);
-      },
-      undefined,
-      (oThis.context || {}).subscriptions
-    );
-  }
-
   private async readCoderLogs() {
     const oThis = this;
 
-    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'coder.log');
+    const coderConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'coder.log');
 
     let coderLogFileContent = '';
 
+    // TODO P1: remove history manager.
     if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
       coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
       // return coderLogFileContent;
@@ -159,7 +213,7 @@ export class Facilitator {
   private async readPlannerLogs() {
     const oThis = this;
 
-    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'planner.log');
+    const plannerConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'planner.log');
 
     let plannerLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(plannerConversationFilePath)) {
@@ -176,7 +230,7 @@ export class Facilitator {
   private async readResearcherLogs() {
     const oThis = this;
 
-    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, 'logs', 'researcher.log');
+    const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'researcher.log');
 
     let researcherLogFileContent = '';
     if (oThis.historyManager?.checkIfFileExists(researcherConversationFilePath)) {
@@ -196,13 +250,11 @@ export class Facilitator {
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: {
-        message: 'Hello, I am Sirji. Please wait while i am setting up the workspace...',
+        message: 'Hello, I am Sirji. Please wait while I am getting initialized...',
         allowUserMessage: false,
-        messageInputText: 'Sirji> is setting up the workspace... Please wait...'
+        messageInputText: 'Sirji> is getting initialized... Please wait...'
       }
     });
-
-    // Setup Python virtual env and Install dependencies
 
     try {
       await oThis.setupVirtualEnv();
@@ -234,13 +286,17 @@ export class Facilitator {
     const oThis = this;
 
     try {
-      await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
+      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'setup_virtual_env.py'), [
         '--venv',
-        path.join(oThis.workspaceRootPath, Constants.PYHTON_VENV_FOLDER)
+        path.join(oThis.sirjiInstallationFolderPath, 'venv')
       ]);
     } catch (error) {
       oThis.sendErrorToChatPanel(error);
     }
+  }
+
+  private writeToFile(filePath: string, content: string, options: any = 'utf-8'): void {
+    fs.writeFileSync(filePath, content, options);
   }
 
   private async handleMessagesFromChatPanel(message: any) {
@@ -268,13 +324,48 @@ export class Facilitator {
         break;
 
       case 'userMessage':
-        if (!oThis.historyManager) {
-          oThis.setupHistoryManager();
+        if (oThis.isFirstUserMessage) {
+          const agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
+
+          let creatorAgent = 'SIRJI';
+          let creatorForlderPath = path.join(oThis.agentOutputFolderPath, creatorAgent);
+          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
+
+          let problemStatementFilePathKey = path.join(creatorAgent, 'problem.txt');
+
+          fs.mkdirSync(creatorForlderPath, { recursive: true });
+          fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
+
+          oThis.writeToFile(problemStatementFilePath, message.content);
+
+          fs.writeFileSync(
+            agentOutputIndexFilePath,
+            JSON.stringify({
+              [problemStatementFilePathKey]: {
+                description: 'Problem statement from the SIRJI_USER.',
+                created_by: creatorAgent
+              }
+            }),
+            'utf-8'
+          );
+
+          oThis.isFirstUserMessage = false;
+
+          await oThis.initFacilitation(message.content, {
+            TO: ACTOR_ENUM.ORCHESTRATOR
+          });
+        } else {
+          console.log('message.content--------', message.content);
+
+          oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+          fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
+
+          await oThis.initFacilitation(message.content, {
+            TO: oThis.lastMessageFrom,
+            FROM: ACTOR_ENUM.USER
+          });
         }
 
-        await oThis.initFacilitation(message.content, {
-          TO: ACTOR_ENUM.CODER
-        });
         break;
 
       default:
@@ -282,253 +373,165 @@ export class Facilitator {
     }
   }
 
-  private async initFacilitation(rawMessage: string, parsedMessage: any) {
+  async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
     while (keepFacilitating) {
-      console.log('inside while loop', parsedMessage);
-      const inputFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PYTHON_INPUT_FILE);
-      switch (parsedMessage.TO) {
-        case ACTOR_ENUM.CODER:
-          if (parsedMessage.ACTION === ACTION_ENUM.STEPS) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedSteps',
-              content: parsedMessage.PARSED_STEPS
-            });
-          }
+      oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
+      oThis.lastMessageFrom = parsedMessage?.FROM;
+      console.log('rawMessage-------', rawMessage);
+      console.log('parsedMessage------', parsedMessage);
+      console.log('lastMessageFrom------', oThis.lastMessageFrom);
 
-          if (!oThis.isCoderTabShown) {
-            oThis.isCoderTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showCoderTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId,
-                logs: oThis.readCoderLogs()
-              }
-            });
-          }
+      const inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
 
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+      if (parsedMessage.ACTION === 'INVOKE_AGENT' || parsedMessage.ACTION === 'INVOKE_AGENT_EXISTING_SESSION') {
+        let agent_id = parsedMessage.TO;
 
-          oThis.toCoderRelayToChatPanel(parsedMessage);
+        oThis.stackManager.addAgentId(agent_id);
+        let agentCallstack = oThis.stackManager.getStack();
 
-          const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
+        let sessionId = parsedMessage.ACTION === 'INVOKE_AGENT' ? oThis.sessionManager?.startNewSession(agentCallstack) : oThis.sessionManager?.reuseSession(agentCallstack);
 
-          const codingAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'coding_agent.py');
+        try {
+          await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'), [
+            '--agent_id',
+            agent_id,
+            '--agent_callstack',
+            agentCallstack,
+            '--agent_session_id',
+            sessionId
+          ]);
+        } catch (error) {
+          oThis.sendErrorToChatPanel(error);
+          keepFacilitating = false;
+        }
 
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, codingAgentPath, ['--input', inputFilePath, '--conversation', coderConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
+        const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);
+        console.log('agentConversationFilePath------', agentConversationFilePath);
 
-          const coderConversationContent = JSON.parse(oThis.historyManager?.readFile(coderConversationFilePath));
+        const conversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
+        const lastAgentMessage: any = conversationContent.conversations[conversationContent.conversations.length - 1];
 
-          const lastCoderMessage: any = coderConversationContent.conversations[coderConversationContent.conversations.length - 1];
+        console.log('------lastAgentMessage------', lastAgentMessage);
 
-          console.log('lastCoderMessage', lastCoderMessage);
+        rawMessage = lastAgentMessage?.content;
 
-          rawMessage = lastCoderMessage?.content;
+        parsedMessage = lastAgentMessage?.parsed_content;
 
-          parsedMessage = lastCoderMessage?.parsed_content;
+        fs.writeFileSync(inputFilePath, rawMessage, 'utf-8');
 
-          oThis.fromCoderRelayToChatPanel(parsedMessage);
+        if (parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+          oThis.stackManager.removeLastAgentId();
+        }
+      } else {
+        switch (parsedMessage.TO) {
+          case ACTOR_ENUM.ORCHESTRATOR:
+            try {
+              await spawnAdapter(
+                oThis.context,
+                oThis.sirjiInstallationFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.projectRootPath,
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_orchestator.py')
+              );
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+              keepFacilitating = false;
+            }
 
-          break;
+            const orchestratorConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'ORCHESTRATOR.json');
+            console.log('orchestratorConversationFilePath-----', orchestratorConversationFilePath);
 
-        case ACTOR_ENUM.RESEARCHER:
-          if (!oThis.isResearcherTabShown) {
-            oThis.isResearcherTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showResearcherTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId
-              }
-            });
-          }
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
+            let conversationContent = JSON.parse(fs.readFileSync(orchestratorConversationFilePath, 'utf-8'));
 
-          const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
+            const lastOrchestratorMessage: any = conversationContent.conversations[conversationContent.conversations.length - 1];
 
-          const researcherAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py');
+            console.log('lastCoderMessage', lastOrchestratorMessage);
 
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, researcherAgentPath, ['--input', inputFilePath, '--conversation', researcherConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
+            rawMessage = lastOrchestratorMessage?.content;
 
-          const researcherConversationContent = JSON.parse(oThis.historyManager?.readFile(researcherConversationFilePath));
+            parsedMessage = lastOrchestratorMessage?.parsed_content;
 
-          const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
+            oThis.writeToFile(inputFilePath, rawMessage);
+            break;
 
-          console.log('lastResearcherMessage', lastResearcherMessage);
+          case ACTOR_ENUM.USER:
+            if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
+              keepFacilitating = false;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'solutionCompleted',
+                content: { message: parsedMessage.BODY, allowUserMessage: true }
+              });
+            }
 
-          rawMessage = lastResearcherMessage?.content;
+            if (parsedMessage.ACTION === ACTION_ENUM.QUESTION) {
+              keepFacilitating = false;
+              oThis.chatPanel?.webview.postMessage({
+                type: 'botMessage',
+                content: { message: parsedMessage.BODY, allowUserMessage: true }
+              });
+            }
+            oThis.writeToFile(inputFilePath, rawMessage);
+            break;
 
-          parsedMessage = lastResearcherMessage?.parsed_content;
+          case ACTOR_ENUM.EXECUTOR:
+            try {
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath);
+              const executorResp = await executor.perform();
 
-          break;
-
-        case ACTOR_ENUM.PLANNER:
-          if (!oThis.isPlannerTabShown) {
-            oThis.isPlannerTabShown = true;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'showPlannerTab',
-              content: {
-                sirjiRunId: oThis.sirjiRunId
-              }
-            });
-          }
-          oThis.historyManager?.writeFile(inputFilePath, rawMessage);
-
-          const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
-
-          const plannerAgentPath = path.join(__dirname, '..', 'py_scripts', 'agents', 'planning_agent.py');
-
-          try {
-            await invokeAgent(oThis.context, oThis.workspaceRootPath, oThis.sirjiRunId, plannerAgentPath, ['--input', inputFilePath, '--conversation', plannerConversationFilePath]);
-          } catch (error) {
-            oThis.sendErrorToChatPanel(error);
-          }
-
-          const plannerConversationContent = JSON.parse(oThis.historyManager?.readFile(plannerConversationFilePath));
-
-          const lastPlannerMessage: any = plannerConversationContent.conversations[plannerConversationContent.conversations.length - 1];
-
-          console.log('lastPlannerMessage', lastPlannerMessage);
-
-          rawMessage = lastPlannerMessage?.content;
-
-          parsedMessage = lastPlannerMessage?.parsed_content;
-
-          break;
-
-        case ACTOR_ENUM.USER:
-          if (parsedMessage.ACTION === ACTION_ENUM.STEP_STARTED) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedStepStart',
-              content: parsedMessage.DETAILS
-            });
-
-            rawMessage = 'sure';
-            parsedMessage = {
-              TO: ACTOR_ENUM.CODER
-            };
-          }
-
-          if (parsedMessage.ACTION === ACTION_ENUM.STEP_COMPLETED) {
-            oThis.chatPanel?.webview.postMessage({
-              type: 'plannedStepComplete',
-              content: parsedMessage.DETAILS
-            });
-
-            rawMessage = 'sure';
-            parsedMessage = {
-              TO: ACTOR_ENUM.CODER
-            };
-          }
-
-          if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
-            keepFacilitating = false;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'solutionCompleted',
-              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
-            });
-          }
-
-          if (parsedMessage.ACTION === ACTION_ENUM.QUESTION || parsedMessage.ACTION === ACTION_ENUM.INFORM) {
-            keepFacilitating = false;
-            oThis.chatPanel?.webview.postMessage({
-              type: 'botMessage',
-              content: { message: parsedMessage.DETAILS, allowUserMessage: true }
-            });
-          }
-          break;
-
-        case ACTOR_ENUM.EXECUTOR:
-          switch (parsedMessage.ACTION) {
-            case ACTION_ENUM.OPEN_BROWSER:
-              //TODO:Implement this
-              openBrowser(parsedMessage.URL);
-              console.log('Browse', parsedMessage);
-              break;
-
-            case ACTION_ENUM.INSTALL_PACKAGE:
-              const installPackageCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
-              rawMessage = installPackageCommandRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              console.log('installPackageCommandRes', installPackageCommandRes);
-              break;
-
-            case ACTION_ENUM.EXECUTE_COMMAND:
-              const executedCommandRes = await executeSpawn(parsedMessage.COMMAND, oThis.workspaceRootPath);
-
-              rawMessage = executedCommandRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              console.log('executedCommandRes', executedCommandRes);
-              break;
-
-            case ACTION_ENUM.RUN_SERVER:
-              const runServerRes = await executeTask(parsedMessage.COMMAND, oThis.workspaceRootPath, oThis.sirjiRunId);
-
-              rawMessage = runServerRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              console.log('runServerRes', runServerRes);
-              break;
-
-            case ACTION_ENUM.CREATE_FILE:
-              const createFileRes = await createFile(oThis.workspaceRootPath, parsedMessage.FILENAME, parsedMessage.CONTENT);
-              rawMessage = createFileRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              console.log('Create', createFileRes);
-              break;
-
-            case ACTION_ENUM.READ_DIR:
-              const readDirContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.DIRPATH);
-              rawMessage = readDirContentRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              break;
-
-            case ACTION_ENUM.READ_FILE:
-              const readFileContentRes = await readContent(oThis.workspaceRootPath, parsedMessage.FILENAME);
-              rawMessage = readFileContentRes;
-              parsedMessage = {
-                TO: ACTOR_ENUM.CODER
-              };
-              break;
-
-            default:
+              rawMessage = executorResp.rawMessage;
+              parsedMessage = executorResp.parsedMessage;
+              oThis.writeToFile(inputFilePath, rawMessage);
+            } catch (error) {
+              console.log('error------', error);
               console.log('Execution default', parsedMessage);
               oThis.chatPanel?.webview.postMessage({
                 type: 'botMessage',
-                content: { message: `Executor called with unknown action: ${parsedMessage.ACTION}. Raw message: ${rawMessage}`, allowUserMessage: true }
+                content: { message: `An error occurred during the execution of the Python script: ${error}`, allowUserMessage: true }
               });
               keepFacilitating = false;
-              break;
-          }
+            }
+            break;
 
-          break;
+          default:
+            let agent_id = parsedMessage.TO;
 
-        default:
-          console.log('Actor default', parsedMessage);
-          oThis.chatPanel?.webview.postMessage({
-            type: 'botMessage',
-            content: { message: `Received message with unknown TO: ${parsedMessage.TO}. Raw message: ${rawMessage}`, allowUserMessage: true }
-          });
-          keepFacilitating = false;
-          break;
+            let agentCallstack = oThis.stackManager.getStack();
+            let sessionId = oThis.sessionManager?.reuseSession(agentCallstack);
+
+            try {
+              await spawnAdapter(
+                oThis.context,
+                oThis.sirjiInstallationFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.projectRootPath,
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'invoke_agent.py'),
+                ['--agent_id', parsedMessage.TO, '--agent_callstack', agentCallstack, '--agent_session_id', sessionId]
+              );
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+              keepFacilitating = false;
+            }
+
+            const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);
+
+            let genericAgentConversationContent = JSON.parse(fs.readFileSync(agentConversationFilePath, 'utf-8'));
+            const lastAgentMessage: any = genericAgentConversationContent.conversations[genericAgentConversationContent.conversations.length - 1];
+
+            console.log('------lastAgentMessage------', lastAgentMessage);
+
+            rawMessage = lastAgentMessage?.content;
+
+            parsedMessage = lastAgentMessage?.parsed_content;
+            oThis.writeToFile(inputFilePath, rawMessage);
+
+            if (parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+              oThis.stackManager.removeLastAgentId();
+            }
+            break;
+        }
       }
 
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
@@ -543,64 +546,19 @@ export class Facilitator {
     }
   }
 
-  private fromCoderRelayToChatPanel(parsedMessage: any) {
+  private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
 
     let contentMessage = null;
 
-    if (!parsedMessage || !parsedMessage.ACTION) {
-      return;
-    }
-
-    switch (parsedMessage.ACTION) {
-      case ACTION_ENUM.GENERATE_STEPS:
-        contentMessage = 'Generating steps to solve the given problem statement.';
-        break;
-
-      case ACTION_ENUM.CREATE_FILE:
-        contentMessage = `Creating File: ${parsedMessage.FILENAME}`;
-        break;
-
-      case ACTION_ENUM.EXECUTE_COMMAND:
-        contentMessage = `Executing Command: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.RUN_SERVER:
-        contentMessage = `Running Server: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.INSTALL_PACKAGE:
-        contentMessage = `Installing Package: ${parsedMessage.COMMAND}`;
-        break;
-
-      case ACTION_ENUM.READ_FILE:
-        contentMessage = `Reading File: ${parsedMessage.FILENAME}`;
-        break;
-
-      case ACTION_ENUM.READ_DIR:
-        contentMessage = `Reading Files in Folder (and its Sub-Folders): ${parsedMessage.DIRPATH}`;
-        break;
-
-      case ACTION_ENUM.TRAIN_USING_URL:
-        contentMessage = `Training Research Agent (RAG): Using contents from ${parsedMessage.URL}`;
-        break;
-
-      case ACTION_ENUM.INFER:
-        contentMessage = 'Inferring from the Research Agent based on trained knowledge';
-        break;
-
-      default:
-        break;
-    }
-
-    if (!contentMessage) {
+    if (!parsedMessage || !parsedMessage.ACTION || parsedMessage.TO == ACTOR_ENUM.USER || !parsedMessage.SUMMARY.trim() || parsedMessage.SUMMARY.trim().toLowerCase() === 'empty') {
       return;
     }
 
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: {
-        message: contentMessage,
+        message: `${parsedMessage.FROM}: ${parsedMessage.SUMMARY.trim()}`,
         allowUserMessage: false
       }
     });
@@ -640,26 +598,35 @@ export class Facilitator {
   private async calculateTotalTokensUsed() {
     const oThis = this;
 
-    const coderConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.CODER_JSON_FILE);
-    const researcherConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
-    const plannerConversationFilePath = path.join(oThis.workspaceRootPath, Constants.HISTORY_FOLDER, oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
+    // TODO - we need to read the conversation files of all the agents
 
-    const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
-    const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
-    const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
+    // const coderConversationFilePath = path.join(oThis.sirjiRunId, Constants.CODER_JSON_FILE);
+    // const researcherConversationFilePath = path.join(oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
+    // const plannerConversationFilePath = path.join(oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
 
-    const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
+    // const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
+    // const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
+    // const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
 
-    const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
+    // const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
 
-    const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-    const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+    // const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
+
+    // const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+    // const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+
+    // return {
+    //   total_prompt_tokens: totalPromptTokens,
+    //   total_completion_tokens: totalCompletionTokens,
+    //   total_prompt_tokens_value: totalPromptTokensValueInDollar,
+    //   total_completion_tokens_value: totalCompletionTokensValueInDollar
+    // };
 
     return {
-      total_prompt_tokens: totalPromptTokens,
-      total_completion_tokens: totalCompletionTokens,
-      total_prompt_tokens_value: totalPromptTokensValueInDollar,
-      total_completion_tokens_value: totalCompletionTokensValueInDollar
+      total_prompt_tokens: 0,
+      total_completion_tokens: 0,
+      total_prompt_tokens_value: 0,
+      total_completion_tokens_value: 0
     };
   }
 
@@ -691,3 +658,4 @@ export class Facilitator {
     });
   }
 }
+async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {}

@@ -8,24 +8,19 @@ class TrainUsingUrlMessage(BaseMessages):
 
     def __init__(self):
         self.action = ActionEnum.TRAIN_USING_URL.name
-        self.from_agent = AgentEnum.CODER.name
         self.to_agent = AgentEnum.RESEARCHER.name
 
         super().__init__()
 
-    def template_payload_part(self):
-        return textwrap.dedent("""
-          URL: {url}
-          """)
-
     def sample(self):
         return self.generate({
-            "url": "The URL that needs to be crawled, parsed, and trained to answer questions."
-        })
+            "from_agent_id": "{{Your Agent ID}}",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": textwrap.dedent("""
+            URL: {{url}}""")})
 
     def description(self):
-        return "Train using a URL:"
-
-    @staticmethod
-    def custom_properties():
-        return ['URL']
+        return "Train using a URL"
+    
+    def instructions(self):
+        return []

@@ -1,0 +1,20 @@
+id: ARCHITECT
+name: Architect Agent
+llm:
+  provider: openai
+  model: gpt-3.5-turbo
+skills:
+  - skill: Generation of architecture components.
+    sub_tasks:
+      - "Read problem statement and epics & user stories from Agent Output Folder."
+      - "Elaborate architecture components and then finalize with USER. Elaboration must include coming up with concrete choices for programming language, framework, database, cache, and any other applicable components required for implementing the epics & user stories and the problem statement. Finalization involves discussion with USER, getting feedback, adjusting according to the feedback and again asking question by showing the updated architecture components."
+      - >
+        Respond with QUESTION ACTION to the USER to get a finalization on. The message details should look like:
+        
+        "Here are the architecture components:
+        
+         <<detailed architecture components>> 
+        
+        <<confirmation question for the user>>". Keep asking QUESTION until finalized, showing the updated architecture components.
+      - "Write the finalized architecture components by saving it to Agent Output Folder."
+      

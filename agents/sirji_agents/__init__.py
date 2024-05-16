@@ -1,10 +1,9 @@
 from .researcher import ResearchAgent
-from .llm.coder import CodingAgent
-from .llm.planner import PlanningAgent
-
+from .llm.orchestrator import Orchestrator
+from .llm.generic import GenericAgent
 
 __all__ = [
     'ResearchAgent',
-    'CodingAgent',
-    'PlanningAgent'
+    'Orchestrator',
+    'GenericAgent'
 ]

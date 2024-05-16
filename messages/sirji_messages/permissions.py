@@ -4,44 +4,34 @@ from sirji_messages import ActionEnum, AgentEnum
 # Key: (from_agent, to_agent)
 # Value: set of allowed actions between the agents
 permissions_dict = {
-    (AgentEnum.CODER, AgentEnum.EXECUTOR): {
-        ActionEnum.CREATE_FILE,
+    (AgentEnum.ANY, AgentEnum.EXECUTOR): {
+        ActionEnum.CREATE_PROJECT_FILE,
+        ActionEnum.CREATE_AGENT_OUTPUT_FILE,
         ActionEnum.EXECUTE_COMMAND,
         ActionEnum.RUN_SERVER,
-        ActionEnum.INSTALL_PACKAGE,
-        ActionEnum.READ_FILE,
-        ActionEnum.READ_DIR
+        ActionEnum.READ_PROJECT_FILES,
+        ActionEnum.READ_AGENT_OUTPUT_FILES,
+        ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX,
+        ActionEnum.READ_AGENT_OUTPUT_INDEX,
+        ActionEnum.FIND_AND_REPLACE,
+        ActionEnum.INSERT_TEXT,
+        ActionEnum.EXTRACT_DEPENDENCIES
     },
-    (AgentEnum.CODER, AgentEnum.PLANNER): (
-        ActionEnum.GENERATE_STEPS
-    ),
-    (AgentEnum.CODER, AgentEnum.RESEARCHER): (
-        ActionEnum.TRAIN_USING_URL,
-        ActionEnum.INFER
-    ),
-    (AgentEnum.CODER, AgentEnum.USER): (
-        ActionEnum.QUESTION,
-        ActionEnum.STEP_STARTED,
-        ActionEnum.STEP_COMPLETED,
+    (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
+        ActionEnum.QUESTION
+    },
+    (AgentEnum.ANY, AgentEnum.CALLER): {
+        ActionEnum.RESPONSE
+    },
+    (AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER): {
         ActionEnum.SOLUTION_COMPLETE
-    ),
-    (AgentEnum.EXECUTOR, AgentEnum.CODER): (
-        ActionEnum.OUTPUT
-    ),
-    (AgentEnum.PLANNER, AgentEnum.CODER): (
-        ActionEnum.STEPS
-    ),
-    (AgentEnum.RESEARCHER, AgentEnum.CODER): (
-        ActionEnum.RESPONSE,
-        ActionEnum.TRAINING_OUTPUT
-    ),
-    (AgentEnum.USER, AgentEnum.CODER): (
-        ActionEnum.PROBLEM_STATEMENT,
-        ActionEnum.ANSWER,
-        ActionEnum.ACKNOWLEDGE,
-        ActionEnum.FEEDBACK
-    )
+    },
+    (AgentEnum.ORCHESTRATOR, AgentEnum.ANY): {
+        ActionEnum.INVOKE_AGENT,
+        ActionEnum.INVOKE_AGENT_EXISTING_SESSION
+    }
 }
+
 
 
 def validate_permission(from_str, to_str, action_str):

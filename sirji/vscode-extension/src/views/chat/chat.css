@@ -606,22 +606,22 @@ label {
 }
 
 .tab-button {
-  color: #9d9d9d;
+  color: var(--vscode-titleBar-inactiveForeground);
   cursor: pointer;
   padding: 5px 3px;
 }
 
 .tab-button:hover {
-  color: var(--vscode-list-hoverForeground);
+  color: var(--vscode-titleBar-activeForeground);
 }
 
 .tab-button.active {
-  color: var(--vscode-list-hoverForeground);
+  color: var(--vscode-titleBar-activeForeground);
   border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
 }
 
 .chat-tab-button{
-  color: var(--vscode-list-hoverForeground);
+  color: var(--vscode-titleBar-activeForeground);
   padding: 5px 3px;
   border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
 }
@@ -650,13 +650,13 @@ label {
 
 .toolbar-icon{
   svg > path {
-    fill: var(--vscode-activityBar-inactiveForeground)
+    fill: var(--vscode-titleBar-inactiveForeground)
   }
 }
 
 .toolbar-icon:hover {
   svg > path {
-    fill: var(--vscode-activityBar-foreground);
+    fill: var(--vscode-titleBar-activeForeground);
   }
 }
 
@@ -776,17 +776,17 @@ label {
 }
 
 .log-tab-button {
-  color: #9d9d9d;
+  color: var(--vscode-titleBar-inactiveForeground);
   cursor: pointer;
   padding: 5px 3px;
 }
 
 .log-tab-button:hover {
-  color: var(--vscode-list-hoverForeground);
+  color: var(--vscode-titleBar-activeForeground);
 }
 
 .log-tab-button.active {
-  color: var(--vscode-list-hoverForeground);
+  color: var(--vscode-titleBar-activeForeground);
   border-bottom: 1px solid var(--vscode-statusBarItem-remoteBackground);
 }
 
