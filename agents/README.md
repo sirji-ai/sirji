@@ -80,44 +80,22 @@ export SIRJI_INSTALLATION_DIR='Absolute path of the Sirji installation directory
 ```python
 # Following is a sample recipe
 recipe = {
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-3.5-turbo"
+  },
   "prescribed_tasks": [
-    "Write epics and user stories.",
-    "Write architecture components.",
-    "Implement the epic & user stories using the architecture components."
+    {
+      "task": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components."
+      "agent": "CODER"
+    }
   ],
-  "tips": [
-    "Ensure finalized epics & user stories and architecture components are consistent. Address any discrepancies with the user."
-  ]
+  "tips": []
 }
-
-# Following is a sample array of installed agents
-installed_agents = [
-  {
-    "id": "PRODUCT_MANAGER",
-    "name": "Product Manager Agent",
-    "skills": [
-      "Generation of epics and user stories for the problem statement."
-    ]
-  },
-  {
-    "id": "ARCHITECT",
-    "name": "Architect Agent",
-    "skills": [
-      "Generation of architecture components."
-    ]
-  },
-  {
-    "id": "CODER",
-    "name": "Coding Agent",
-    "skills": [
-      "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components."
-    ]
-  }
-]
 
 from sirji_agents import Orchestrator
 
-agent = Orchestrator(recipe, installed_agents)
+agent = Orchestrator(recipe)
 
 # History is the array of LLM conversation till now
 history = []
@@ -202,7 +180,16 @@ Some example message handling usages are given below.
 from sirji_messages import MessageFactory, ActionEnum
 
 message_class = MessageFactory[ActionEnum.TRAIN_USING_URL.name]
-message_str = message_class().generate({"url": "https://finance.yahoo.com/quote/API/"})
+
+body = {
+    "URL": "https://www.w3schools.com/python/python_json.asp"
+}
+
+message_str = message_class().generate({
+            "from_agent_id": "Id of the agent, who is invoking the action",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": body
+        })
 
 researcher.message(message_str)
 ```
@@ -213,8 +200,13 @@ researcher.message(message_str)
 from sirji_messages import MessageFactory, ActionEnum
 
 message_class = MessageFactory[ActionEnum.INFER.name]
-message_str = message_class().generate({"details": "How to use yahoo finance api?"})
-
+infer_query = "What is the capital of India?"
+message_str = message_class().generate({
+            "from_agent_id": "Id of the agent, who is invoking the action",
+            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
+            "body": infer_query
+        })  
+        
 response, total_tokens = researcher.message(message_str)
 ```
 
