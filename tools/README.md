@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Sirji is an Open Source AI Software Development Agent.</em>
+  <em>Sirji is an agentic AI framework for software development.</em>
 </p>
 
 <p align="center">
@@ -60,16 +60,16 @@ playwright install
 
 ### Environment Variables
 
-Ensure that following environment variables are set:
+Ensure that the following environment variables are set:
 
 ```zsh
-export SIRJI_PROJECT="Absolute folder path for Sirji to use as it's project folder."
+export SIRJI_PROJECT="Absolute folder path for Sirji to use as its project folder."
 export SIRJI_RUN_PATH='Folder having run specific logs, etc.'
 ```
 
 ### Crawl URLs
 
-Crawl URLs tool will be used to crawl the web pages and extract the information from the web pages. And store the information for the further processing by researcher.
+Crawl URLs tool will be used to crawl the web pages and extract the information from the web pages. And store the information for further processing by the researcher.
 
 ```python
 from sirji_tools import crawl_urls
@@ -107,7 +107,7 @@ p_logger.info("Log line here")
 1. Fork and clone the repository.
 2. Create and activate the virtual environment as described above.
 3. Set the environment variables as described above.
-4. Install the package in editable mode by running the following command from repository root:
+4. Install the package in editable mode by running the following command from the repository root:
 
 ```zsh
 pip install -e .
@@ -121,7 +121,7 @@ playwright install
 
 ## Running Tests and Coverage Analysis
 
-Follow the above mentioned steps for "contributors", before running the test cases.
+Follow the above-mentioned steps for "contributors", before running the test cases.
 
 ```zsh
 # Install testing dependencies
