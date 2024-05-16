@@ -21,8 +21,12 @@ export const findAndReplaceInProjectFile = async (body: string, projectRootPath:
       const editor = await vscode.window.showTextDocument(document);
       const allText = new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length));
 
+      let text = document.getText(allText);
+      if (!text.includes(searchText)) {
+        return 'ERROR: The specified string to find was not found in the document. Please re-read the content of the file and ensure you have provided the correct string to search for, then try again.';
+      }
+
       await editor.edit((editBuilder) => {
-        let text = document.getText(allText);
         const regex = new RegExp(searchText, 'g');
         text = text.replace(regex, replacement);
         editBuilder.replace(allText, text);
