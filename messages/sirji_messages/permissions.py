@@ -11,7 +11,6 @@ permissions_dict = {
         ActionEnum.RUN_SERVER,
         ActionEnum.READ_PROJECT_FILES,
         ActionEnum.READ_AGENT_OUTPUT_FILES,
-        ActionEnum.READ_DIR_STRUCTURE,
         ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX,
         ActionEnum.READ_AGENT_OUTPUT_INDEX,
         ActionEnum.FIND_AND_REPLACE,

@@ -3,7 +3,6 @@ import { executeSpawn } from './execute_spawn';
 import { executeTask } from './execute_task';
 import { openBrowser } from './open_browser';
 import { readContent } from './read_content';
-import { readDirectoryStructure } from './read_directory_structure';
 import { appendToAgentOutputsIndex } from './append_to_agent_output_index';
 import { readAgentOutputsIndex } from './read_agent_output_index';
 
@@ -54,8 +53,6 @@ export class Executor {
         return await readContent(oThis.projectRootPath, oThis.parsedMessage.BODY, false);
       case ACTION_ENUM.READ_AGENT_OUTPUT_FILES:
         return await readContent(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, false);
-      case ACTION_ENUM.READ_DIR_STRUCTURE:
-        return await readDirectoryStructure(oThis.projectRootPath, oThis.parsedMessage.BODY);
       case ACTION_ENUM.APPEND_TO_AGENT_OUTPUT_INDEX:
         return await appendToAgentOutputsIndex(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:

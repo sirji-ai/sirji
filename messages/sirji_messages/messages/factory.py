@@ -11,7 +11,6 @@ from .actions.response import ResponseMessage
 from .actions.solution_complete import SolutionCompleteMessage
 from .actions.train_using_search_term import TrainUsingSearchTermMessage
 from .actions.train_using_url import TrainUsingUrlMessage
-from .actions.read_dir_structure import ReadDirStructureMessage
 from .actions.read_project_files import ReadProjectFilesMessage
 from .actions.read_agent_output_files import ReadAgentOutputFilesMessage
 from .actions.append_to_agent_output_index import AppendToAgentOutputIndexMessage
@@ -53,7 +52,6 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
         ActionEnum.READ_PROJECT_FILES: ReadProjectFilesMessage,
         ActionEnum.READ_AGENT_OUTPUT_FILES: ReadAgentOutputFilesMessage,
-        ActionEnum.READ_DIR_STRUCTURE: ReadDirStructureMessage,
         ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX: AppendToAgentOutputIndexMessage,
         ActionEnum.READ_AGENT_OUTPUT_INDEX: ReadAgentOutputIndexMessage,
         ActionEnum.FIND_AND_REPLACE: FindAndReplace,
