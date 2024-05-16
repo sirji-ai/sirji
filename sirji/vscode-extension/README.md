@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Sirji is an Open Source AI Software Development Agent.</em>
+  <em>Sirji is an agentic AI framework for software development.</em>
 </p>
 
 <p align="center">
@@ -24,37 +24,19 @@
 
 ## Sirji
 
-Sirji is an agentic AI framework that helps developers solve software problems faster. These problems can range from building greenfield web applications to resolving GitHub issues, writing test cases, generating documentation, conducting code reviews, and much more.
+Sirji as an open-source framework where various AI agents collaborate via a messaging protocol to solve a given software problem. Problems range from building greenfield web apps to solving GitHub issues, writing test cases, and generating documentation.
 
-Right now, we have implemented Sirji as a VS Code extension. It lives where developers work. It provides an interactive chat interface, through which you can submit your problem statement and provide feedback. It takes advantage of the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+Sirji uses either the standard or user-generated recipe, that lists prescribed tasks and tips for solving a particular problem. Recipe also indicates which agent should perform each task.
 
-Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It also executes the generated code in your local or remote development environment.
+An Agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudo code. The community can create a custom agent either by modifying an already existing agent or write entirely new agent with entirely different pseudo code.
 
-In the next release, we will be making Sirji extendable, building it as a framework where the community can write custom agents having specialized skills, which would generate better results than a generic agent.
+Sirji is currently implemented as a Visual Studio Code extension. This extension provides an interactive chat interface right within your IDE through which you can submit your problem statement and give feedback to Sirji.
 
-## Why Do Developers Need Sirji?
+The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
-As developers, we aim to dedicate more time to high-impact activities, such as understanding requirements, finalizing architecture, and designing database schemas. We also strive to liberate ourselves from writing routine code—like models, migrations, and routes—and from the ongoing task of keeping test cases and documentation up to date.
-
-When adopting a new tech stack, it often takes time to familiarize ourselves with its concepts. Moreover, we frequently encounter runtime issues, such as missing packages or modules and errors that, while typically simple to resolve, are time-consuming.
-
-We are enthusiastic users and fans of GitHub Copilot, which assists us in writing code and resolving issues. However, Copilot’s contextual awareness is quite limited. To use it, we must first open the specific code file requiring changes and then activate Copilot. This becomes cumbersome in large projects spanning multiple repositories, particularly if developers are unsure where to begin. Additionally, Copilot is limited to the context of the current file, unless other files are explicitly mentioned in the comments.
-
-Furthermore, Copilot does not facilitate the process of getting code to run on our machines, which can require considerable effort and distract from more impactful tasks.
-
-These are all the problems and limitations we want to solve with Sirji, and in the process, build something that we will use ourselves.
-
-## Demo Video
-
-Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
-
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
-
-<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
+Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It executes the generated code in your local or remote development environment.
 
 ## Prerequisites
-
-Sirji has been tested on **macOS** only for now. We know there are certain OS-specific functionalities that we will soon generalize ([Issue #44](https://github.com/sirji-ai/sirji/issues/44)).
 
 Make sure you have installed all of the following prerequisites on your machine:
 
@@ -65,22 +47,47 @@ Make sure you have installed all of the following prerequisites on your machine:
 
 Also, you will need an OpenAI API key to access the GPT-4o model.
 
+## Demo Video
+
+Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
+
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
+
+<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
+
 ## Installation
 
 You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
 
 ## Architecture
 
-Sirji gets the work done using it's following agents:
+Let's go step by step in understanding the architecture.
 
-- The **Planning Agent** takes a problem statement and breaks it down into steps.
-- The **Coding Agent** proceeds step by step through the generated steps to solve the problem programmatically.
-- The **Research Agent** utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms. It can later use this acquired knowledge to answer questions posed by the Coding Agent.
-- The **Executor Agent** is responsible for Filesystem CRUD, executing commands, and installing dependencies. The Executor Agent is implemented directly within the extension and is written in TypeScript.
+### Agent
 
-### Architecture Diagram
+An Agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudo code.
 
-<img width="100%" alt="VS Code Extension - Architecture" src="https://github.com/sirji-ai/sirji/assets/7627517/0cee6e34-a42a-4db0-81db-d2f930132465">
+An agent defines its skills in an agent.yml file. This file lists the skills of the agent and the pseudo code to follow for each skill. It also specifies the LLM provider and model to be used for inference. Additionally, it lists the sub-agents that can be invoked from within the agent to complete certain parts of the task.
+
+### Recipe (recipe.json)
+
+A Recipe is a file that lists prescribed tasks and tips for solving a particular problem. It also indicates which agent should perform each task. The tips provide guidance for addressing issues that arise when tasks are performed out of the prescribed order. Each tip specifies the task and the agent responsible for it.
+
+### Orchestrator
+
+The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents as per the recipe.
+
+### Agent Sessions
+An agent can be invoked in either a fresh session or asked to continue an existing session. When invoked in a new session, it starts with a new system prompt and does not retain the context from the previous session. Sessions help keep the context focused on specific tasks.
+
+### Project Folder
+The Project Folder is the primary directory for accessing all user-specific project files, including code files, documentation, and other relevant resources. When initializing Sirji, the user selects this folder as the primary workspace for the project.
+
+### Agent Output Folder
+The Agent Output Folder is designated for storing the results and data outputs generated by the agents. This folder is different from the project folder and this ensures that operational data is kept separate from project files.
+
+#### Agent Output Index
+The Agent Output Index is an index file for the Agent Output Folder that keeps track of all files written by agents in that folder along with the a brief description of the file contents.
 
 ### PyPI Packages
 
@@ -92,6 +99,9 @@ The tools for crawling URLs (converting them into markdowns), searching for term
 
 All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
+### Architecture Diagram
+![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
+
 ## Roadmap
 We are calling our next release the ‘Core’ Release (ONGOING. ETA - May 20).
 
@@ -101,9 +111,6 @@ This is a significant release focused on the following key areas:
 - **User accounts**: Users will be required to create an account with Sirji. They can either bring their own LLM key or subscribe to a free but rate-limited Developer plan.
 - **Improve reliability**: The first version of the VS Code extension improved usability, but after using it ourselves for a while, we identified several issues and limitations ranging from incomplete solutions to a lack of web debugging capabilities. We are addressing these issues to make Sirji more reliable in solving software problems.
 - **Custom agents and recipes**: We are developing the framework to enable users to create and use custom agents and recipes (instructions on how the agents interact). This involves enhancing the orchestration functionality and refactoring existing base agents.
-
-### Architecture Diagram (Post Core Release)
-![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
 
 ## Contributing
 
