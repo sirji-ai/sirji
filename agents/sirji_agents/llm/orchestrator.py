@@ -89,7 +89,7 @@ class Orchestrator():
         instructions = textwrap.dedent(f"""
             Instructions:
             - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
-            - Processed sequentially over the prescribed tasks.
+            - Proceed sequentially over the prescribed tasks.
             - For each task, invoke the agent specified in the recipe alogside the task, explaining the task in the BODY of the invocation.
             """)
 

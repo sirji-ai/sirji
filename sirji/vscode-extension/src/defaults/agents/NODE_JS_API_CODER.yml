@@ -8,6 +8,7 @@ llm:
 
 sub_agents:
     - id: CODE_PLANNER
+    - id: CODE_WRITER
 
 skills:
   - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
