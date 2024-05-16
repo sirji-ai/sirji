@@ -28,8 +28,10 @@
 `sirji-messages` is a PyPI package that implements the Sirji message protocol with following highlights:
 
 - Message Factory
-- Permissions Matrix (for defining message actions allowed between two agents)
-- System prompt generation
+- Message Parser
+- Generate Allowed Response Templates
+- Custom Exceptions
+- Enums for Intuitive References
 
 ## Installation
 
@@ -52,6 +54,27 @@ pip install sirji-messages
 
 ## Usage
 
+### Message Factory
+
+Utilize factories MessageFactory to instantiate message based on enums. It simplifies creating custom messages without hardcoding class names.
+
+```python
+from sirji_messages import MessageFactory, ActionEnum
+
+# Message class instantiation from an action enum
+message_class = MessageFactory[ActionEnum.RESPONSE.name]
+print(f"Sample RESPONSE message:\n{message_class().sample()}")
+
+# Generate message using passed template variables
+generated_messages = message_class().generate({
+            "from_agent_id": "{{Agent Id of the agent sending the response}}",
+            "to_agent_id": "{{Agent Id of the agent receiving the response}}",
+            "summary": "Empty",
+            "body": textwrap.dedent("""
+            {{Response}}""")})
+print(f"Generated RESPONSE message:\n{generated_messages}")
+```
+
 ### Message Parsing
 
 Parse structured message strings into Python dictionaries for easy access to the message components.
@@ -64,7 +87,8 @@ message_str = """```
 FROM: CODER
 TO: USER
 ACTION: INFORM
-DETAILS: Welcome to sirji-messages. Here's how you can start.
+SUMMARY: Welcome to sirji-messages
+BODY: Welcome to sirji-messages. Here's how you can start.
 ```"""
 
 # Parsing the message
@@ -72,19 +96,16 @@ message = message_parse(message_str)
 print(message)
 ````
 
-### Permission Validation
+### Generate allowed response templates
 
-Determine if a specified action is allowed between two agents based on predefined permission rules.
+Generate allowed response templates for a given agent pair to ensure that the response is valid and follows the protocol.
 
 ```python
-from sirji_messages import permissions_dict, validate_permission, AgentEnum
+from sirji_messages import generate_allowed_response_template, AgentEnum
 
-# Example check if a CODER can QUESTION a USER
-is_allowed = validate_permission("CODER", "USER", "QUESTION")
-print(f"Is allowed: {is_allowed}")
-
-# Get a direct look at permissions dictionary for CODER sending to USER
-print(permissions_dict[(AgentEnum.CODER, AgentEnum.SIRJI_USER)])
+# Generate allowed response templates
+response_templates = generate_allowed_response_template(AgentEnum.ANY, AgentEnum.EXECUTOR)
+print(response_templates)
 ```
 
 ### Handling Custom Exceptions
@@ -111,15 +132,15 @@ Use enums (`ActionEnum`, `AgentEnum`) to reference actions and agent types progr
 from sirji_messages import ActionEnum, AgentEnum
 
 # Example usage of enums for action and agent reference
-action = ActionEnum.ACKNOWLEDGE
-agent = AgentEnum.CODER
+action = ActionEnum.INVOKE_AGENT
+agent = AgentEnum.ORCHESTRATOR
 
 # Accessing enum properties
 print(f"Action: {action.name}, Agent: {agent.full_name}")
 
 # Access to enums using [] is also possible
-action = ActionEnum['ACKNOWLEDGE']
-agent = AgentEnum['CODER']
+action = ActionEnum['INVOKE_AGENT']
+agent = AgentEnum['ORCHESTRATOR']
 ```
 
 ## For Contributors
