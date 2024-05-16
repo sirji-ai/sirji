@@ -3,9 +3,17 @@ import * as fs from 'fs';
 import path from 'path';
 
 export const findAndReplaceInProjectFile = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
-  const searchText = body.split('FIND:')[1].split('---')[0].trim();
-  const replacement = body.split('REPLACE:')[1].split('---')[0].trim();
-  let filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
+  let searchText, replacement, filePath;
+
+  try {
+    searchText = body.split('FIND:')[1].split('---')[0].trim();
+    replacement = body.split('REPLACE:')[1].split('---')[0].trim();
+    filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return 'Error: Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response for the FIND_AND_REPLACE_IN_PROJECT_FILE action must conform this response template: FILE_PATH: {{File path}} --- FIND: {{Find this text}} --- REPLACE: {{Replace with this text}}---';
+  }
+
   filePath = path.join(projectRootPath, filePath);
 
   console.log(`Searching for files with pattern: ${searchText} in folder: ${filePath} and replacing with: ${replacement}`);
