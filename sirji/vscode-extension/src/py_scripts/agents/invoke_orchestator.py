@@ -45,7 +45,7 @@ class AgentRunner:
         return message_str
 
     def process_message(self, message_str, conversations, recipe, installed_agents): 
-        agent = Orchestrator(recipe, installed_agents)
+        agent = Orchestrator(recipe)
         return agent.message(message_str, conversations)
     
     def read_agents_from_files(self, directory):

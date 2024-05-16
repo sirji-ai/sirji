@@ -8,10 +8,9 @@ from sirji_messages import message_parse, MessageParsingError, MessageValidation
 from .model_providers.factory import LLMProviderFactory
 
 class Orchestrator():
-    def __init__(self, recipe, installed_agents):
+    def __init__(self, recipe):
         
         self.recipe = recipe
-        self.installed_agents = installed_agents
 
     def message(self, input_message, history=[]):
         conversation = self.__prepare_conversation(input_message, history)
