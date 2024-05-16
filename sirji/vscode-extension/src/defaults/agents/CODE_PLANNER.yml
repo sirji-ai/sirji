@@ -5,46 +5,46 @@ llm:
   model: gpt-4o
 
 skills:
-  - skill: Generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in Agent Output Folder.
+  - skill: Analyze problem statements, identify relevant files, thoroughly review their contents, identify relevant dependencies, thoroughly review their contents too, and create a detailed implementation guide.
     pseudo_code: |
-      1. Read the problem statement from the Agent Output Folder.
-      2. Read the list of essential file paths from Agent Output Folder. These file paths were shortlisted earlier and fall under one of these categories: "Target for Modification", "Reference for New Development", and "Dependency".
-      3. Read the content of the essential files.
-      4. Using the understanding from the essential files, generate detailed steps using the templates below and adhering to the specified rules:
-          
-          READ DOCUMENTATION STEP TEMPLATE:
-            Reference document file paths: {{reference file paths to refer to the coding requirements}}
-            Summary of what to refer: {{Summary of what to refer}}
+        1. Initialize:
+            - Read the problem statement from the AGENT OUTPUT FOLDER.
+            - Access the project folder structure and concise file summaries.
 
-          IMPLEMENTATION STEP TEMPLATE:
-            Reference file path: {{reference file path to refer}}
-            File to be changed/created: {{file path}}
-            Change summary: {{detailed change summary}}
+        2. Identify and Note Relevant Files:
+            - Create a list to hold file paths and their relevance scores.
+            - For each file path in the file summaries:
+                - Score each file based on the necessity to review its content in relation to the problem statement. This can involve criteria such as:
+                    a) Direct references to features, modules, or components mentioned in the problem statement.
+                    b) Relevance of the file's functionality to the problem being solved.
+                    c) Frequency of key terms from the problem statement appearing in the file summary.
+                    d) Historical modification patterns that suggest the file has been central to similar issues.
+                - Add the file path and its relevance score to the list.
+            - Sort the list by relevance scores in descending order.
+            - Keep only the top 20 most relevant file paths.
+            - Send these top 20 file paths to the ongoing conversation notes in the AGENT OUTPUT FOLDER (Note: These notes are ongoing and not to be indexed in the AGENT OUTPUT INDEX).
 
-          General rules:
-            - First step must be READ DOCUMENTATION STEP
-            - Next steps must be IMPLEMENTATION STEPs
+        3. Deep Dive into Identified Files:
+            - Repeat until all necessary changes are fully understood:
+                - For each file listed in the ongoing conversation notes:
+                    - Read the file content thoroughly.
+                    - Identify specific parts of the content that directly relate to solving the problem statement.
+                    - Send these identified parts to the ongoing conversation notes in the AGENT OUTPUT FOLDER (Note: Continually update these notes, and they are not to be indexed).
+                    - Determine if further reading of other files is needed based on references or dependencies found.
+                    - Update the ongoing conversation notes with any additional files that need detailed review.
 
-          Rules for generating READ DOCUMENTATION STEP:
-            - Must involve reading relevant documentation files from the project folder, such as OpenAPI specifications, DBML files, sequence diagrams, READMEs, etc.
-            - Must strictly conform to the READ DOCUMENTATION STEP TEMPLATE.
+        4. Create and Finalize Implementation Guide:
+            - Construct and review a detailed, standalone implementation guide:
+                - List all the technical instructions for necessary changes, specifying exact file paths and descriptions of changes.
+                - Provide specifics on coding requirements, such as function signatures, data structures, and algorithms to be used or modified.
+                - Outline the creation of new files, including their paths, the specific logic to be implemented, and detailed function signatures and class definitions.
+                - Explain how these new functionalities will interact with existing components, including dependency and integration points.
+                - Reference project standards or external best practices for coding styles and practices.
+                - Ensure that the guide follows a bottom-up approach in implementation order, starting from the most foundational changes to the higher-level ones.
+                - Review the guide for completeness, clarity, and technical accuracy.
+                - Ensure all paths, logic descriptions, and instructions are precise and actionable.
+            - Store the implementation guide in the AGENT OUTPUT FOLDER.
+            - Register the implementation guide to the AGENT OUTPUT INDEX.
 
-          Rules for generating IMPLEMENTATION STEPs:
-            - Reference file path must refer to well-written source code that will serve as a template or guide for the coding style, patterns, and practices expected in new files.
-            - Change summary must be detailed enough to be independently executed by a developer.
-            - Must strictly conform to the IMPLEMENTATION STEP TEMPLATE.
-            - Do not include steps for unit tests and integration tests.
-      5. Confirm the generated steps with the SIRJI_USER by including these steps in the response template:
-          REPEAT
-              Ask the SIRJI_USER to review the steps and provide feedback or confirmation.
-              IF the SIRJI_USER suggests changes THEN
-                  Modify the list of steps based on feedback.
-                  Ask the SIRJI_USER to review the modified steps.
-              END IF
-          UNTIL the SIRJI_USER confirms the steps.
-      6. Store a document (called as "planner output") in Agent Output Folder having the following sections:
-        - Your detailed understandaing of the problem statement
-        - Relevant contents of the documentation needed to solve the problem statement
-        - List of finalized implementation steps
-        - Subset of file summaries corresponding to the finalized files
-      7. Respond back to the agent who invoked you, detailing your actions in the BODY.
+
+

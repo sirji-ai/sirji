@@ -7,18 +7,11 @@ llm:
   model: gpt-4o
 
 sub_agents:
-    - id: FILE_SHORTLISTER
     - id: CODE_PLANNER
-    - id: CODE_STEP_EXECUTOR
 
 skills:
   - skill: "Developing robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions."
     pseudo_code: |
-      1. Read the problem statement from Agent Output Folder to understand the requirements.
-      2. INVOKE_AGENT FILE_SHORTLISTER with following purpose of invocation:
-        - Identify the code files from the available file summaries in your context that will help understand the coding style, patterns, and practices followed in the existing code base to solve the provided problem statemen. 
-      3. INVOKE_AGENT CODE_PLANNER to generate steps to review documentation, reference coding conventions, and update code files based on problem requirements, ensuring detailed steps for independent developer execution and final user confirmation before storing in Agent Output Folder.
-      4. Fetch the fresh contents of Agent Output Index, in order to get paths to files created by CODE_PLANNER inside of Agent Output Folder.
-      5. Read the planner output having the generated steps from Agent Output Folder.
-      6. Loop over the generated steps and INVOKE_AGENT CODE_STEP_EXECUTOR to work on each step of the iteration, passing the current step in the BODY as purpose of invocation.
-      7. Respond back to the agent who invoked you, detailing your actions in the BODY.
+      1. INVOKE_AGENT CODE_PLANNER to analyze problem statements, identify relevant files, thoroughly review their contents, identify relevant dependencies, thoroughly review their contents too, and create a detailed implementation guide.
+      2. INVOKE_AGENT CODE_WRITER to read the implementation guide, extract necessary file changes, apply these modifications to the project files.
+      3. Respond back to the agent who invoked you, detailing your actions in the BODY.
