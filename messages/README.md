@@ -100,7 +100,7 @@ print(message)
 Provides the part of the system prompt describing allowed Response Templates for a given agent pair.
 
 ```python
-from sirji_messages import generate_allowed_response_template, AgentEnum
+from sirji_messages import allowed_response_templates, AgentEnum
 
 # Generate allowed response templates
 response_templates_str = allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR)
