@@ -9,7 +9,7 @@ from sirji_messages import (
     MessageValidationError,
     validate_permission,
     permissions_dict,
-    generate_allowed_response_template
+    allowed_response_templates
 )
 
 def test_imports():
@@ -22,7 +22,7 @@ def test_imports():
     assert MessageValidationError is not None
     assert validate_permission is not None
     assert permissions_dict is not None
-    assert generate_allowed_response_template is not None
+    assert allowed_response_templates is not None
 
 def test_enum_members():
     # Test if enums have expected members
@@ -42,10 +42,10 @@ def test_validate_permission():
     assert validate_permission("ANY", "EXECUTOR", "CREATE_PROJECT_FILE") == True
     assert validate_permission("ANY", "EXECUTOR", "INVALID_ACTION") == False
 
-def test_generate_allowed_response_template():
-    # Test if generate_allowed_response_template function works as expected
+def test_allowed_response_templates():
+    # Test if allowed_response_templates function works as expected
     from_agent = AgentEnum.ANY
     to_agent = AgentEnum.EXECUTOR
-    response_template = generate_allowed_response_template(from_agent, to_agent)
+    response_template = allowed_response_templates(from_agent, to_agent)
     
     assert "Allowed Response Templates TO EXECUTOR:" in response_template

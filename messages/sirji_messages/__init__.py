@@ -4,7 +4,7 @@ from .messages.factory import MessageFactory
 from .custom_exceptions import MessageParsingError, MessageValidationError
 from .permissions import validate_permission, permissions_dict
 from .parser import parse as message_parse
-from .helper import generate_allowed_response_template
+from .helper import allowed_response_templates
 
 
 __all__ = [
@@ -16,5 +16,5 @@ __all__ = [
     'MessageValidationError',
     'validate_permission',
     'permissions_dict',
-    'generate_allowed_response_template'
+    'allowed_response_templates'
 ]

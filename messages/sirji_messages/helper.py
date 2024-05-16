@@ -1,6 +1,6 @@
 from sirji_messages import permissions_dict, AgentEnum, MessageFactory
 
-def generate_allowed_response_template(from_agent, to_agent):
+def allowed_response_templates(from_agent, to_agent):
     response_template = ''
 
     if from_agent != AgentEnum.ORCHESTRATOR and from_agent != AgentEnum.CALLER:

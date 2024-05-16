@@ -5,7 +5,7 @@ import json
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, generate_allowed_response_template
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
@@ -156,9 +156,9 @@ class GenericAgent():
                     {{Purpose of invocation.}}
                     ***""") + '\n'
 
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
+        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
+        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
 

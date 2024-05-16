@@ -4,7 +4,7 @@ import os
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, generate_allowed_response_template
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates
 from .model_providers.factory import LLMProviderFactory
 
 class Orchestrator():
@@ -97,8 +97,8 @@ class Orchestrator():
         allowed_response_templates = textwrap.dedent(f"""
             Allowed Response Templates:""")
         
-        allowed_response_templates += '\n' + generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates += '\n' +  generate_allowed_response_template(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
+        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
 
         return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates}".strip()
     def __format_recipe(self):
