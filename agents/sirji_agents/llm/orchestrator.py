@@ -94,13 +94,13 @@ class Orchestrator():
 
         formatted_recipe = self.__format_recipe()
 
-        allowed_response_templates = textwrap.dedent(f"""
+        allowed_response_templates_str = textwrap.dedent(f"""
             Allowed Response Templates:""")
         
-        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
 
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates}".strip()
+        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates_str}".strip()
     def __format_recipe(self):
         formatted = "Recipe:\n"
         # Adding prescribed tasks with enumeration

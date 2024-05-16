@@ -121,7 +121,7 @@ class GenericAgent():
             """)
 
         formatted_skills = self.__format_skills()
-        allowed_response_templates = textwrap.dedent("""
+        allowed_response_templates_str = textwrap.dedent("""
             Allowed Response Templates:
             Below are all the possible allowed "Response Template" formats for each of the allowed recipients. You must always respond using one of them.
             """)
@@ -129,7 +129,7 @@ class GenericAgent():
         if "sub_agents" in self.config and self.config["sub_agents"]:
             for sub_agent in self.config["sub_agents"]:
             
-                allowed_response_templates += textwrap.dedent(f"""
+                allowed_response_templates_str += textwrap.dedent(f"""
                     Allowed Response Templates to {sub_agent['id']}:
                     For invoking the {sub_agent['id']}, in a fresh session, use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
                     
@@ -143,7 +143,7 @@ class GenericAgent():
                     {{Purpose of invocation.}}
                     ***""") + '\n'
                 
-                allowed_response_templates += textwrap.dedent(f"""
+                allowed_response_templates_str += textwrap.dedent(f"""
                     For invoking the {sub_agent['id']}, continuing over the existing session session, use the following response template. Please respond with the following, including the starting and ending '***', with no commentary above or below.
                     
                     Response template:
@@ -156,9 +156,9 @@ class GenericAgent():
                     {{Purpose of invocation.}}
                     ***""") + '\n'
 
-        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
-        allowed_response_templates += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
 
@@ -168,7 +168,7 @@ class GenericAgent():
         if self.file_summaries is not None:
             file_summaries += f"File Summaries:\n{self.file_summaries}"
 
-        return f"{initial_intro}\n{response_specifications}{understanding_the_folders}\n{instructions}\n{formatted_skills}\n{allowed_response_templates}\n\n{current_agent_output_index}\n\n{current_project_folder_structure}\n\n{file_summaries}".strip()
+        return f"{initial_intro}\n{response_specifications}{understanding_the_folders}\n{instructions}\n{formatted_skills}\n{allowed_response_templates_str}\n\n{current_agent_output_index}\n\n{current_project_folder_structure}\n\n{file_summaries}".strip()
     
     def __format_skills(self):
         output_text = ""
