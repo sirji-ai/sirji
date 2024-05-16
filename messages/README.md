@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Sirji is an Open Source AI Software Development Agent.</em>
+  <em>Sirji is an agentic AI framework for software development.</em>
 </p>
 
 <p align="center">
@@ -25,13 +25,13 @@
 
 ## Sirji Messages
 
-`sirji-messages` is a PyPI package that implements the Sirji message protocol with following highlights:
+`sirji-messages` is a PyPI package that implements the Sirji messaging protocol with the following highlights:
 
-- Message Factory
-- Message Parser
-- Generate Allowed Response Templates
-- Custom Exceptions
-- Enums for Intuitive References
+- **Message Factory**: A factory that provides a Message class for a given action.
+- **Message Parser**: Parse structured message strings into Python dictionaries for easy access to the message components.
+- **Allowed Response Templates**: Provides the part of the system prompt describing allowed Response Templates for a given agent pair.
+- **Custom Exceptions**: A set of custom exceptions thrown by the message parser.
+- **Enums for Agents and Actions**: Provides easy auto-completion while writing code.
 
 ## Installation
 
@@ -56,7 +56,7 @@ pip install sirji-messages
 
 ### Message Factory
 
-Utilize factories MessageFactory to instantiate message based on enums. It simplifies creating custom messages without hardcoding class names.
+A factory that provides a Message class for a given action.
 
 ```python
 from sirji_messages import MessageFactory, ActionEnum
@@ -66,13 +66,12 @@ message_class = MessageFactory[ActionEnum.RESPONSE.name]
 print(f"Sample RESPONSE message:\n{message_class().sample()}")
 
 # Generate message using passed template variables
-generated_messages = message_class().generate({
-            "from_agent_id": "{{Agent Id of the agent sending the response}}",
-            "to_agent_id": "{{Agent Id of the agent receiving the response}}",
+message_str = message_class().generate({
+            "from_agent_id": "EXECUTOR",
+            "to_agent_id": "CODER",
             "summary": "Empty",
-            "body": textwrap.dedent("""
-            {{Response}}""")})
-print(f"Generated RESPONSE message:\n{generated_messages}")
+            "body": "Done.")
+print(f"Generated RESPONSE message:\n{message_str}")
 ```
 
 ### Message Parsing
@@ -84,9 +83,9 @@ from sirji_messages import message_parse
 
 # Example message string to parse
 message_str = """```
-FROM: CODER
-TO: USER
-ACTION: INFORM
+FROM: EXECUTOR
+TO: CODER
+ACTION: RESPONSE
 SUMMARY: Welcome to sirji-messages
 BODY: Welcome to sirji-messages. Here's how you can start.
 ```"""
@@ -96,16 +95,16 @@ message = message_parse(message_str)
 print(message)
 ````
 
-### Generate allowed response templates
+### Allowed Response Templates
 
-Generate allowed response templates for a given agent pair to ensure that the response is valid and follows the protocol.
+Provides the part of the system prompt describing allowed Response Templates for a given agent pair.
 
 ```python
 from sirji_messages import generate_allowed_response_template, AgentEnum
 
 # Generate allowed response templates
-response_templates = generate_allowed_response_template(AgentEnum.ANY, AgentEnum.EXECUTOR)
-print(response_templates)
+response_templates_str = allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR)
+print(response_templates_str)
 ```
 
 ### Handling Custom Exceptions
@@ -124,7 +123,7 @@ except MessageValidationError as e:
     print(f"Validation Error: {e}")
 ```
 
-### Enums for Intuitive References
+### Enums for Agents and Actions
 
 Use enums (`ActionEnum`, `AgentEnum`) to reference actions and agent types programmatically, enhancing code clarity and reducing errors.
 
