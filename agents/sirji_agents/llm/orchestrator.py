@@ -8,9 +8,8 @@ from sirji_messages import message_parse, MessageParsingError, MessageValidation
 from .model_providers.factory import LLMProviderFactory
 
 class Orchestrator():
-    def __init__(self, recipe):
-        
-        self.recipe = recipe
+    def __init__(self):
+        pass
 
     def message(self, input_message, history=[]):
         conversation = self.__prepare_conversation(input_message, history)
@@ -92,28 +91,10 @@ class Orchestrator():
             - For each task, invoke the agent specified in the recipe alogside the task, explaining the task in the BODY of the invocation.
             """)
 
-        formatted_recipe = self.__format_recipe()
-
         allowed_response_templates_str = textwrap.dedent(f"""
             Allowed Response Templates:""")
         
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
 
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates_str}".strip()
-    def __format_recipe(self):
-        formatted = "Recipe:\n"
-        # Adding prescribed tasks with enumeration
-        formatted += "- Prescribed tasks\n"
-        for index, task in enumerate(self.recipe["prescribed_tasks"], start=1):
-            formatted += f"   {index}. {task['task']}\n"
-            formatted += f"      Agent to invoke: {task['agent']}\n"
-        
-        # Adding tips
-        if "tips" in self.recipe and self.recipe["tips"]:
-            formatted += "- Tips:\n"
-            for tip in self.recipe["tips"]:
-                formatted += f"   - {tip['tip']}\n"
-                formatted += f"      Agent to invoke: {tip['agent']}\n"
-        
-        return formatted
+        return f"{initial_intro}\n{instructions}\n{allowed_response_templates_str}".strip()

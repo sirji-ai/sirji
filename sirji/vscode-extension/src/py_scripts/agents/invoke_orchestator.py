@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import yaml
 from sirji_agents import Orchestrator
 
 class AgentRunner:
@@ -44,8 +45,8 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, recipe, installed_agents): 
-        agent = Orchestrator(recipe)
+    def process_message(self, message_str, conversations, installed_agents): 
+        agent = Orchestrator()
         return agent.message(message_str, conversations)
     
     def read_agents_from_files(self, directory):
@@ -81,25 +82,24 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
 
-        recipe_file_path = os.path.join(sirji_installation_dir, 'active_recipe', 'recipe.json')
         installed_agent_folder = os.path.join(sirji_installation_dir, 'active_recipe', 'agents')
+        orchestrator_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
+        config_file_contents = self.read_input_file(orchestrator_config_path)
+        config = yaml.safe_load(config_file_contents)
 
         installed_agents = self.read_agents_from_files(installed_agent_folder)
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
-        recipe_file_contents = self.read_input_file(recipe_file_path)
-        recipe = json.loads(recipe_file_contents)
+        llm = config['llm']    
 
-        llm = recipe['llm']
-        
         # Set SIRJI_MODEL_PROVIDER env var to llm.provider
         os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
         # Set SIRJI_MODEL env var to llm.model
         os.environ['SIRJI_MODEL'] = llm['model']
         
-        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, recipe, installed_agents)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations,installed_agents)
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed
