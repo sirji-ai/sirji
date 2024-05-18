@@ -1,0 +1,13 @@
+id: RECIPE_SELECTOR
+name: Recipe Selector Agent
+llm:
+  provider: openai
+  model: gpt-3.5-turbo
+skills:
+  - skill: Get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
+    pseudo_code: |
+      1. FETCH_RECIPES using EXECUTOR 
+      2. Question SIRJI_USER by showing the list of fetched recipes with their descriptions, and ask them to select one recipe from the available recipes in the index
+      3. CREATE_AGENT_OUTPUT_FILE with the content of selected recipe.
+      4. APPEND_TO_AGENT_OUTPUT_INDEX the details of stored selected recipe.
+      5. Respond back to the agent who invoked you.

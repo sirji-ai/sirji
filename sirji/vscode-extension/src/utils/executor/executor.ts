@@ -5,6 +5,7 @@ import { openBrowser } from './open_browser';
 import { readContent } from './read_content';
 import { appendToAgentOutputsIndex } from './append_to_agent_output_index';
 import { readAgentOutputsIndex } from './read_agent_output_index';
+import { fetchRecipes } from './fetch_recipes';
 
 import { ACTION_ENUM } from '../constants';
 import { searchFileInProject } from './search_file_in_project';
@@ -17,14 +18,16 @@ export class Executor {
   private projectRootPath: any;
   private agentOutputFolderPath: any;
   private sirjiRunFolderPath: any;
+  private sirjiInstallationFolderPath: any;
 
-  public constructor(parsedMessage: any, projectRootPath: any, agentOutputFolderPath: any, sirjiRunFolderPath: any) {
+  public constructor(parsedMessage: any, projectRootPath: any, agentOutputFolderPath: any, sirjiRunFolderPath: any, sirjiInstallationFolderPath: any) {
     const oThis = this;
 
     oThis.parsedMessage = parsedMessage;
     oThis.projectRootPath = projectRootPath;
     oThis.agentOutputFolderPath = agentOutputFolderPath;
     oThis.sirjiRunFolderPath = sirjiRunFolderPath;
+    oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
   }
 
   public async perform() {
@@ -57,6 +60,9 @@ export class Executor {
         return await appendToAgentOutputsIndex(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:
         return await readAgentOutputsIndex(oThis.agentOutputFolderPath);
+      case ACTION_ENUM.FETCH_RECIPES:
+        const activeRecipeFolderPath = oThis.sirjiInstallationFolderPath + '/active_recipe';
+        return await fetchRecipes(activeRecipeFolderPath);
       case ACTION_ENUM.SEARCH_FILE_IN_PROJECT:
         return await searchFileInProject(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE:

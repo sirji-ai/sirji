@@ -1,0 +1,8 @@
+{
+  "greenfield.json": {
+    "description": "Recipe for creating a new project"
+  },
+  "brownfield_node_js.json": {
+    "description": "Recipe for making changes in the existing project"
+  }
+}

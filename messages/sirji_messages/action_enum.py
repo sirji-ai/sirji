@@ -8,6 +8,7 @@ class ActionEnum(Enum):
     EXECUTE_COMMAND = auto()
     APPEND_TO_AGENT_OUTPUT_INDEX = auto()
     READ_AGENT_OUTPUT_INDEX = auto()
+    FETCH_RECIPES = auto()
     RUN_SERVER = auto()
     CREATE_PROJECT_FILE = auto()
     CREATE_AGENT_OUTPUT_FILE = auto()

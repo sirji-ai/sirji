@@ -83,13 +83,23 @@ class Orchestrator():
             You are an agent named "Orchestration Agent", a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR
             Your OS (refered as SIRJI_OS later): {os.name}""")
-
-        instructions = textwrap.dedent(f"""
-            Instructions:
-            - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
-            - Proceed sequentially over the prescribed tasks.
-            - For each task, invoke the agent specified in the recipe alogside the task, explaining the task in the BODY of the invocation.
+        
+        pseudo_code = textwrap.dedent(f"""
+            Pseudo code which you must follow:
+                1. INVOKE_AGENT REQUIREMENT_GATHERER to QUESTION SIRJI_USER to provide the problem statement and then store it in Agent Output folder.
+                2. INVOKE_AGENT RECIPE_SELECTOR to Get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
+                3. Read the selected recipe stored by RECIPE_SELECTOR in the Agent Output Folder.
+                4. Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
+                5. Proceed sequentially over the prescribed tasks.
+                6. For each task, invoke the agent specified in the recipe alongside the task, explaining the task in the BODY of the invocation.
             """)
+
+        # instructions = textwrap.dedent(f"""
+        #     Instructions:
+        #     - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
+        #     - Proceed sequentially over the prescribed tasks.
+        #     - For each task, invoke the agent specified in the recipe alongside the task, explaining the task in the BODY of the invocation.
+        #     """)
 
         allowed_response_templates_str = textwrap.dedent(f"""
             Allowed Response Templates:""")
@@ -97,4 +107,4 @@ class Orchestrator():
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
 
-        return f"{initial_intro}\n{instructions}\n{allowed_response_templates_str}".strip()
+        return f"{initial_intro}\n{pseudo_code}\n{allowed_response_templates_str}".strip()
