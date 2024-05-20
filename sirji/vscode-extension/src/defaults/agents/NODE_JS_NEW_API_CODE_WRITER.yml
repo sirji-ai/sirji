@@ -1,0 +1,20 @@
+id: NODE_JS_NEW_API_CODE_WRITER
+
+name: Node.js new API code writer
+
+llm:
+  provider: openai
+  model: gpt-4o
+
+skills:
+  - skill: Read implementation guide, extract necessary file changes, and apply these modifications to the project files.
+    pseudo_code: |
+      1. READ_PROJECT_FILES the implementation guide from the Agent Output Folder.
+
+      2. Interpret the steps mentioned in the BODY of the message which invoked you. Fully understand the necessary changes using the implementation guide and make the required modifications:
+          - If changes are needed in an existing file:
+              - READ_PROJECT_FILES the existing file using file path.
+              - Apply the necessary changes using either FIND_AND_REPLACE or INSERT_TEXT actions.
+          - Use CREATE_PROJECT_FILE action when a new file is indicated.
+
+      3. Respond back to the agent who invoked you, detailing your actions in the BODY.
