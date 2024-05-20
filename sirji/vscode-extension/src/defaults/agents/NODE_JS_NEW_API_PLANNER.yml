@@ -31,7 +31,7 @@ skills:
             - External parameters are those sent by the API caller. These are listed in both the sequence diagram and the OpenAPI specifications.
             - Construct the part that will go inside the signature.js file, using 'kind' as internal for internal parameters.
             - Both internal and external parameters are available as parameters to the service class constructor.
-            - Determine which models are relevant to the new API requirement and what queries will be needed for those models.
+            - Determine which models are relevant to the new API requirement and what DB queries will be needed for those models.
 
         13. Using the project folder structure, locate the file paths of the relevant models identified from the sequence diagram. Read the model files using the file paths. Models are implemented using Sequelize ORM. Store your understanding as conversation notes (in a file named something like models understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
@@ -39,7 +39,7 @@ skills:
 
         15. Using the project folder structure, identify the top three most relevant formatter file paths related to the new API requirement. Read these formatter files and understand the conventions used in the formatter files, how the service response is fomatted to a response which is returned to the API called, etc. Formatters are used in route files to convert the service response to a formatted response. Store your understanding as conversation notes (in a file named something like relevant formatter file reference understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        16. Using the project folder structure, identify the path to messageStringsHelper.js, en_us.json and validateJWTClaims.js. Read these files and understand how a message is localized by adding a key in en_us.json and using this key path (keys joined by '.') to the localized message. Store your understanding as conversation notes (in a file named something like localization understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        16. Using the project folder structure, identify the path to messageStringsHelper.js, en_us.json and validateJWTClaims.js. Read these files and understand how a message is localized by first adding a key in en_us.json and then using this key path (keys joined by '.') in argument to messageStringsHelper.getMessageString to get the localized message. Never directly use a message copy anywhere. Use it via this localization process. Store your understanding as conversation notes (in a file named something like localization understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
         17. Read the `package.json` file.
 
@@ -69,7 +69,7 @@ skills:
                     - Ensure all paths, logic descriptions, and instructions are precise and actionable.
                     - Do not include steps for tests.
                     - Ensure to list only the steps which are needed to be done. Do not list steps which are already in place in the code.
-                    - Ensure that any new methods or classes introduced are clearly defined in the guide.
+                    - Make sure that the guide clearly defines any new methods or classes that got introduced and used in the updated code.
             - Store the implementation guide in the AGENT OUTPUT FOLDER.
             - QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
             - Register the implementation guide to the AGENT OUTPUT INDEX.
