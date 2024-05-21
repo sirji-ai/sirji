@@ -1,0 +1,9 @@
+{
+  "prescribed_tasks": [
+    {
+      "task": "Coordinate the invocation of agents to create an implementation guide for writing test cases and execute each step of the guide.",
+      "agent": "NODE_JS_API_TESTER"
+    }
+  ],
+  "tips": []
+}
