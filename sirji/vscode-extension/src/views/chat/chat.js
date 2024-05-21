@@ -118,6 +118,10 @@ window.addEventListener('message', (event) => {
       displayCoderLogs(event.data.content);
       break;
 
+    case 'tokenUsesByAgent':
+      displayTokenUsesByAgent(event.data.content.message);
+      break;
+
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`, false);
   }
@@ -472,6 +476,7 @@ function convertNumber(number) {
 }
 
 function displayTokenUsed(data = {}) {
+  console.log('display token used', data);
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = data;
 
   const totalTokensUsed = total_completion_tokens + total_prompt_tokens;
@@ -495,6 +500,7 @@ function updateTokensUsed(totalTokensUsed) {
 }
 
 function updateTooltipTokenValues(tokenValues) {
+  console.log('updateTooltipTokenValues values:', tokenValues);
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
 
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
@@ -730,12 +736,41 @@ function tokensButtonClickhandler(e) {
   }
 }
 
-function openTokensModal() {
+function displayTokenUsesByAgent(data) {
+  console.log('Token uses by agent:', data);
+  const agents = Object.keys(data);
+
+  let totalCompletionTokens = 0;
+
+  let totalTokenValuationInDollar = 0;
+
+  const tokensTable = document.getElementById('tokensTable');
+
+  tokensTable.querySelectorAll('.tokens-table-row').forEach((row) => row.remove());
+
+  agents.forEach((agent) => {
+    const agentData = data[agent];
+    const completionTokens = agentData.completion_tokens;
+    const tokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
+    totalCompletionTokens += completionTokens;
+    totalTokenValuationInDollar += tokenValuationInDollar;
+    const row = document.createElement('div');
+    row.className = 'tokens-table-row';
+    row.innerHTML = `<div>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens)} | $${tokenValuationInDollar.toFixed(2)}</div>`;
+    tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
+  });
+
+  document.getElementById('totalRow').innerHTML = `${convertNumber(totalCompletionTokens)} | $${totalTokenValuationInDollar.toFixed(2)}`;
+
   jTokensModal.style.display = 'flex';
   jTabsBackdrop.style.display = 'flex';
   jBackdrop.style.display = 'flex';
   document.body.addEventListener('click', modalClickHandler);
   isOpen = !isOpen;
+}
+
+function openTokensModal() {
+  vscode.postMessage({ type: 'requestTokenUsage' });
 }
 
 function closeTokensModal() {

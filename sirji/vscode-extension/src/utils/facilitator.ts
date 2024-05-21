@@ -277,6 +277,22 @@ export class Facilitator {
     });
   }
 
+  private async getTokenUsedAgentWise() {
+    const oThis = this;
+
+    const tokenUsedInTheConversation = await oThis.tokenManager?.getTokenUsedInConversation();
+
+    console.log('tokenUsedInTheConversation------', tokenUsedInTheConversation);
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'tokenUsesByAgent',
+      content: {
+        message: tokenUsedInTheConversation,
+        allowUserMessage: false
+      }
+    });
+  }
+
   private async sendWelcomeMessage() {
     const oThis = this;
 
@@ -359,6 +375,8 @@ export class Facilitator {
       case 'requestCoderLogs':
         await oThis.readCoderLogs();
         break;
+      case 'requestTokenUsage':
+        await oThis.getTokenUsedAgentWise();
 
       case 'userMessage':
         console.log('message.content--------', message.content);
@@ -545,6 +563,8 @@ export class Facilitator {
 
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
 
+      console.log('totalTokensUsed------', totalTokensUsed);
+
       oThis.chatPanel?.webview.postMessage({
         type: 'tokenUsed',
         content: {
@@ -606,37 +626,7 @@ export class Facilitator {
 
   private async calculateTotalTokensUsed() {
     const oThis = this;
-
-    // TODO - we need to read the conversation files of all the agents
-
-    // const coderConversationFilePath = path.join(oThis.sirjiRunId, Constants.CODER_JSON_FILE);
-    // const researcherConversationFilePath = path.join(oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
-    // const plannerConversationFilePath = path.join(oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
-
-    // const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
-    // const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
-    // const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
-
-    // const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
-
-    // const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
-
-    // const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-    // const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-
-    // return {
-    //   total_prompt_tokens: totalPromptTokens,
-    //   total_completion_tokens: totalCompletionTokens,
-    //   total_prompt_tokens_value: totalPromptTokensValueInDollar,
-    //   total_completion_tokens_value: totalCompletionTokensValueInDollar
-    // };
-
-    return {
-      total_prompt_tokens: 0,
-      total_completion_tokens: 0,
-      total_prompt_tokens_value: 0,
-      total_completion_tokens_value: 0
-    };
+    return await oThis.tokenManager?.getAggregateTokensUsedInConversation();
   }
 
   private async getTokensUsed(conversationFilePath: string): Promise<any> {

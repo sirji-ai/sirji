@@ -120,13 +120,39 @@ export class TokenManager {
     }
   }
 
-  private getTokenUsedInConversation() {
+  public getTokenUsedInConversation() {
     try {
+      if (!fs.existsSync(this.aggregateTokenFilePath)) {
+        return {};
+      }
       const fileContents = fs.readFileSync(this.aggregateTokenFilePath, 'utf8');
       return JSON.parse(fileContents);
     } catch (error) {
       console.error('Error reading the aggregate token file:', error);
-      return { sessions: [] };
+      return {};
     }
+  }
+
+  public getAggregateTokensUsedInConversation() {
+    const aggregateTokens = this.getTokenUsedInConversation();
+
+    let prompt_tokens = 0;
+    let completion_tokens = 0;
+    let total_prompt_tokens_value = 0;
+    let completion_tokens_value = 0;
+
+    Object.keys(aggregateTokens).forEach((key) => {
+      prompt_tokens += aggregateTokens[key].prompt_tokens;
+      completion_tokens += aggregateTokens[key].completion_tokens;
+      total_prompt_tokens_value += aggregateTokens[key].prompt_token_valuation_in_dollar;
+      completion_tokens_value += aggregateTokens[key].completion_token_valuation_in_dollar;
+    });
+
+    return {
+      total_prompt_tokens: prompt_tokens,
+      total_completion_tokens: completion_tokens,
+      total_prompt_tokens_value: total_prompt_tokens_value,
+      total_completion_tokens_value: completion_tokens_value
+    };
   }
 }
