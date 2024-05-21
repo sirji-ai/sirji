@@ -179,10 +179,11 @@ class GenericAgent():
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
 
         current_project_folder_structure = f"Recursive structure of the project folder:\n{os.environ.get('SIRJI_PROJECT_STRUCTURE')}"
-
-        file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the project folder:\n'
-        if self.file_summaries is not None:
+        file_summaries = ""
+        if self.file_summaries:
+            file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the project folder:\n'
             file_summaries += f"File Summaries:\n{self.file_summaries}"
+        
 
         return f"{initial_intro}\n{response_specifications}{understanding_the_folders}\n{instructions}\n{formatted_skills}\n{allowed_response_templates_str}\n\n{current_agent_output_index}\n\n{current_project_folder_structure}\n\n{file_summaries}".strip()
     

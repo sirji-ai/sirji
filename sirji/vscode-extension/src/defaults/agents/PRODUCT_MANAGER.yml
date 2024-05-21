@@ -8,11 +8,11 @@ definitions:
   Finalization: "Finalization involves discussion with SIRJI_USER by sending 'Proposal', getting feedback, adjusting according to the feedback and again sending the revised 'Proposal'. Keep on doing it till SIRJI_USER agrees."
   Finalized epics and user stories: "The 'Proposal' on which the SIRJI_USER agrees."
 rules:
-  - "Elaboration must include detailed screen elements and interactions, without leaving anything abstract."
-  - "UI created for any user story must me modern and neat."
+  - 'Elaboration must include detailed screen elements and interactions, without leaving anything abstract.'
+  - 'UI created for any user story must me modern and neat.'
 skills:
-  - skill: "Finalize Epics and User Story"
-    sub_tasks:
-      - "Read problem statement from Agent Output Folder."
-      - "Elaborate the problem statement into epics & then send the 'Proposal' to SIRJI_USER to get 'Finalization'."
-      - "Write the finalized epics and user stories by saving it to Agent Output Folder."
+  - skill: 'Finalize Epics and User Story'
+    pseudo_code: |
+      1. Read problem statement from Agent Output Folder.
+      2. Elaborate the problem statement into epics & then send the 'Proposal' to SIRJI_USER to get 'Finalization'.
+      3. Write the finalized epics and user stories by saving it to Agent Output Folder.
