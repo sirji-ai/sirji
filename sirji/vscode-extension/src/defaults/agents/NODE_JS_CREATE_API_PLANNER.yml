@@ -1,5 +1,5 @@
-id: NODE_JS_NEW_API_PLANNER
-name: Node.js new API planner
+id: NODE_JS_CREATE_API_PLANNER
+name: Node.js create API planner
 llm:
   provider: openai
   model: gpt-4o
@@ -7,7 +7,7 @@ llm:
 skills:
   - skill: Manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
     pseudo_code: |
-        1. READ_PROJECT_FILES the problem statement from the Agent Output Folder.
+        1. Read the problem statement from the Agent Output Folder.
 
         2. If the problem statement does not specify the file path to the DBML file, QUESTION SIRJI_USER to provide it.
         3. READ_PROJECT_FILES the DBML file using the specified file path.

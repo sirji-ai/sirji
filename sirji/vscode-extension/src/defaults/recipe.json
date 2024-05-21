@@ -5,8 +5,8 @@
   },
   "prescribed_tasks": [
     {
-      "task": "Develop robust backend REST APIs using Node.js and Express, integrating Sequelize ORM with PostgreSQL databases, and implementing Redis for efficient caching solutions.",
-      "agent": "NODE_JS_NEW_API_CODER"
+      "task": "Coordinate the invocation of agents to create an implementation guide for writing test cases and execute each step of the guide.",
+      "agent": "NODE_JS_API_TESTER"
     }
   ],
   "tips": []

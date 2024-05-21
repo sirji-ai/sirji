@@ -1,6 +1,6 @@
-id: NODE_JS_NEW_API_CODE_WRITER
+id: IMPLEMENTATION_GUIDE_CODE_WRITER
 
-name: Node.js new API code writer
+name: Implementation guide code writer
 
 llm:
   provider: openai
@@ -9,7 +9,7 @@ llm:
 skills:
   - skill: Read implementation guide, extract necessary file changes, and apply these modifications to the project files.
     pseudo_code: |
-      1. READ_PROJECT_FILES the implementation guide from the Agent Output Folder.
+      1. Read the implementation guide from the Agent Output Folder.
 
       2. Interpret the steps mentioned in the BODY of the message which invoked you. Fully understand the necessary changes using the implementation guide and make the required modifications:
           - If changes are needed in an existing file:
