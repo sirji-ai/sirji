@@ -1,0 +1,65 @@
+id: NODE_JS_API_TEST_PLANNER
+name: Node.js API test planner
+llm:
+  provider: openai
+  model: gpt-4o
+
+skills:
+  - skill: Analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
+    pseudo_code: |
+        1. Read the problem statement from the Agent Output Folder. Identify the "Target API" for which the test cases are to be written.
+
+        2. If the problem statement does not specify the route of an API with existing test cases for reference, QUESTION SIRJI_USER to provide it. Refer to this API as the "Inspiration API."
+
+        3. If the problem statement does not specify the file path to the OpenAPI specifications file, QUESTION SIRJI_USER to provide it.
+        4. READ_PROJECT_FILES the OpenAPI specifications file using the specified file path.
+
+        5. Using the project folder structure, locate the DBML file. Read this file using the file path.
+
+        6. Read the `package.json` file.
+
+        7. Using the file path specified as the value of the "main" key in the package.json (referred to as the "Main Index File"), read the file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes (like `/consumer` and `/admin`) to the main application.
+
+        8. The folder structure under the routes folder matches the route. In each folder, there is an `index.js` which links to the sub-routes. The last `index.js` file implements the routes. Identify all the file paths under the routes folder that are relevant to the "Target API" and the "Inspiration API". READ_PROJECT_FILES for all these relevant file paths. These are referred to as "Relevant Route File Paths".
+
+        9. From the contents of the "Relevant Route File Paths", understand the path to the service files for both the "Target API" and the "Inspiration API". Read these service files.
+
+        10. Understand the logic implemented in both the above read service file. Store your understanding as conversation notes (in a file named something like relevant service files understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+
+        11. Using the project folder structure, identify the corresponding test file from test/functional folder, corresponding to the "Inspiration API". Read this file using the file path. Let's call this test file as Inspiration API test file.
+
+        12. Understand the following from the Inspiration API test file contents and store your understanding as conversation notes (in a file named something like inspiration api test file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+          - Understand what all files from the test folder are required in the file.
+          - Understand what steps are performed beforeEach and afterEach of each test.
+          - Understand how external API calls are stubbed using Sinon package.
+          - Understand how the jwt token / authentication is managed and an API request is made.
+        
+        13. From the list of files from the test folder that are required in the inspiration api test file, identify the scenario data file. Note the folder structure of this scenario data file and read the file using the file path, identified using the require path and the project folder structure.
+
+        14. Understand the contents of the scenario data file and their relevance in writing the test file. Store your understanding as conversation notes (in a file named something like scenario data file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX)
+
+        15. From the list of files from the test folder that are required in the inspiration api test file, identify the fixtures file. Note the folder structure of this fixtures file and read the file using the file path, identified using the require path and the project folder structure.
+
+        16. From the contents of the target API service file, list down all the files used in the implementation. Read the contents of these project files, if not already read.
+
+        17. Identify the methods which need to be stubbed for writing the tests for the target API. Store your understanding as conversation notes (in a file named something like details of stubbings file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX)
+
+        18. Create and Finalize Implementation Guide for writing tests for the target API:
+            - Construct and review a detailed, standalone implementation guide by following these rules:
+                - The implementation guide must be in markdown format.
+                - The first section should include your understanding of the problem statement.
+                - Next section of the implementation guide should be for listing down the steps, following these rules:
+                    - Each step must be standalone, so that different developers can work on different steps in parallel.
+                    - List all the technical instructions for necessary changes, specifying exact file paths and descriptions of changes.
+                    - Provide specifics on coding requirements, such as function signatures, data structures, and algorithms to be used or modified.
+                    - Outline the creation of new files, including their paths, the specific logic to be implemented, and detailed function signatures and class definitions.
+                    - Explain how these new functionalities will interact with existing components, including dependency and integration points.
+                    - Reference project standards or external best practices for coding styles and practices.
+                    - Ensure that the guide follows a bottom-up approach in order of the steps, starting from the most foundational changes to the higher-level ones.
+                    - Review the guide for completeness, clarity, and technical accuracy.
+                    - Ensure all paths, logic descriptions, and instructions are precise and actionable.
+                    - Ensure to list only the steps which are needed to be done. Do not list steps which are already in place in the code.
+                    - Make sure that the guide clearly defines any new methods or classes that got introduced and used in the updated code.
+            - Store the implementation guide in the AGENT OUTPUT FOLDER.
+            - QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
+            - Register the implementation guide to the AGENT OUTPUT INDEX.

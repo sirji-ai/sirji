@@ -1,16 +1,16 @@
 import textwrap
 import os
+import json
 
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict
 from .model_providers.factory import LLMProviderFactory
 
 class Orchestrator():
-    def __init__(self, recipe):
-        
-        self.recipe = recipe
+    def __init__(self, agent_output_folder_index):
+        self.agent_output_folder_index = agent_output_folder_index
 
     def message(self, input_message, history=[]):
         conversation = self.__prepare_conversation(input_message, history)
@@ -84,36 +84,29 @@ class Orchestrator():
             You are an agent named "Orchestration Agent", a component of the Sirji AI agentic framework.
             Your Agent ID: ORCHESTRATOR
             Your OS (refered as SIRJI_OS later): {os.name}""")
-
-        instructions = textwrap.dedent(f"""
-            Instructions:
-            - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
-            - Proceed sequentially over the prescribed tasks.
-            - For each task, invoke the agent specified in the recipe alogside the task, explaining the task in the BODY of the invocation.
+        
+        pseudo_code = textwrap.dedent(f"""
+            Pseudo code which you must follow:
+                1. INVOKE_AGENT REQUIREMENT_GATHERER to QUESTION SIRJI_USER to provide the problem statement and then store it in Agent Output folder.
+                2. INVOKE_AGENT RECIPE_SELECTOR to Get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
+                3. READ_AGENT_OUTPUT_FILES the selected recipe from the Agent Output Folder using EXECUTOR.
+                4. Proceed sequentially over the prescribed tasks in the recipe.
+                5. For each task, invoke the agent specified in the recipe alongside the task, explaining the task in the BODY of the invocation.
             """)
 
-        formatted_recipe = self.__format_recipe()
+        # instructions = textwrap.dedent(f"""
+        #     Instructions:
+        #     - Manage the task workflow by interpreting the "recipe", which outlines a series of prescribed tasks.
+        #     - Proceed sequentially over the prescribed tasks.
+        #     - For each task, invoke the agent specified in the recipe alongside the task, explaining the task in the BODY of the invocation.
+        #     """)
 
         allowed_response_templates_str = textwrap.dedent(f"""
             Allowed Response Templates:""")
         
-        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY) + '\n'
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER, permissions_dict[(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER)]) + '\n'
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY, permissions_dict[(AgentEnum.ORCHESTRATOR, AgentEnum.ANY)]) + '\n'
 
-        return f"{initial_intro}\n{instructions}\n{formatted_recipe}{allowed_response_templates_str}".strip()
-    def __format_recipe(self):
-        formatted = "Recipe:\n"
-        # Adding prescribed tasks with enumeration
-        formatted += "- Prescribed tasks\n"
-        for index, task in enumerate(self.recipe["prescribed_tasks"], start=1):
-            formatted += f"   {index}. {task['task']}\n"
-            formatted += f"      Agent to invoke: {task['agent']}\n"
-        
-        # Adding tips
-        if "tips" in self.recipe and self.recipe["tips"]:
-            formatted += "- Tips:\n"
-            for tip in self.recipe["tips"]:
-                formatted += f"   - {tip['tip']}\n"
-                formatted += f"      Agent to invoke: {tip['agent']}\n"
-        
-        return formatted
+        current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
+
+        return f"{initial_intro}\n{pseudo_code}\n{allowed_response_templates_str}\n{current_agent_output_index}".strip()

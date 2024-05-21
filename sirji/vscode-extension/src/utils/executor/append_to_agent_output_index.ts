@@ -44,7 +44,7 @@ export async function appendToAgentOutputsIndex(agentOutputFolderPath: string, m
 
     return 'Updated agent output index file.';
   } catch (e) {
-    const errorMessage = `Failed to create or write to the file. Error: ${e}`;
+    const errorMessage = `Failed to create or write to the file. Make sure you provided the body with correct structure as mentioned in the Allowed response template. Error: ${e}`;
     return errorMessage;
   }
 }

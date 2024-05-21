@@ -1,0 +1,23 @@
+{
+  "prescribed_tasks": [
+    {
+      "task": "Write epics and user stories.",
+      "agent": "PRODUCT_MANAGER"
+    },
+    {
+      "task": "Write architecture components.",
+      "agent": "ARCHITECT"
+    },
+    {
+      "task": "Implement the epic & user stories using the architecture components.",
+      "agent": "CODER"
+    }
+  ],
+  "tips": [
+    {
+      "deviation": "Architecture components are not in sync with the epics and user stories.",
+      "agent": "PRODUCT_MANAGER",
+      "task": "Make the epics and user stories consistent with the architecture components."
+    }
+  ]
+}

@@ -80,34 +80,24 @@ export SIRJI_MODEL_PROVIDER_API_KEY='API key to be used for LLM inference.'
 The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
 
 ```python
-# Following is a sample recipe
-recipe = {
-  "prescribed_tasks": [
-    {
-      "task": "Write epics and user stories.",
-      "agent": "PRODUCT_MANAGER"
-    },
-    {
-      "task": "Write architecture components.",
-      "agent": "ARCHITECT"
-    },
-    {
-      "task": "Implement the epic & user stories using the architecture components.",
-      "agent": "CODER"
-    }
-  ],
-  "tips": [
-    {
-      "deviation": "Architecture components are not in sync with the epics and user stories.",
-      "agent": "PRODUCT_MANAGER",
-      "task": "Make the epics and user stories consistent with the architecture components."
-    }
-  ]
-}
-
 from sirji_agents import Orchestrator
 
-agent = Orchestrator(recipe)
+agent_output_folder_index = {
+  "SIRJI/problem.txt": {
+    "description": "Problem statement from the user.",
+    "created_by": "SIRJI"
+  },
+  "PRODUCT_MANAGER/finalized_epics_user_stories.txt": {
+    "description": "Finalized Epics and User Stories for the Tic-Tac-Toe game with AI opponent.",
+    "created_by": "PRODUCT_MANAGER"
+  },
+  "ARCHITECT/finalized_architecture_components.txt": {
+    "description": "Finalized architecture components for the Tic-Tac-Toe game with AI opponent.",
+    "created_by": "ARCHITECT"
+  }
+}
+
+agent = Orchestrator(agent_output_folder_index)
 
 # History is the array of LLM conversations till now
 history = []
