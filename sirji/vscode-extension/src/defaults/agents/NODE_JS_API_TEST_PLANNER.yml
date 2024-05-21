@@ -11,46 +11,74 @@ skills:
 
         2. If the problem statement does not specify the route of an API with existing test cases for reference, QUESTION SIRJI_USER to provide it. Refer to this API as the "Inspiration API."
 
-        3. If the problem statement does not specify the file path to the OpenAPI specifications file, QUESTION SIRJI_USER to provide it.
-        4. READ_PROJECT_FILES the OpenAPI specifications file using the specified file path.
+        3. Using the api routes for the "Target API" & the "Inspiration API" and the project folder structure, identify the file path to the relevant OpenAPI specs file. Read the OpenAPI specs file using the file path.
 
-        5. Using the project folder structure, locate the DBML file. Read this file using the file path.
+        4. Using the project folder structure, locate the DBML file. Read this file using the file path.
 
-        6. Read the `package.json` file.
+        5. Read the `package.json` file.
 
-        7. Using the file path specified as the value of the "main" key in the package.json (referred to as the "Main Index File"), read the file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes (like `/consumer` and `/admin`) to the main application.
+        6. Using the file path specified as the value of the "main" key in the package.json (referred to as the "Main Index File"), read the file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes (like `/consumer` and `/admin`) to the main application.
 
-        8. The folder structure under the routes folder matches the route. In each folder, there is an `index.js` which links to the sub-routes. The last `index.js` file implements the routes. Identify all the file paths under the routes folder that are relevant to the "Target API" and the "Inspiration API". READ_PROJECT_FILES for all these relevant file paths. These are referred to as "Relevant Route File Paths".
+        7. The folder structure under the routes folder matches the route. In each folder, there is an `index.js` which links to the sub-routes. The last `index.js` file implements the routes. Identify all the file paths under the routes folder that are relevant to the "Target API" and the "Inspiration API". READ_PROJECT_FILES for all these relevant file paths. These are referred to as "Relevant Route File Paths".
 
-        9. From the contents of the "Relevant Route File Paths", understand the path to the service files for both the "Target API" and the "Inspiration API". Read these service files.
+        8. From the contents of the "Relevant Route File Paths", understand the path to the service files for both the "Target API" and the "Inspiration API". Read these service files.
 
-        10. Understand the logic implemented in both the above read service file. Store your understanding as conversation notes (in a file named something like relevant service files understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        9. Understand the logic implemented in both the above read service file. Store your understanding as conversation notes (in a file named something like relevant service files understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        11. Using the project folder structure, identify the corresponding test file from test/functional folder, corresponding to the "Inspiration API". Read this file using the file path. Let's call this test file as Inspiration API test file.
+        10. From the contents of the "Relevant Route File Paths", identify the api name constant getters for both the "Target API" and the "Inspiration API". Store your understanding as conversation notes (in a file named something like api names understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        12. Understand the following from the Inspiration API test file contents and store your understanding as conversation notes (in a file named something like inspiration api test file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+        11. Using the api routes for the "Target API" & the "Inspiration API" and the project folder structure, identify the relevant signature.js files. Read these signature files using their file paths and understand what are the manadatory and optional parameters of the "Target API" and the "Inspiration API". Also understand what all validation methods are called for each of these parameters. Store your understanding as conversation notes (in a file named something like parameter and validation understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+
+        12. Read the common validator file. This file defines the methods whose names are used in the signature file to specify what all validations need to be done for each parameter.
+
+        13. Using the project folder structure, identify the corresponding test file from test/functional folder, corresponding to the "Inspiration API". Read this file using the file path. Let's call this test file as Inspiration API test file.
+
+        14. Understand the following from the Inspiration API test file contents and store your understanding as conversation notes (in a file named something like inspiration api test file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
           - Understand what all files from the test folder are required in the file.
           - Understand what steps are performed beforeEach and afterEach of each test.
           - Understand how external API calls are stubbed using Sinon package.
           - Understand how the jwt token / authentication is managed and an API request is made.
         
-        13. From the list of files from the test folder that are required in the inspiration api test file, identify the scenario data file. Note the folder structure of this scenario data file and read the file using the file path, identified using the require path and the project folder structure.
+        15. From the list of files from the test folder that are required in the Inspiration API test file, identify the scenario data file path. Read the scenarios file using the file path, identified using the require path and the project folder structure.
 
-        14. Understand the contents of the scenario data file and their relevance in writing the test file. Store your understanding as conversation notes (in a file named something like scenario data file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX)
+        16. Understand the following from the Inspiration API scenario data file contents and store your understanding as conversation notes (in a file named something like inspiration api scenario data file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+          - Each scenario object must have the description, input and output keys.
+          - Array of scenario objects forms a value to a key used in one test. This key is called the scenario group.
+          - A scenario object can optionally have information of stubbing, if external APIs are involved and there is a need to stub their responses.
+          - Value of the output key in a scenario object, must match with the response output specifications from OpenAPI specs. Note that the value of the output key does not need to be inline with the DB objects.
+          - Value of the input key in a scenarion object must match with the parameter specifications from OpenAPI specs.
+          - Understand how the scenarios in a scenario group are iterated and the output is asserted for input in each iteration.
+          - Note the folder structure of this scenario data file, which aligns with the route file location with the final filename coming from the final route part.
 
-        15. From the list of files from the test folder that are required in the inspiration api test file, identify the fixtures file. Note the folder structure of this fixtures file and read the file using the file path, identified using the require path and the project folder structure.
+        17. From the list of files from the test folder that are required in the Inspiration API test file, identify the fixtures file. Read the fixtures file usign the file path, identified using the require path and the project folder structure.
 
-        16. From the contents of the target API service file, list down all the files used in the implementation. Read the contents of these project files, if not already read.
+        18. Understand the following from the Inspiration API fixtures file contents and store your understanding as conversation notes (in a file named something like inspiration api fixtures file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+          - All the db rows needed for the functioning of the API are needed to be listed in the fixtures file.
+          - Before each test case, the data from the fixtures is inserted into a clean slate database, having the table schema created using db migrations.
+          - The fixture file is structured into arrays of rows from different tables grouped by their models.
 
-        17. Identify the methods which need to be stubbed for writing the tests for the target API. Store your understanding as conversation notes (in a file named something like details of stubbings file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX)
+        19. From the contents of the target API service file, list down all the files used in the implementation. Read the contents of these project files, if not already read.
 
-        18. Create and Finalize Implementation Guide for writing tests for the target API:
+        20. Identify the scenarios which are needed for the test cases for target API following the below listed rules and store your understanding as conversation notes (in a file named something like target api scenario data file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+          - Each scenario object must have the description, input and output keys.
+          - Array of scenario objects forms a value to a key used in one test. This key is called the scenario group.
+          - A scenario object can optionally have information of stubbing, if external APIs are involved and there is a need to stub their responses.
+          - Value of the output key in a scenario object, must match with the response output specifications from OpenAPI specs. Note that the value of the output key does not need to be inline with the DB objects.
+          - Value of the input key in a scenarion object must match with the parameter specifications from OpenAPI specs.
+          - Ensure to have multiple scenarios in a single scenario group covering different combinations of inputs and and thus different resulting outputs.
+          - Ensure to consider error scenarios (success = false) taking hints from the rejections made in the service file.
+          - Ensure to consider param validation error scenarios too (success = false) by passing parameters which will fail the validations written in the signature file.
+          - Ensure to use stubbing for external API calls.
+          - Ensure to have concrete values in the input and output, either using the example values from the openAPI specs or create appropriate dummy values.
+
+        21. Create and Finalize Implementation Guide for writing tests for the target API:
             - Construct and review a detailed, standalone implementation guide by following these rules:
                 - The implementation guide must be in markdown format.
                 - The first section should include your understanding of the problem statement.
                 - Next section of the implementation guide should be for listing down the steps, following these rules:
                     - Each step must be standalone, so that different developers can work on different steps in parallel.
                     - List all the technical instructions for necessary changes, specifying exact file paths and descriptions of changes.
+                    - Each step must specify a file path.
                     - Provide specifics on coding requirements, such as function signatures, data structures, and algorithms to be used or modified.
                     - Outline the creation of new files, including their paths, the specific logic to be implemented, and detailed function signatures and class definitions.
                     - Explain how these new functionalities will interact with existing components, including dependency and integration points.

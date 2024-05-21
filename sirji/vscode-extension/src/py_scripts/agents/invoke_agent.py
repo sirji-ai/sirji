@@ -79,13 +79,13 @@ class AgentRunner:
 
         relative_path = file_summaries_index.get(sirji_project_folder, '')
 
-        file_summaries = {}
+        file_summaries = ""
 
         if relative_path:
             file_summaries_path = os.path.join(file_summaries_folder_path, relative_path)
             if os.path.exists(file_summaries_path):
                 with open(file_summaries_path, 'r') as file:
-                    file_summaries = json.load(file)
+                    file_summaries = file.read()
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
