@@ -20,6 +20,7 @@ from .actions.invoke_agent_existing_session import InvokeAgentExistingSessionMes
 from .actions.find_and_replace import FindAndReplace
 from .actions.insert_text import InsertText
 from .actions.extract_dependencies import ExtractDependenciesMessage
+from .actions.search_code_in_project import SearchCodeInProject
 from .actions.fetch_recipe import FetchRecipeMessage
 from .actions.fetch_recipe_index import FetchRecipeIndexMessage
 
@@ -59,6 +60,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.FIND_AND_REPLACE: FindAndReplace,
         ActionEnum.INSERT_TEXT: InsertText,
         ActionEnum.EXTRACT_DEPENDENCIES: ExtractDependenciesMessage,
+        ActionEnum.SEARCH_CODE_IN_PROJECT: SearchCodeInProject,
         ActionEnum.FETCH_RECIPE: FetchRecipeMessage,
         ActionEnum.FETCH_RECIPE_INDEX: FetchRecipeIndexMessage
     }

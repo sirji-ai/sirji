@@ -12,6 +12,7 @@ import { searchFileInProject } from './search_file_in_project';
 import { findAndReplaceInProjectFile } from './find_and_replace_in_project_file';
 import { insertText } from './insert_text';
 import { readDependencies } from './extract_file_dependencies';
+import { searchCodeInProject } from './search_code_in_project';
 import { fetchRecipeIndex } from './fetch_recipe_index';
 
 export class Executor {
@@ -73,6 +74,8 @@ export class Executor {
         return await insertText(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.EXTRACT_DEPENDENCIES:
         return await readDependencies(oThis.parsedMessage.BODY, oThis.projectRootPath);
+      case ACTION_ENUM.SEARCH_CODE_IN_PROJECT:
+        return await searchCodeInProject(oThis.parsedMessage.BODY, oThis.projectRootPath);
       default:
         throw `Invalid message ACTION: ${action} sent to executor.`;
     }
