@@ -46,6 +46,8 @@ def test_allowed_response_templates():
     # Test if allowed_response_templates function works as expected
     from_agent = AgentEnum.ANY
     to_agent = AgentEnum.EXECUTOR
-    response_template = allowed_response_templates(from_agent, to_agent)
+    action_list = permissions_dict[(from_agent, to_agent)]
+
+    response_template = allowed_response_templates(from_agent, to_agent, action_list)
     
     assert "Allowed Response Templates TO EXECUTOR:" in response_template
