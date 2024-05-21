@@ -36,6 +36,8 @@ class GenericAgent():
             conversation.append(
                 {"role": "system", "content": self.system_prompt()})
         else:
+            if history[0]['role'] == "system":
+                history[0]['content'] = self.system_prompt()
             conversation = history
         
         parsed_input_message = message_parse(input_message)

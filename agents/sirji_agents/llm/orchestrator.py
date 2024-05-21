@@ -31,6 +31,9 @@ class Orchestrator():
             conversation.append(
                 {"role": "system", "content": self.system_prompt()})
         else:
+            if history[0]['role'] == "system":
+                history[0]['content'] = self.system_prompt()
+                
             conversation = history
             parsed_input_message = message_parse(input_message)
             conversation.append({"role": "user", "content": input_message, "parsed_content": parsed_input_message})
