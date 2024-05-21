@@ -6,7 +6,9 @@ from sirji_messages.permissions import permissions_dict
 def test_allowed_response_templates():
     from_agent = AgentEnum.ANY
     to_agent = AgentEnum.EXECUTOR
-    response_template = allowed_response_templates(from_agent, to_agent)
+    action_list = permissions_dict[(from_agent, to_agent)]
+    print("action_list", action_list)
+    response_template = allowed_response_templates(from_agent, to_agent, action_list)
     
     assert "Allowed Response Templates TO EXECUTOR:" in response_template
     assert "Function 1. " in response_template
@@ -15,7 +17,8 @@ def test_allowed_response_templates():
 def test_allowed_response_templates_orchestrator_to_any():
     from_agent = AgentEnum.ORCHESTRATOR
     to_agent = AgentEnum.ANY
-    response_template = allowed_response_templates(from_agent, to_agent)
+    action_list = permissions_dict[(from_agent, to_agent)]
+    response_template = allowed_response_templates(from_agent, to_agent, action_list)
     
     assert "To invoke an agent, please respond with the text below" in response_template
     assert "Function 1. " in response_template
@@ -24,7 +27,8 @@ def test_allowed_response_templates_orchestrator_to_any():
 def test_allowed_response_templates_any_to_caller():
     from_agent = AgentEnum.ANY
     to_agent = AgentEnum.CALLER
-    response_template = allowed_response_templates(from_agent, to_agent)
+    action_list = permissions_dict[(from_agent, to_agent)]
+    response_template = allowed_response_templates(from_agent, to_agent, action_list)
     
     assert "Respond to the agent which invoked you" in response_template
     assert "Function 1. " in response_template
@@ -34,4 +38,5 @@ def test_allowed_response_templates_invalid_agents():
     from_agent = 'INVALID_AGENT'
     to_agent = AgentEnum.EXECUTOR
     with pytest.raises(KeyError):
-        allowed_response_templates(from_agent, to_agent)
+        action_list = permissions_dict[(from_agent, to_agent)]
+        allowed_response_templates(from_agent, to_agent, action_list)

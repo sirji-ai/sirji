@@ -56,7 +56,7 @@ export class Facilitator {
     await oThis.setupSecretManager();
 
     // Open Chat Panel
-    oThis.openChatViewPanel();
+    await oThis.openChatViewPanel();
 
     return oThis.chatPanel;
   }
@@ -101,9 +101,10 @@ export class Facilitator {
 
     let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
-    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
+    let recipeFilePath = path.join(activeRecipeFolderPath, 'index.json');
     let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
+    let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
@@ -111,30 +112,59 @@ export class Facilitator {
     fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
+    fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
     fs.writeFileSync(constantsFilePath, JSON.stringify({ project_folder: oThis.projectRootPath }, null, 4), 'utf-8');
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
 
     if (!fs.existsSync(recipeFilePath)) {
-      fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
-      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
-      fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
+      // Copy all the files from defaults folder to the active_recipe folder
+      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults'), activeRecipeFolderPath);
+
+      // fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
+      // await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
+      // fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
     }
   }
 
+  // private async copyDirectory(source: string, destination: string) {
+  //   if (!fs.existsSync(destination)) {
+  //     fs.mkdirSync(destination, { recursive: true });
+  //   }
+
+  //   let items = fs.readdirSync(source);
+
+  //   items.forEach((item) => {
+  //     let srcPath = path.join(source, item);
+  //     let destPath = path.join(destination, item);
+  //     fs.copyFileSync(srcPath, destPath);
+  //   });
+  // }
+
   private async copyDirectory(source: string, destination: string) {
-    if (!fs.existsSync(destination)) {
-      fs.mkdirSync(destination, { recursive: true });
+    try {
+      if (!fs.existsSync(destination)) {
+        fs.mkdirSync(destination, { recursive: true });
+      }
+
+      let items = fs.readdirSync(source);
+
+      for (const item of items) {
+        let srcPath = path.join(source, item);
+        let destPath = path.join(destination, item);
+        let stats = fs.statSync(srcPath);
+
+        if (stats.isDirectory()) {
+          await this.copyDirectory(srcPath, destPath);
+        } else {
+          fs.copyFileSync(srcPath, destPath);
+        }
+      }
+    } catch (error) {
+      console.error(`Error copying directory from ${source} to ${destination}:`, error);
+      throw error;
     }
-
-    let items = fs.readdirSync(source);
-
-    items.forEach((item) => {
-      let srcPath = path.join(source, item);
-      let destPath = path.join(destination, item);
-      fs.copyFileSync(srcPath, destPath);
-    });
   }
 
   private async setupSecretManager() {
@@ -144,7 +174,7 @@ export class Facilitator {
     await oThis.retrieveSecret();
   }
 
-  private openChatViewPanel() {
+  private async openChatViewPanel() {
     const oThis = this;
 
     oThis.chatPanel = renderView(oThis.context, 'chat', oThis.projectRootUri, oThis.projectRootPath, oThis.sirjiRunId);
@@ -277,7 +307,7 @@ export class Facilitator {
     } else {
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
-        content: { message: 'I am all setup! What would you like me to build today?', allowUserMessage: true }
+        content: { message: 'I am all setup!', allowUserMessage: false }
       });
     }
   }
@@ -305,6 +335,10 @@ export class Facilitator {
     switch (message.type) {
       case 'webViewReady':
         await oThis.sendWelcomeMessage();
+        console.log('Starting Facilitation...');
+        await oThis.initFacilitation('', {
+          TO: ACTOR_ENUM.ORCHESTRATOR
+        });
         break;
 
       case 'saveSettings':
@@ -324,47 +358,15 @@ export class Facilitator {
         break;
 
       case 'userMessage':
-        if (oThis.isFirstUserMessage) {
-          const agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
+        console.log('message.content--------', message.content);
 
-          let creatorAgent = 'SIRJI';
-          let creatorForlderPath = path.join(oThis.agentOutputFolderPath, creatorAgent);
-          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
+        oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+        fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
 
-          let problemStatementFilePathKey = path.join(creatorAgent, 'problem.txt');
-
-          fs.mkdirSync(creatorForlderPath, { recursive: true });
-          fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
-
-          oThis.writeToFile(problemStatementFilePath, message.content);
-
-          fs.writeFileSync(
-            agentOutputIndexFilePath,
-            JSON.stringify({
-              [problemStatementFilePathKey]: {
-                description: 'Problem statement from the SIRJI_USER.',
-                created_by: creatorAgent
-              }
-            }),
-            'utf-8'
-          );
-
-          oThis.isFirstUserMessage = false;
-
-          await oThis.initFacilitation(message.content, {
-            TO: ACTOR_ENUM.ORCHESTRATOR
-          });
-        } else {
-          console.log('message.content--------', message.content);
-
-          oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
-          fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
-
-          await oThis.initFacilitation(message.content, {
-            TO: oThis.lastMessageFrom,
-            FROM: ACTOR_ENUM.USER
-          });
-        }
+        await oThis.initFacilitation(message.content, {
+          TO: oThis.lastMessageFrom,
+          FROM: ACTOR_ENUM.USER
+        });
 
         break;
 
@@ -428,6 +430,7 @@ export class Facilitator {
       } else {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
+            console.log('Orchestrator message', parsedMessage);
             try {
               await spawnAdapter(
                 oThis.context,
@@ -478,7 +481,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath);
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath, oThis.sirjiInstallationFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;

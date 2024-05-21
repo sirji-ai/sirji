@@ -12,7 +12,7 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
     insertPosition = body.split('INSERT_POSITION:')[1].split('---')[0].trim();
   } catch (error) {
     console.error('Error parsing body:', error);
-    return 'Error in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response for the INSERT_TEXT action must conform this response template: FILE_PATH: {{File path}} ---FIND: {{Text to find}} ---INSERT_POSITION: {{above or below}}---TEXT_TO_INSERT: {{Text to insert}}--- ';
+    return `Error in processing your last response. The error is ${error}. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response for the INSERT_TEXT action must conform this response template: FILE_PATH: {{File path}} ---FIND: {{Text to find}} ---INSERT_POSITION: {{above or below}}---TEXT_TO_INSERT: {{Text to insert}}---`;
   }
   filePath = path.join(projectRootPath, filePath);
 
