@@ -103,7 +103,7 @@ export class Facilitator {
 
     let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
-    let recipeFilePath = path.join(activeRecipeFolderPath, 'index.json');
+    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipes');
     let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');

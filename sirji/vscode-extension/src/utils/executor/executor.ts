@@ -63,9 +63,9 @@ export class Executor {
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:
         return await readAgentOutputsIndex(oThis.agentOutputFolderPath);
       case ACTION_ENUM.FETCH_RECIPE:
-        return await fetchRecipe(oThis.sirjiInstallationFolderPath + '/active_recipe', oThis.parsedMessage.BODY);
+        return await fetchRecipe(oThis.sirjiInstallationFolderPath + '/active_recipe/recipes', oThis.parsedMessage.BODY);
       case ACTION_ENUM.FETCH_RECIPE_INDEX:
-        return await fetchRecipeIndex(oThis.sirjiInstallationFolderPath + '/active_recipe');
+        return await fetchRecipeIndex(oThis.sirjiInstallationFolderPath + '/active_recipe/recipes');
       case ACTION_ENUM.SEARCH_FILE_IN_PROJECT:
         return await searchFileInProject(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE:
