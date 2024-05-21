@@ -11,6 +11,24 @@ export const Constants = {
   SESSIONS: 'sessions'
 };
 
+interface LlmModelPricing {
+  [key: string]: {
+    PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS: number;
+    COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS: number;
+  };
+}
+
+export const LLM_MODEL_PRICING: LlmModelPricing = {
+  'gpt-3.5-turbo': {
+    PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS: 1.5,
+    COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS: 2
+  },
+  'gpt-4o': {
+    PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS: 10,
+    COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS: 30
+  }
+};
+
 export const ACTION_ENUM = {
   //user and coder conversations
   PROBLEM_STATEMENT: 'PROBLEM_STATEMENT',
