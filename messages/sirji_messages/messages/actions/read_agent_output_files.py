@@ -23,4 +23,5 @@ class ReadAgentOutputFilesMessage(BaseMessages):
         return "Read Multiple Files From Agent Output Folder"
     
     def instructions(self):
-        return [ "The file paths must be in the following format: '{{Your Agent ID}}/{{file name}}'."]
+        return [ "The body must be in the following format: File paths: [\"{{Your_agent_id}}/{{file_name}}\"]"]
+    

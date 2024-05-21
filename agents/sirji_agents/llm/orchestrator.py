@@ -92,7 +92,7 @@ class Orchestrator():
             Pseudo code which you must follow:
                 1. INVOKE_AGENT REQUIREMENT_GATHERER to QUESTION SIRJI_USER to provide the problem statement and then store it in Agent Output folder.
                 2. INVOKE_AGENT RECIPE_SELECTOR to Get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
-                3. READ_AGENT_OUTPUT_FILES the selected recipe from the Agent Output Folder.
+                3. READ_AGENT_OUTPUT_FILES the selected recipe from the Agent Output Folder using EXECUTOR.
                 4. Proceed sequentially over the prescribed tasks in the recipe.
                     - For each task, invoke the agent specified in the recipe alongside the task, explaining the task in the BODY of the invocation.
             """)

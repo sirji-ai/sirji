@@ -55,10 +55,9 @@ export class TokenManager {
       };
     }
 
-    this.aggregateTokens[key].prompt_tokens += prompt_tokens;
-    this.aggregateTokens[key].completion_tokens += completion_tokens;
+    this.aggregateTokens[key].prompt_tokens = prompt_tokens;
+    this.aggregateTokens[key].completion_tokens = completion_tokens;
     this.aggregateTokens[key].llm_model = llm_model;
-    //Add a check if llm_model is not present in LLM_MODEL_PRICING then add a default value
 
     const llmModelPricing = LLM_MODEL_PRICING[llm_model];
     if (!llmModelPricing) {

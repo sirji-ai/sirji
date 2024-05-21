@@ -88,12 +88,17 @@ export async function readContent(projectRootPath: string, body: string, isDirec
   let result = '';
   let inputPaths = [];
 
-  if (isDirectory) {
-    const directoryPath = body.split('Directory:')[1].trim();
-    inputPaths.push(directoryPath);
-  } else {
-    const filePaths = body.split('File paths:')[1];
-    inputPaths = JSON.parse(filePaths);
+  try {
+    if (isDirectory) {
+      const directoryPath = body.split('Directory:')[1].trim();
+      inputPaths.push(directoryPath);
+    } else {
+      const filePaths = body.split('File paths:')[1];
+      inputPaths = JSON.parse(filePaths);
+    }
+  } catch (error) {
+    console.error('Error parsing the file paths from body:', error);
+    return `Error parsing the file paths from body: ${error}`;
   }
 
   console.log('-------inputPaths', inputPaths);

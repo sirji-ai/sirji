@@ -740,7 +740,7 @@ function displayTokenUsesByAgent(data) {
   console.log('Token uses by agent:', data);
   const agents = Object.keys(data);
 
-  let totalCompletionTokens = 0;
+  let totalTokens = 0;
 
   let totalTokenValuationInDollar = 0;
 
@@ -751,16 +751,20 @@ function displayTokenUsesByAgent(data) {
   agents.forEach((agent) => {
     const agentData = data[agent];
     const completionTokens = agentData.completion_tokens;
-    const tokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
-    totalCompletionTokens += completionTokens;
-    totalTokenValuationInDollar += tokenValuationInDollar;
+    const completionTokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
+    const promptTokens = agentData.prompt_tokens;
+    const promptTokenValuationInDollar = agentData.prompt_token_valuation_in_dollar;
+    totalTokens += completionTokens + promptTokens;
+    totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;
     const row = document.createElement('div');
     row.className = 'tokens-table-row';
-    row.innerHTML = `<div>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens)} | $${tokenValuationInDollar.toFixed(2)}</div>`;
+    row.innerHTML = `<div>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(completionTokenValuationInDollar + promptTokenValuationInDollar).toFixed(
+      2,
+    )}</div>`;
     tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
   });
 
-  document.getElementById('totalRow').innerHTML = `${convertNumber(totalCompletionTokens)} | $${totalTokenValuationInDollar.toFixed(2)}`;
+  document.getElementById('totalRow').innerHTML = `${convertNumber(totalTokens)} | $${totalTokenValuationInDollar.toFixed(2)}`;
 
   jTokensModal.style.display = 'flex';
   jTabsBackdrop.style.display = 'flex';
