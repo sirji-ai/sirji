@@ -5,13 +5,14 @@ import { openBrowser } from './open_browser';
 import { readContent } from './read_content';
 import { appendToAgentOutputsIndex } from './append_to_agent_output_index';
 import { readAgentOutputsIndex } from './read_agent_output_index';
-import { fetchRecipes } from './fetch_recipes';
+import { fetchRecipe } from './fetch_recipe';
 
 import { ACTION_ENUM } from '../constants';
 import { searchFileInProject } from './search_file_in_project';
 import { findAndReplaceInProjectFile } from './find_and_replace_in_project_file';
 import { insertText } from './insert_text';
 import { readDependencies } from './extract_file_dependencies';
+import { fetchRecipeIndex } from './fetch_recipe_index';
 
 export class Executor {
   private parsedMessage: any;
@@ -60,9 +61,10 @@ export class Executor {
         return await appendToAgentOutputsIndex(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:
         return await readAgentOutputsIndex(oThis.agentOutputFolderPath);
-      case ACTION_ENUM.FETCH_RECIPES:
-        const activeRecipeFolderPath = oThis.sirjiInstallationFolderPath + '/active_recipe';
-        return await fetchRecipes(activeRecipeFolderPath);
+      case ACTION_ENUM.FETCH_RECIPE:
+        return await fetchRecipe(oThis.sirjiInstallationFolderPath + '/active_recipe', oThis.parsedMessage.BODY);
+      case ACTION_ENUM.FETCH_RECIPE_INDEX:
+        return await fetchRecipeIndex(oThis.sirjiInstallationFolderPath + '/active_recipe');
       case ACTION_ENUM.SEARCH_FILE_IN_PROJECT:
         return await searchFileInProject(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE:

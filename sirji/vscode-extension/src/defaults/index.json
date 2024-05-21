@@ -1,8 +1,10 @@
 {
   "greenfield.json": {
+    "name": "Green field",
     "description": "Recipe for creating a new project"
   },
   "brownfield_node_js.json": {
+    "name": "Brown field Node.js",
     "description": "Recipe for making changes in the existing project"
   }
 }

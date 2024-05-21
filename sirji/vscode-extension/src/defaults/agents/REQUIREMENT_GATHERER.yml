@@ -2,11 +2,11 @@ id: REQUIREMENT_GATHERER
 name: Requirement Gatherer Agent
 llm:
   provider: openai
-  model: gpt-3.5-turbo
+  model: gpt-4o
 skills:
-  - skill: QUESTION SIRJI_USER to provide the problem statement and then store it in Agent Output folder.
+  - skill: Gather, store, and register the problem statement provided by the user.
     pseudo_code: |
       1. QUESTION SIRJI_USER to provide the problem statement they want you to work on.
-      2. CREATE_AGENT_OUTPUT_FILE with the problem statement provided by SIRJI_USER.
-      3. APPEND_TO_AGENT_OUTPUT_INDEX the details of stored problem statement.
-      4. Respond back to the agent who invoked you.
+      2. Store the problem statement in AGENT OUTPUT FOLDER.
+      3. Register the problem statement to the AGENT OUTPUT INDEX.
+      4. Respond back to the agent who invoked you, detailing your actions in the BODY.

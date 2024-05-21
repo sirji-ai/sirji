@@ -13,7 +13,6 @@ permissions_dict = {
         ActionEnum.READ_AGENT_OUTPUT_FILES,
         ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX,
         ActionEnum.READ_AGENT_OUTPUT_INDEX,
-        ActionEnum.FETCH_RECIPES,
         ActionEnum.FIND_AND_REPLACE,
         ActionEnum.INSERT_TEXT,
         ActionEnum.EXTRACT_DEPENDENCIES

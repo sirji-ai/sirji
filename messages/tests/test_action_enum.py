@@ -7,7 +7,8 @@ def test_action_enum_membership():
     assert ActionEnum['EXECUTE_COMMAND'] == ActionEnum.EXECUTE_COMMAND
     assert ActionEnum['APPEND_TO_AGENT_OUTPUT_INDEX'] == ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX
     assert ActionEnum['READ_AGENT_OUTPUT_INDEX'] == ActionEnum.READ_AGENT_OUTPUT_INDEX
-    assert ActionEnum['FETCH_RECIPES'] == ActionEnum.FETCH_RECIPES
+    assert ActionEnum['FETCH_RECIPE'] == ActionEnum.FETCH_RECIPE
+    assert ActionEnum['FETCH_RECIPE_INDEX'] == ActionEnum.FETCH_RECIPE_INDEX
     assert ActionEnum['RUN_SERVER'] == ActionEnum.RUN_SERVER
     assert ActionEnum['CREATE_PROJECT_FILE'] == ActionEnum.CREATE_PROJECT_FILE
     assert ActionEnum['CREATE_AGENT_OUTPUT_FILE'] == ActionEnum.CREATE_AGENT_OUTPUT_FILE
