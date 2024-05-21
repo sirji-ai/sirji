@@ -15,6 +15,7 @@ import { readDependencies } from './executor/extract_file_dependencies';
 
 import { AgentStackManager } from './agent_stack_manager';
 import { SessionManager } from './session_manager';
+import { TokenManager } from './token_manager';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -36,6 +37,7 @@ export class Facilitator {
   private sirjiInstallationFolderPath: string = '';
   private sirjiRunFolderPath: string = '';
   private inputFilePath: string = '';
+  private tokenManager: TokenManager | undefined;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -115,6 +117,7 @@ export class Facilitator {
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
+    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
 
     if (!fs.existsSync(recipeFilePath)) {
       fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
@@ -455,6 +458,7 @@ export class Facilitator {
             parsedMessage = lastOrchestratorMessage?.parsed_content;
 
             oThis.writeToFile(inputFilePath, rawMessage);
+            await oThis.tokenManager?.generateAggregateTokenForOrchestrator();
             break;
 
           case ACTOR_ENUM.USER:
@@ -533,6 +537,8 @@ export class Facilitator {
             break;
         }
       }
+
+      await oThis.tokenManager?.generateAggregateTokens();
 
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
 

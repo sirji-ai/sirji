@@ -24,9 +24,9 @@ class AgentRunner:
                 contents = json.load(file)
                 return contents["conversations"], contents["prompt_tokens"], contents["completion_tokens"]
 
-    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens):
+    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens, llm_model):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
+            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,"llm_model": llm_model }, file, indent=4)
 
     def read_file(self, file_path):
         print('---------')
@@ -104,7 +104,7 @@ class AgentRunner:
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed
-        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens)
+        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens, llm['model'])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process interactions.")
