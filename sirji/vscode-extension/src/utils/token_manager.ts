@@ -10,6 +10,9 @@ export class TokenManager {
   private aggregateTokens: {
     [key: string]: { prompt_tokens: number; completion_tokens: number; prompt_token_valuation_in_dollar: number; completion_token_valuation_in_dollar: number; llm_model: string };
   } = {};
+  private finalAggregateTokens: {
+    [key: string]: { prompt_tokens: number; completion_tokens: number; prompt_token_valuation_in_dollar: number; completion_token_valuation_in_dollar: number; llm_model: string };
+  } = {};
 
   constructor(filePath: string, conversationFolderPath: string, aggregateTokenFilePath: string) {
     this.filePath = filePath;
@@ -44,7 +47,9 @@ export class TokenManager {
     this.addTokensToAggregateTokens('ORCHESTRATOR', prompt_tokens, completion_tokens, llm_model);
   }
 
-  public addTokensToAggregateTokens(key: string, prompt_tokens: number, completion_tokens: number, llm_model: string) {
+  public async addTokensToAggregateTokens(key: string, prompt_tokens: number, completion_tokens: number, llm_model: string) {
+    console.log('TokenManager: addTokensToAggregateTokens:', { key, prompt_tokens, completion_tokens, llm_model });
+
     if (!this.aggregateTokens[key]) {
       this.aggregateTokens[key] = {
         prompt_tokens: 0,
@@ -66,6 +71,8 @@ export class TokenManager {
     }
     this.aggregateTokens[key].prompt_token_valuation_in_dollar = (this.aggregateTokens[key].prompt_tokens * LLM_MODEL_PRICING[llm_model].PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
     this.aggregateTokens[key].completion_token_valuation_in_dollar = (this.aggregateTokens[key].completion_tokens * LLM_MODEL_PRICING[llm_model].COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
+
+    console.log('TokenManager: aggregateTokens:', this.aggregateTokens);
 
     this.writeAggregateTokensFile(this.aggregateTokens);
   }
@@ -91,8 +98,8 @@ export class TokenManager {
         console.log('TokenManager: prompt_tokens:', prompt_tokens);
         console.log('TokenManager: completion_tokens:', completion_tokens);
 
-        const splittedCallStack = session.callStack.split('.');
-        const key = splittedCallStack[0];
+        // const splittedCallStack = session.callStack.split('.');
+        const key = session.callStack;
 
         this.addTokensToAggregateTokens(key, prompt_tokens, completion_tokens, llm_model);
       }
@@ -111,15 +118,38 @@ export class TokenManager {
     }
   }
 
-  private writeAggregateTokensFile(data: { [key: string]: { prompt_tokens: number; completion_tokens: number } }): void {
+  private writeAggregateTokensFile(data: {
+    [key: string]: { prompt_tokens: number; completion_tokens: number; prompt_token_valuation_in_dollar: number; completion_token_valuation_in_dollar: number; llm_model: string };
+  }): void {
     try {
-      fs.writeFileSync(this.aggregateTokenFilePath, JSON.stringify(data, null, 4), 'utf8');
+      this.finalAggregateTokens = {};
+      Object.keys(data).forEach((key) => {
+        const splittedKey = key.split('.');
+        const newKey = splittedKey[0];
+        if (!this.finalAggregateTokens[newKey]) {
+          this.finalAggregateTokens[newKey] = {
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            prompt_token_valuation_in_dollar: 0,
+            completion_token_valuation_in_dollar: 0,
+            llm_model: ''
+          };
+        }
+
+        this.finalAggregateTokens[newKey].prompt_tokens += data[key].prompt_tokens;
+        this.finalAggregateTokens[newKey].completion_tokens += data[key].completion_tokens;
+        this.finalAggregateTokens[newKey].prompt_token_valuation_in_dollar += data[key].prompt_token_valuation_in_dollar;
+        this.finalAggregateTokens[newKey].completion_token_valuation_in_dollar += data[key].completion_token_valuation_in_dollar;
+        this.finalAggregateTokens[newKey].llm_model = data[key].llm_model;
+      });
+
+      fs.writeFileSync(this.aggregateTokenFilePath, JSON.stringify(this.finalAggregateTokens, null, 4), 'utf8');
     } catch (error) {
       console.error('Error writing the aggregate tokens file:', error);
     }
   }
 
-  public getTokenUsedInConversation() {
+  public async getTokenUsedInConversation() {
     try {
       if (!fs.existsSync(this.aggregateTokenFilePath)) {
         return {};
@@ -132,8 +162,8 @@ export class TokenManager {
     }
   }
 
-  public getAggregateTokensUsedInConversation() {
-    const aggregateTokens = this.getTokenUsedInConversation();
+  public async getAggregateTokensUsedInConversation() {
+    const aggregateTokens = await this.getTokenUsedInConversation();
 
     let prompt_tokens = 0;
     let completion_tokens = 0;
