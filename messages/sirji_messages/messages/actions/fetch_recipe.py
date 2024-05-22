@@ -23,4 +23,4 @@ class FetchRecipeMessage(BaseMessages):
         return "Fetch Recipe"
 
     def instructions(self):
-        return []
+        return [ "The body must be in the following format: File path: file_path"]
