@@ -38,6 +38,7 @@ export class Facilitator {
   private sirjiRunFolderPath: string = '';
   private inputFilePath: string = '';
   private tokenManager: TokenManager | undefined;
+  private isDebugging: Boolean = true;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -577,6 +578,18 @@ export class Facilitator {
 
   private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
+
+    if (oThis.isDebugging) {
+      if (
+        parsedMessage.ACTION === 'INVOKE_AGENT' ||
+        parsedMessage.ACTION === 'APPEND_TO_AGENT_OUTPUT_INDEX' ||
+        parsedMessage.ACTION === 'FETCH_RECIPE_INDEX' ||
+        parsedMessage.ACTION === 'FETCH_RECIPE' ||
+        parsedMessage.ACTION === 'READ_AGENT_OUTPUT_FILES'
+      ) {
+        return;
+      }
+    }
 
     let contentMessage = null;
 
