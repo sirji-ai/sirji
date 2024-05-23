@@ -24,17 +24,17 @@
 
 ## Sirji
 
-Sirji is an open-source framework where various AI agents collaborate via a messaging protocol to solve a given software problem. Problems range from building greenfield web apps to solving GitHub issues, writing test cases, and generating documentation.
+Sirji is a framework designed to build and run custom AI agents for your everyday development tasks.
 
-Sirji uses either the standard or user-generated recipe, that lists prescribed tasks and tips for solving a particular problem. Recipe also indicates which agent should perform each task.
+Sirji has two main components:
+- **Sirji Studio:** Within Sirji Studio, developers can write custom agents and recipes by writing pseudocode in plain English.
+- **Sirji VS Code Extension:** This extension provides an interactive chat interface right within the VS Code IDE, allowing you to submit your problem statements and give feedback to Sirji. The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
-An Agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudo code. The community can create a custom agent either by modifying an already existing agent or write entirely new agent with an entirely different pseudo code.
+Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. An agent in the Sirji framework is a modular AI component that performs a specific task based on custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
 
-Sirji is currently implemented as a Visual Studio Code extension. This extension provides an interactive chat interface right within your IDE through which you can submit your problem statement and give feedback to Sirji.
+Different custom agents collaborate via a messaging protocol to perform development tasks. These tasks can range from building greenfield web apps to solving GitHub issues, writing new APIs, writing test cases, generating documentation, and more.
 
-The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
-
-Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It executes the generated code in your local or remote development environment.
+In addition to filesystem CRUD operations, custom agents can install system-level packages and programming language-specific dependencies, run commands, execute test cases, and bring up server processes using the capabilities of the EXECUTOR agent, a component of the Sirji framework.
 
 ## Prerequisites
 
