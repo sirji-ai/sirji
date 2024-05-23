@@ -23,4 +23,6 @@ class InvokeAgentExistingSessionMessage(BaseMessages):
         return "Invoke an agent continuing on the existing session"
     
     def instructions(self):
-        return []
+        return [
+            "Never use this action while invoking an agent for the first time."
+        ]

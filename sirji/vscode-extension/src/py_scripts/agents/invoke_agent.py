@@ -69,7 +69,7 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
         
-        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
+        agent_config_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
 
         file_summaries_folder_path = os.path.join(sirji_installation_dir, 'file_summaries')
         file_summaries_file_path = os.path.join(file_summaries_folder_path, 'index.json')

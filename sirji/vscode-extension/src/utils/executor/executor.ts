@@ -63,9 +63,9 @@ export class Executor {
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:
         return await readAgentOutputsIndex(oThis.agentOutputFolderPath);
       case ACTION_ENUM.FETCH_RECIPE:
-        return await fetchRecipe(oThis.sirjiInstallationFolderPath + '/active_recipe/recipes', oThis.parsedMessage.BODY);
+        return await fetchRecipe(oThis.sirjiInstallationFolderPath + '/studio/recipes', oThis.parsedMessage.BODY);
       case ACTION_ENUM.FETCH_RECIPE_INDEX:
-        return await fetchRecipeIndex(oThis.sirjiInstallationFolderPath + '/active_recipe/recipes');
+        return await fetchRecipeIndex(oThis.sirjiInstallationFolderPath + '/studio/recipes');
       case ACTION_ENUM.SEARCH_FILE_IN_PROJECT:
         return await searchFileInProject(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE:
@@ -77,7 +77,7 @@ export class Executor {
       case ACTION_ENUM.SEARCH_CODE_IN_PROJECT:
         return await searchCodeInProject(oThis.parsedMessage.BODY, oThis.projectRootPath);
       default:
-        throw `Invalid message ACTION: ${action} sent to executor.`;
+        return `Invalid message ACTION: ${action} sent to executor. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors.`;
     }
   }
 

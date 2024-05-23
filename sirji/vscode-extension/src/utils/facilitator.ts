@@ -100,19 +100,19 @@ export class Facilitator {
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
     oThis.agentOutputFolderPath = path.join(runFolderPath, 'agent_output');
-    let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
+    let studioFolderPath = path.join(sirjiInstallationFolderPath, 'studio');
 
     let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
-    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipes');
-    let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
+    let recipeFilePath = path.join(studioFolderPath, 'recipes');
+    let installedAgentsFolderPath = path.join(studioFolderPath, 'agents');
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
-    fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
+    fs.mkdirSync(studioFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
     fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
@@ -123,12 +123,12 @@ export class Facilitator {
     oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
 
     if (!fs.existsSync(recipeFilePath)) {
-      // Copy all the files from defaults folder to the active_recipe folder
-      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults'), activeRecipeFolderPath);
+      // Copy all the files from defaults folder to the studio folder
+      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults'), studioFolderPath);
 
       // fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
       // await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
-      // fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
+      // fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'studio', 'config.json'), '{}', 'utf-8');
     }
   }
 

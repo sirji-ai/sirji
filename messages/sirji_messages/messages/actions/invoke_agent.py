@@ -23,4 +23,6 @@ class InvokeAgentMessage(BaseMessages):
         return "Invoke an agent in a fresh session"
     
     def instructions(self):
-        return []
+        return [
+            "For first time invoking an agent, always use this action.",
+            ]

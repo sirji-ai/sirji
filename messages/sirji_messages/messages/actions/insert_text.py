@@ -21,7 +21,7 @@ class InsertText(BaseMessages):
             ---
             FIND: {{Text to find}}
             ---
-            INSERT_POSITION: {{'above' or 'below'}}
+            INSERT_POSITION: {{above or below}}
             ---
             TEXT_TO_INSERT: {{Text to insert}}
             ---
@@ -31,4 +31,7 @@ class InsertText(BaseMessages):
         return "Insert text into a file at a specific line number"
     
     def instructions(self):
-        return []
+        return [
+            "The file path must be relative to the project root.",
+            "The text to find must not be enclosed in special charaters like quotes, backticks, etc."
+        ]
