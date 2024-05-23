@@ -9,51 +9,48 @@ skills:
     pseudo_code: |
         1. Read the problem statement from the Agent Output Folder.
 
-        2. If the problem statement does not specify the file path to the DBML file, QUESTION SIRJI_USER to provide it.
-        3. READ_PROJECT_FILES the DBML file using the specified file path.
+        2. Using the project folder structure, determine the file path to the DBML file. Read the DBML file using the file path.
 
-        4. If the problem statement does not specify the file path to the OpenAPI specifications file, QUESTION SIRJI_USER to provide it.
-        5. READ_PROJECT_FILES the OpenAPI specifications file using the specified file path.
+        3. Using the project folder structure, determine the file path to the OpenAPI specs file. Read the OpenAPI specs file using the file path.
 
-        6. If the problem statement does not specify the file path to the sequence diagram for the new API, QUESTION SIRJI_USER to provide it.
-        7. READ_PROJECT_FILES the sequence diagram using the specified file path.
+        4. Using the project folder structure, determine the file path to the sequence diagram file for the new API. Read the sequence diagram file using the file path.
+        
+        5. Using the project folder structure, determine the file path to the apiName.js file. This file is used to manage API name constants, centralizing their definition to facilitate easier maintenance and reduce error potential. Each API must have a name constant defined in this file. Read the apiName.js file using the file path.
 
-        8. Using the project folder structure, determine the file path to the apiName.js file. This file is used to manage API name constants, centralizing their definition to facilitate easier maintenance and reduce error potential. Each API must have a name constant defined in this file. Read the apiName.js file using the file path.
+        6. Using the project folder structure, identify the paths for the API params validator and the common validator. Read both files using the respective file paths.
 
-        9. Using the project folder structure, identify the paths for the API params validator and the common validator. Read both files using the respective file paths.
+        7. Using the project folder structure, locate the relevant signature.js file. There may be multiple files named signature.js; select the relevant one based on the new API route. The signature file contains configurations of parameters categorized into mandatory and optional parameters. It also specifies the validations to be applied to the parameters, providing a map of validation method names to error details. Read the relevant signature file using the file path.
 
-        10. Using the project folder structure, locate the relevant signature.js file. There may be multiple files named signature.js; select the relevant one based on the new API route. The signature file contains configurations of parameters categorized into mandatory and optional parameters. It also specifies the validations to be applied to the parameters, providing a map of validation method names to error details. Read the relevant signature file using the file path.
+        8. To understand more about how signature validation, service class calling, and formatter class calling are performed, read all files matching the pattern `routes/helper/*`, using paths obtained from the project folder structure.
 
-        11. To understand more about how signature validation, service class calling, and formatter class calling are performed, read all files matching the pattern `routes/helper/*`, using paths obtained from the project folder structure.
-
-        12. Understand the contents of the sequence diagram along the following lines and store your understanding as conversation notes (in a file named something like sequence diagram understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
+        9. Understand the contents of the sequence diagram along the following lines and store your understanding as conversation notes (in a file named something like sequence diagram understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX):
             - Internal parameters are those set by middleware, such as authentication. These parameters are listed in the sequence diagram.
             - External parameters are those sent by the API caller. These are listed in both the sequence diagram and the OpenAPI specifications.
             - Construct the part that will go inside the signature.js file, using 'kind' as internal for internal parameters.
             - Both internal and external parameters are available as parameters to the service class constructor.
             - Determine which models are relevant to the new API requirement and what DB queries will be needed for those models.
 
-        13. Using the project folder structure, locate the file paths of the relevant models identified from the sequence diagram. Read the model files using the file paths. Models are implemented using Sequelize ORM. Store your understanding as conversation notes (in a file named something like models understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        10. Using the project folder structure, locate the file paths of the relevant models identified from the sequence diagram. Read the model files using the file paths. Models are implemented using Sequelize ORM. Store your understanding as conversation notes (in a file named something like models understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        14. Using the project folder structure, identify the top three most relevant service file paths related to the new API requirement. Read these service files and understand the conventions used in the service files, the return value from the `perform` method, etc. Store your understanding as conversation notes (in a file named something like relevant service file reference understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        11. Using the project folder structure, identify the top three most relevant service file paths related to the new API requirement. Read these service files and understand the conventions used in the service files, the return value from the `perform` method, etc. Store your understanding as conversation notes (in a file named something like relevant service file reference understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        15. Using the project folder structure, identify the top three most relevant formatter file paths related to the new API requirement. Read these formatter files and understand the conventions used in the formatter files, how the service response is fomatted to a response which is returned to the API called, etc. Formatters are used in route files to convert the service response to a formatted response. Store your understanding as conversation notes (in a file named something like relevant formatter file reference understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        12. Using the project folder structure, identify the top three most relevant formatter file paths related to the new API requirement. Read these formatter files and understand the conventions used in the formatter files, how the service response is fomatted to a response which is returned to the API called, etc. Formatters are used in route files to convert the service response to a formatted response. Store your understanding as conversation notes (in a file named something like relevant formatter file reference understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        16. Using the project folder structure, identify the path to messageStringsHelper.js, en_us.json and validateJWTClaims.js. Read these files and understand how a message is localized by first adding a key in en_us.json and then using this key path (keys joined by '.') in argument to messageStringsHelper.getMessageString to get the localized message. Never directly use a message copy anywhere. Use it via this localization process. Store your understanding as conversation notes (in a file named something like localization understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        13. Using the project folder structure, identify the path to messageStringsHelper.js, en_us.json and validateJWTClaims.js. Read these files and understand how a message is localized by first adding a key in en_us.json and then using this key path (keys joined by '.') in argument to messageStringsHelper.getMessageString to get the localized message. Never directly use a message copy anywhere. Use it via this localization process. Store your understanding as conversation notes (in a file named something like localization understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        17. Read the `package.json` file.
+        14. Read the `package.json` file.
 
-        18. Using the file path specified as the value of the "main" key in the package.json (referred to as the "Main Index File"), read the file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes (like `/consumer` and `/admin`) to the main application.
+        15. Using the file path specified as the value of the "main" key in the package.json (referred to as the "Main Index File"), read the file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes (like `/consumer` and `/admin`) to the main application.
 
-        19. The folder structure under the routes folder matches the route. In each folder, there is an `index.js` which links to the sub-routes. The last `index.js` file implements the routes. Identify all the file paths under the routes folder that are relevant to the new API to be developed. READ_PROJECT_FILES for all these relevant file paths. These are referred to as "Relevant Route File Paths".
+        16. The folder structure under the routes folder matches the route. In each folder, there is an `index.js` which links to the sub-routes. The last `index.js` file implements the routes. Identify all the file paths under the routes folder that are relevant to the new API to be developed. READ_PROJECT_FILES for all these relevant file paths. These are referred to as "Relevant Route File Paths".
 
-        20. For writing the route for the new API, understand the folders and files you will need to create. Store your understanding as conversation notes (in a file named something like folders and files to create understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        17. For writing the route for the new API, understand the folders and files you will need to create. Store your understanding as conversation notes (in a file named something like folders and files to create understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        21. Using your understanding of the sequence diagram contents and the folder structure, identify relevant file paths which you have not yet read (referred to as "other relevant files"). Document why you feel these files are relevant in conversation notes (in a file named something like other relevant files understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        18. Using your understanding of the sequence diagram contents and the folder structure, identify relevant file paths which you have not yet read (referred to as "other relevant files"). Document why you feel these files are relevant in conversation notes (in a file named something like other relevant files understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        22. Read files out of the "other relevant files" which you have not yet read.
+        19. Read files out of the "other relevant files" which you have not yet read.
 
-        23. Create and Finalize Implementation Guide:
+        20. Create and Finalize Implementation Guide:
             - Construct and review a detailed, standalone implementation guide by following these rules:
                 - The implementation guide must be in markdown format.
                 - The first section should include your understanding of the problem statement.
@@ -67,7 +64,7 @@ skills:
                     - Ensure that the guide follows a bottom-up approach in order of the steps, starting from the most foundational changes to the higher-level ones.
                     - Review the guide for completeness, clarity, and technical accuracy.
                     - Ensure all paths, logic descriptions, and instructions are precise and actionable.
-                    - Do not include steps for tests.
+                    - Never include steps for tests.
                     - Ensure to list only the steps which are needed to be done. Do not list steps which are already in place in the code.
                     - Make sure that the guide clearly defines any new methods or classes that got introduced and used in the updated code.
             - Store the implementation guide in the AGENT OUTPUT FOLDER.

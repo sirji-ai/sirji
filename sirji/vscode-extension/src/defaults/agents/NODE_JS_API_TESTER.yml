@@ -14,6 +14,6 @@ skills:
   - skill: Coordinate the invocation of agents to create an implementation guide for writing test cases and execute each step of the guide.
     pseudo_code: |
       1. INVOKE_AGENT NODE_JS_API_TEST_PLANNER to analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
-      2. Read the implementation guide from the Agent Output Folder.
+      2. Read the implementation guide created by NODE_JS_API_TEST_PLANNER from the Agent Output Folder.
       3. Loop over the steps in the implementation guide and INVOKE_AGENT IMPLEMENTATION_GUIDE_CODE_WRITER, passing a request to perform the current step in the BODY of the invocation during each iteration.
       4. Respond back to the agent who invoked you, detailing your actions in the BODY.

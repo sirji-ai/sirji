@@ -1,18 +1,10 @@
 {
-  "greenfield.json": {
-    "name": "Green field",
-    "description": "Recipe for creating a new project."
+  "new_project.json": {
+    "name": "Start New Project",
+    "description": "Recipe for creating a new project from scratch."
   },
-  "brownfield_node_js.json": {
-    "name": "Brown field Node.js",
-    "description": "Recipe for making changes in the existing Node.js project."
-  },
-  "node_js_create_api.json": {
-    "name": "Node.js Create New API",
-    "description": "Custom recipe for creating a new API in Node.js."
-  },
-  "node_js_api_test_cases.json": {
-    "name": "Test cases for Node.js API",
-    "description": "Recipe for writing test cases for Node.js API following the test framework existing in the project."
+  "node_js_create_api_and_test_cases.json": {
+    "name": "Write New API and Test Cases",
+    "description": "Recipe for writing a new API and test cases in an existing Node.js Project."
   }
 }
