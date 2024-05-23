@@ -78,8 +78,11 @@ skills:
           - All the db rows needed for the functioning of the API are needed to be listed in the fixtures file.
           - Before each test case, the data from the fixtures is inserted into a clean slate database, having the table schema created using db migrations.
           - The fixture file is structured into arrays of rows from different tables grouped by their models.
+          - Make sure to understand all the necessary fixtures required for the "Target API".
+          - Make sure to understand the casing of the keys in the fixtures file.
           - Each fixture file contains data for only one model.
           - modelNameConstants.js file is used to get the model name constants for the models used in the fixtures file. Make sure to add table name constants for the tables used in the fixtures file if not already present.
+
 
         25. From the contents of the target API service file, list down all the files used in the implementation. Read the contents of these project files, if not already read.
 
@@ -89,7 +92,7 @@ skills:
           - A scenario object can optionally have information of stubbing, if external APIs are involved and there is a need to stub their responses.
           - Value of the output key in a scenario object, must match with the response output specifications from OpenAPI specs. Note that the value of the output key does not need to be inline with the DB objects.
           - Value of the input key in a scenario object must match with the parameter specifications from OpenAPI specs.
-          - Ensure to have multiple scenarios in a single scenario group covering different combinations of inputs and and thus different resulting outputs. Make sure to add negative scenarios as well.
+          - Ensure to have multiple scenarios in a single scenario group covering different combinations of inputs and and thus different resulting outputs.
           - Ensure to consider error scenarios (success = false) taking hints from the rejections made in the service file.
           - Ensure to consider param validation error scenarios too (success = false) by passing parameters which will fail the validations written in the signature file.
           - Ensure to use stubbing for external API calls.
