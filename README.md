@@ -13,7 +13,8 @@
 <p align="center">
   <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
-  <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+  <img alt="GitHub Open Issues" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+  <img alt="GitHub Closed Issues" src="https://img.shields.io/github/issues-closed/sirji-ai/sirji">
 </p>
 
 <p align="center">
@@ -26,20 +27,31 @@
 
 Sirji is a framework designed to build and run custom AI agents for your everyday development tasks.
 
-Sirji has two main product components:
-- **Sirji Studio:** Within Sirji Studio, developers can write custom agents and recipes by writing pseudocode in plain English.
-- **Sirji VS Code Extension:** This extension provides an interactive chat interface right within the VS Code IDE, allowing you to submit your problem statements and give feedback to Sirji. The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+Sirji has two main product components: Sirji Studio and Sirji VS Code Extension.
 
-**Custom agents** help capture and convey the developer's code writing style and domain knowledge to Sirji. An agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
+### Sirji Studio
 
-Different custom agents collaborate via a **messaging protocol** to perform development tasks. These tasks can range from building greenfield web apps to solving GitHub issues, writing new APIs, writing test cases, generating documentation, and more.
+We have built the framework that allows the developer community to build custom agents simply by writing pseudocode in plain English.
 
-In addition to filesystem CRUD operations, custom agents can install system-level packages and programming language-specific dependencies, run commands, execute test cases, and bring up server processes using the capabilities of the **EXECUTOR** agent, a component of the Sirji framework.
+Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. They performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
 
-## Prerequisites
+### Sirji VS Code Extension
+
+We have build and released the [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) on the Visual Studio Marketplace.
+
+This extension has the following features implemented:
+- Interactive chat interface allows user to submit their problem statements and give feedback to Sirji.
+- Messaging protocol implements the allowed response templates for messages exchanged between various agents.
+- Orchestrator enables requirement gathering, recipe selection, recipe execution by invoking agents
+- Executor makes these functionalities accessible to the agents: file system access, search, find & replace, insert text in project files, install packages, execute commands, run code, run test cases.
+- Agent Sessions provide the ability to invoke an agent with a fresh LLM conversation or continue on an existing LLM conversation.
+- Logs and Token Usage Summary are displayed alongside the interactive chat interface.
+
+## Installation
+
+You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
 
 Make sure you have installed all of the following prerequisites on your machine:
-
 - Visual Studio Code (>= 1.80.2)
 - Node.js (>= 18) and npm (>= 8.19)
 - Python (>= 3.10) - Make sure `python --version` runs without error.
@@ -49,15 +61,14 @@ Also, you will need an OpenAI API key to access the GPT-4o model.
 
 ## Demo Video
 
-Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
+Here's a three-minute demo. We tasked Sirji with creating a new API and its test cases in an existing Node.js repository. Sirji uses these custom agents we developed:
+- **Code Planner**: Generates an implementation guide with steps and code snippets based on domain knowledge.
+- **Test Planner**: Generates an implementation guide for test cases, following the existing framework and conventions.
+- **Code Writer**: Implements the code changes specified in the guides.
 
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank">https://www.youtube.com/watch?v=NA7uPIvcvmg</a>
 
-<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
-
-## Installation
-
-You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
+<a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/8156bdd5-7324-47e4-a375-df0d29e095c9" alt="Custom Agents for Creating a New API and Test Cases in an Existing Node.js Repository"></a>
 
 ## Architecture
 
@@ -75,7 +86,10 @@ A Recipe is a file that lists prescribed tasks and tips for solving a particular
 
 ### Orchestrator
 
-The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents as per the recipe.
+The Orchestrator is the central component in the Sirji framework, responsible for following:
+- Gathering requirement from the user.
+- Showing list of available recipes to the user and asking for their choice.
+- Reading the selected recipe and managing the flow & execution of prescribed tasks from the selected recipe.
 
 ### Agent Sessions
 An agent can be invoked in either a fresh session or asked to continue an existing session. When invoked in a new session, it starts with a new system prompt and does not retain the context from the previous session. Sessions help keep the context focused on specific tasks.
@@ -120,7 +134,7 @@ We have published following 3 PyPI packages, implementing different responsibili
 - Custom Logging
 
 ### Architecture Diagram
-![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
+![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/0edd8cfe-1d49-4119-8960-1a3f2bf1f73f)
 
 ## Roadmap
 We are calling our next release the ‘Core’ Release (ONGOING).
