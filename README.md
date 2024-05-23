@@ -30,11 +30,11 @@ Sirji has two main product components:
 - **Sirji Studio:** Within Sirji Studio, developers can write custom agents and recipes by writing pseudocode in plain English.
 - **Sirji VS Code Extension:** This extension provides an interactive chat interface right within the VS Code IDE, allowing you to submit your problem statements and give feedback to Sirji. The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
 
-Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. An agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
+**Custom agents** help capture and convey the developer's code writing style and domain knowledge to Sirji. An agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
 
-Different custom agents collaborate via a messaging protocol to perform development tasks. These tasks can range from building greenfield web apps to solving GitHub issues, writing new APIs, writing test cases, generating documentation, and more.
+Different custom agents collaborate via a **messaging protocol** to perform development tasks. These tasks can range from building greenfield web apps to solving GitHub issues, writing new APIs, writing test cases, generating documentation, and more.
 
-In addition to filesystem CRUD operations, custom agents can install system-level packages and programming language-specific dependencies, run commands, execute test cases, and bring up server processes using the capabilities of the EXECUTOR agent, a component of the Sirji framework.
+In addition to filesystem CRUD operations, custom agents can install system-level packages and programming language-specific dependencies, run commands, execute test cases, and bring up server processes using the capabilities of the **EXECUTOR** agent, a component of the Sirji framework.
 
 ## Prerequisites
 
