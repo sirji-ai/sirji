@@ -15,6 +15,7 @@ import { readDependencies } from './executor/extract_file_dependencies';
 
 import { AgentStackManager } from './agent_stack_manager';
 import { SessionManager } from './session_manager';
+import { TokenManager } from './token_manager';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -36,6 +37,8 @@ export class Facilitator {
   private sirjiInstallationFolderPath: string = '';
   private sirjiRunFolderPath: string = '';
   private inputFilePath: string = '';
+  private tokenManager: TokenManager | undefined;
+  private isDebugging: Boolean = false;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -56,7 +59,7 @@ export class Facilitator {
     await oThis.setupSecretManager();
 
     // Open Chat Panel
-    oThis.openChatViewPanel();
+    await oThis.openChatViewPanel();
 
     return oThis.chatPanel;
   }
@@ -97,44 +100,75 @@ export class Facilitator {
 
     let conversationFolderPath = path.join(runFolderPath, 'conversations');
     oThis.agentOutputFolderPath = path.join(runFolderPath, 'agent_output');
-    let activeRecipeFolderPath = path.join(sirjiInstallationFolderPath, 'active_recipe');
+    let studioFolderPath = path.join(sirjiInstallationFolderPath, 'studio');
 
     let agentSessionsFilePath = path.join(runFolderPath, 'agent_sessions.json');
     let constantsFilePath = path.join(runFolderPath, 'constants.json');
-    let recipeFilePath = path.join(activeRecipeFolderPath, 'recipe.json');
-    let installedAgentsFolderPath = path.join(activeRecipeFolderPath, 'agents');
+    let recipeFilePath = path.join(studioFolderPath, 'recipes');
+    let installedAgentsFolderPath = path.join(studioFolderPath, 'agents');
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
+    let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
-    fs.mkdirSync(activeRecipeFolderPath, { recursive: true });
+    fs.mkdirSync(studioFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
+    fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
     fs.writeFileSync(constantsFilePath, JSON.stringify({ project_folder: oThis.projectRootPath }, null, 4), 'utf-8');
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
+    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
 
     if (!fs.existsSync(recipeFilePath)) {
-      fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
-      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
-      fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'active_recipe', 'config.json'), '{}', 'utf-8');
+      // Copy all the files from defaults folder to the studio folder
+      await oThis.copyDirectory(path.join(__dirname, '..', 'defaults'), studioFolderPath);
+
+      // fs.copyFileSync(path.join(__dirname, '..', 'defaults', 'recipe.json'), recipeFilePath);
+      // await oThis.copyDirectory(path.join(__dirname, '..', 'defaults', 'agents'), installedAgentsFolderPath);
+      // fs.writeFileSync(path.join(sirjiInstallationFolderPath, 'studio', 'config.json'), '{}', 'utf-8');
     }
   }
 
+  // private async copyDirectory(source: string, destination: string) {
+  //   if (!fs.existsSync(destination)) {
+  //     fs.mkdirSync(destination, { recursive: true });
+  //   }
+
+  //   let items = fs.readdirSync(source);
+
+  //   items.forEach((item) => {
+  //     let srcPath = path.join(source, item);
+  //     let destPath = path.join(destination, item);
+  //     fs.copyFileSync(srcPath, destPath);
+  //   });
+  // }
+
   private async copyDirectory(source: string, destination: string) {
-    if (!fs.existsSync(destination)) {
-      fs.mkdirSync(destination, { recursive: true });
+    try {
+      if (!fs.existsSync(destination)) {
+        fs.mkdirSync(destination, { recursive: true });
+      }
+
+      let items = fs.readdirSync(source);
+
+      for (const item of items) {
+        let srcPath = path.join(source, item);
+        let destPath = path.join(destination, item);
+        let stats = fs.statSync(srcPath);
+
+        if (stats.isDirectory()) {
+          await this.copyDirectory(srcPath, destPath);
+        } else {
+          fs.copyFileSync(srcPath, destPath);
+        }
+      }
+    } catch (error) {
+      console.error(`Error copying directory from ${source} to ${destination}:`, error);
+      throw error;
     }
-
-    let items = fs.readdirSync(source);
-
-    items.forEach((item) => {
-      let srcPath = path.join(source, item);
-      let destPath = path.join(destination, item);
-      fs.copyFileSync(srcPath, destPath);
-    });
   }
 
   private async setupSecretManager() {
@@ -144,7 +178,7 @@ export class Facilitator {
     await oThis.retrieveSecret();
   }
 
-  private openChatViewPanel() {
+  private async openChatViewPanel() {
     const oThis = this;
 
     oThis.chatPanel = renderView(oThis.context, 'chat', oThis.projectRootUri, oThis.projectRootPath, oThis.sirjiRunId);
@@ -244,6 +278,22 @@ export class Facilitator {
     });
   }
 
+  private async getTokenUsedAgentWise() {
+    const oThis = this;
+
+    const tokenUsedInTheConversation = await oThis.tokenManager?.getTokenUsedInConversation();
+
+    console.log('tokenUsedInTheConversation------', tokenUsedInTheConversation);
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'tokenUsesByAgent',
+      content: {
+        message: tokenUsedInTheConversation,
+        allowUserMessage: false
+      }
+    });
+  }
+
   private async sendWelcomeMessage() {
     const oThis = this;
 
@@ -277,7 +327,7 @@ export class Facilitator {
     } else {
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
-        content: { message: 'I am all setup! What would you like me to build today?', allowUserMessage: true }
+        content: { message: 'I am all setup!', allowUserMessage: false }
       });
     }
   }
@@ -305,6 +355,10 @@ export class Facilitator {
     switch (message.type) {
       case 'webViewReady':
         await oThis.sendWelcomeMessage();
+        console.log('Starting Facilitation...');
+        await oThis.initFacilitation('', {
+          TO: ACTOR_ENUM.ORCHESTRATOR
+        });
         break;
 
       case 'saveSettings':
@@ -322,49 +376,19 @@ export class Facilitator {
       case 'requestCoderLogs':
         await oThis.readCoderLogs();
         break;
+      case 'requestTokenUsage':
+        await oThis.getTokenUsedAgentWise();
 
       case 'userMessage':
-        if (oThis.isFirstUserMessage) {
-          const agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
+        console.log('message.content--------', message.content);
 
-          let creatorAgent = 'SIRJI';
-          let creatorForlderPath = path.join(oThis.agentOutputFolderPath, creatorAgent);
-          let problemStatementFilePath = path.join(creatorForlderPath, 'problem.txt');
+        oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
+        fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
 
-          let problemStatementFilePathKey = path.join(creatorAgent, 'problem.txt');
-
-          fs.mkdirSync(creatorForlderPath, { recursive: true });
-          fs.writeFileSync(problemStatementFilePath, message.content, 'utf-8');
-
-          oThis.writeToFile(problemStatementFilePath, message.content);
-
-          fs.writeFileSync(
-            agentOutputIndexFilePath,
-            JSON.stringify({
-              [problemStatementFilePathKey]: {
-                description: 'Problem statement from the SIRJI_USER.',
-                created_by: creatorAgent
-              }
-            }),
-            'utf-8'
-          );
-
-          oThis.isFirstUserMessage = false;
-
-          await oThis.initFacilitation(message.content, {
-            TO: ACTOR_ENUM.ORCHESTRATOR
-          });
-        } else {
-          console.log('message.content--------', message.content);
-
-          oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
-          fs.writeFileSync(oThis.inputFilePath, message.content, 'utf-8');
-
-          await oThis.initFacilitation(message.content, {
-            TO: oThis.lastMessageFrom,
-            FROM: ACTOR_ENUM.USER
-          });
-        }
+        await oThis.initFacilitation(message.content, {
+          TO: oThis.lastMessageFrom,
+          FROM: ACTOR_ENUM.USER
+        });
 
         break;
 
@@ -428,6 +452,7 @@ export class Facilitator {
       } else {
         switch (parsedMessage.TO) {
           case ACTOR_ENUM.ORCHESTRATOR:
+            console.log('Orchestrator message', parsedMessage);
             try {
               await spawnAdapter(
                 oThis.context,
@@ -455,6 +480,7 @@ export class Facilitator {
             parsedMessage = lastOrchestratorMessage?.parsed_content;
 
             oThis.writeToFile(inputFilePath, rawMessage);
+            await oThis.tokenManager?.generateAggregateTokenForOrchestrator();
             break;
 
           case ACTOR_ENUM.USER:
@@ -478,7 +504,7 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath);
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath, oThis.sirjiInstallationFolderPath);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;
@@ -534,7 +560,11 @@ export class Facilitator {
         }
       }
 
+      await oThis.tokenManager?.generateAggregateTokens();
+
       const totalTokensUsed = await oThis.calculateTotalTokensUsed();
+
+      console.log('totalTokensUsed------', totalTokensUsed);
 
       oThis.chatPanel?.webview.postMessage({
         type: 'tokenUsed',
@@ -548,6 +578,18 @@ export class Facilitator {
 
   private displayParsedMessageSummaryToChatPanel(parsedMessage: any) {
     const oThis = this;
+
+    if (!oThis.isDebugging) {
+      if (
+        parsedMessage.ACTION === 'INVOKE_AGENT' ||
+        parsedMessage.ACTION === 'APPEND_TO_AGENT_OUTPUT_INDEX' ||
+        parsedMessage.ACTION === 'FETCH_RECIPE_INDEX' ||
+        parsedMessage.ACTION === 'FETCH_RECIPE' ||
+        parsedMessage.ACTION === 'READ_AGENT_OUTPUT_FILES'
+      ) {
+        return;
+      }
+    }
 
     let contentMessage = null;
 
@@ -597,37 +639,7 @@ export class Facilitator {
 
   private async calculateTotalTokensUsed() {
     const oThis = this;
-
-    // TODO - we need to read the conversation files of all the agents
-
-    // const coderConversationFilePath = path.join(oThis.sirjiRunId, Constants.CODER_JSON_FILE);
-    // const researcherConversationFilePath = path.join(oThis.sirjiRunId, Constants.RESEARCHER_JSON_FILE);
-    // const plannerConversationFilePath = path.join(oThis.sirjiRunId, Constants.PLANNER_JSON_FILE);
-
-    // const coderTokensUsed = await oThis.getTokensUsed(coderConversationFilePath);
-    // const researcherTokensUsed = await oThis.getTokensUsed(researcherConversationFilePath);
-    // const plannerTokensUsed = await oThis.getTokensUsed(plannerConversationFilePath);
-
-    // const totalPromptTokens = coderTokensUsed.prompt_tokens + researcherTokensUsed.prompt_tokens + plannerTokensUsed.prompt_tokens;
-
-    // const totalCompletionTokens = coderTokensUsed.completion_tokens + researcherTokensUsed.completion_tokens + plannerTokensUsed.completion_tokens;
-
-    // const totalPromptTokensValueInDollar = (totalPromptTokens * Constants.PROMPT_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-    // const totalCompletionTokensValueInDollar = (totalCompletionTokens * Constants.COMPLETION_TOKEN_PRICE_PER_MILLION_TOKENS) / 1000000.0;
-
-    // return {
-    //   total_prompt_tokens: totalPromptTokens,
-    //   total_completion_tokens: totalCompletionTokens,
-    //   total_prompt_tokens_value: totalPromptTokensValueInDollar,
-    //   total_completion_tokens_value: totalCompletionTokensValueInDollar
-    // };
-
-    return {
-      total_prompt_tokens: 0,
-      total_completion_tokens: 0,
-      total_prompt_tokens_value: 0,
-      total_completion_tokens_value: 0
-    };
+    return await oThis.tokenManager?.getAggregateTokensUsedInConversation();
   }
 
   private async getTokensUsed(conversationFilePath: string): Promise<any> {

@@ -4,10 +4,9 @@ from sirji_messages import AgentEnum, ActionEnum
 from .base import BaseMessages
 
 
-class ReadAgentOutputFilesMessage(BaseMessages):
-
+class FetchRecipeIndexMessage(BaseMessages):
     def __init__(self):
-        self.action = ActionEnum.READ_AGENT_OUTPUT_FILES.name
+        self.action = ActionEnum.FETCH_RECIPE_INDEX.name
         self.to_agent = AgentEnum.EXECUTOR.name
 
         super().__init__()
@@ -17,11 +16,10 @@ class ReadAgentOutputFilesMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            File paths: {{Array of file paths}}""")})
+            EMPTY""")})
     
     def description(self):
-        return "Read Multiple Files From Agent Output Folder"
-    
+        return "Fetch Recipe Index"
+
     def instructions(self):
-        return [ "The body must be in the following format: File paths: [\"{{Your_agent_id}}/{{file_name}}\"]"]
-    
+        return []

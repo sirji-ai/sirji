@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import yaml
 from sirji_agents import Orchestrator
 
 class AgentRunner:
@@ -21,13 +22,13 @@ class AgentRunner:
                 contents = json.load(file)
                 return contents["conversations"], contents["prompt_tokens"], contents["completion_tokens"]
 
-    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens):
+    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens, llm_model):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
+            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens, "llm_model": llm_model}, file, indent=4)
             file.flush()
             os.fsync(file.fileno())  # Ensure all internal buffers associated with the file are written to disk
 
-    def read_input_file(self, input_file_path):
+    def read_file(self, input_file_path):
         with open(input_file_path, 'r') as file:
             contents = file.read()
         return contents
@@ -44,8 +45,8 @@ class AgentRunner:
 
         return message_str
 
-    def process_message(self, message_str, conversations, recipe, installed_agents): 
-        agent = Orchestrator(recipe)
+    def process_message(self, message_str, conversations, agent_output_index): 
+        agent = Orchestrator(agent_output_index)
         return agent.message(message_str, conversations)
     
     def read_agents_from_files(self, directory):
@@ -81,29 +82,30 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
 
-        recipe_file_path = os.path.join(sirji_installation_dir, 'active_recipe', 'recipe.json')
-        installed_agent_folder = os.path.join(sirji_installation_dir, 'active_recipe', 'agents')
-
-        installed_agents = self.read_agents_from_files(installed_agent_folder)
+        installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
+        orchestrator_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
+        config_file_contents = self.read_file(orchestrator_config_path)
+        config = yaml.safe_load(config_file_contents)
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
-        recipe_file_contents = self.read_input_file(recipe_file_path)
-        recipe = json.loads(recipe_file_contents)
+        agent_output_index_contents = self.read_file(agent_output_index_path)
+        agent_output_index = json.loads(agent_output_index_contents)
 
-        llm = recipe['llm']
-        
+        llm = config['llm']    
+
         # Set SIRJI_MODEL_PROVIDER env var to llm.provider
         os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
         # Set SIRJI_MODEL env var to llm.model
         os.environ['SIRJI_MODEL'] = llm['model']
         
-        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, recipe, installed_agents)
+        response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, agent_output_index)
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed
-        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens)
+
+        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens, llm['model'])
 
 if __name__ == "__main__":
     agent_runner = AgentRunner()

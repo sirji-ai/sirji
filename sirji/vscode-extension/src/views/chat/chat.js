@@ -118,6 +118,10 @@ window.addEventListener('message', (event) => {
       displayCoderLogs(event.data.content);
       break;
 
+    case 'tokenUsesByAgent':
+      displayTokenUsesByAgent(event.data.content.message);
+      break;
+
     default:
       sendBotMessage(`Unknown message received from facilitator: ${event.data}`, false);
   }
@@ -155,7 +159,7 @@ function sendBotMessage(message, allowUserInput) {
 function onInputChange(event) {
   removRecentUserLoader();
   adjustTextAreaHeight();
-  
+
   // Check if "Command" key (Mac) or "Ctrl" key (Windows/Linux) and "Enter" key are pressed
   if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
     sendUserMessage();
@@ -175,12 +179,12 @@ function adjustTextAreaHeight() {
 
 function updateMessageContainerHeight() {
   const chatContainer = document.getElementById('chatContainer');
-  
-  const inputontainerHeight = document.getElementById("inputContainer").offsetHeight;
-  const headerHeight = document.getElementById("jHeader").offsetHeight;
 
-  const totalHeight = inputontainerHeight + headerHeight; 
-  
+  const inputontainerHeight = document.getElementById('inputContainer').offsetHeight;
+  const headerHeight = document.getElementById('jHeader').offsetHeight;
+
+  const totalHeight = inputontainerHeight + headerHeight;
+
   chatContainer.style.height = `calc(100vh - ${totalHeight}px)`;
 }
 
@@ -194,15 +198,15 @@ function displayMessage(msg, sender, allowUserInput) {
   // Defer the scrolling a bit to ensure layout updates
   chatListContainerElement.appendChild(messageElement);
 
-  if (sender === "bot" && allowUserInput) {
-    displayMessage("Waiting for your input", "user", true); 
+  if (sender === 'bot' && allowUserInput) {
+    displayMessage('Waiting for your input', 'user', true);
   }
 
   chatListContainerElement.scrollTop = chatListContainerElement.scrollHeight + 10;
 }
 
 function removRecentUserLoader() {
-  const userMessages = document.querySelectorAll(".user-input-waiting");
+  const userMessages = document.querySelectorAll('.user-input-waiting');
 
   if (userMessages.length <= 0) {
     return;
@@ -214,10 +218,9 @@ function removRecentUserLoader() {
 }
 
 function createMessageElement(msg, sender, allowUserInput) {
-  removeAllLoaderInstanceFromDOM("message-loader");
-  
-  const chatElement = document.createElement('div');
+  removeAllLoaderInstanceFromDOM('message-loader');
 
+  const chatElement = document.createElement('div');
 
   // Construct user message HTML format
   if (sender === 'user') {
@@ -271,7 +274,7 @@ function createMessageElement(msg, sender, allowUserInput) {
       chatElement.appendChild(loaderElement);
     }
   }
-  
+
   return chatElement;
 }
 
@@ -458,17 +461,22 @@ function toggleProgressTextColor() {
 
 function convertNumber(number) {
   if (number >= 1000000) {
-      return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 100000) / 10).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 100000) {
-      return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
+    return (Math.ceil(number / 10000) / 100).toFixed(1).replace('.0', '') + 'M';
   } else if (number >= 1000) {
-      return (Math.ceil(number / 1000)).toFixed(1).replace('.0', '') + 'K';
+    return (
+      Math.ceil(number / 1000)
+        .toFixed(1)
+        .replace('.0', '') + 'K'
+    );
   } else {
-      return ""; // Don't show tokens less than 1K
+    return ''; // Don't show tokens less than 1K
   }
 }
 
 function displayTokenUsed(data = {}) {
+  console.log('display token used', data);
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = data;
 
   const totalTokensUsed = total_completion_tokens + total_prompt_tokens;
@@ -492,6 +500,7 @@ function updateTokensUsed(totalTokensUsed) {
 }
 
 function updateTooltipTokenValues(tokenValues) {
+  console.log('updateTooltipTokenValues values:', tokenValues);
   const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
 
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
@@ -505,21 +514,21 @@ function displayPlannerLogs(data) {
   const plannerLogs = document.getElementById('plannerLogs');
   plannerLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("plannerLogs");
+  scrollToBottom('plannerLogs');
 }
 
 function displayResearcherLogs(data) {
   const researcherLogs = document.getElementById('researcherLogs');
   researcherLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("researcherLogs");
+  scrollToBottom('researcherLogs');
 }
 
 function displayCoderLogs(data) {
   const coderLogs = document.getElementById('coderLogs');
   coderLogs.innerText = data;
   // scroll to bottom
-  scrollToBottom("coderLogs");
+  scrollToBottom('coderLogs');
 }
 
 function displayCoderTab(data) {
@@ -575,12 +584,11 @@ const logTabButtons = document.querySelectorAll('.log-tab-button');
 logTabButtons.forEach(function (button) {
   button.addEventListener('click', function () {
     const tabName = this.getAttribute('data-tab');
-    showTab(tabName, "log-tab", "log-tab-button");
+    showTab(tabName, 'log-tab', 'log-tab-button');
   });
 });
 
-
-function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button") {
+function showTab(tabName, tabClassName = 'tab', tabButtonClassName = 'tab-button') {
   let i, tabcontent, tablinks;
 
   // Get all elements with class="tab" and hide them
@@ -602,7 +610,7 @@ function showTab(tabName, tabClassName = "tab", tabButtonClassName = "tab-button
   // scroll to bottom
   scrollToBottom(`${tabName}Logs`);
 
-  // adjust the tabs 
+  // adjust the tabs
   toggleTabsArrowOnResize();
 }
 
@@ -611,12 +619,10 @@ function scrollToBottom(elementId) {
 
   if (!domElement) {
     return;
-  };
-  
+  }
+
   domElement.scrollTop = domElement.scrollHeight + 25;
-
 }
-
 
 updateIconColors();
 
@@ -668,11 +674,11 @@ function setup(event) {
 function drag(event) {
   event.preventDefault();
 
-  jWrap.style.gridTemplateAreas = (lStartWidth + event.clientX - StartX) + 'px',(rStartWidth - event.clientX + StartX) + 'px';
-	jRight.style.width = (rStartWidth - event.clientX + StartX) + 'px';
-  jLeft.style.width = (lStartWidth + event.clientX - StartX) + 'px';
-  
-  jResizeHandle.style.right = (rStartWidth - event.clientX + StartX - 4) + 'px';
+  (jWrap.style.gridTemplateAreas = lStartWidth + event.clientX - StartX + 'px'), rStartWidth - event.clientX + StartX + 'px';
+  jRight.style.width = rStartWidth - event.clientX + StartX + 'px';
+  jLeft.style.width = lStartWidth + event.clientX - StartX + 'px';
+
+  jResizeHandle.style.right = rStartWidth - event.clientX + StartX - 4 + 'px';
 
   toggleTabsArrowOnResize();
 }
@@ -696,20 +702,94 @@ function toggleTabsArrowOnResize() {
   }
 }
 
-window.addEventListener("resize", function () {
+window.addEventListener('resize', function () {
   setup();
 });
 
-jTabsButtonsContainerEl.addEventListener("scroll", function () {
+jTabsButtonsContainerEl.addEventListener('scroll', function () {
   const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
 
   if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
-    jArrowSvg.style.display = "none";
+    jArrowSvg.style.display = 'none';
   } else {
-    jArrowSvg.style.display = "flex";
+    jArrowSvg.style.display = 'flex';
   }
 });
 
 jArrowSvg.onclick = function () {
   jTabsButtonsContainerEl.scrollLeft = 999999;
 };
+
+// Tokens modal
+const jTokensButton = document.getElementById('jTokensButton');
+const jTokensModal = document.getElementById('jTokensModal');
+const jCloseTokensModalButton = document.getElementById('jCloseTokensModalButton');
+const jTabsBackdrop = document.getElementById('jTabsBackdrop');
+const jBackdrop = document.getElementById('jBackdrop');
+let isOpen = false;
+
+function tokensButtonClickhandler(e) {
+  if (isOpen) {
+    closeTokensModal();
+  } else {
+    openTokensModal();
+  }
+}
+
+function displayTokenUsesByAgent(data) {
+  console.log('Token uses by agent:', data);
+  const agents = Object.keys(data);
+
+  let totalTokens = 0;
+
+  let totalTokenValuationInDollar = 0;
+
+  const tokensTable = document.getElementById('tokensTable');
+
+  tokensTable.querySelectorAll('.tokens-table-row').forEach((row) => row.remove());
+
+  agents.forEach((agent) => {
+    const agentData = data[agent];
+    const completionTokens = agentData.completion_tokens;
+    const completionTokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
+    const promptTokens = agentData.prompt_tokens;
+    const promptTokenValuationInDollar = agentData.prompt_token_valuation_in_dollar;
+    totalTokens += completionTokens + promptTokens;
+    totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;
+    const row = document.createElement('div');
+    row.className = 'tokens-table-row';
+    row.innerHTML = `<div>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(completionTokenValuationInDollar + promptTokenValuationInDollar).toFixed(
+      2,
+    )}</div>`;
+    tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
+  });
+
+  document.getElementById('totalRow').innerHTML = `${convertNumber(totalTokens)} | $${totalTokenValuationInDollar.toFixed(2)}`;
+
+  jTokensModal.style.display = 'flex';
+  jTabsBackdrop.style.display = 'flex';
+  jBackdrop.style.display = 'flex';
+  document.body.addEventListener('click', modalClickHandler);
+  isOpen = !isOpen;
+}
+
+function openTokensModal() {
+  vscode.postMessage({ type: 'requestTokenUsage' });
+}
+
+function closeTokensModal() {
+  jTokensModal.style.display = 'none';
+  jTabsBackdrop.style.display = 'none';
+  jBackdrop.style.display = 'none';
+  document.body.removeEventListener('click', modalClickHandler);
+  isOpen = !isOpen;
+}
+
+function modalClickHandler(event) {
+  if (event.target.classList.contains('backdrop')) {
+    closeTokensModal();
+  }
+}
+
+jCloseTokensModalButton.addEventListener('click', closeTokensModal);
+jTokensButton.addEventListener('click', tokensButtonClickhandler);

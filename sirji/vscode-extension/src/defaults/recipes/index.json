@@ -1,0 +1,14 @@
+{
+  "new_project.json": {
+    "name": "Start New Project",
+    "description": "Recipe for creating a new project from scratch."
+  },
+  "node_js_create_api_and_test_cases.json": {
+    "name": "Write New API and Test Cases",
+    "description": "Recipe for writing a new API and test cases in an existing Node.js Project."
+  },
+  "node_js_existing_api_test_cases.json": {
+    "name": "Write Test Cases for Existing API",
+    "description": "Recipe for writing test cases for an existing API in a Node.js Project."
+  }
+}

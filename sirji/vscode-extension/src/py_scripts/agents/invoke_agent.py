@@ -24,9 +24,9 @@ class AgentRunner:
                 contents = json.load(file)
                 return contents["conversations"], contents["prompt_tokens"], contents["completion_tokens"]
 
-    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens):
+    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens, llm_model):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
+            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,"llm_model": llm_model }, file, indent=4)
 
     def read_file(self, file_path):
         print('---------')
@@ -69,19 +69,23 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
         
-        agent_config_path = os.path.join(sirji_installation_dir, 'active_recipe', 'agents', f'{agent_id}.yml')
+        agent_config_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
 
         file_summaries_folder_path = os.path.join(sirji_installation_dir, 'file_summaries')
         file_summaries_file_path = os.path.join(file_summaries_folder_path, 'index.json')
 
         with open(file_summaries_file_path, 'r') as file:
             file_summaries_index = json.load(file)
-            relative_path = file_summaries_index.get(sirji_project_folder, '')
+
+        relative_path = file_summaries_index.get(sirji_project_folder, '')
+
+        file_summaries = ""
+
+        if relative_path:
             file_summaries_path = os.path.join(file_summaries_folder_path, relative_path)
-
-        with open(file_summaries_path, 'r') as file:
-            file_summaries = file.read()
-
+            if os.path.exists(file_summaries_path):
+                with open(file_summaries_path, 'r') as file:
+                    file_summaries = file.read()
 
         conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
@@ -104,7 +108,7 @@ class AgentRunner:
         
         prompt_tokens += prompt_tokens_consumed
         completion_tokens += completion_tokens_consumed
-        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens)
+        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens, llm['model'])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process interactions.")

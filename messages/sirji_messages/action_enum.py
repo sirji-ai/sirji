@@ -8,6 +8,8 @@ class ActionEnum(Enum):
     EXECUTE_COMMAND = auto()
     APPEND_TO_AGENT_OUTPUT_INDEX = auto()
     READ_AGENT_OUTPUT_INDEX = auto()
+    FETCH_RECIPE = auto()
+    FETCH_RECIPE_INDEX = auto()
     RUN_SERVER = auto()
     CREATE_PROJECT_FILE = auto()
     CREATE_AGENT_OUTPUT_FILE = auto()
@@ -31,3 +33,4 @@ class ActionEnum(Enum):
     EXTRACT_DEPENDENCIES = auto()
     FIND_AND_REPLACE_IN_PROJECT = auto()
     SEARCH_FILE_IN_PROJECT = auto()
+    SEARCH_CODE_IN_PROJECT = auto()

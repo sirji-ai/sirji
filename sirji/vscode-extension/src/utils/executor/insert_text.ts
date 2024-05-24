@@ -7,13 +7,32 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
 
   try {
     searchText = body.split('FIND:')[1].split('---')[0].trim();
-    textToInsert = body.split('TEXT_TO_INSERT:')[1].split('---')[0].trim();
-    filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
-    insertPosition = body.split('INSERT_POSITION:')[1].split('---')[0].trim();
   } catch (error) {
     console.error('Error parsing body:', error);
-    return 'Error in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response for the INSERT_TEXT action must conform this response template: FILE_PATH: {{File path}} ---FIND: {{Text to find}} ---INSERT_POSITION: {{above or below}}---TEXT_TO_INSERT: {{Text to insert}}--- ';
+    return `The error in parsing the BODY: ${error}. Either the FIND key is missing from the BODY or it's not in the correct format. The correct format is FIND: {{Text to find without any special characters}} ---. Your response must conform strictly to the INSERT_TEXT Response Template with all the keys present in the BODY.`;
   }
+
+  try {
+    textToInsert = body.split('CODE_TO_INSERT:')[1].split('---')[0];
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return `The error in parsing the BODY: ${error}. Either the CODE_TO_INSERT key is missing or not in the correct format. The correct format is CODE_TO_INSERT: {{Code to insert without any special characaters}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
+  }
+
+  try {
+    filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path without any special characaters}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
+  }
+
+  try {
+    insertPosition = body.split('INSERT_POSITION_RELATIVE_TO_FIND:')[1].split('---')[0].trim();
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return `The error in parsing the BODY: ${error}. Either the INSERT_POSITION_RELATIVE_TO_FIND key is missing or not in the correct format. The correct format is INSERT_POSITION_RELATIVE_TO_FIND: {{above or below}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
+  }
+
   filePath = path.join(projectRootPath, filePath);
 
   console.log(`Inserting text in file: ${filePath} based on search text: '${searchText}' with replacement: '${textToInsert}' and insert position: '${insertPosition}'`);
@@ -33,7 +52,7 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
     const index = text.indexOf(searchText);
     if (index === -1) {
       console.error('Search text not found in the document.');
-      return 'ERROR: The specified string to find was not found in the document. Please re-read the content of the file and ensure you have provided the correct string to search for, then try again';
+      return `ERROR: The provided FIND: ${searchText} was not found in the file. Please make sure to provided FIND exists in the file without any special characters or newlines. The FIND is case-sensitive`;
     }
 
     const position = document.positionAt(index);

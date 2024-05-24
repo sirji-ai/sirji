@@ -1,6 +1,6 @@
 from sirji_messages import permissions_dict, AgentEnum, MessageFactory
 
-def allowed_response_templates(from_agent, to_agent):
+def allowed_response_templates(from_agent, to_agent, action_list):
     response_template = ''
 
     if from_agent != AgentEnum.ORCHESTRATOR and from_agent != AgentEnum.CALLER:
@@ -12,8 +12,6 @@ def allowed_response_templates(from_agent, to_agent):
         response_template += f'To invoke an agent, please respond with the text below, including the starting and ending \'***\', and ensure there is no commentary above or below:'
     else:
         response_template += f'Invoke the {to_agent.name} for the following functions. Please respond with the following, including the starting and ending \'***\', with no commentary above or below.'
-
-    action_list = permissions_dict[(from_agent, to_agent)]
 
     for index, action in enumerate(action_list):
         message_class = MessageFactory[action.name]

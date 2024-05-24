@@ -25,5 +25,4 @@ def test_read_agent_output_files_message_description():
 def test_read_agent_output_files_message_instructions():
     message = ReadAgentOutputFilesMessage()
     instructions = message.instructions()
-    
-    assert instructions == ["The file paths must be in the following format: '{{Your Agent ID}}/{{file name}}'."]
+    assert instructions == ["The body must be in the following format: File paths: [\"{{Your_agent_id}}/{{file_name}}\"]"]

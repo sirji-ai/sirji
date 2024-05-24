@@ -5,7 +5,7 @@ import json
 # TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import p_logger as logger
 
-from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates
+from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
@@ -36,6 +36,8 @@ class GenericAgent():
             conversation.append(
                 {"role": "system", "content": self.system_prompt()})
         else:
+            if history[0]['role'] == "system":
+                history[0]['content'] = self.system_prompt()
             conversation = history
         
         parsed_input_message = message_parse(input_message)
@@ -98,7 +100,7 @@ class GenericAgent():
             - Not conforming above rules will lead to response processing errors.""")
 
         # Todo: Use action names from ActionEnum
-        understanding_the_folders = textwrap.dedent(f"""
+        understanding_the_folders = textwrap.dedent("""
             Project Folder:
             - The Project Folder is your primary directory for accessing all user-specific project files, including code files, documentation, and other relevant resources.
             - When initializing Sirji, the SIRJI_USER selects this folder as the primary workspace for the project. You should refer to this folder exclusively for accessing and modifying project-specific files.
@@ -109,7 +111,14 @@ class GenericAgent():
             - This folder is different from the project folder and this ensures that operational data is kept separate from project files.
             
             Agent Output Index:
-            - The Agent Output Index is an index file for the Agent Output Folder that keeps track of all files written by agents in that folder along with the a brief description of the file contents.""")
+            - The Agent Output Index is an index file for the Agent Output Folder that keeps track of all files written by agents in that folder along with the a brief description of the file contents.
+            - The Agent Output Index will look as follows:
+              {
+                  'agent_id/file_name': {
+                        'description': 'description of the file contents'
+                        'created_by': 'agent_id'
+                  }
+              }""")
 
         instructions = textwrap.dedent(f"""
             Instructions:
@@ -155,18 +164,26 @@ class GenericAgent():
                     BODY:
                     {{Purpose of invocation.}}
                     ***""") + '\n'
+            
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.SIRJI_USER, permissions_dict[(AgentEnum.ANY, AgentEnum.SIRJI_USER)]) + '\n'
 
-        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.SIRJI_USER) + '\n'
-        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR) + '\n'
-        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER) + '\n'
+        action_list = permissions_dict[(AgentEnum.ANY, AgentEnum.EXECUTOR)]
+        accessible_actions = self.config.get("accessible_actions", [])
+        if accessible_actions:
+            for action in accessible_actions:
+                action_list.add(ActionEnum[action])
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
+
+        allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER, permissions_dict[(AgentEnum.ANY, AgentEnum.CALLER)]) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
 
         current_project_folder_structure = f"Recursive structure of the project folder:\n{os.environ.get('SIRJI_PROJECT_STRUCTURE')}"
-
-        file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the project folder:\n'
-        if self.file_summaries is not None:
+        file_summaries = ""
+        if self.file_summaries:
+            file_summaries = 'Here are the concise summaries of the responsibilities and functionalities for each file currently present in the project folder:\n'
             file_summaries += f"File Summaries:\n{self.file_summaries}"
+        
 
         return f"{initial_intro}\n{response_specifications}{understanding_the_folders}\n{instructions}\n{formatted_skills}\n{allowed_response_templates_str}\n\n{current_agent_output_index}\n\n{current_project_folder_structure}\n\n{file_summaries}".strip()
     
