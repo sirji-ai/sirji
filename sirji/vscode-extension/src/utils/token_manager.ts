@@ -18,10 +18,6 @@ export class TokenManager {
     this.filePath = filePath;
     this.conversationFolderPath = conversationFolderPath;
     this.aggregateTokenFilePath = aggregateTokenFilePath;
-
-    console.log('TokenManager: filePath:', this.filePath);
-    console.log('TokenManager: conversationFolderPath:', this.conversationFolderPath);
-    console.log('TokenManager: aggregateTokenFilePath:', this.aggregateTokenFilePath);
   }
 
   private readFile(orchestratorFilePath: string) {
@@ -48,8 +44,6 @@ export class TokenManager {
   }
 
   public async addTokensToAggregateTokens(key: string, prompt_tokens: number, completion_tokens: number, llm_model: string) {
-    console.log('TokenManager: addTokensToAggregateTokens:', { key, prompt_tokens, completion_tokens, llm_model });
-
     if (!this.aggregateTokens[key]) {
       this.aggregateTokens[key] = {
         prompt_tokens: 0,
@@ -80,10 +74,8 @@ export class TokenManager {
   public generateAggregateTokens(): void {
     const data = this.readSessionsFile();
     data.sessions.forEach((session: Session) => {
-      console.log('TokenManager: session:', session);
       const fileName = `${session.callStack}.${session.sessionId}.json`;
       const filePath = path.join(this.conversationFolderPath, fileName);
-      console.log('TokenManager: filePath:', filePath);
 
       if (fs.existsSync(filePath)) {
         const fileContents = fs.readFileSync(filePath, 'utf8');
@@ -94,9 +86,6 @@ export class TokenManager {
           console.error('Error: prompt_tokens and completion_tokens should be numbers.', { prompt_tokens, completion_tokens });
           return;
         }
-
-        console.log('TokenManager: prompt_tokens:', prompt_tokens);
-        console.log('TokenManager: completion_tokens:', completion_tokens);
 
         // const splittedCallStack = session.callStack.split('.');
         const key = session.callStack;

@@ -7,11 +7,23 @@ export const findAndReplaceInProjectFile = async (body: string, projectRootPath:
 
   try {
     searchText = body.split('FIND:')[1].split('---')[0].trim();
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return `The error in parsing the BODY: ${error}. Either the FIND key is missing or not in the correct format. The correct format is FIND: {{Code to Find without any special characaters}} ---. Your response must conform strictly to FIND_AND_REPLACE Response Template with all the keys present in the BODY`;
+  }
+
+  try {
     replacement = body.split('REPLACE:')[1].split('---')[0].trim();
+  } catch (error) {
+    console.error('Error parsing body:', error);
+    return `The error in parsing the BODY: ${error}. Either the REPLACE key is missing or not in the correct format. The correct format is REPLACE: {{Code to Replace without any special characaters}} ---. Your response must conform strictly to FIND_AND_REPLACE Response Template with all the keys present in the BODY`;
+  }
+
+  try {
     filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
   } catch (error) {
     console.error('Error parsing body:', error);
-    return 'Error: Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response for the FIND_AND_REPLACE_IN_PROJECT_FILE action must conform this response template: FILE_PATH: {{File path}} --- FIND: {{Find this text}} --- REPLACE: {{Replace with this text}}---';
+    return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path}} ---. Your response must conform strictly to FIND_AND_REPLACE Response Template with all the keys present in the BODY`;
   }
 
   filePath = path.join(projectRootPath, filePath);
@@ -31,7 +43,7 @@ export const findAndReplaceInProjectFile = async (body: string, projectRootPath:
 
       let text = document.getText(allText);
       if (!text.includes(searchText)) {
-        return 'ERROR: The specified string to find was not found in the document. Please re-read the content of the file and ensure you have provided the correct string to search for, then try again.';
+        return `ERROR: The provided FIND: ${searchText} was not found in the file. Please make sure to provided FIND exists in the file without any special characters or newlines. The FIND is case-sensitive`;
       }
 
       await editor.edit((editBuilder) => {

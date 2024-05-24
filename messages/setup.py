@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-messages',
-    version='0.0.20',
+    version='0.0.21',
     author='Sirji',
     description='Sirji messaging protocol implementation to create, validate and parse messages.',
     license='MIT',

@@ -7,8 +7,8 @@ llm:
   model: gpt-4o
 
 sub_agents:
-    - id: NODE_JS_CREATE_API_PLANNER
-    - id: IMPLEMENTATION_GUIDE_CODE_WRITER
+  - id: NODE_JS_CREATE_API_PLANNER
+  - id: IMPLEMENTATION_GUIDE_CODE_WRITER
 
 skills:
   - skill: Coordinate the invocation of agents to create an implementation guide for creating new Node.js API and execute each step of the guide.
