@@ -26,5 +26,4 @@ def test_invoke_agent_message_description():
 def test_invoke_agent_message_instructions():
     message = InvokeAgentMessage()
     instructions = message.instructions()
-    
-    assert instructions == []
+    assert instructions == ["For first time invoking an agent, always use this action."]

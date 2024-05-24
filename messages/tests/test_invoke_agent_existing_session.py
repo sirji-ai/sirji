@@ -26,4 +26,4 @@ def test_invoke_agent_existing_session_message_instructions():
     message = InvokeAgentExistingSessionMessage()
     instructions = message.instructions()
     
-    assert instructions == []
+    assert instructions == ["Never use this action while invoking an agent for the first time."]
