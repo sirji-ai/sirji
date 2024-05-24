@@ -31,6 +31,5 @@ class ActionEnum(Enum):
     FIND_AND_REPLACE = auto()
     INSERT_TEXT = auto()
     EXTRACT_DEPENDENCIES = auto()
-    FIND_AND_REPLACE_IN_PROJECT = auto()
     SEARCH_FILE_IN_PROJECT = auto()
     SEARCH_CODE_IN_PROJECT = auto()

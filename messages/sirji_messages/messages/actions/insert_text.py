@@ -20,26 +20,25 @@ class InsertText(BaseMessages):
             FILE_PATH: 
             {{File path}}
             ---
-            FIND: 
-            {{Code to Find}}
+            FIND_CODE: 
+            {{code to be found in the file}}
+            ---
+            INSERT_DIRECTION:
+            {{The direction to insert the code relative to the found code; can be either above or below.}}
             ---
             CODE_TO_INSERT: 
-            {{Code to insert}}
-            ---
-            INSERT_POSITION_RELATIVE_TO_FIND:
-            {{above or below}}
+            {{Code to be inserted in the file}}
             ---
             """)})
     
     def description(self):
-        return "Insert text into a file at a specific line number"
-    
+        return "Insert text into a file at a specific location relative to a given code snippet."
+
     def instructions(self):
         return [
-            "The FILE_PATH must be a valid path to the file where you want to insert the code. Ensure that the file path is correct and that the file exists. If the file does not exist, the action will fail.",
-            "The FIND must be a valid, uniquely identifiable code in the file. Ensure that you provide the FIND considering that new code will be inserted above or below this code. After insertion, it should not disturb the scope of the existing code in the file or create any syntax errors."
-            "The CODE_TO_INSERT must be a valid code that you want to insert into the file. Ensure that the code is correctly formatted and does not create any syntax errors in the file."
-            "The INSERT_POSITION_RELATIVE_TO_FIND must be either above or below. If you want to insert the code above the FIND, provide above. If you want to insert the code below the FIND, provide below. We will use this as follows: if above, we will replace the FIND with (CODE_TO_INSERT)(FIND); if below, we will replace the FIND with (FIND)(CODE_TO_INSERT). Please make sure that the code is correctly formatted and does not create any syntax errors in the file."
-            "For all the keys present in the BODY, make sure you don't enclose them in any special characters. Just provide the values."
-            "Make sure the CODE_TO_INSERT is correctly formatted and has the proper indentation in place. If the indentation is not correct, it may create syntax errors in the file."
+            "File path must be relative to the project root. This action cannot create new files and will fail if the file doesn't exist.",
+            "Code to be found must be a valid, uniquely identifiable piece of code within the relevant scope. Ensure it allows proper insertion without causing syntax errors",
+            "Insert direction must be ‘above’ or ‘below’. It specifies where to insert CODE_TO_INSERT relative to FIND_CODE. Incorrect values will disrupt functionality. If 'above', CODE_TO_INSERT will be inserted before FIND_CODE; if 'below', it will be inserted after.",
+            "CODE_TO_INSERT must be valid and correctly formatted code to be inserted. Ensure it does not cause syntax errors and has proper indentation.",
+            "When providing values for the keys in the BODY, do not enclose them in special characters.",
         ]
