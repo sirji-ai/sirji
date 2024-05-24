@@ -36,20 +36,19 @@ skills:
 
         14. Using the project folder structure, read the contents of the `entityType.js` file. Store your understanding as conversation notes (in a file named something like entity type understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
 
-        15. Using the project folder structure, read the `responseKeyEntity.js` file to understand the response keys in the response. Store your understanding as conversation notes (in a file named something like response key entity understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
+        15. Using the project folder structure, read the `responseKeyEntity.js` file to understand the response keys in the "Target API" & "Inspiration API" response. Store your understanding as conversation notes (in a file named something like response key entity understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
           - The response key entity file is a mapping of response key entity to it's snake case.
-          - The data returned from the APIs will have response key entity as keys.
+          - The API responses will have the response key entity as keys.
 
         16. Using the project folder structure, read the `Common.js` file to understand the required entity formatting file paths and store your understanding as conversation notes (in a file named something like common formatter composer file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
           - The `Common.js` file is a mapping of entity type to the class performing entity formatting.
-          - Understand what all entity types are present in the `Common.js` file respective to "Target API".
+          - Understand what all entity types are present in the `Common.js` file respective to "Target API" & "Inspiration API".
           - Store the entity formatting class file paths for the "Target API" and the "Inspiration API".
 
         17. Using the project folder structure, read required entity formatting files identified in the previous step. Store your understanding as conversation notes (in a file named something like entity formatting file understanding) in the AGENT OUTPUT FOLDER (Note: These conversation notes must not be indexed in the AGENT OUTPUT INDEX).
           - The entity formatting class is responsible for adding/removing fields from the entity object.
           - The entity formatting class is used to format the response object before sending it back to the client.
           - The entity formatting class is used to convert the fields from camel case to snake case.
-          - Understand the data being returned from the entity formatting class.
 
         18. Read the common validator file. This file defines the methods whose names are used in the signature file to specify what all validations need to be done for each parameter.
 
@@ -67,10 +66,11 @@ skills:
           - Each scenario object must have the description, input and output keys.
           - Array of scenario objects forms a value to a key used in one test. This key is called the scenario group.
           - A scenario object can optionally have information of stubbing, if external APIs are involved and there is a need to stub their responses.
-          - Value of the output key in a scenario object, must match with the response output specifications from OpenAPI specs. Note that the value of the output key does not need to be inline with the DB objects.
-          - Value of the input key in a scenarios object must match with the parameter specifications from OpenAPI specs.
+          - Value of the output key in a scenario object, must match with the respective entity formatting class response. Note that the value of the output key does not need to be inline with the DB objects.
+          - Value of the input key in a scenarios object must match with the respective values from the responseKeyEntity.
           - Understand how the scenarios in a scenario group are iterated and the output is asserted for input in each iteration.
           - Note the folder structure of this scenario data file, which aligns with the route file location with the final filename coming from the final route part.
+          - Understand how placeholders are avoided in the scenarios file and the actual values are used for both input and output.
 
         23. From the list of files from the test folder that are required in the Inspiration API test file, identify the fixtures file. Read the fixtures file using the file path, identified using the require path and the project folder structure.
 
@@ -80,9 +80,8 @@ skills:
           - The fixture file is structured into arrays of rows from different tables grouped by their models.
           - Make sure to understand all the necessary fixtures required for the "Target API".
           - Make sure to understand the casing of the keys in the fixtures file.
-          - Each fixture file contains data for only one model.
-          - modelNameConstants.js file is used to get the model name constants for the models used in the fixtures file. Make sure to add table name constants for the tables used in the fixtures file if not already present.
-
+          - Each fixture file contains data for only one model. For multiple models, multiple fixture files should be created.
+          - modelNameConstants.js file is used to get the model name constants for the models used in the fixtures file. Make sure to add/update getters for the models used in the fixtures file if not already present.
 
         25. From the contents of the target API service file, list down all the files used in the implementation. Read the contents of these project files, if not already read.
 
@@ -90,8 +89,8 @@ skills:
           - Each scenario object must have the description, input and output keys.
           - Array of scenario objects forms a value to a key used in one test. This key is called the scenario group.
           - A scenario object can optionally have information of stubbing, if external APIs are involved and there is a need to stub their responses.
-          - Value of the output key in a scenario object, must match with the response output specifications from OpenAPI specs. Note that the value of the output key does not need to be inline with the DB objects.
-          - Value of the input key in a scenario object must match with the parameter specifications from OpenAPI specs.
+          - Value of the output key in a scenario object, must match with the respective entity formatting class response. Note that the value of the output key does not need to be inline with the DB objects.
+          - Value of the input key in a scenarios object must match with the respective values from the responseKeyEntity.
           - Ensure to have multiple scenarios in a single scenario group covering different combinations of inputs and and thus different resulting outputs.
           - Ensure to consider error scenarios (success = false) taking hints from the rejections made in the service file.
           - Ensure to consider param validation error scenarios too (success = false) by passing parameters which will fail the validations written in the signature file.
