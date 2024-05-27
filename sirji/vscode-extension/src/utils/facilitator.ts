@@ -209,7 +209,7 @@ export class Facilitator {
       await oThis.secretManager?.storeSecret(Constants.ENV_VARS_KEY, JSON.stringify(data));
       responseContent = {
         success: true,
-        message: 'Great! Your environment is all setup and ready to roll! What would you like me to build today?'
+        message: 'Great! Your environment is all setup and ready to roll!'
       };
 
       await oThis.retrieveSecret();
@@ -223,7 +223,7 @@ export class Facilitator {
 
     oThis.chatPanel?.webview.postMessage({
       type: 'settingSaved',
-      content: { message: responseContent, allowUserMessage: true }
+      content: { message: responseContent, allowUserMessage: false }
     });
   }
 
@@ -331,6 +331,10 @@ export class Facilitator {
         type: 'botMessage',
         content: { message: 'I am all setup!', allowUserMessage: false }
       });
+      console.log('Starting Facilitation...');
+      await oThis.initFacilitation('', {
+        TO: ACTOR_ENUM.ORCHESTRATOR
+      });
     }
   }
 
@@ -357,14 +361,14 @@ export class Facilitator {
     switch (message.type) {
       case 'webViewReady':
         await oThis.sendWelcomeMessage();
-        console.log('Starting Facilitation...');
-        await oThis.initFacilitation('', {
-          TO: ACTOR_ENUM.ORCHESTRATOR
-        });
         break;
 
       case 'saveSettings':
         await oThis.setSecretEnvVars(message.content);
+        console.log('Starting Facilitation...');
+        await oThis.initFacilitation('', {
+          TO: ACTOR_ENUM.ORCHESTRATOR
+        });
         break;
 
       case 'requestPlannerLogs':
