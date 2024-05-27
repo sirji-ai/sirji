@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Sirji is an agentic AI framework for software development.</em>
+  <em>Sirji is a framework to build & run custom AI agents for your everyday dev tasks.</em>
 </p>
 
 <p align="center">
@@ -13,7 +13,8 @@
 <p align="center">
   <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
-  <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+  <img alt="GitHub Open Issues" src="https://img.shields.io/github/issues/sirji-ai/sirji">
+  <img alt="GitHub Closed Issues" src="https://img.shields.io/github/issues-closed/sirji-ai/sirji">
 </p>
 
 <p align="center">
@@ -24,22 +25,33 @@
 
 ## Sirji
 
-Sirji as an open-source framework where various AI agents collaborate via a messaging protocol to solve a given software problem. Problems range from building greenfield web apps to solving GitHub issues, writing test cases, and generating documentation.
+Sirji is a framework designed to build and run custom AI agents for your everyday development tasks.
 
-Sirji uses either the standard or user-generated recipe, that lists prescribed tasks and tips for solving a particular problem. Recipe also indicates which agent should perform each task.
+Sirji has two main product components: Sirji Studio and Sirji VS Code Extension.
 
-An Agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudo code. The community can create a custom agent either by modifying an already existing agent or write entirely new agent with entirely different pseudo code.
+### Sirji Studio
 
-Sirji is currently implemented as a Visual Studio Code extension. This extension provides an interactive chat interface right within your IDE through which you can submit your problem statement and give feedback to Sirji.
+We have built the framework that allows the developer community to build custom agents simply by writing pseudocode in plain English.
 
-The extension leverages the capabilities of VS Code, including the Editor, Terminal, and Project Explorer.
+Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. They performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
 
-Additionally, Sirji sets up your local or remote development environment by installing system-level packages and programming language-specific dependencies. It executes the generated code in your local or remote development environment.
+### Sirji VS Code Extension
 
-## Prerequisites
+We have build and released the [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) on the Visual Studio Marketplace.
+
+This extension has the following features implemented:
+- Interactive chat interface allows user to submit their problem statements and give feedback to Sirji.
+- Messaging protocol implements the allowed response templates for messages exchanged between various agents.
+- Orchestrator enables requirement gathering, recipe selection, recipe execution by invoking agents
+- Executor makes these functionalities accessible to the agents: file system access, search, find & replace, insert text in project files, install packages, execute commands, run code, run test cases.
+- Agent Sessions provide the ability to invoke an agent with a fresh LLM conversation or continue on an existing LLM conversation.
+- Logs and Token Usage Summary are displayed alongside the interactive chat interface.
+
+## Installation
+
+You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
 
 Make sure you have installed all of the following prerequisites on your machine:
-
 - Visual Studio Code (>= 1.80.2)
 - Node.js (>= 18) and npm (>= 8.19)
 - Python (>= 3.10) - Make sure `python --version` runs without error.
@@ -49,15 +61,14 @@ Also, you will need an OpenAI API key to access the GPT-4o model.
 
 ## Demo Video
 
-Here's a three-minute demo showing the five-second Sirji installation, followed by a quick walkthrough of Sirji's attempt to solve a given problem statement (building an interactive Tic-Tac-Toe game website).
+Here's a three-minute demo. We tasked Sirji with creating a new API and its test cases in an existing Node.js repository. Sirji uses these custom agents we developed:
+- **Code Planner**: Generates an implementation guide with steps and code snippets based on domain knowledge.
+- **Test Planner**: Generates an implementation guide for test cases, following the existing framework and conventions.
+- **Code Writer**: Implements the code changes specified in the guides.
 
-Watch on YouTube: <a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank">https://www.youtube.com/watch?v=r1wJHLUDVTo</a>
+Watch on YouTube: <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank">https://www.youtube.com/watch?v=NA7uPIvcvmg</a>
 
-<a href="https://www.youtube.com/watch?v=r1wJHLUDVTo" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/a21804a7-06d5-4974-ae94-bb72870b93fd" alt="Tic Tac Toe game by Sirji"></a>
-
-## Installation
-
-You can start using Sirji by installing this [extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) from the Visual Studio Marketplace.
+<a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/8156bdd5-7324-47e4-a375-df0d29e095c9" alt="Custom Agents for Creating a New API and Test Cases in an Existing Node.js Repository"></a>
 
 ## Architecture
 
@@ -75,10 +86,16 @@ A Recipe is a file that lists prescribed tasks and tips for solving a particular
 
 ### Orchestrator
 
-The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents as per the recipe.
+The Orchestrator is the central component in the Sirji framework, responsible for following:
+- Gathering requirement from the user.
+- Showing list of available recipes to the user and asking for their choice.
+- Reading the selected recipe and managing the flow & execution of prescribed tasks from the selected recipe.
 
 ### Agent Sessions
 An agent can be invoked in either a fresh session or asked to continue an existing session. When invoked in a new session, it starts with a new system prompt and does not retain the context from the previous session. Sessions help keep the context focused on specific tasks.
+
+### Messaging Protocol
+The messaging protocol defines how the response from an LLM inference for an agent should appear. It specifies the recipient-specific allowed Response Templates. These Response Templates also adhere to an interface that mandates the presence of keys: FROM, TO, BODY, SUMMARY, and ACTION. The BODY may contain an ACTION-specific information schema.
 
 ### Project Folder
 The Project Folder is the primary directory for accessing all user-specific project files, including code files, documentation, and other relevant resources. When initializing Sirji, the user selects this folder as the primary workspace for the project.
@@ -91,19 +108,36 @@ The Agent Output Index is an index file for the Agent Output Folder that keeps t
 
 ### PyPI Packages
 
-The Planning Agent, Coding Agent, and Research Agent are developed within the Python package [`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo). <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
+We have published following 3 PyPI packages, implementing different responsibilities. These packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
-Communication among these agents is facilitated through a defined message protocol. The Message Factory (responsible for creating, reading, updating, and deleting messages according to the message protocol) and the permissions matrix are developed in the Python package [`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo).<a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+#### sirji-agents <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
-The tools for crawling URLs (converting them into markdowns), searching for terms on Google, and a custom logger are developed within the Python package [`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo). <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+[`sirji-agents`](https://pypi.org/project/sirji-agents/) (located in the `agents` folder of this monorepo) is a PyPI package that implements the following components of the Sirji AI agentic framework:
+- **Orchestrator**: The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
+- **Generic Agent**: Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
+- **Research Agent**: Utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
-All these packages are invoked by Python Adapter Scripts, which are spawned by the extension.
+#### sirji-messages <a href="https://pypi.org/project/sirji-messages/"><img src="https://img.shields.io/pypi/v/sirji-messages.svg" alt="Sirji Messages on PyPI" height="15"></a>
+
+[`sirji-messages`](https://pypi.org/project/sirji-messages/) (located in the `messages` folder of this monorepo) is a PyPI package that implements the Sirji messaging protocol with the following highlights:
+- **Message Factory**: A factory that provides a Message class for a given action.
+- **Message Parser**: Parse structured message strings into Python dictionaries for easy access to the message components.
+- **Allowed Response Templates**: Provides the part of the system prompt describing allowed Response Templates for a given agent pair.
+- **Custom Exceptions**: A set of custom exceptions thrown by the message parser.
+- **Enums for Agents and Actions**: Provides easy auto-completion while writing code.
+
+#### sirji-tools <a href="https://pypi.org/project/sirji-tools/"><img src="https://img.shields.io/pypi/v/sirji-tools.svg" alt="Sirji Tools on PyPI" height="15"></a>
+
+[`sirji-tools`](https://pypi.org/project/sirji-tools/) (located in the `tools` folder of this monorepo) implements these tools:
+- Crawling (downloading web pages to markdown files)
+- Searching on Google
+- Custom Logging
 
 ### Architecture Diagram
-![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/9068c6d1-a11b-4589-b09e-ad494334fd6b)
+![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/0edd8cfe-1d49-4119-8960-1a3f2bf1f73f)
 
 ## Roadmap
-We are calling our next release the ‘Core’ Release (ONGOING. ETA - May 20).
+We are calling our next release the ‘Core’ Release (ONGOING).
 
 Here is the link to the ‘Core’ release’s roadmap: https://github.com/orgs/sirji-ai/projects/5
 
