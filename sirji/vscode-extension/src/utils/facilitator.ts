@@ -107,6 +107,7 @@ export class Facilitator {
     let recipeFilePath = path.join(studioFolderPath, 'recipes');
     let installedAgentsFolderPath = path.join(studioFolderPath, 'agents');
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
+    let fileSummariesIndexFilePath = path.join(fileSummariesFolderPath, 'index.json');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
@@ -116,6 +117,7 @@ export class Facilitator {
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
 
     fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
+    fs.writeFileSync(fileSummariesIndexFilePath, JSON.stringify({}), 'utf-8');
     fs.writeFileSync(constantsFilePath, JSON.stringify({ project_folder: oThis.projectRootPath }, null, 4), 'utf-8');
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
