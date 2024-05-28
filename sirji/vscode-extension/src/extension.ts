@@ -29,8 +29,19 @@ function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // Register the command `sirji.studio` to open studio 
+  let openStudio = vscode.commands.registerCommand('sirji.studio', async function () {
+    // open terminal
+    // execute the shell script
+    // open the folder
+    const terminal = vscode.window.createTerminal("Open Terminal");
+    terminal.show();
+    terminal.sendText('sh out/scripts/open_studio.sh', true);
+  });
+
   // Add the command to the context's subscriptions to ensure proper disposal
   context.subscriptions.push(disposable);
+  context.subscriptions.push(openStudio);
 }
 
 /**
@@ -38,7 +49,7 @@ function activate(context: vscode.ExtensionContext) {
  * This function is called when the extension is deactivated.
  * Currently, there is no cleanup necessary on deactivation.
  */
-function deactivate() {}
+function deactivate() { }
 
 // Export the activate and deactivate functions to be called by VS Code
 exports.activate = activate;
