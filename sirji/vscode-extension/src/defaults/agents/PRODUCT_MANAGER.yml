@@ -7,8 +7,9 @@ rules:
   - 'Elaboration must include detailed screen elements and interactions, without leaving anything abstract.'
   - 'UI created for any user story must me modern and neat.'
 skills:
-  - skill: Read the problem statement, generate and confirm epics and user stories, store them, and register them.
+  - skill: Ask the user to provide the problem statement, then generate and confirm the epics and user stories based on their input. Store and register these details.
     pseudo_code: |
+      1. Always QUESTION SIRJI_USER to provide the problem statement. Store this information as a problem statement in the AGENT OUTPUT FOLDER and register it in the AGENT OUTPUT INDEX.
       1. READ_AGENT_OUTPUT_FILES the problem statement from Agent Output Folder.
       2. Generate epics and user stories for problem statement and get it finalized from SIRJI_USER by asking QUESTION as below:
         REPEAT:
