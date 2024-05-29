@@ -76,7 +76,7 @@
     "viewsWelcome": [
       {
         "view": "sirji-view",
-        "contents": "Start a new session to run Sirji. \n[Start a new session](command:sirji.chat)\n\t\n\t\n\nCreate and edit custom agents in Sirji Studio. \n[Start Sirji Studio](command:sirji.studio)"
+        "contents": "Start a new session to run Sirji. \n[Start a new session](command:sirji.chat)\n\t\n\t\n\nCreate and edit custom agents in Sirji Studio. \n[Open Sirji Studio](command:sirji.studio)"
       }
     ],
     "walkthrough": [
