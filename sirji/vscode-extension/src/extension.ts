@@ -29,8 +29,17 @@ function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // Register the command `sirji.studio` to open studio
+  let openStudio = vscode.commands.registerCommand('sirji.studio', async function () {
+    let current_user = process.env.USER;
+    let folderPath = `/Users/${current_user}/Library/Application Support/Code/User/globalStorage/truesparrow.sirji/Sirji`;
+    let uri = vscode.Uri.file(folderPath);
+    vscode.commands.executeCommand('vscode.openFolder', uri, true);
+  });
+
   // Add the command to the context's subscriptions to ensure proper disposal
   context.subscriptions.push(disposable);
+  context.subscriptions.push(openStudio);
 }
 
 /**

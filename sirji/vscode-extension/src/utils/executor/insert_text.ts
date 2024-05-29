@@ -7,6 +7,10 @@ function delay(ms: number) {
 }
 
 async function checkForSyntaxErrors(document: vscode.TextDocument): Promise<string[]> {
+  if (!document.fileName.endsWith('.js') && !document.fileName.endsWith('.json')) {
+    return [];
+  }
+
   await delay(4500);
   const diagnostics = vscode.languages.getDiagnostics(document.uri);
   const syntaxErrors: string[] = diagnostics.map((diag) => `${diag.message} at line ${diag.range.start.line}, column ${diag.range.start.character}`);
@@ -97,6 +101,7 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
 
     let syntaxErrors = await checkForSyntaxErrors(document);
     console.log('checkForSyntaxErrors Syntax errors comparision', syntaxErrors.length, checkPreviousSyntaxErrors.length);
+    console.log('checkForSyntaxErrors Syntax errors:', syntaxErrors);
     if (checkPreviousSyntaxErrors.length < syntaxErrors.length) {
       await discardAndCloseEditor(document.uri);
 
