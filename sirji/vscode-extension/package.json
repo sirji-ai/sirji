@@ -2,7 +2,7 @@
   "name": "sirji",
   "displayName": "Sirji",
   "description": "Sirji is an AI Software Development Agent.",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "publisher": "TrueSparrow",
   "icon": "out/assets/sirji.png",
   "repository": {
@@ -76,7 +76,7 @@
     "viewsWelcome": [
       {
         "view": "sirji-view",
-        "contents": "Start a new session to run Sirji. \n[Start a new session](command:sirji.chat)\n\t\n\t\n\nCreate and edit custom agents in Sirji Studio. \n[Start Sirji Studio](command:sirji.studio)"
+        "contents": "Start a new session to run Sirji. \n[Start a new session](command:sirji.chat)\n\t\n\t\n\nCreate and edit custom agents in Sirji Studio. \n[Open Sirji Studio](command:sirji.studio)"
       }
     ],
     "walkthrough": [
@@ -137,7 +137,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets src/defaults src/scripts out/",
+    "compile": "tsc -p ./ && cp -r src/views src/py_scripts src/assets src/defaults out/",
     "watch-ts": "tsc -watch -p ./",
     "watch-other": "nodemon --watch src --ext html,css,js,py --exec 'mkdir -p out/ && cp -r src/views src/py_scripts src/assets src/defaults out/'",
     "watch": "concurrently npm:watch-*",
