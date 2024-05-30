@@ -79,7 +79,7 @@
         "contents": "Start a new session to run Sirji. \n[Start a new session](command:sirji.chat)\n\t\n\t\n\nCreate and edit custom agents in Sirji Studio. \n[Open Sirji Studio](command:sirji.studio)"
       }
     ],
-    "walkthrough": [
+    "walkthroughs": [
       {
         "id": "sample",
         "title": "Sirji",
@@ -91,7 +91,7 @@
             "title": "Getting Started",
             "description": "To start working with Sirji, you must start a new session. You can do that by:\n👉Clicking the Sirji icon in the Activity panel \n👉Or just type cmd+shift+P.\n[Start a session](command:sirji.chat)",
             "media": {
-              "image": "out/assets/sirji-icon.svg",
+              "svg": "out/assets/sirji 300px.svg",
               "altText": "Image 1"
             }
           },
@@ -100,7 +100,7 @@
             "title": "What is a recipe?",
             "description": "A recipe is a complex set of instructions on how the agents will interact with each other. You can use from certain set recipes or create your own.",
             "media": {
-              "image": "out/assets/sirji-icon.svg",
+              "svg": "out/assets/sirji 300px.svg",
               "altText": "Image 2"
             }
           },
@@ -109,8 +109,8 @@
             "title": "What is an agent?",
             "description": "The agents include base ones built by us such as the planner, coder, researcher, product manager, architect, reviewer, and executor. \nYou can create a custom agent either by modifying certain properties of a base agent such as the prompt and the LLM, or writing one from scratch such as a DevOps agent specializing in the AWS deployment workflow.",
             "media": {
-              "image": "out/assets/sirji-icon.svg",
-              "altText": "Image 1"
+              "svg": "out/assets/sirji 300px.svg",
+              "altText": "Image 3"
             }
           },
           {
@@ -118,8 +118,8 @@
             "title": "Contribute",
             "description": "We welcome contributions to Sirji! If you're interested in helping, please look at our [Contributing Guidelines](https://github.com/sirji-ai/sirji/blob/main/CONTRIBUTING.md).",
             "media": {
-              "image": "out/assets/sirji-icon.svg",
-              "altText": "Image 1"
+              "svg": "out/assets/sirji 300px.svg",
+              "altText": "Image 4"
             }
           },
           {
@@ -127,8 +127,8 @@
             "title": "Provide feedback",
             "description": "We value your feedback and suggestions. Please report them by following our [issue-reporting guidelines](https://github.com/sirji-ai/sirji/blob/main/ISSUES.md).",
             "media": {
-              "image": "out/assets/sirji-icon.svg",
-              "altText": "Image 1"
+              "svg": "out/assets/sirji 300px.svg",
+              "altText": "Image 5"
             }
           }
         ]
