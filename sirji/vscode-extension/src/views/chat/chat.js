@@ -758,9 +758,9 @@ function displayTokenUsesByAgent(data) {
     totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;
     const row = document.createElement('div');
     row.className = 'tokens-table-row';
-    row.innerHTML = `<div>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(completionTokenValuationInDollar + promptTokenValuationInDollar).toFixed(
-      2,
-    )}</div>`;
+    row.innerHTML = `<div class='truncate-text'>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(
+      completionTokenValuationInDollar + promptTokenValuationInDollar
+    ).toFixed(2)}</div>`;
     tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
   });
 

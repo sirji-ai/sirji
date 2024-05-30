@@ -914,7 +914,7 @@ label {
   align-items: flex-start;
   width: 100%;
   color: var(--vscode-titleBar-activeForeground);
-  gap: 32px;
+  gap: 28px;
 }
 
 .tokens-table-footer-row {
@@ -923,7 +923,17 @@ label {
   align-items: flex-start;
   width: 100%;
   margin-top: 20px;
-  gap: 32px;
+  gap: 28px;
+}
+
+.truncate-text {
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* Limit to two lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .flex-shrink{
