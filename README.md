@@ -70,6 +70,9 @@ Watch on YouTube: <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="
 
 <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/8156bdd5-7324-47e4-a375-df0d29e095c9" alt="Custom Agents for Creating a New API and Test Cases in an Existing Node.js Repository"></a>
 
+**Note:
+Sirji is still rough on the edges. We are also working on better documentation (particularly for Sirji Studio). So we suggest if you want to try Sirji, please let us give you a walkthrough. You can book a call with us [here](https://calendly.com/nishith-true-sparrow/30min).**
+
 ## Architecture
 
 Let's go step by step in understanding the architecture.
