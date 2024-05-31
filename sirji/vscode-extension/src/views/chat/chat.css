@@ -76,7 +76,6 @@ html {
 .user-message {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   align-self: end;
   width: fit-content;
   max-width: 80%;
