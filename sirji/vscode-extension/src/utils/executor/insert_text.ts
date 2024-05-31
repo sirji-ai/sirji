@@ -65,7 +65,7 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
     textToInsert = body.split('NEW_CHANGES:')[1].split('---')[0];
   } catch (error) {
     console.error('Error parsing body:', error);
-    return `The error in parsing the BODY: ${error}. Either the NEW_CHANGES key is missing or not in the correct format. The correct format is CODE_TO_INSERT: {{Code to insert without any special characaters}} ---. Your response must conform strictly to Response Template with all the keys present in the BODY`;
+    return `The error in parsing the BODY: ${error}. Either the NEW_CHANGES key is missing or not in the correct format. The correct format is NEW_CHANGES: {{New code to be inserted in the file}} ---. Your response must conform strictly to Response Template with all the keys present in the BODY`;
   }
 
   try {
