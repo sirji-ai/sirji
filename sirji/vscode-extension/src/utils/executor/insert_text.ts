@@ -17,6 +17,10 @@ async function checkForSyntaxErrors(document: vscode.TextDocument): Promise<stri
   return syntaxErrors;
 }
 
+function normalizeIndentation(text: string): string {
+  return text.split('\n').map(line => line.trim()).join('\n');
+}
+
 async function discardAndCloseEditor(uri: vscode.Uri) {
   const originalDocument = await vscode.workspace.openTextDocument(uri);
   const emptyEdit = new vscode.WorkspaceEdit();
@@ -24,45 +28,51 @@ async function discardAndCloseEditor(uri: vscode.Uri) {
   await vscode.workspace.applyEdit(emptyEdit);
   await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
 }
-async function insertCode(document: vscode.TextDocument, editor: vscode.TextEditor, textToInsert: string, line: number, insertPosition: string): Promise<boolean> {
+async function insertCode(document: vscode.TextDocument, editor: vscode.TextEditor, textToInsert: string, startLine: number, endLine: number, insertPosition: string): Promise<boolean> {
   return editor.edit((editBuilder) => {
     if (insertPosition.toLowerCase() === 'above') {
-      editBuilder.insert(new vscode.Position(line, 0), textToInsert + '\n');
+      editBuilder.insert(new vscode.Position(startLine, 0), textToInsert + '\n');
     } else if (insertPosition.toLowerCase() === 'below') {
-      editBuilder.insert(new vscode.Position(line + 1, 0), textToInsert + '\n');
+      editBuilder.insert(new vscode.Position(endLine + 1, 0), textToInsert + '\n');
     }
   });
 }
 
-export const insertText = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
-  let searchText, textToInsert, filePath, insertPosition;
+export const insertText = async (body: string, projectRootPath: string, insertPosition: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+  let searchText, textToInsert, filePath;
 
-  try {
-    searchText = body.split('FIND_CODE:')[1].split('---')[0].trim();
-  } catch (error) {
-    console.error('Error parsing body:', error);
-    return `The error in parsing the BODY: ${error}. Either the FIND_CODE key is missing from the BODY or it's not in the correct format. The correct format is FIND_CODE: {{Text to find without any special characters}} ---. Your response must conform strictly to the INSERT_TEXT Response Template with all the keys present in the BODY.`;
+  if(insertPosition.toLowerCase() === 'below') {
+    try {
+      searchText = body.split('INSERT_BELOW:')[1].split('---')[0].trim();
+    } catch (error) {
+      console.error('Error parsing body:', error);
+      return `The error in parsing the BODY: ${error}. Either the INSERT_BELOW key is missing from the BODY or it's not in the correct format. The correct format is INSERT_BELOW: {{Text to insert below without any special characters}} ---. Your response must conform strictly to the Response Template with all the keys present in the BODY.`;
+    }
+  } else {
+    try {
+      searchText = body.split('INSERT_ABOVE:')[1].split('---')[0].trim();
+    } catch (error) {
+      console.error('Error parsing body:', error);
+      return `The error in parsing the BODY: ${error}. Either the INSERT_ABOVE key is missing from the BODY or it's not in the correct format. The correct format is INSERT_ABOVE: {{Text to insert above without any special characters}} ---. Your response must conform strictly to the Response Template with all the keys present in the BODY.`;
+    }
   }
 
+
+  console.log(`==================>======Searching for text: '${searchText}' in the file to insert the new text`);
+
+
   try {
-    textToInsert = body.split('CODE_TO_INSERT:')[1].split('---')[0];
+    textToInsert = body.split('NEW_CHANGES:')[1].split('---')[0];
   } catch (error) {
     console.error('Error parsing body:', error);
-    return `The error in parsing the BODY: ${error}. Either the CODE_TO_INSERT key is missing or not in the correct format. The correct format is CODE_TO_INSERT: {{Code to insert without any special characaters}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
+    return `The error in parsing the BODY: ${error}. Either the NEW_CHANGES key is missing or not in the correct format. The correct format is CODE_TO_INSERT: {{Code to insert without any special characaters}} ---. Your response must conform strictly to Response Template with all the keys present in the BODY`;
   }
 
   try {
     filePath = body.split('FILE_PATH:')[1].split('---')[0].trim();
   } catch (error) {
     console.error('Error parsing body:', error);
-    return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path without any special characaters}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
-  }
-
-  try {
-    insertPosition = body.split('INSERT_DIRECTION:')[1].split('---')[0].trim();
-  } catch (error) {
-    console.error('Error parsing body:', error);
-    return `The error in parsing the BODY: ${error}. Either the INSERT_DIRECTION key is missing or not in the correct format. The correct format is INSERT_DIRECTION: {{above or below}} ---. Your response must conform strictly to INSERT_TEXT Response Template with all the keys present in the BODY`;
+    return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path without any special characaters}} ---. Your response must conform strictly to Response Template with all the keys present in the BODY`;
   }
 
   filePath = path.join(projectRootPath, filePath);
@@ -81,18 +91,40 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
     const range = new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length));
     const text = document.getText(range);
 
-    const index = text.indexOf(searchText);
-    if (index === -1) {
-      console.error('Search text not found in the document.');
-      return `ERROR: The provided FIND_CODE: ${searchText} was not found in the file. Please make sure to provided FIND_CODE exists in the file without any special characters or newlines. The FIND_CODE is case-sensitive`;
+    const normalizedSearchText = normalizeIndentation(searchText);
+
+    const lines = text.split('\n');
+    let startIndex = -1;
+    let endIndex = -1;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const block = lines.slice(i, i + normalizedSearchText.split('\n').length).join('\n');
+      if (normalizeIndentation(block) === normalizedSearchText) {
+        startIndex = text.indexOf(block);
+        endIndex = startIndex + block.length;
+        break;
+      }
     }
 
-    const position = document.positionAt(index);
-    const line = position.line;
+    console.log('startIndex:', startIndex);
+    console.log('endIndex:', endIndex);
+
+    if (startIndex === -1) {
+      console.error('Search text not found in the document.');
+      return `ERROR: The provided existing code '${searchText}' was not found in the file. Please ensure that the provided existing code is present in the file without any special characters or newlines. The existing code is case-sensitive and must match exactly as it appears in the file, including proper indentation. Try again with the correct existing code.`;
+    }
+
+    const startPosition = document.positionAt(startIndex);
+    const endPosition = document.positionAt(endIndex);
+    const startLine = startPosition.line;
+    const endLine = endPosition.line;
+
+    console.log('startLine:', startLine);
+    console.log('endLine:', endLine);
 
     const checkPreviousSyntaxErrors = await checkForSyntaxErrors(document);
 
-    let editApplied = await insertCode(document, editor, textToInsert, line, insertPosition);
+    let editApplied = await insertCode(document, editor, textToInsert, startLine, endLine, insertPosition);
 
     if (!editApplied) {
       console.error('Failed to apply the edit');
@@ -123,7 +155,7 @@ export const insertText = async (body: string, projectRootPath: string, globPatt
       // console.log('Retry checkForSyntaxErrors Syntax errors comparision', syntaxErrors.length, checkPreviousSyntaxErrors.length);
       // if (checkPreviousSyntaxErrors.length < syntaxErrors.length) {
       //   await discardAndCloseEditor(documentRetry.uri);
-      return 'After performing the specified code insertion, the file syntax was found to be incorrect. The code insertion was reverted. Please correct the keys specified in the body of the INSERT_TEXT action so that the code does not cause syntax errors. If you find insertion has failed more than two times, please QUESTION to SIRJI_USER for assistance by providing the necessary details.';
+      return 'After performing the specified code insertion, the file syntax was found to be incorrect. The code insertion was reverted. Please correct the keys specified in the body of the action so that the code does not cause syntax errors. If you find insertion has failed more than two times, please QUESTION to SIRJI_USER for assistance by providing the necessary details.';
       // }
     }
 
