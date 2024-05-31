@@ -14,7 +14,8 @@ permissions_dict = {
         ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX,
         ActionEnum.READ_AGENT_OUTPUT_INDEX,
         ActionEnum.FIND_AND_REPLACE,
-        ActionEnum.INSERT_TEXT,
+        ActionEnum.INSERT_ABOVE,
+        ActionEnum.INSERT_BELOW,
         ActionEnum.EXTRACT_DEPENDENCIES
     },
     (AgentEnum.ANY, AgentEnum.SIRJI_USER): {

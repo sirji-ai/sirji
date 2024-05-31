@@ -70,8 +70,10 @@ export class Executor {
         return await searchFileInProject(oThis.parsedMessage.BODY);
       case ACTION_ENUM.FIND_AND_REPLACE:
         return await findAndReplaceInProjectFile(oThis.parsedMessage.BODY, oThis.projectRootPath);
-      case ACTION_ENUM.INSERT_TEXT:
-        return await insertText(oThis.parsedMessage.BODY, oThis.projectRootPath);
+      case ACTION_ENUM.INSERT_ABOVE:
+        return await insertText(oThis.parsedMessage.BODY, oThis.projectRootPath, 'above');
+      case ACTION_ENUM.INSERT_BELOW:
+        return await insertText(oThis.parsedMessage.BODY, oThis.projectRootPath, 'below');
       case ACTION_ENUM.EXTRACT_DEPENDENCIES:
         return await readDependencies(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.SEARCH_CODE_IN_PROJECT:
