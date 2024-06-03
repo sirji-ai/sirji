@@ -18,7 +18,10 @@ async function checkForSyntaxErrors(document: vscode.TextDocument): Promise<stri
 }
 
 function normalizeIndentation(text: string): string {
-  return text.split('\n').map(line => line.trim()).join('\n');
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .join('\n');
 }
 
 async function discardAndCloseEditor(uri: vscode.Uri) {
@@ -41,7 +44,7 @@ async function insertCode(document: vscode.TextDocument, editor: vscode.TextEdit
 export const insertText = async (body: string, projectRootPath: string, insertPosition: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
   let searchText, textToInsert, filePath;
 
-  if(insertPosition.toLowerCase() === 'below') {
+  if (insertPosition.toLowerCase() === 'below') {
     try {
       searchText = body.split('INSERT_BELOW:')[1].split('---')[0].trim();
     } catch (error) {
@@ -57,9 +60,7 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
     }
   }
 
-
   console.log(`==================>======Searching for text: '${searchText}' in the file to insert the new text`);
-
 
   try {
     textToInsert = body.split('NEW_CHANGES:')[1].split('---')[0];
@@ -96,7 +97,7 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
     const lines = text.split('\n');
     let startIndex = -1;
     let endIndex = -1;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const block = lines.slice(i, i + normalizedSearchText.split('\n').length).join('\n');
       if (normalizeIndentation(block) === normalizedSearchText) {
@@ -122,41 +123,11 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
     console.log('startLine:', startLine);
     console.log('endLine:', endLine);
 
-    const checkPreviousSyntaxErrors = await checkForSyntaxErrors(document);
-
     let editApplied = await insertCode(document, editor, textToInsert, startLine, endLine, insertPosition);
 
     if (!editApplied) {
       console.error('Failed to apply the edit');
       return 'Failed to apply the edit';
-    }
-
-    let syntaxErrors = await checkForSyntaxErrors(document);
-    console.log('checkForSyntaxErrors Syntax errors comparision', syntaxErrors.length, checkPreviousSyntaxErrors.length);
-    console.log('checkForSyntaxErrors Syntax errors:', syntaxErrors);
-    if (checkPreviousSyntaxErrors.length < syntaxErrors.length) {
-      await discardAndCloseEditor(document.uri);
-
-      // Keeping the Retry with the opposite insertion position we might need later
-      // const alternativeInsertPosition = insertPosition.toLowerCase() === 'above' ? 'below' : 'above';
-      // console.log(`Retrying insertion with alternative position: ${alternativeInsertPosition}`);
-
-      // const documentRetry = await vscode.workspace.openTextDocument(filePath);
-      // const editorRetry = await vscode.window.showTextDocument(documentRetry);
-
-      // editApplied = await insertCode(documentRetry, editorRetry, textToInsert, line, alternativeInsertPosition);
-
-      // if (!editApplied) {
-      //   console.error('Failed to apply the edit on retry');
-      //   return 'Failed to apply the edit on retry';
-      // }
-
-      // syntaxErrors = await checkForSyntaxErrors(documentRetry);
-      // console.log('Retry checkForSyntaxErrors Syntax errors comparision', syntaxErrors.length, checkPreviousSyntaxErrors.length);
-      // if (checkPreviousSyntaxErrors.length < syntaxErrors.length) {
-      //   await discardAndCloseEditor(documentRetry.uri);
-      return 'After performing the specified code insertion, the file syntax was found to be incorrect. The code insertion was reverted. Please correct the keys specified in the body of the action so that the code does not cause syntax errors. If you find insertion has failed more than two times, please QUESTION to SIRJI_USER for assistance by providing the necessary details.';
-      // }
     }
 
     await document.save();
