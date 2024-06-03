@@ -657,8 +657,12 @@ const winWidth = window.innerWidth;
 const winHeight = window.innerHeight;
 
 document.addEventListener('DOMContentLoaded', function (event) {
-  jLeft.style.width = winWidth / 1 + 'px';
-  jRight.style.width = winWidth / 3 + 'px';
+  const rightWidth = winWidth / 3;
+  const leftWidth = winWidth - rightWidth;
+  jRight.style.width = (rightWidth / winWidth) * 100 + '%';
+  jLeft.style.width = (leftWidth / winWidth) * 100 + '%';
+
+  console.log('DOMContentLoaded ::: ', { rightWidth, leftWidth });
 
   rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
   jResizeHandle.style.right = rStartWidth - 4 + 'px';
@@ -669,7 +673,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 let StartX, rStartWidth, lStartWidth;
 
 function setup(event) {
-  StartX = event.clientX;
+  console.log('Event ::: mousedown', event);
+  if (!event) {
+    drag(event);
+    return;
+  }
+
+  StartX = event?.clientX || 0;
   rStartWidth = parseInt(window.getComputedStyle(jRight).width, 10);
   lStartWidth = parseInt(window.getComputedStyle(jLeft).width, 10);
 
@@ -678,11 +688,16 @@ function setup(event) {
 }
 
 function drag(event) {
+  console.log('Event ::: mousemove');
   event.preventDefault();
 
-  (jWrap.style.gridTemplateAreas = lStartWidth + event.clientX - StartX + 'px'), rStartWidth - event.clientX + StartX + 'px';
-  jRight.style.width = rStartWidth - event.clientX + StartX + 'px';
-  jLeft.style.width = lStartWidth + event.clientX - StartX + 'px';
+  (jWrap.style.gridTemplateAreas = lStartWidth + event?.clientX - StartX + 'px'), rStartWidth - event?.clientX + StartX + 'px';
+  const rightWidth = ((rStartWidth - event?.clientX + StartX) / winWidth) * 100;
+  const leftWidth = 100 - rightWidth; //lStartWidth + event.clientX - StartX;
+  jRight.style.width = rightWidth + '%';
+  jLeft.style.width = leftWidth + '%';
+
+  console.log('drag ::: ', { rightWidth, leftWidth, rStartWidth, lStartWidth, clientX: event.clientX, StartX });
 
   jResizeHandle.style.right = rStartWidth - event.clientX + StartX - 4 + 'px';
 
@@ -690,6 +705,7 @@ function drag(event) {
 }
 
 function destroy(e) {
+  console.log('Event ::: mouseup');
   document.documentElement.removeEventListener('mousemove', drag, false);
   document.documentElement.removeEventListener('mouseup', destroy, false);
 
