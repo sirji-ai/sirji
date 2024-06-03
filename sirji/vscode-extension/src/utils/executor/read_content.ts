@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as mimetype from 'mime-types';
+import { sanitizePath } from './create_file';
 
 const SKIP_LIST = ['__pycache__', '.git', '.github', '.gitlab', '.vscode', '.idea', 'node_modules', '.DS_Store', 'venv', '.venv', '.sass-cache', 'dist', 'out', 'build', 'logs', '.npm', 'temp', 'tmp'];
 
@@ -38,19 +39,20 @@ export async function readContent(projectRootPath: string, body: string, isDirec
 
   async function readFile(filePath: string): Promise<string> {
     try {
-      const fileMimetype = mimetype.lookup(filePath);
+      const sanitizedFilePath = sanitizePath(filePath);
+      const fileMimetype = mimetype.lookup(sanitizedFilePath);
       let content = null;
-      const relativePath = path.relative(projectRootPath, filePath);
+      const relativePath = path.relative(projectRootPath, sanitizedFilePath);
 
-      const stats = await fs.stat(filePath);
+      const stats = await fs.stat(sanitizedFilePath);
       if (stats.size > 102400) {
-        content = `Skipping file of size greater than 100 KB: ${filePath}`;
+        content = `Skipping file of size greater than 100 KB: ${sanitizedFilePath}`;
       } else if (fileMimetype && MEDIA_MIME_TYPES.some((type) => fileMimetype.startsWith(type))) {
-        content = `Skipping file of media type: ${filePath}`;
+        content = `Skipping file of media type: ${sanitizedFilePath}`;
       } else if (fileMimetype && fileMimetype.startsWith('application/octet-stream')) {
-        content = `Skipping binary file: ${filePath}`;
+        content = `Skipping binary file: ${sanitizedFilePath}`;
       } else {
-        content = await fs.readFile(filePath, 'utf8');
+        content = await fs.readFile(sanitizedFilePath, 'utf8');
       }
 
       return `File: ${relativePath}\n\n${content}\n\n---\n\n`;
