@@ -78,7 +78,7 @@ export class Executor {
         return await readDependencies(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.SEARCH_CODE_IN_PROJECT:
         return await searchCodeInProject(oThis.parsedMessage.BODY, oThis.projectRootPath);
-      case ACTION_ENUM.STORE_IN_SCRATCHPAD:
+      case ACTION_ENUM.STORE_IN_SCRATCH_PAD:
         return 'Done';
       default:
         return `Invalid message ACTION: ${action} sent to executor. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors.`;

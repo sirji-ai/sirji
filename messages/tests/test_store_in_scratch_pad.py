@@ -19,11 +19,11 @@ def test_store_in_scratch_pad_message_sample():
 
 def test_store_in_scratch_pad_message_description():
     message = StoreInScratchPad()
-    assert message.description() == "Save Notes in the Scratch Pad"
+    assert message.description() == "Store Notes in the Scratch Pad"
 
 def test_store_in_scratch_pad_message_instructions():
     message = StoreInScratchPad()
     instructions = message.instructions()
     
-    assert instructions == [ "The command is used to save the notes in the scratch pad.",]
+    assert instructions == [ "The command is used to store notes in the scratch pad.",]
 
