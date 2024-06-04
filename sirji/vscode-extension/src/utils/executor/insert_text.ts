@@ -18,10 +18,9 @@ async function checkForSyntaxErrors(document: vscode.TextDocument): Promise<stri
 }
 
 function normalizeIndentation(text: string): string {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .join('\n');
+  const lines = text.split('\n');
+  const normalizedLines = lines.map((line) => line.trim().replace(/\s/g, ''));
+  return normalizedLines.join('\n');
 }
 
 async function discardAndCloseEditor(uri: vscode.Uri) {
@@ -100,7 +99,9 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
 
     for (let i = 0; i < lines.length; i++) {
       const block = lines.slice(i, i + normalizedSearchText.split('\n').length).join('\n');
-      if (normalizeIndentation(block) === normalizedSearchText) {
+      
+      if (normalizeIndentation(block).includes(normalizedSearchText)) {
+        console.log('Block found:', block);
         startIndex = text.indexOf(block);
         endIndex = startIndex + block.length;
         break;
