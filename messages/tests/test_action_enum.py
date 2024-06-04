@@ -29,3 +29,4 @@ def test_action_enum_membership():
     assert ActionEnum['READ_AGENT_OUTPUT_FILES'] == ActionEnum.READ_AGENT_OUTPUT_FILES
     assert ActionEnum['FIND_AND_REPLACE'] == ActionEnum.FIND_AND_REPLACE
     assert ActionEnum['EXTRACT_DEPENDENCIES'] == ActionEnum.EXTRACT_DEPENDENCIES
+    assert ActionEnum['STORE_IN_SCRATCH_PAD'] == ActionEnum.STORE_IN_SCRATCH_PAD

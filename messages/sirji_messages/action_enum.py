@@ -34,3 +34,4 @@ class ActionEnum(Enum):
     EXTRACT_DEPENDENCIES = auto()
     SEARCH_FILE_IN_PROJECT = auto()
     SEARCH_CODE_IN_PROJECT = auto()
+    STORE_IN_SCRATCH_PAD = auto()

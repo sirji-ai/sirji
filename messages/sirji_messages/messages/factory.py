@@ -24,6 +24,7 @@ from .actions.fetch_recipe import FetchRecipeMessage
 from .actions.fetch_recipe_index import FetchRecipeIndexMessage
 from .actions.insert_above import InsertAbove
 from .actions.insert_below import InsertBelow
+from .actions.store_in_scratch_pad import StoreInScratchPad
 
 
 class MetaMessageFactory(type):
@@ -64,6 +65,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.EXTRACT_DEPENDENCIES: ExtractDependenciesMessage,
         ActionEnum.SEARCH_CODE_IN_PROJECT: SearchCodeInProject,
         ActionEnum.FETCH_RECIPE: FetchRecipeMessage,
-        ActionEnum.FETCH_RECIPE_INDEX: FetchRecipeIndexMessage
+        ActionEnum.FETCH_RECIPE_INDEX: FetchRecipeIndexMessage,
+        ActionEnum.STORE_IN_SCRATCH_PAD: StoreInScratchPad
     }
 
