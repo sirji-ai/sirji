@@ -7,46 +7,41 @@ llm:
 skills:
   - skill: Manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
     pseudo_code: |
-      1. Read the problem statement from the Agent Output Folder.
+      1. Read the problem statement from the Agent Output Folder. Identify the "Target API" route and the file path of the sequence diagram which has to be implemented.
 
-      2. Read 'package.json' to identify project dependencies and the main entry point.
+      2. QUESTION SIRJI_USER to provide one or more specific service files to understand the conventions used in writing a service file. Let's call these files "Inspiration Service Files".
 
-      3. Read the main entry point project file to understand the initial setup of the Express application.
+      3. Using the project folder structure, determine the file paths for the following core codebase files and read them for the specified purposes:
+        - OpenAPI file: Understand the input parameter and response specifications for the API.
+        - Sequence diagram relevant to the Target API: Understand the logic to be implemented.
+        - Route file relevant to the Target API: Let's call this file as "Relevant Route" File. Understand where to insert the code for the new route in this file.
+        - Relevant file to the Target API under storage folder: Let's call this file as "Storage Management" File. Understand the conventions for writing the storage handler methods.
+        - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
+        - Inspiration Service Files: Given by SIRJI_USER.
+      
+      4. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes to the main application.
 
-      4. Read an existing model file to understand the coding standards and structure.
-
-      5. Based on the problem statement, determine if any changes are required in the model file. If changes are needed, create/update a model file within the models folder. The model file should be named based on the API route. Use the existing styling and structure of the model file for writing the new model.
-
-      6. Read an existing service file to understand the coding standards and structure.
-
-      7. Based on the problem statement, determine if any changes are required in the service file. If changes are needed, create/update a service file within the services folder. The service file should be named based on the API route. Use the existing styling and structure of the service file for writing the new service.
-
-      8. Read an existing controller file to understand the coding standards and structure.
-
-      9. Based on the problem statement, determine if any changes are required in the controller file. If changes are needed, create/update a controller file within the controllers folder. The controller file should be named based on the API route. Use the existing styling and structure of the controller file for writing the new controller.
-
-      10. Read an existing route file to understand the coding standards and structure.
-
-      11. Based on the problem statement, determine if any changes are required in the route file. If changes are needed, create/update a route file within the routes folder. The route file should be named based on the API route. Use the existing styling and structure of the route file for writing the new route.
-
-      12. Create and finalize the implementation guide:
-            - Construct and review a detailed, standalone implementation guide by following these rules:
-                - The implementation guide must be in markdown format.
-                - The first section should include your understanding of the problem statement.
-                - The next section of the implementation guide should list the steps, following these rules:
-                    - Each step must be standalone so that different developers can work on different steps in parallel.
-                    - List all the technical instructions for necessary changes, specifying exact file paths and descriptions of changes.
-                    - Provide specifics on coding requirements, such as function signatures, data structures, and algorithms to be used or modified.
-                    - Outline the creation of new files, including their paths, the specific logic to be implemented, and detailed function signatures and class definitions.
-                    - Explain how these new functionalities will interact with existing components, including dependency and integration points.
-                    - Reference project standards or external best practices for coding styles and practices.
-                    - Ensure that the guide follows a bottom-up approach in order of the steps, starting from the most foundational changes to the higher-level ones.
-                    - Review the guide for completeness, clarity, and technical accuracy.
-                    - Ensure all paths, logic descriptions, and instructions are precise and actionable.
-                    - Never include steps for tests.
-                    - List only the steps which need to be done. Do not list steps which are already in place in the code.
-                    - Clearly define any new methods or classes introduced and used in the updated code.
-            - Store the implementation guide in the AGENT OUTPUT FOLDER.
-            - Register the implementation guide in the AGENT OUTPUT INDEX.
-
-      13. Ask SIRJI_USER to review the implementation guide, make any necessary modifications, and inform you when to proceed further.
+      5. Understand the code conventions followed in the existing code which you have read and store your understanding in the scratch pad.
+      
+      6. Construct and store a detailed, standalone implementation guide by following these rules:
+        - The implementation guide must be in markdown format.
+        - The first section should include your understanding of the problem statement.
+        - Next section should be for listing down the steps:
+            - Following rules must be followed for coming up with steps:
+              - Each step must be standalone, so that different developers can work on different steps in parallel.
+              - One step should involve only one file.
+              - Order the steps in a bottom-up approach, starting from foundational changes to higher-level ones.
+              - Indicate whether each step involves creating new file or updating existing one, specifying the exact file path.
+              - For step involving new file, give the contents of the entire file, along with code comments.
+              - For step involving updating an existing file, provide the exact code snippet to insert, along with code comments.
+              - While using a method from another file, ensure to 'require' that file at the top.
+              - Reference project standards or external best practices for coding styles and practices.
+              - Ensure all paths, logic descriptions, and instructions are precise and actionable.
+              - Never include steps for tests.
+            - Following are must to have steps for writing a new API:
+              - Step to add a new method to the Storage Management file as per the requirements in the sequence diagram.
+              - Step to create a new service file, taking inspiration for code conventions from the Inspiration Service Files.
+              - Step to add route to the Relevant Route File, calling the newly implemented service from the same.
+          - Store the implementation guide in the Agent Output Folder.
+      7. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
+      8. Register the implementation guide to the Agent Output Index.
