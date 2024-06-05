@@ -1,4 +1,4 @@
-id: NODE_JS_CREATE_API_CODER
+id: NODE_JS_CREATE_API_MASTER
 
 name: Node.js create API coder
 
@@ -8,7 +8,7 @@ llm:
 
 sub_agents:
   - id: NODE_JS_CREATE_API_PLANNER
-  - id: IMPLEMENTATION_GUIDE_CODE_WRITER
+  - id: NODE_JS_CODE_WRITER
 
 skills:
   - skill: Coordinate the invocation of agents to create an implementation guide for creating new Node.js API and execute each step of the guide.
@@ -16,5 +16,5 @@ skills:
       1. QUESTION SIRJI_USER to provide the route of the new API and the file path of the sequence diagram. Store this information as a problem statement (mentioning your understanding) in the Agent Out Folder and register it in the Agent Output Index.
       2. INVOKE_AGENT NODE_JS_CREATE_API_PLANNER to manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
       3. Read the implementation guide created by NODE_JS_CREATE_API_PLANNER from the Agent Output Folder.
-      4. Loop over the steps in the implementation guide and INVOKE_AGENT IMPLEMENTATION_GUIDE_CODE_WRITER, passing a request to perform the current step in the BODY of the invocation during each iteration.
+      4. Loop over the steps in the implementation guide and INVOKE_AGENT NODE_JS_CODE_WRITER, passing a request to perform the current step in the BODY of the invocation during each iteration.
       5. Respond back to the agent who invoked you, detailing your actions in the BODY.

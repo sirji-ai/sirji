@@ -2,7 +2,7 @@
   "prescribed_tasks": [
     {
       "task": "Coordinate the invocation of agents to create an implementation guide for creating new Node.js API and execute each step of the guide.",
-      "agent": "NODE_JS_CREATE_API_CODER"
+      "agent": "NODE_JS_CREATE_API_MASTER"
     }
   ],
   "tips": []

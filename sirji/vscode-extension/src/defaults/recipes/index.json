@@ -3,7 +3,7 @@
     "name": "Start New Project",
     "description": "Recipe for creating a new project from scratch."
   },
-  "node_js_create_api_and_test_cases.json": {
+  "node_js_create_api.json": {
     "name": "Write New API and Test Cases",
     "description": "Recipe for writing a new API and test cases in an existing Node.js Project."
   }
