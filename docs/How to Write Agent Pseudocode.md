@@ -6,7 +6,9 @@ An agent in the Sirji framework is a modular AI component designed to perform sp
 
 Think of the custom agent as a new team member. You need to provide it with your understanding of the existing architecture, design patterns, and code conventions used in the repository where you plan to use the custom agent to solve a problem. This understanding is conveyed through the agent's pseudocode.
 
-This guide will explain the terminology involved, provide example pseudocode snippets with their corresponding messages generated according to the messaging protocol, and outline best practices for writing pseudocode.
+This guide will explain the terminology involved, provide example pseudocode snippets with their corresponding messages generated according to the [messaging protocol](./Messaging%20Protocol.md), and outline best practices for writing pseudocode.
+
+[Here](./sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) is an example of an agent pseudocode.
 
 ## Terminology
 
