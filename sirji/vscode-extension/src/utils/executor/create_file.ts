@@ -2,12 +2,17 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+export function sanitizePath(filePath: string): string {
+  return filePath.replace(/^['"]|['"]$/g, '');
+}
+
 export async function createFile(rootPath: string, isProjectRoot: boolean, body: string): Promise<string> {
   try {
     const [filePathPart, fileContent] = body.split('---');
     const filePath = filePathPart.replace('File path:', '').trim();
+    const sanitizedFilePath = sanitizePath(filePath);
 
-    const fullPath = path.isAbsolute(filePath) ? filePath : path.join(rootPath, filePath);
+    const fullPath = path.isAbsolute(sanitizedFilePath) ? sanitizedFilePath : path.join(rootPath, sanitizedFilePath);
     const uri = vscode.Uri.file(fullPath);
 
     if (isProjectRoot) {
@@ -15,7 +20,7 @@ export async function createFile(rootPath: string, isProjectRoot: boolean, body:
         throw new Error('File path is outside of the project folder tree. Write operation denied.');
       }
     } else {
-      if (path.isAbsolute(filePath)) {
+      if (path.isAbsolute(sanitizedFilePath)) {
         throw new Error('Absolute file path is not allowed while creating file in Agent Output Folder. Write operation denied.');
       }
     }
