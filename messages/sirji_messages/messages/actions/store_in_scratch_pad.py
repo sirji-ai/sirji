@@ -18,7 +18,7 @@ class StoreInScratchPad(BaseMessages):
             "body": "{{notes}}"})
 
     def description(self):
-        return "Store Notes in the Scratch Pad"
+        return "Store Notes in the scratchpad"
     
     def instructions(self):
-        return [ "The command is used to store notes in the scratch pad.",]
+        return [ "The command is used to store notes in the scratchpad.",]

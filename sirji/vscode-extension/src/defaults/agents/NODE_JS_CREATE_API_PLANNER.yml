@@ -18,11 +18,9 @@ skills:
         - Relevant file to the Target API under storage folder: Let's call this file as "Storage Management" File. Understand the conventions for writing the storage handler methods.
         - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
         - Inspiration Service Files: Given by SIRJI_USER.
-      
       4. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes to the main application.
 
-      5. Understand the code conventions followed in the existing code which you have read and store your understanding in the scratch pad.
-      
+      5. Understand the code conventions followed in the existing code which you have read and store your understanding in the scratchpad.
       6. Construct and store a detailed, standalone implementation guide by following these rules:
         - The implementation guide must be in markdown format.
         - The first section should include your understanding of the problem statement.
