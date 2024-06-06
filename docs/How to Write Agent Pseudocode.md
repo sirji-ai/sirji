@@ -1,4 +1,4 @@
-# How to write agent pseudo code
+# How to Write Agent Pseudocode
 
 ## Introduction
 
