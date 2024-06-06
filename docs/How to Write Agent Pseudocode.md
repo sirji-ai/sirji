@@ -134,7 +134,7 @@ const addTodo = (data) => {
 
 Example pseudocode snippet:
 ```
-Store the problem statement (mentioning your understanding) in the Agent Out Folder and register it in the Agent Output Index.
+Store the problem statement (mentioning your understanding) in the Agent Output Folder and register it in the Agent Output Index.
 ```
 
 Generated message:
