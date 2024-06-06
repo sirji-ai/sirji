@@ -35,6 +35,8 @@ We have built the framework that allows the developer community to build custom 
 
 Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. They performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
 
+[Here](./docs/How%20to%20Write%20Agent%20Pseudocode.md) is a guide for writing agent pseudocode.
+
 ### Sirji VS Code Extension
 
 We have build and released the [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) on the Visual Studio Marketplace.
