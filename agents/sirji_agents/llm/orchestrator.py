@@ -118,7 +118,7 @@ class Orchestrator():
         
         pseudo_code = textwrap.dedent(f"""
             Pseudo code which you must follow:
-                1. INVOKE_AGENT RECIPE_SELECTOR to get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
+                1. Invoke agent RECIPE_SELECTOR to get the recipe selected from the available recipes by SIRJI_USER and then store it in Agent Output Folder.
                 2. Read the selected recipe from the Agent Output Folder.
                 3. Loop over the prescribed tasks in the selected recipe and invoke the agent specified in the recipe alongside the current task, explaining the task in the BODY of the invocation.
             """)
