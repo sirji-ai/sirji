@@ -8,7 +8,7 @@ Think of the custom agent as a new team member. You need to provide it with your
 
 This guide will explain the terminology involved, provide example pseudocode snippets with their corresponding messages generated according to the [messaging protocol](./Messaging%20Protocol.md), and outline best practices for writing pseudocode.
 
-[Here](./sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) is an example of an agent pseudocode.
+[Here](../sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) is an example of an agent pseudocode.
 
 ## Terminology
 
