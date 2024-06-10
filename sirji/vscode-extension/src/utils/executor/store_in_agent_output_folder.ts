@@ -1,11 +1,17 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { createFile, sanitizePath } from './create_file';
 
-export async function appendToAgentOutputsIndex(agentOutputFolderPath: string, messageBody: string, agentId: string): Promise<string> {
+export async function storeInAgentOutputFolder(agentOutputFolderPath: string, messageBody: string, agentId: string): Promise<string> {
   try {
-    const [filePathString, filePathContentDescription] = messageBody.split('---');
-    const filePath = filePathString.replace('File path:', '').trim();
+    const [filePathString, filePathContentDescription, agentOutputFileContent] = messageBody.split('---');
+    let filePath = filePathString.replace('File path:', '').trim();
+    filePath = sanitizePath(filePath);
+
+    let bodyForFileCreation = `File path:${filePath}---${agentOutputFileContent}`;
+
+    const fileCreationRes = await createFile(agentOutputFolderPath, false, bodyForFileCreation);
 
     let fileDescription = '';
     if (filePathContentDescription) {
@@ -40,9 +46,7 @@ export async function appendToAgentOutputsIndex(agentOutputFolderPath: string, m
 
     await vscode.workspace.fs.writeFile(uri, content);
 
-    console.log(`Agent Output Index updated successfully: ${uri.fsPath}`);
-
-    return 'Updated agent output index file.';
+    return `${fileCreationRes} and Agent Output Index updated successfully`;
   } catch (e) {
     const errorMessage = `Failed to create or write to the file. Make sure you provided the body with correct structure as mentioned in the Allowed response template. Error: ${e}`;
     return errorMessage;

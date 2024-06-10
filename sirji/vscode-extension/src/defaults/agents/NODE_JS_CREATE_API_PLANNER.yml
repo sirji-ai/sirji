@@ -42,4 +42,3 @@ skills:
               - Step to add route to the Relevant Route File, calling the newly implemented service from the same.
           - Store the implementation guide in the Agent Output Folder.
       7. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
-      8. Register the implementation guide to the Agent Output Index.

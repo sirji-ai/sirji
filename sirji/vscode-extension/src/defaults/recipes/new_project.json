@@ -1,7 +1,7 @@
 {
   "prescribed_tasks": [
     {
-      "task": "Read the problem statement, generate and confirm epics and user stories, store them, and register them.",
+      "task": "Read the problem statement, generate and confirm epics and user stories, and store them",
       "agent": "PRODUCT_MANAGER"
     },
     {
