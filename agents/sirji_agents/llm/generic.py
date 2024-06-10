@@ -174,6 +174,8 @@ class GenericAgent():
                 action_list.add(ActionEnum[action])
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
 
+        allowed_response_templates_str += "For updating in project folder use either FIND_AND_REPLACE, INSERT_ABOVE or INSERT_BELOW actions" + '\n'
+
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER, permissions_dict[(AgentEnum.ANY, AgentEnum.CALLER)]) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"

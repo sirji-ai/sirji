@@ -129,8 +129,8 @@ class Orchestrator():
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER, permissions_dict[(AgentEnum.ORCHESTRATOR, AgentEnum.SIRJI_USER)]) + '\n'
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ORCHESTRATOR, AgentEnum.ANY, permissions_dict[(AgentEnum.ORCHESTRATOR, AgentEnum.ANY)]) + '\n'
 
-        action_list = permissions_dict[(AgentEnum.ANY, AgentEnum.EXECUTOR)]
-        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
+        action_list = permissions_dict[(AgentEnum.ANY, AgentEnum.EXECUTOR)] 
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'        
 
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
 
