@@ -14,7 +14,7 @@ skills:
       2. Interpret the steps mentioned in the BODY of the message which invoked you. Fully understand the necessary changes using the implementation guide and make the required modifications:
           - If changes are needed in an existing file:
               - READ_PROJECT_FILES the existing file using file path.
-              - Apply the necessary changes using either FIND_AND_REPLACE, INSERT_ABOVE or INSERT_BELOW actions.
+              - Apply the necessary changes using executor.
           - Use CREATE_PROJECT_FILE action when a new file is indicated.
 
       3. Respond back to the agent who invoked you, detailing your actions in the BODY.
