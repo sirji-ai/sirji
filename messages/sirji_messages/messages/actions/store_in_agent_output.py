@@ -18,9 +18,10 @@ class StoreInAgentOutputMessage(BaseMessages):
             "body": textwrap.dedent("""
             File path: {{file path}}
             ---
-            {{Description of the agent output file, to be used by other agents to know what it is about}}                     
+            File content: {{file contents}}
             ---
-            {{file contents}}""")})
+            File content description: {{Description of the agent output file, to be used by other agents to know what it is about}}                     
+           """)})
 
     def description(self):
         return "Create a file in the Agent Output Folder and register it to the Agent Output Index"

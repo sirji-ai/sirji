@@ -5,10 +5,12 @@ import { createFile, sanitizePath } from './create_file';
 
 export async function storeInAgentOutputFolder(agentOutputFolderPath: string, messageBody: string, agentId: string): Promise<string> {
   try {
-    const [filePathString, filePathContentDescription, agentOutputFileContent] = messageBody.split('---');
+    const [filePathString, agentOutputFileContentString, filePathContentDescriptionString] = messageBody.split('---');
     let filePath = filePathString.replace('File path:', '').trim();
-    filePath = sanitizePath(filePath);
-
+    filePath = sanitizePath(filePath); 
+    let agentOutputFileContent = agentOutputFileContentString.replace('File content:', '').trim();
+    let filePathContentDescription = filePathContentDescriptionString.replace('File content description:', '').trim();
+  
     let bodyForFileCreation = `File path:${filePath}---${agentOutputFileContent}`;
 
     const fileCreationRes = await createFile(agentOutputFolderPath, false, bodyForFileCreation);
