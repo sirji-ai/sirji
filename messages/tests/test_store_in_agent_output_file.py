@@ -24,7 +24,7 @@ def test_store_in_agent_output_message_sample():
 
 def test_store_in_agent_output_message_description():
     message = StoreInAgentOutputMessage()
-    assert message.description() == "Create a file in the Agent Output Folder and register it to the Agent Output Index"
+    assert message.description() == "Create a file in the Agent Output Folder and register it to the Agent Output Index file"
 
 def test_store_in_agent_output_message_instructions():
     message = StoreInAgentOutputMessage()
