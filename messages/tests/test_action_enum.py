@@ -5,13 +5,12 @@ def test_action_enum_membership():
     assert ActionEnum['INVOKE_AGENT'] == ActionEnum.INVOKE_AGENT
     assert ActionEnum['INVOKE_AGENT_EXISTING_SESSION'] == ActionEnum.INVOKE_AGENT_EXISTING_SESSION
     assert ActionEnum['EXECUTE_COMMAND'] == ActionEnum.EXECUTE_COMMAND
-    assert ActionEnum['APPEND_TO_AGENT_OUTPUT_INDEX'] == ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX
+    assert ActionEnum['STORE_IN_AGENT_OUTPUT'] == ActionEnum.STORE_IN_AGENT_OUTPUT
     assert ActionEnum['READ_AGENT_OUTPUT_INDEX'] == ActionEnum.READ_AGENT_OUTPUT_INDEX
     assert ActionEnum['FETCH_RECIPE'] == ActionEnum.FETCH_RECIPE
     assert ActionEnum['FETCH_RECIPE_INDEX'] == ActionEnum.FETCH_RECIPE_INDEX
     assert ActionEnum['RUN_SERVER'] == ActionEnum.RUN_SERVER
     assert ActionEnum['CREATE_PROJECT_FILE'] == ActionEnum.CREATE_PROJECT_FILE
-    assert ActionEnum['CREATE_AGENT_OUTPUT_FILE'] == ActionEnum.CREATE_AGENT_OUTPUT_FILE
     assert ActionEnum['GENERATE_STEPS'] == ActionEnum.GENERATE_STEPS
     assert ActionEnum['PROBLEM_STATEMENT'] == ActionEnum.PROBLEM_STATEMENT
     assert ActionEnum['INFER'] == ActionEnum.INFER

@@ -35,7 +35,7 @@ export async function createFile(rootPath: string, isProjectRoot: boolean, body:
 
     console.log(`File created successfully: ${uri.fsPath}`);
 
-    return 'Done';
+    return 'File created successfully';
   } catch (e) {
     const errorMessage = `Failed to create or write to the file. Make sure you provided the body with correct structure as mentioned in the Allowed response template. Error: ${e}`;
     return errorMessage;
