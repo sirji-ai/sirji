@@ -154,16 +154,16 @@ The pseudo code snippet gets converted into the following message:
 FROM: NODE_JS_CREATE_API_CODER
 TO: EXECUTOR
 ACTION: STORE_IN_AGENT_OUTPUT
-SUMMARY: Storing the problem statement for the new API route and sequence diagram.
+SUMMARY: Storing the problem statement file for the new API route and sequence diagram.
 BODY: 
 File path: NODE_JS_CREATE_API_CODER/problem_statement.json
 ---
-Problem statement for creating a new API route and sequence diagram.
----
-{
+File content: {
     "route": "PUT /todos/{id}",
     "sequence_diagram": "docs/sequenceDiagrams/updateTodo.mermaid"
 }
+---
+File content description: Problem statement for creating a new API route and sequence diagram.
 ***
 ```
 
