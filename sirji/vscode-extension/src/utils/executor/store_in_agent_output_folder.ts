@@ -48,7 +48,7 @@ export async function storeInAgentOutputFolder(agentOutputFolderPath: string, me
 
     await vscode.workspace.fs.writeFile(uri, content);
 
-    return `${fileCreationRes} and Agent Output Index updated successfully`;
+    return 'Stored the file and registered it in the Agent Output Index file successfully';
   } catch (e) {
     const errorMessage = `Failed to create or write to the file. Make sure you provided the body with correct structure as mentioned in the Allowed response template. Error: ${e}`;
     return errorMessage;
