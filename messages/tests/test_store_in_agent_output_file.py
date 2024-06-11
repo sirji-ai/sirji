@@ -15,9 +15,9 @@ def test_store_in_agent_output_message_sample():
     BODY: 
     File path: {{file path}}
     ---
-    {{Description of the agent output file, to be used by other agents to know what it is about}}                     
+    File content: {{file contents}}                     
     ---
-    {{file contents}}
+    File content description: {{Description of the agent output file, to be used by other agents to know what it is about}}
     ***""")
     
     assert sample_message.strip() == expected_output.strip()
