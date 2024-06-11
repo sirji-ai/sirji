@@ -6,6 +6,7 @@ llm:
 accessible_actions: ["FETCH_RECIPE_INDEX", "FETCH_RECIPE"]
 skills:
   - skill: Manage recipe selection and storage by fetching a recipe index, questioning the user to select a recipe, retrieving the chosen recipe, saving it to a designated folder.
+    pseudo_code: |
       1. FETCH_RECIPE_INDEX using EXECUTOR
       2. QUESTION SIRJI_USER by showing the recipe index, and ask them to select one recipe from the available recipes in the index.
       3. FETCH_RECIPE using EXECUTOR by providing the file path of selected recipe.
