@@ -100,32 +100,16 @@ window.addEventListener('message', (event) => {
       displayTokenUsed(event.data.content.message);
       break;
 
-    case 'showCoderTab':
-      displayCoderTab(event.data.content);
-      break;
-
-    case 'showPlannerTab':
-      displayPlannerTab(event.data.content);
-      break;
-
-    case 'showResearcherTab':
-      displayResearcherTab(event.data.content);
-      break;
-
-    case 'plannerLogs':
-      displayPlannerLogs(event.data.content);
-      break;
-
-    case 'researcherLogs':
-      displayResearcherLogs(event.data.content);
-      break;
-
-    case 'coderLogs':
-      displayCoderLogs(event.data.content);
-      break;
-
     case 'tokenUsesByAgent':
       displayTokenUsesByAgent(event.data.content.message);
+      break;
+
+    case 'availableHeaderLogs':
+      createTabs(event.data.content);
+      break;
+
+    case 'displayLogs':
+      displayLogs(event.data.content);
       break;
 
     default:
@@ -516,81 +500,12 @@ function updateTooltipTokenValues(tokenValues) {
   jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $${total_completion_tokens_value.toFixed(2)}`;
 }
 
-function displayPlannerLogs(data) {
-  const plannerLogs = document.getElementById('plannerLogs');
-  plannerLogs.innerText = data;
-  // scroll to bottom
-  scrollToBottom('plannerLogs');
-}
-
-function displayResearcherLogs(data) {
-  const researcherLogs = document.getElementById('researcherLogs');
-  researcherLogs.innerText = data;
-  // scroll to bottom
-  scrollToBottom('researcherLogs');
-}
-
-function displayCoderLogs(data) {
-  const coderLogs = document.getElementById('coderLogs');
-  coderLogs.innerText = data;
-  // scroll to bottom
-  scrollToBottom('coderLogs');
-}
-
-function displayCoderTab(data) {
-  const coderTab = document.getElementById('coderTab');
-
-  coderTabInterval = setInterval(() => {
-    vscode.postMessage({ type: 'requestCoderLogs' });
-  }, 10000);
-}
-
-function displayPlannerTab(data) {
-  const plannerTab = document.getElementById('plannerTab');
-
-  plannerTabInterval = setInterval(() => {
-    vscode.postMessage({ type: 'requestPlannerLogs' });
-  }, 10000);
-}
-
-function displayResearcherTab(data) {
-  const researcherTab = document.getElementById('researcherTab');
-
-  researcherTabInterval = setInterval(() => {
-    vscode.postMessage({ type: 'requestResearcherLogs' });
-  }, 10000);
-}
-
-function closeCoderTab() {
-  clearInterval(coderTabInterval);
-  document.getElementById('coderTab').innerHTML = '';
-}
-
-function closePlannerTab() {
-  clearInterval(plannerTabInterval);
-  document.getElementById('plannerTab').innerHTML = '';
-}
-
-function closeResearcherTab() {
-  clearInterval(researcherTabInterval);
-  document.getElementById('researcherTab').innerHTML = '';
-}
-
 const tabButtons = document.querySelectorAll('.tab-button');
 
 tabButtons.forEach(function (button) {
   button.addEventListener('click', function () {
     const tabName = this.getAttribute('data-tab');
     showTab(tabName);
-  });
-});
-
-const logTabButtons = document.querySelectorAll('.log-tab-button');
-
-logTabButtons.forEach(function (button) {
-  button.addEventListener('click', function () {
-    const tabName = this.getAttribute('data-tab');
-    showTab(tabName, 'log-tab', 'log-tab-button');
   });
 });
 
@@ -698,13 +613,14 @@ function destroy(e) {
 
 const jTabsButtonsContainerEl = document.getElementById('jTabsButtonsContainer');
 const jTabButtonsEl = document.getElementById('jTabButtons');
-const jArrowSvg = document.getElementById('jArrowSvg');
+const jRArrowSvg = document.getElementById('jRightArrowSvg');
+const jLArrowSvg = document.getElementById('jLeftArrowSvg');
 
 function toggleTabsArrowOnResize() {
   if (jTabsButtonsContainerEl.offsetWidth < jTabButtonsEl.offsetWidth) {
-    jArrowSvg.style.display = 'flex';
+    jRArrowSvg.style.display = 'flex';
   } else {
-    jArrowSvg.style.display = 'none';
+    jRArrowSvg.style.display = 'none';
   }
 }
 
@@ -715,15 +631,27 @@ window.addEventListener('resize', function () {
 jTabsButtonsContainerEl.addEventListener('scroll', function () {
   const totalScrolledWidth = jTabsButtonsContainerEl.offsetWidth + jTabsButtonsContainerEl.scrollLeft;
 
-  if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
-    jArrowSvg.style.display = 'none';
+  if (jTabsButtonsContainerEl.scrollLeft === 0) {
+    jLArrowSvg.style.display = 'none';
   } else {
-    jArrowSvg.style.display = 'flex';
+    jLArrowSvg.style.display = 'flex';
+  }
+
+  console.log('totalScrolledWidth:', totalScrolledWidth, jTabButtonsEl.offsetWidth);
+
+  if (totalScrolledWidth >= jTabButtonsEl.offsetWidth) {
+    jRArrowSvg.style.display = 'none';
+  } else {
+    jRArrowSvg.style.display = 'flex';
   }
 });
 
-jArrowSvg.onclick = function () {
+jRArrowSvg.onclick = function () {
   jTabsButtonsContainerEl.scrollLeft = 999999;
+};
+
+jLArrowSvg.onclick = function () {
+  jTabsButtonsContainerEl.scrollLeft = 0;
 };
 
 // Tokens modal
@@ -796,6 +724,104 @@ function modalClickHandler(event) {
     closeTokensModal();
   }
 }
+const logTabButtonsContainer = document.getElementById('jTabButtons');
+const logTabContentContainer = document.getElementById('logTabContent');
+let currentActiveLog = null;
+let fetchLogsInterval = null;
+
+// Function to create tabs
+function createTabs(logs) {
+  // Preserve currently active tab
+  const activeTab = document.querySelector('.log-tab-button.active');
+  if (activeTab) currentActiveLog = activeTab.getAttribute('data-tab');
+
+  // Fetch existing logs
+  const existingLogsIds = Array.from(logTabContentContainer.children).map((child) => child.id.slice(0, -3));
+
+  // Clear existing headers but not content
+  logTabButtonsContainer.innerHTML = '';
+
+  logs.forEach((log, index) => {
+    // Create or update tab button
+    const tabButton = document.createElement('div');
+    tabButton.classList.add('log-tab-button');
+    if (log === currentActiveLog) tabButton.classList.add('active'); // Restore active tab
+    tabButton.setAttribute('data-tab', log);
+    tabButton.innerText = log.replace(/_/g, ' ').toUpperCase();
+    tabButton.addEventListener('click', () => {
+      activateTab(log);
+      // Call requestLogs on click
+      requestLogs(log);
+    });
+    logTabButtonsContainer.appendChild(tabButton);
+
+    if (!existingLogsIds.includes(log)) {
+      // Create tab content if it doesn't exist
+      const tabContent = document.createElement('div');
+      tabContent.id = `${log}Tab`;
+      tabContent.classList.add('log-tab');
+      if (log === currentActiveLog) tabContent.classList.add('active'); // Restore active content
+      const panelView = document.createElement('div');
+      panelView.id = `${log}Logs`;
+      panelView.classList.add('panel-view');
+      tabContent.appendChild(panelView);
+      logTabContentContainer.appendChild(tabContent);
+    }
+  });
+
+  // If there's no previously active log, set the first one as active
+  if (!currentActiveLog && logs.length > 0) {
+    currentActiveLog = logs[0];
+    activateTab(currentActiveLog);
+  }
+}
+
+// Function to activate a tab
+function activateTab(log) {
+  // Keep track of the active tab
+  currentActiveLog = log;
+
+  // Clear existing interval to prevent memory leaks
+  if (fetchLogsInterval) {
+    clearInterval(fetchLogsInterval);
+  }
+
+  // Deactivate all tab buttons and contents
+  document.querySelectorAll('.log-tab-button').forEach((btn) => btn.classList.remove('active'));
+  document.querySelectorAll('.log-tab').forEach((tab) => tab.classList.remove('active'));
+
+  // Activate the selected tab button and content
+  document.querySelector(`[data-tab="${log}"]`).classList.add('active');
+  document.getElementById(`${log}Tab`).classList.add('active');
+
+  // Start fetching logs for the active tab every 10 seconds
+  fetchLogsInterval = setInterval(() => {
+    console.log('Requesting logs for:', log);
+    requestLogs(log);
+  }, 10000);
+}
+
+// Function to request logs
+function requestLogs(log) {
+  vscode.postMessage({ type: 'requestLogs', content: log });
+}
+
+// Function to display logs
+function displayLogs(data) {
+  const { fileName, logFileContent } = data;
+  const logPanel = document.getElementById(`${fileName}Logs`);
+  logPanel.innerHTML = `<pre>${logFileContent}</pre>`;
+  scrollToBottom(`${fileName}Logs`);
+}
+
+// Loading initial headers
+function loadHeaders() {
+  vscode.postMessage({ type: 'requestAvailableHeaderLogs' });
+}
+
+// Initial load
+loadHeaders();
+setInterval(loadHeaders, 10000);
 
 jCloseTokensModalButton.addEventListener('click', closeTokensModal);
 jTokensButton.addEventListener('click', tokensButtonClickhandler);

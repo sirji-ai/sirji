@@ -1,27 +1,23 @@
 body[data-vscode-theme-kind='vscode-dark'] {
-
-  .icon svg>path {
+  .icon svg > path {
     fill: white;
   }
 }
 
 body[data-vscode-theme-kind='vscode-light'] {
-
-  .icon svg>path {
+  .icon svg > path {
     fill: black;
   }
 }
 
 body[data-vscode-theme-kind='vscode-dark'] {
-
-  .boticon svg>g>path {
+  .boticon svg > g > path {
     fill: white;
   }
 }
 
 body[data-vscode-theme-kind='vscode-light'] {
-
-  .boticon svg>g>path {
+  .boticon svg > g > path {
     fill: black;
   }
 }
@@ -203,7 +199,6 @@ textarea {
   gap: 10px;
 }
 
-
 .progressContainer {
   display: flex;
   justify-content: flex-end;
@@ -259,10 +254,7 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,
-      0,
-      0,
-      0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: none;
   justify-content: center;
   align-items: center;
@@ -376,7 +368,6 @@ textarea {
   margin: 0;
 }
 
-
 .stepItem {
   display: flex;
   align-items: center;
@@ -396,7 +387,6 @@ textarea {
   flex-grow: 1;
   color: inherit;
 }
-
 
 .checkbox {
   /* Hide the default checkbox */
@@ -419,7 +409,7 @@ textarea {
 
 /* Hide the default checkbox and add a custom tick mark using the ::after pseudo-element */
 .checkbox:checked::after {
-  content: "✔";
+  content: '✔';
   font-size: 12px;
   color: white;
   position: absolute;
@@ -577,7 +567,7 @@ label {
   text-align: left;
 }
 
-.input-wrapper input[type="text"] {
+.input-wrapper input[type='text'] {
   width: calc(100% - 10px);
   padding: 10px;
   border: 1px solid #454545;
@@ -589,7 +579,7 @@ label {
   color: white;
 }
 
-.input-wrapper input[type="text"]:hover {
+.input-wrapper input[type='text']:hover {
   border-color: #888;
 }
 
@@ -652,13 +642,13 @@ label {
 }
 
 .toolbar-icon {
-  svg>path {
-    fill: var(--vscode-titleBar-inactiveForeground)
+  svg > path {
+    fill: var(--vscode-titleBar-inactiveForeground);
   }
 }
 
 .toolbar-icon:hover {
-  svg>path {
+  svg > path {
     fill: var(--vscode-titleBar-activeForeground);
   }
 }
@@ -695,7 +685,7 @@ label {
   display: grid;
   grid-gap: 0px;
   grid-template-columns: 60vw 40vw;
-  grid-template-areas: "left right";
+  grid-template-areas: 'left right';
   height: 100vh;
 }
 
@@ -825,7 +815,6 @@ label {
   padding-left: 10px;
 }
 
-
 .tab-buttons-container {
   overflow-x: auto;
   white-space: nowrap;
@@ -857,6 +846,20 @@ label {
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
+}
+
+.larrow-svg {
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  justify-content: 'flex-start';
+  backdrop-filter: blur(2px);
+  width: 50px;
+  height: 45px;
+  align-items: center;
+  padding-left: 10px;
 }
 
 *,
