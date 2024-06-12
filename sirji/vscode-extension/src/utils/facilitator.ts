@@ -566,7 +566,7 @@ export class Facilitator {
     if (!oThis.isDebugging) {
       if (
         parsedMessage.ACTION === 'INVOKE_AGENT' ||
-        parsedMessage.ACTION === 'APPEND_TO_AGENT_OUTPUT_INDEX' ||
+        parsedMessage.ACTION === 'STORE_IN_AGENT_OUTPUT' ||
         parsedMessage.ACTION === 'FETCH_RECIPE_INDEX' ||
         parsedMessage.ACTION === 'FETCH_RECIPE' ||
         parsedMessage.ACTION === 'READ_AGENT_OUTPUT_FILES'

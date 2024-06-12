@@ -3,7 +3,7 @@ import { executeSpawn } from './execute_spawn';
 import { executeTask } from './execute_task';
 import { openBrowser } from './open_browser';
 import { readContent } from './read_content';
-import { appendToAgentOutputsIndex } from './append_to_agent_output_index';
+import { storeInAgentOutputFolder } from './store_in_agent_output_folder';
 import { readAgentOutputsIndex } from './read_agent_output_index';
 import { fetchRecipe } from './fetch_recipe';
 
@@ -45,8 +45,6 @@ export class Executor {
     switch (action) {
       case ACTION_ENUM.CREATE_PROJECT_FILE:
         return await createFile(oThis.projectRootPath, true, oThis.parsedMessage.BODY);
-      case ACTION_ENUM.CREATE_AGENT_OUTPUT_FILE:
-        return await createFile(oThis.agentOutputFolderPath, false, oThis.parsedMessage.BODY);
       case ACTION_ENUM.EXECUTE_COMMAND:
         return await executeSpawn(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.RUN_SERVER:
@@ -58,8 +56,8 @@ export class Executor {
         return await readContent(oThis.projectRootPath, oThis.parsedMessage.BODY, false);
       case ACTION_ENUM.READ_AGENT_OUTPUT_FILES:
         return await readContent(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, false);
-      case ACTION_ENUM.APPEND_TO_AGENT_OUTPUT_INDEX:
-        return await appendToAgentOutputsIndex(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
+      case ACTION_ENUM.STORE_IN_AGENT_OUTPUT:
+        return await storeInAgentOutputFolder(oThis.agentOutputFolderPath, oThis.parsedMessage.BODY, oThis.parsedMessage.FROM);
       case ACTION_ENUM.READ_AGENT_OUTPUT_INDEX:
         return await readAgentOutputsIndex(oThis.agentOutputFolderPath);
       case ACTION_ENUM.FETCH_RECIPE:

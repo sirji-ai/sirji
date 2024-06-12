@@ -50,7 +50,7 @@ jobs:
           npm run package
 
       - name: Publish Extension To VS Marketplace
-        run:
+        run: |
           cd sirji/vscode-extension
           npm run publish -- -p ${{ secrets.VS_MARKETPLACE_PAT }}
         env:

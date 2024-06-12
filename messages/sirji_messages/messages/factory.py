@@ -4,7 +4,6 @@ from sirji_messages import ActionEnum
 from .actions.execute_command import ExecuteCommandMessage
 from .actions.run_server import RunServerMessage
 from .actions.create_project_file import CreateProjectFileMessage
-from .actions.create_agent_output_file import CreateAgentOutputFileMessage
 from .actions.infer import InferMessage
 from .actions.question import QuestionMessage
 from .actions.response import ResponseMessage
@@ -13,7 +12,6 @@ from .actions.train_using_search_term import TrainUsingSearchTermMessage
 from .actions.train_using_url import TrainUsingUrlMessage
 from .actions.read_project_files import ReadProjectFilesMessage
 from .actions.read_agent_output_files import ReadAgentOutputFilesMessage
-from .actions.append_to_agent_output_index import AppendToAgentOutputIndexMessage
 from .actions.read_agent_output_index import ReadAgentOutputIndexMessage
 from .actions.invoke_agent import InvokeAgentMessage
 from .actions.invoke_agent_existing_session import InvokeAgentExistingSessionMessage
@@ -25,6 +23,7 @@ from .actions.fetch_recipe_index import FetchRecipeIndexMessage
 from .actions.insert_above import InsertAbove
 from .actions.insert_below import InsertBelow
 from .actions.store_in_scratch_pad import StoreInScratchPad
+from .actions.store_in_agent_output import StoreInAgentOutputMessage
 
 
 class MetaMessageFactory(type):
@@ -48,7 +47,6 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.EXECUTE_COMMAND: ExecuteCommandMessage,
         ActionEnum.RUN_SERVER: RunServerMessage,
         ActionEnum.CREATE_PROJECT_FILE: CreateProjectFileMessage,
-        ActionEnum.CREATE_AGENT_OUTPUT_FILE: CreateAgentOutputFileMessage,
         ActionEnum.INFER: InferMessage,
         ActionEnum.QUESTION: QuestionMessage,
         ActionEnum.RESPONSE: ResponseMessage,
@@ -57,7 +55,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.TRAIN_USING_URL: TrainUsingUrlMessage,
         ActionEnum.READ_PROJECT_FILES: ReadProjectFilesMessage,
         ActionEnum.READ_AGENT_OUTPUT_FILES: ReadAgentOutputFilesMessage,
-        ActionEnum.APPEND_TO_AGENT_OUTPUT_INDEX: AppendToAgentOutputIndexMessage,
+        ActionEnum.STORE_IN_AGENT_OUTPUT: StoreInAgentOutputMessage,
         ActionEnum.READ_AGENT_OUTPUT_INDEX: ReadAgentOutputIndexMessage,
         ActionEnum.FIND_AND_REPLACE: FindAndReplace,
         ActionEnum.INSERT_ABOVE: InsertAbove,
