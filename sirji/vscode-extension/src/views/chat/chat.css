@@ -953,3 +953,8 @@ label {
   border: none;
   cursor: pointer;
 }
+
+.rotate-svg {
+  transform: rotate(180deg);
+  transform-origin: center;
+}

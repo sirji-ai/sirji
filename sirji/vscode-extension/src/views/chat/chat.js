@@ -30,9 +30,6 @@ const loaderSvg = `
 
 let stepsArray = [];
 let totalStepsCompleted = 0;
-let coderTabInterval;
-let plannerTabInterval;
-let researcherTabInterval;
 
 const userInput = document.getElementById('userInput');
 userInput.addEventListener('keydown', onInputChange);

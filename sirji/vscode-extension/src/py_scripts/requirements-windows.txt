@@ -1,4 +1,4 @@
 urllib3==2.2.1
 pyyaml==6.0.1
-sirji-messages==0.0.25
-sirji-agents==0.0.36
+sirji-messages==0.0.26
+sirji-agents==0.0.37
