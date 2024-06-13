@@ -506,6 +506,10 @@ tabButtons.forEach(function (button) {
   });
 });
 
+setTimeout(() => {
+  showTab('logs', 'tab', 'tab-button');
+}, 3000);
+
 function showTab(tabName, tabClassName = 'tab', tabButtonClassName = 'tab-button') {
   let i, tabcontent, tablinks;
 
