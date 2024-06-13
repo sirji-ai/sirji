@@ -6,5 +6,9 @@
   "node_js_create_api.json": {
     "name": "Write New API and Test Cases",
     "description": "Recipe for writing a new API and test cases in an existing Node.js Project."
+  },
+  "node_js_create_test_case.json": {
+    "name": "Write New Test Case",
+    "description": "Recipe for writing a new test case in an existing Node.js Project."
   }
 }
