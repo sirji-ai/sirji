@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Facilitator } from './utils/facilitator';
+import path from 'path';
 
 // Variable to keep track of the chat panel instance
 let chatPanel: vscode.WebviewPanel | undefined = undefined;
@@ -31,9 +32,9 @@ function activate(context: vscode.ExtensionContext) {
 
   // Register the command `sirji.studio` to open studio
   let openStudio = vscode.commands.registerCommand('sirji.studio', async function () {
-    let current_user = process.env.USER;
-    let folderPath = `/Users/${current_user}/Library/Application Support/Code/User/globalStorage/truesparrow.sirji/Sirji`;
-    let uri = vscode.Uri.file(folderPath);
+    let rootPath = context?.globalStorageUri.path;
+    let sirjiInstallationFolderPath = path.join(rootPath, 'Sirji');
+    let uri = vscode.Uri.file(sirjiInstallationFolderPath);
     vscode.commands.executeCommand('vscode.openFolder', uri, true);
   });
 
