@@ -49,7 +49,6 @@ skills:
                       - Refer to the Inspiration API test file to understand the structure and format of the test cases.
                       - If the test case is expecting some data to be present in the database, ensure that the data is inserted before running the test case.
                       - Understand what all files from the test folder are required in the file.
-                      - Understand what steps are performed beforeEach and afterEach of each test.
                       - Understand how external API calls are stubbed.
       7. Store the implementation guide in the Agent Output Folder.
       8. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
