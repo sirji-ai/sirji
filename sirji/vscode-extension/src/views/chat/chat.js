@@ -729,6 +729,7 @@ const logTabButtonsContainer = document.getElementById('jTabButtons');
 const logTabContentContainer = document.getElementById('logTabContent');
 let currentActiveLog = null;
 let fetchLogsInterval = null;
+let previousActiveLog = null;
 
 // Function to create tabs
 function createTabs(logs) {
@@ -780,6 +781,7 @@ function createTabs(logs) {
 // Function to activate a tab
 function activateTab(log) {
   // Keep track of the active tab
+  previousActiveLog = currentActiveLog;
   currentActiveLog = log;
 
   // Clear existing interval to prevent memory leaks
@@ -812,7 +814,23 @@ function displayLogs(data) {
   const { fileName, logFileContent } = data;
   const logPanel = document.getElementById(`${fileName}Logs`);
   logPanel.innerHTML = `<pre>${logFileContent}</pre>`;
-  scrollToBottom(`${fileName}Logs`);
+
+  // Scroll to bottom if the active tab has changed
+  if (previousActiveLog.toLowerCase() !== fileName.toLowerCase()) {
+    scrollToBottom(`${fileName}Logs`);
+    previousActiveLog = fileName;
+    return;
+  }
+
+  previousActiveLog = fileName;
+
+  // Don't scroll to bottom if the user has scrolled up
+  if (logPanel.scrollTop + logPanel.clientHeight <= logPanel.scrollHeight) {
+    console.log('here here');
+    return;
+  } else {
+    scrollToBottom(`${fileName}Logs`);
+  }
 }
 
 // Loading initial headers
