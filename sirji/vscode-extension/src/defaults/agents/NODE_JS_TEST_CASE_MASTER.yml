@@ -1,0 +1,20 @@
+id: NODE_JS_TEST_CASE_MASTER
+
+name: Node.js test case coder
+
+llm:
+  provider: openai
+  model: gpt-4o
+
+sub_agents:
+  - id: NODE_JS_TEST_CASE_PLANNER
+  - id: NODE_JS_CODE_WRITER
+
+skills:
+  - skill: Coordinate the invocation of agents to create an implementation guide for writing test cases and execute each step of the guide.
+    pseudo_code: |
+      1. QUESTION SIRJI_USER to provide the API route, the file path of the service for which test cases are to be written. Store this information as a problem statement (mentioning your understanding) in the Agent Output Folder.
+      2. Invoke agent NODE_JS_TEST_CASE_PLANNER to analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
+      3. Read the implementation guide created by NODE_JS_TEST_CASE_PLANNER from the Agent Output Folder.
+      4. Loop over the steps in the implementation guide and Invoke agent NODE_JS_CODE_WRITER, passing a request to perform the current step in the BODY of the invocation during each iteration.
+      5. Respond back to the agent who invoked you, detailing your actions in the BODY.
