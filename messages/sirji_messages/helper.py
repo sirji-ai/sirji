@@ -4,7 +4,10 @@ def allowed_response_templates(from_agent, to_agent, action_list):
     response_template = ''
 
     if from_agent != AgentEnum.ORCHESTRATOR and from_agent != AgentEnum.CALLER:
-        response_template += f'Allowed Response Templates TO {to_agent.name}:\n'
+        if to_agent == AgentEnum.CALLER:
+            response_template += f'Allowed Response Templates TO agent who invoked you:\n'
+        else:
+            response_template += f'Allowed Response Templates TO {to_agent.name}:\n'
 
     if (from_agent, to_agent) == (AgentEnum.ANY, AgentEnum.CALLER):
         response_template += f'Respond to the agent which invoked you, at the end of task completion. Please respond with the following, including the starting and ending \'***\', with no commentary above or below.'

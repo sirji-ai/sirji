@@ -227,56 +227,36 @@ export class Facilitator {
     });
   }
 
-  private async readCoderLogs() {
+  private async readLogs(fileName: string) {
     const oThis = this;
+    const logsFilePath = path.join(oThis.sirjiInstallationFolderPath, 'sessions', oThis.sirjiRunId, 'logs', `${fileName}.log`);
+    let logFileContent = '';
 
-    const coderConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'coder.log');
-
-    let coderLogFileContent = '';
-
-    // TODO P1: remove history manager.
-    if (oThis.historyManager?.checkIfFileExists(coderConversationFilePath)) {
-      coderLogFileContent = oThis.historyManager?.readFile(coderConversationFilePath);
-      // return coderLogFileContent;
-    }
-
-    this.chatPanel?.webview.postMessage({
-      type: 'coderLogs',
-      content: coderLogFileContent
-    });
-  }
-
-  private async readPlannerLogs() {
-    const oThis = this;
-
-    const plannerConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'planner.log');
-
-    let plannerLogFileContent = '';
-    if (oThis.historyManager?.checkIfFileExists(plannerConversationFilePath)) {
-      plannerLogFileContent = oThis.historyManager?.readFile(plannerConversationFilePath);
-      // return plannerLogFileContent;
+    if (fs.existsSync(logsFilePath)) {
+      logFileContent = fs.readFileSync(logsFilePath, 'utf-8');
     }
 
     oThis.chatPanel?.webview.postMessage({
-      type: 'plannerLogs',
-      content: plannerLogFileContent
+      type: 'displayLogs',
+      content: { fileName, logFileContent }
     });
+
+    return logFileContent;
   }
 
-  private async readResearcherLogs() {
+  private async requestAvailableHeaderLogs() {
     const oThis = this;
 
-    const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'logs', 'researcher.log');
+    const logsFilePath = path.join(oThis.sirjiInstallationFolderPath, 'sessions', oThis.sirjiRunId, 'logs');
+    const logsFiles = fs.readdirSync(logsFilePath);
 
-    let researcherLogFileContent = '';
-    if (oThis.historyManager?.checkIfFileExists(researcherConversationFilePath)) {
-      researcherLogFileContent = oThis.historyManager?.readFile(researcherConversationFilePath);
-      // return researcherLogFileContent;
-    }
+    let availableLogs = logsFiles.map((file) => {
+      return file.replace('.log', '');
+    });
 
-    this.chatPanel?.webview.postMessage({
-      type: 'researcherLogs',
-      content: researcherLogFileContent
+    oThis.chatPanel?.webview.postMessage({
+      type: 'availableHeaderLogs',
+      content: availableLogs
     });
   }
 
@@ -371,19 +351,17 @@ export class Facilitator {
         });
         break;
 
-      case 'requestPlannerLogs':
-        await oThis.readPlannerLogs();
+      case 'requestAvailableHeaderLogs':
+        await oThis.requestAvailableHeaderLogs();
         break;
 
-      case 'requestResearcherLogs':
-        await oThis.readResearcherLogs();
-        break;
-
-      case 'requestCoderLogs':
-        await oThis.readCoderLogs();
-        break;
       case 'requestTokenUsage':
         await oThis.getTokenUsedAgentWise();
+        break;
+
+      case 'requestLogs':
+        await oThis.readLogs(message.content);
+        break;
 
       case 'userMessage':
         console.log('message.content--------', message.content);

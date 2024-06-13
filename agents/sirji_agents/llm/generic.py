@@ -3,17 +3,17 @@ import os
 import json
 
 # TODO - log file should be dynamically created based on agent ID
-from sirji_tools.logger import p_logger as logger
-
+from sirji_tools.logger import create_logger
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
 from .model_providers.factory import LLMProviderFactory
 
 class GenericAgent():
     def __init__(self, config, agent_output_folder_index, file_summaries=None):
-
-        logger.info('---------inside generic agent-----------')
-        logger.info(config)
-        logger.info(agent_output_folder_index)
+        # Initialize the logger as an instance variable
+        self.logger = create_logger(f"{config['id']}.log", 'debug')
+  
+        self.logger.info(config)
+        self.logger.info(agent_output_folder_index)
         
         self.config = config
         self.agent_output_folder_index = agent_output_folder_index
@@ -22,8 +22,8 @@ class GenericAgent():
     def message(self, input_message, history=[]):
         conversation = self.__prepare_conversation(input_message, history)
 
-        logger.info(f"Incoming: \n{input_message}")
-        logger.info("Calling OpenAI Chat Completions API\n")
+        self.logger.info(f"Incoming: \n{input_message}")
+        self.logger.info("Calling OpenAI Chat Completions API\n")
 
         response_message, prompt_tokens, completion_tokens = self.__get_response(conversation)
 
@@ -63,18 +63,17 @@ class GenericAgent():
                 break
             except (MessageParsingError, MessageValidationError) as e:
             # Handling both MessageParsingError and MessageValidationError similarly
-                logger.info("Error while parsing the message.\n")
+                self.logger.info("Error while parsing the message.\n")
                 retry_llm_count += 1
                 if retry_llm_count > 2:
                     raise e
-                logger.info(f"Requesting LLM to resend the message in correct format.\n")
+                self.logger.info(f"Requesting LLM to resend the message in correct format.\n")
                 conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
                 conversation.append({"role": "user", "content": "Error in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors."})
             except Exception as e:
-                logger.info(f"Generic error while parsing message. Error: {e}\n")
+                self.logger.info(f"Generic error while parsing message. Error: {e}\n")
                 raise e
-            
-            
+                        
         return response_message, prompt_tokens, completion_tokens
     
     def __call_llm(self, conversation):
@@ -85,20 +84,19 @@ class GenericAgent():
 
         model_provider = LLMProviderFactory.get_instance()
 
-        return model_provider.get_response(history, logger)
+        return model_provider.get_response(history, self.logger)
 
     def system_prompt(self):
         initial_intro = textwrap.dedent(f"""
             You are an agent named "{self.config['name']}", a component of the Sirji AI agentic framework.
             Your Agent ID: {self.config['id']}
-            Your OS (refered as SIRJI_OS later): {os.name}""")
+            Your OS (referred as SIRJI_OS later): {os.name}""")
         
         response_specifications = textwrap.dedent(f"""
             Your Response:
             - Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized.
             - Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers.
-            - Not conforming above rules will lead to response processing errors.""")
-
+            - Not conforming above rules will lead to response processing errors.""")        
         # Todo: Use action names from ActionEnum
         understanding_the_folders = textwrap.dedent("""
             Project Folder:

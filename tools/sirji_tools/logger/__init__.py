@@ -1,8 +1,5 @@
-from .logger import LoggerManager
+from .logger import logger_manager
 
-c_logger = LoggerManager().coder
-r_logger = LoggerManager().researcher
-p_logger = LoggerManager().planner
-e_logger = LoggerManager().executor
-s_logger = LoggerManager().sirji
-u_logger = LoggerManager().user
+o_logger = logger_manager.orchestrator
+create_logger = logger_manager.create_logger
+r_logger = logger_manager.research
