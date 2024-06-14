@@ -23,12 +23,6 @@ class LoggerSingleton:
     def _log_folder(self):
         return os.path.join(self._get_run_path(), "logs")
     
-    def _get_project_folder(self):
-        project_folder = os.environ.get("SIRJI_PROJECT")
-        if project_folder is None:
-            raise ValueError("SIRJI_PROJECT is not set as an environment variable")
-        return project_folder
-
     def _get_run_path(self):
         run_id = os.environ.get("SIRJI_RUN_PATH")
         if run_id is None:
