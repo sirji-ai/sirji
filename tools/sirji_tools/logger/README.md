@@ -22,7 +22,7 @@ The `LoggerSingleton` class is responsible for:
 
 The `LoggerManager` class serves as a central access point for managing various logger instances within the Sirji framework. Key functionalities include:
 
-- **Pre-configured Loggers**: Access to orchestrator and research loggers with default settings.
+- **Pre-configured Loggers**: Access to orchestrator loggers with default settings.
 - **Dynamic Logger Creation**: A `create_logger` method facilitating the creation of additional loggers with specified log levels and log file path.
 
 ### Environment Variables
@@ -48,13 +48,6 @@ To access the pre-configured orchestrator logger:
 ```python
 from sirji_tools.logger import o_logger as logger
 logger.info("This is an info log message for the orchestrator.")
-```
-
-To access the pre-configured research logger:
-
-```python
-from sirji_tools.logger import r_logger as logger
-logger.debug("This is a debug log message for research.")
 ```
 
 #### Creating and Using a Custom Logger

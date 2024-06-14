@@ -2,7 +2,7 @@ import os
 
 from sirji_tools.crawler import crawl_urls
 from sirji_tools.search import search_for
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger 
 
 from sirji_messages import message_parse, MessageFactory, ActionEnum
 
@@ -13,7 +13,8 @@ from .inferer.factory import InfererFactory
 class ResearchAgent:
     def __init__(self, embeddings_type, inferer_type, init_payload={}):
         """Initialize Researcher with specific embeddings and inferer types."""
-        logger.info("Initializing researcher...")
+        self.logger = create_logger("researcher.log", "debug")
+        self.logger.info("Initializing researcher...")
 
         self._embeddings_manager = EmbeddingsFactory.get_instance(
             embeddings_type, init_payload)
@@ -25,7 +26,7 @@ class ResearchAgent:
 
         self._research_folder = os.path.join(self._get_run_path(), "researcher")
 
-        logger.info("Completed initializing researcher")
+        self.logger.info("Completed initializing researcher")
 
     def message(self, input_message):
         """Public method to process input messages and dispatch actions."""
@@ -55,7 +56,7 @@ class ResearchAgent:
 
     def _handle_train_using_search_term(self, parsed_message):
         """Private method to handle training using a search term."""
-        logger.info(
+        self.logger.info(
             f"Training using search term: {parsed_message.get('TERM')}")
         self._search_and_index(parsed_message.get('TERM'))
 
@@ -63,14 +64,14 @@ class ResearchAgent:
 
     def _handle_train_using_url(self, parsed_message):
         """Private method to handle training using a specific URL."""
-        logger.info(f"Training using URL: {parsed_message.get('URL')}")
+        self.logger.info(f"Training using URL: {parsed_message.get('URL')}")
         self._index([parsed_message.get('URL')])
 
         return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
 
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
-        logger.info(f"Infering: {parsed_message.get('DETAILS')}")
+        self.logger.info(f"Infering: {parsed_message.get('DETAILS')}")
         response, prompt_tokens, completion_tokens= self._infer(parsed_message.get('DETAILS'))
 
         return self._generate_message(ActionEnum.RESPONSE, response), prompt_tokens, completion_tokens
@@ -82,10 +83,10 @@ class ResearchAgent:
 
     def _index(self, urls):
         """Index given URLs."""
-        logger.info("Started indexing the URLs")
+        self.logger.info("Started indexing the URLs")
         crawl_urls(urls, self._research_folder)
         self.__reindex()
-        logger.info("Completed indexing the URLs")
+        self.logger.info("Completed indexing the URLs")
 
     def _search_and_index(self, query):
         """Search for a query and index resulting URLs."""
@@ -100,13 +101,13 @@ class ResearchAgent:
 
     def __reindex(self):
         """Re-index the research folder recursively. Note: This is treated exceptionally private."""
-        logger.info("Recursively indexing the research folder")
+        self.logger.info("Recursively indexing the research folder")
         for root, dirs, files in os.walk(self._research_folder):
             for folder in dirs:
                 folder_path = os.path.join(root, folder)
                 # Improved logging
-                logger.info(f"Indexing folder: {folder_path}")
+                self.logger.info(f"Indexing folder: {folder_path}")
 
                 response = self._embeddings_manager.index(folder_path)
                 # Optionally handle the response
-        logger.info("Completed recursive indexing of the research folder")
+        self.logger.info("Completed recursive indexing of the research folder")

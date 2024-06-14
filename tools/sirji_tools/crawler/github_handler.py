@@ -3,10 +3,11 @@ import os
 import subprocess
 import shutil
 from urllib.parse import urlparse
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 class GitHubHandler(BaseContentHandler):
     def handle(self, url, output_dir):
+        logger = create_logger("researcher.log", "debug")
         logger.info(f"Started handling GitHub URL: {url}")
 
         parsed_url = urlparse(url)

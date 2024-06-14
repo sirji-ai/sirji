@@ -2,11 +2,12 @@ import re
 from .web_page_handler import WebPageHandler
 from .pdf_handler import PDFHandler
 from .github_handler import GitHubHandler
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 class ContentHandlerFactory:
     @classmethod
     def get_handler(cls, url):
+        logger = create_logger("researcher.log", "debug")
         logger.info(f"Getting crawler handler for URL: {url}")
 
         if url.endswith('.pdf'):

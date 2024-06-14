@@ -1,5 +1,5 @@
 from .factory import ContentHandlerFactory
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 
 def crawl_urls(urls, output_dir):
@@ -9,6 +9,7 @@ def crawl_urls(urls, output_dir):
     - output_dir: The directory where output from the handlers should be stored.
     """
     for url in urls:
+        logger = create_logger("researcher.log", "debug")
         logger.info(f"Started crawling URL: {url}")
 
         handler = ContentHandlerFactory.get_handler(url)
