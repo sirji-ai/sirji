@@ -4,7 +4,7 @@ from markdownify import markdownify as md
 import re
 
 from .base import BaseContentHandler
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 
 class WebPageHandler(BaseContentHandler):
@@ -12,6 +12,7 @@ class WebPageHandler(BaseContentHandler):
         with sync_playwright() as pw:
             delay_seconds = 10
 
+            logger = create_logger("researcher.log", "debug")
             logger.info(f"Started crawling web page URL: {url}")
             browser = pw.chromium.launch()
 

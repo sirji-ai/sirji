@@ -1,7 +1,7 @@
 import os
 import hashlib
 
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 class BaseContentHandler:
     def handle(self, url, output_dir):
@@ -9,6 +9,7 @@ class BaseContentHandler:
             "Each handler must implement the 'handle' method.")
 
     def save_content(self, content, url, output_dir, extension):
+        logger = create_logger("researcher.log", "debug")
         logger.info(f"Saving crawled content to file at path: {output_dir}")
 
         filename = f"{self.url_to_md5(url)}.{extension}"

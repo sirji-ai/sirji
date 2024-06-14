@@ -12,7 +12,7 @@ class TestLoggerManager:
 
         # Test logger_manager initialization
         assert logger_manager.orchestrator is not None, "LoggerManager did not initialize an orchestrator logger."
-        assert logger_manager.research is not None, "LoggerManager did not initialize a research logger."
+
 
     @patch('sirji_tools.logger.logger.logging.getLogger')
     def test_logger_manager_logging(self, mock_get_logger):
@@ -22,7 +22,7 @@ class TestLoggerManager:
 
         # Test logging through logger_manager
         logger_manager.orchestrator.info("Test message for orchestrator")
-        logger_manager.research.info("Test message for research")
+
 
     @patch('sirji_tools.logger.logger.logging.getLogger')
     def test_create_logger(self, mock_get_logger):

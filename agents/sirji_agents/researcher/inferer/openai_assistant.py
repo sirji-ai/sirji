@@ -2,7 +2,7 @@ import os
 import time
 from openai import OpenAI
 
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger 
 
 # Assuming .base contains your ResearcherInfererBase
 from .base import ResearcherInfererBase
@@ -10,7 +10,8 @@ from .base import ResearcherInfererBase
 
 class OpenAIAssistantInferer(ResearcherInfererBase):
     def __init__(self, init_payload):
-        logger.info("Initializing OpenAI Assistant Inferer")
+        self.logger = create_logger("researcher.log", "debug")
+        self.logger.info("Initializing OpenAI Assistant Inferer")
         """
         Initializes the OpenAIAssistantInferer by setting up the OpenAI client 
         with the API key obtained from environment variables.
@@ -37,10 +38,10 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             thread = self.client.beta.threads.create()
             self.init_payload['thread_id'] = thread.id
 
-        logger.info("Completed initializing OpenAI Assistant Inferer")
+        self.logger.info("Completed initializing OpenAI Assistant Inferer")
 
     def infer(self, retrieved_context, problem_statement):
-        logger.info("Started inferring using OpenAI Assistant Inferer")
+        self.logger.info("Started inferring using OpenAI Assistant Inferer")
 
         """
         Infers an answer by calling a chat model using the retrieved context and the problem statement.
@@ -60,7 +61,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             content=prompt,
         )
 
-        logger.info("Completed inferring using OpenAI Assistant Inferer")
+        self.logger.info("Completed inferring using OpenAI Assistant Inferer")
 
         # Fetch and return the assistant's response
         return self._fetch_response()
@@ -78,7 +79,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         return problem_statement
 
     def _fetch_response(self):
-        logger.info("Fetching response using OpenAI Assistant Inferer")
+        self.logger.info("Fetching response using OpenAI Assistant Inferer")
 
         """
         Initiates a run and waits for the assistant's response, then retrieves and returns the last message.
@@ -93,7 +94,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
             tools=[{"type": "retrieval"}]
         )
 
-        logger.info(
+        self.logger.info(
             "Completed fetching response using OpenAI Assistant Inferer")
         
 

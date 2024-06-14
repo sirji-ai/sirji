@@ -62,14 +62,10 @@ class LoggerSingleton:
 class LoggerManager:
     def __init__(self):
         self._orchestrator = LoggerSingleton("orchestrator.log", _default_log_level).logger
-        self._research = LoggerSingleton("research.log", _default_log_level).logger
 
     def create_logger(self, file_name, log_level='debug'):
         return LoggerSingleton(file_name, _log_level_str_to_const.get(log_level.lower(), logging.DEBUG)).logger
 
-    @property
-    def research(self):
-        return self._research
 
     @property
     def orchestrator(self):

@@ -3,10 +3,11 @@ import os
 import requests
 import PyPDF2
 from markdownify import markdownify as md
-from sirji_tools.logger import r_logger as logger
+from sirji_tools.logger import create_logger
 
 class PDFHandler(BaseContentHandler):
     def handle(self, url, output_dir):
+        logger = create_logger("researcher.log", "debug")
         logger.info(f"Started crawling PDF from URL: {url}")
 
         response = requests.get(url)
