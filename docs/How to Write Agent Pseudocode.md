@@ -10,7 +10,7 @@ This guide will explain the terminology involved, provide example pseudocode sni
 
 [Here](../sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) is an example of an agent pseudocode.
 
-[Here](https://www.youtube.com/watch?v=8rt) is a YouTube video covering agents and recipes.
+[Here](https://www.youtube.com/watch?v=8rtZdN9-5UY) is a YouTube video covering agents and recipes.
 
 ## Terminology
 
