@@ -14,6 +14,7 @@ import { insertText } from './insert_text';
 import { readDependencies } from './extract_file_dependencies';
 import { searchCodeInProject } from './search_code_in_project';
 import { fetchRecipeIndex } from './fetch_recipe_index';
+import { StepManager } from '../step_manager';
 
 export class Executor {
   private parsedMessage: any;
@@ -21,8 +22,9 @@ export class Executor {
   private agentOutputFolderPath: any;
   private sirjiRunFolderPath: any;
   private sirjiInstallationFolderPath: any;
+  private stepManager: any;
 
-  public constructor(parsedMessage: any, projectRootPath: any, agentOutputFolderPath: any, sirjiRunFolderPath: any, sirjiInstallationFolderPath: any) {
+  public constructor(parsedMessage: any, projectRootPath: any, agentOutputFolderPath: any, sirjiRunFolderPath: any, sirjiInstallationFolderPath: any, agentCallStack: any) {
     const oThis = this;
 
     oThis.parsedMessage = parsedMessage;
@@ -30,6 +32,7 @@ export class Executor {
     oThis.agentOutputFolderPath = agentOutputFolderPath;
     oThis.sirjiRunFolderPath = sirjiRunFolderPath;
     oThis.sirjiInstallationFolderPath = sirjiInstallationFolderPath;
+    oThis.stepManager = new StepManager(oThis.projectRootPath);
   }
 
   public async perform() {
@@ -78,6 +81,12 @@ export class Executor {
         return await searchCodeInProject(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.STORE_IN_SCRATCH_PAD:
         return 'Done';
+      case ACTION_ENUM.LOG_STEPS:
+        console.log('LOG_STEPS', oThis.parsedMessage.BODY);
+        return await oThis.stepManager.createStepsFile(oThis.parsedMessage.BODY.fileName, oThis.parsedMessage.BODY.data);
+
+        return 'Done';
+
       default:
         return `Invalid message ACTION: ${action} sent to executor. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors.`;
     }

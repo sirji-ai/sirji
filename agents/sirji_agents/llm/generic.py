@@ -220,7 +220,14 @@ class GenericAgent():
                         output_text += f"- {sub_task}\n"
                     output_text += "\n"
                 elif "pseudo_code" in skill and skill['pseudo_code']:
+                    output_text += "Skip the steps for the existing session\n"
+                    output_text += "First convert the points mentioned in Pseudo code to steps having at max 10 words each and log these steps. Log the steps in the following format:\n"
+                    output_text += "Step 1: <Step 1 description>\n"
+                    output_text += "Step 2: <Step 2 description>\n"
+                    output_text += "Log the execution of each steps in array using LOG_STEPS action in executor\n" 
                     output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
+                    output_text += "\n"
+                                   
 
         return output_text
 

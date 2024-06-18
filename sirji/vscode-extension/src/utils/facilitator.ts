@@ -16,6 +16,7 @@ import { readDependencies } from './executor/extract_file_dependencies';
 import { AgentStackManager } from './agent_stack_manager';
 import { SessionManager } from './session_manager';
 import { TokenManager } from './token_manager';
+import { StepManager } from './step_manager';
 
 export class Facilitator {
   private context: vscode.ExtensionContext | undefined;
@@ -39,6 +40,7 @@ export class Facilitator {
   private inputFilePath: string = '';
   private tokenManager: TokenManager | undefined;
   private isDebugging: Boolean = false;
+  private stepsManager: StepManager | null = null;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -109,12 +111,14 @@ export class Facilitator {
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
     let fileSummariesIndexFilePath = path.join(fileSummariesFolderPath, 'index.json');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
+    let stepsFolderPath = path.join(runFolderPath, 'steps');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
     fs.mkdirSync(studioFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
+    fs.mkdirSync(stepsFolderPath, { recursive: true });
 
     fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
     fs.writeFileSync(fileSummariesIndexFilePath, JSON.stringify({}), 'utf-8');
@@ -122,6 +126,7 @@ export class Facilitator {
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
+    oThis.stepsManager = new StepManager(stepsFolderPath);
     oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
 
     if (!fs.existsSync(recipeFilePath)) {
@@ -488,7 +493,18 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath, oThis.sirjiInstallationFolderPath);
+              // if (parsedMessage.ACTION === ACTION_ENUM.LOG_STEPS) {
+              //   let agentCallstack = oThis.stackManager.getStack();
+              //   console.log('agentCallstack------', agentCallstack);
+              //   this.stepsManager?.createStepsFile(agentCallstack, parsedMessage.BODY);
+              //   console.log("returning 'Done' from LOG_STEPS");
+              //   rawMessage = 'Done';
+              //   parsedMessage = 'Done';
+              //   oThis.writeToFile(inputFilePath, 'done');
+              //   return 'Done';
+              // }
+              let agentCallstack = oThis.stackManager.getStack();
+              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath, oThis.sirjiInstallationFolderPath, agentCallstack);
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;
