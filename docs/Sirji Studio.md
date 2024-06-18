@@ -19,7 +19,6 @@ When project conventions change, corresponding updates to agents can be easily m
 To start using Sirji Studio for your custom agents and recipes, follow these steps:
 
 1. Click the "Open Sirji Studio" button in the left panel.
-   ![Open Sirji Studio Button](https://github.com/sirji-ai/sirji/assets/7627517/792da609-a272-47ca-9269-9f7f1d18cf47)
    
 2. In the opened VS Code window, open a terminal.
 
