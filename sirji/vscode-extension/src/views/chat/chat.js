@@ -685,9 +685,9 @@ function displayTokenUsesByAgent(data) {
 
   agents.forEach((agent) => {
     const agentData = data[agent];
-    const completionTokens = agentData.completion_tokens;
+    const completionTokens = agentData.total_completion_tokens;
     const completionTokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
-    const promptTokens = agentData.prompt_tokens;
+    const promptTokens = agentData.total_prompt_tokens;
     const promptTokenValuationInDollar = agentData.prompt_token_valuation_in_dollar;
     totalTokens += completionTokens + promptTokens;
     totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;

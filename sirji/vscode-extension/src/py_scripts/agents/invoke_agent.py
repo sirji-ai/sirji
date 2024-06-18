@@ -17,16 +17,16 @@ class AgentRunner:
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
             with open(file_path, 'w') as file:
-                json.dump({"conversations": [], "prompt_tokens": 0, "completion_tokens": 0}, file, indent=4)
-                return [], 0, 0
+                json.dump({"conversations": [], "total_prompt_tokens": 0, "total_completion_tokens": 0, "max_prompt_tokens": 0, "max_completion_tokens": 0}, file, indent=4)
+                return [], 0, 0, 0, 0
         else:
             with open(file_path, 'r') as file:
                 contents = json.load(file)
-                return contents["conversations"], contents["prompt_tokens"], contents["completion_tokens"]
+                return contents["conversations"], contents["total_prompt_tokens"], contents["total_completion_tokens"], contents["max_prompt_tokens"], contents["max_completion_tokens"]
 
-    def write_conversations_to_file(self, file_path, conversations, prompt_tokens, completion_tokens, llm_model):
+    def write_conversations_to_file(self, file_path, conversations, total_prompt_tokens, total_completion_tokens, max_prompt_tokens, max_completion_tokens, llm_model):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,"llm_model": llm_model }, file, indent=4)
+            json.dump({"conversations": conversations, "total_prompt_tokens": total_prompt_tokens, "total_completion_tokens": total_completion_tokens, "max_prompt_tokens": max_prompt_tokens, "max_completion_tokens": max_completion_tokens, "llm_model": llm_model}, file, indent=4)
 
     def read_file(self, file_path):
         print('---------')
@@ -87,7 +87,7 @@ class AgentRunner:
                 with open(file_summaries_path, 'r') as file:
                     file_summaries = file.read()
 
-        conversations, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
+        conversations, total_prompt_tokens, total_completion_tokens, max_prompt_tokens, max_completion_tokens =  self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
 
         config_file_contents = self.read_file(agent_config_path)
@@ -106,9 +106,12 @@ class AgentRunner:
 
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, config, agent_output_index, file_summaries)
         
-        prompt_tokens += prompt_tokens_consumed
-        completion_tokens += completion_tokens_consumed
-        self.write_conversations_to_file(conversation_file_path, conversations, prompt_tokens, completion_tokens, llm['model'])
+        total_prompt_tokens += prompt_tokens_consumed
+        total_completion_tokens += completion_tokens_consumed
+
+        max_prompt_tokens = max(max_prompt_tokens, prompt_tokens_consumed)
+        max_completion_tokens = max(max_completion_tokens, completion_tokens_consumed)
+        self.write_conversations_to_file(conversation_file_path, conversations, total_prompt_tokens, total_completion_tokens, max_prompt_tokens, max_completion_tokens, llm['model'])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process interactions.")
