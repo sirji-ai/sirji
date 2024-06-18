@@ -1,4 +1,3 @@
-
 import textwrap;
 from sirji_messages import AgentEnum, ActionEnum;
 
@@ -38,5 +37,5 @@ class InsertAbove(BaseMessages):
             "NEW_CHANGES must be valid and correctly formatted code to be inserted. Ensure it does not cause syntax errors and has proper indentation.",
             "INSERT_ABOVE must be a valid, uniquely identifiable piece of code within the relevant scope. Ensure it is a valid insertion point without causing syntax errors",
             "When providing values for the keys in the BODY, do not enclose them in special characters.",
-            "Ensure that the INSERT_ABOVE code snippet has the same indentation as the code in the file. The indentation must match exactly to avoid syntax errors. Carefully check the number of spaces or tabs used in the existing code and replicate it precisely in the INSERT_ABOVE snippet."
+            "Ensure that the INSERT_ABOVE code snippet has the same indentation as the existing code in the file. The indentation must match exactly to avoid leaving a comma, semicolon, or any other character that could cause syntax errors. Carefully check the number of spaces or tabs used in the existing code and replicate it precisely in the INSERT_ABOVE snippet."
         ]
