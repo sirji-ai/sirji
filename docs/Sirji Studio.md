@@ -16,7 +16,7 @@ When project conventions change, corresponding updates to agents can be easily m
 
 ## Setting Up Sirji Studio
 
-To start using Sirji Studio for your custom agents and recipes, follow these steps:
+To configure Sirji to use your custom agents and recipes, i.e. setting up Sirji Studio, follow these steps:
 
 1. Click the "Open Sirji Studio" button in the left panel.
    
