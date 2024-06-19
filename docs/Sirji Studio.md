@@ -2,11 +2,11 @@
 
 ## What is Sirji Studio?
 
-Sirji Studio is the GitHub repository where you create and manage your custom agents and recipes for Sirji.
+Sirji Studio is a collection of your custom agents and recipes, created following a specific folder structure and committed in a GitHub repository.
 
-## Why Create Sirji Studio?
+## Why Create GitHub Repository for Sirji Studio?
 
-Sirji Studio offers version control for your custom agents and recipes, making it easier for team members to share, modify, and update them in response to changing project conventions.
+Creating the GitHub Repository offers version control for your custom agents and recipes, making it easier for team members to share, modify, and update them in response to changing project conventions.
 
 ## Creating Sirji Studio
 
