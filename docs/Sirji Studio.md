@@ -2,36 +2,34 @@
 
 ## What is Sirji Studio?
 
-Sirji Studio is a collection of your custom agents and recipes, created following a specific folder structure and committed in a GitHub repository.
+Sirji Studio is a collection of your custom agents and recipes, organized in a specific folder structure. We recommend storing these agents and recipes in a GitHub repository.
 
-## Why Create GitHub Repository for Sirji Studio?
+## Why Use a GitHub Repository for Sirji Studio?
 
-Creating the GitHub Repository offers version control for your custom agents and recipes, making it easier for team members to share, modify, and update them in response to changing project conventions.
+A GitHub repository provides version control for your custom agents and recipes, making it easier for team members to share, modify, and update them as project conventions change.
 
-## Creating Sirji Studio
+## Creating Sirji Studio from Scratch
 
-To set up Sirji Studio and make your repository compatible with Sirji, follow these steps:
+To set up Sirji Studio, follow these steps:
 
-1. **Create Folders**: At the root level of your repository, create `recipes` and `agents` folders.
+1. **Create Folders**: At the root level of your Sirji Studio folder, create `recipes` and `agents` folders.
 2. **Copy Configuration Files**: Copy [ORCHESTRATOR.yml](../sirji/vscode-extension/src/defaults/agents/ORCHESTRATOR.yml) and [RECIPE_SELECTOR.yml](../sirji/vscode-extension/src/defaults/agents/RECIPE_SELECTOR.yml) into the `agents` folder.
-3. **Create `index.json`**: In the `recipes` folder, create an `index.json` file. This file should list your recipe JSON files, mapping each to an object with `name` and `description` keys. Refer to [this example](../sirji/vscode-extension/src/defaults/recipes/index.json) for the format.
+3. **Create `index.json`**: In the `recipes` folder, create an `index.json` file that lists your recipe JSON files, each mapped to an object with `name` and `description` keys. Refer to [this example](../sirji/vscode-extension/src/defaults/recipes/index.json) for the format.
 4. **Create Recipe JSON Files**: Add your recipe JSON files in the `recipes` folder. Refer to [this example](../sirji/vscode-extension/src/defaults/recipes/new_project.json) for the format.
 5. **Create Agent YAML Files**: Add the necessary agent YAML files in the `agents` folder. Use [this example](../sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) as a reference.
+6. **Commit to GitHub Repository (Optional)**: Optionally, commit the `agents` and `recipes` folders and all their files to a GitHub repository for version control.
 
 ## Configuring Sirji to Use Sirji Studio
 
-To configure Sirji to use your custom agents and recipes from Sirji Studio, follow these steps:
-
+To configure Sirji to use your custom agents and recipes from a GitHub repository, follow these steps:
 
 1. Click the "Open Sirji Studio" button in the left panel.
-   
 2. In the opened VS Code window, open a terminal.
+3. Remove the contents of the "studio" folder.
+4. Bring your custom agents and recipes to the "studio" folder:
+   - **From your GitHub Repository**: Clone your GitHub repository into the "studio" folder:
+     ```zsh
+     cd studio && git clone <repo URL> .
+     ```
+   - **Without version control**: Manually copy the `agents` and `recipes` folders into the "studio" folder.
 
-3. Remove the existing "studio" folder, which contains generic open-source agents, by running:
-   ```zsh
-   rm -rf studio
-   ```
-4. Clone your GitHub repository with custom agents and recipes into the "studio" folder:
-   ```zsh
-   git clone <repo url> studio
-   ```
