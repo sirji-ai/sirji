@@ -1,22 +1,25 @@
+
+markdown
+Copy code
 # Sirji Studio
 
 ## What is Sirji Studio?
 
-Sirji Studio refers to the GitHub repository where developers create and manage their custom agents and recipes.
+Sirji Studio is the GitHub repository where you create and manage your custom agents and recipes for Sirji. To set it up, follow these steps to make your repository compatible with Sirji:
 
-The repository should have a specific folder structure:
-- **Root Level**: Contains "recipes" and "agents" folders.
-- **Recipes Folder**: Must include an `index.json` file.
+1. **Create Folders**: At the root level of your repository, create `recipes` and `agents` folders.
+2. **Copy Configuration Files**: Copy [ORCHESTRATOR.yml](../sirji/vscode-extension/src/defaults/agents/ORCHESTRATOR.yml) and [RECIPE_SELECTOR.yml](../sirji/vscode-extension/src/defaults/agents/RECIPE_SELECTOR.yml) into the `agents` folder.
+3. **Create `index.json`**: In the `recipes` folder, create an `index.json` file. This file should define an object with keys as the file names of your recipe JSON files. Each key should map to an object with `name` and `description` keys. Refer to [this example](../sirji/vscode-extension/src/defaults/recipes/index.json) for the format.
+4. **Create Recipe JSON Files**: Add your recipe JSON files in the `recipes` folder. Refer to [this example](../sirji/vscode-extension/src/defaults/recipes/new_project.json) for the format.
+5. **Create Agent YAML Files**: Add the necessary agent YAML files in the `agents` folder. Use [this example](../sirji/vscode-extension/src/defaults/agents/NODE_JS_CREATE_API_PLANNER.yml) as a reference.
 
 ## Why Use Sirji Studio?
 
-Sirji Studio offers version control for custom agents and recipes, enabling team collaboration. Team members can share and modify agents, ensuring consistency across the project.
+Sirji Studio provides version control for custom agents and recipes, facilitating team collaboration. It allows team members to share and modify agents. When project conventions change, updates to agents can be managed easily.
 
-When project conventions change, corresponding updates to agents can be easily managed.
+## Configuring Sirji to Use Sirji Studio
 
-## Setting Up Sirji Studio
-
-To configure Sirji to use your custom agents and recipes, i.e. setting up Sirji Studio, follow these steps:
+To configure Sirji to use your custom agents and recipes from your Sirji Studio, follow these steps:
 
 1. Click the "Open Sirji Studio" button in the left panel.
    
