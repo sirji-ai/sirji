@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunksirji_docs=self.webpackChunksirji_docs||[]).push([[7745],{5374:s=>{s.exports=JSON.parse('{"metadata":{"permalink":"/sirji/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
