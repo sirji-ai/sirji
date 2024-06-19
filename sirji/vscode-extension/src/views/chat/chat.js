@@ -692,8 +692,9 @@ function displayTokenUsesByAgent(data) {
     totalTokens += completionTokens + promptTokens;
     totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;
     const row = document.createElement('div');
+    let agentName = agent.replace(/_/g, ' ').toUpperCase();
     row.className = 'tokens-table-row';
-    row.innerHTML = `<div class='truncate-text'>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(
+    row.innerHTML = `<div class='truncate-text'>${agentName}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(
       completionTokenValuationInDollar + promptTokenValuationInDollar
     ).toFixed(2)}</div>`;
     tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
