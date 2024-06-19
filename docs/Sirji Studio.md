@@ -26,10 +26,13 @@ To configure Sirji to use your custom agents and recipes from a GitHub repositor
 1. Click the "Open Sirji Studio" button in the left panel.
 2. In the opened VS Code window, open a terminal.
 3. Remove the contents of the "studio" folder.
+   ```zsh
+   rm -rf studio && mkdir studio
+   ```
 4. Bring your custom agents and recipes to the "studio" folder:
    - **From your GitHub Repository**: Clone your GitHub repository into the "studio" folder:
      ```zsh
-     cd studio && git clone <repo URL> .
+     cd studio && git clone <repo URL> . && cd ..
      ```
    - **Without version control**: Manually copy the `agents` and `recipes` folders into the "studio" folder.
 
