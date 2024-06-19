@@ -6,7 +6,7 @@ Sirji Studio is a collection of your custom agents and recipes, organized in a s
 
 ## Why Use a GitHub Repository for Sirji Studio?
 
-A GitHub repository provides version control for your custom agents and recipes, making it easier for team members to share, modify, and update them as project conventions change.
+A GitHub repository provides version control for your custom agents and recipes, making sharing them with your team members easier. Moreover, it helps with modifying and updating them as project conventions change.
 
 ## Creating Sirji Studio from Scratch
 
