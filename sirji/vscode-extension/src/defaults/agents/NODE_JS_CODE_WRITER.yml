@@ -3,8 +3,8 @@ id: NODE_JS_CODE_WRITER
 name: Implementation guide code writer
 
 llm:
-  provider: openai
-  model: gpt-4o
+  provider: deepseek
+  model: deepseek-coder
 
 skills:
   - skill: Read implementation guide, extract necessary file changes, and apply these modifications to the project files.
