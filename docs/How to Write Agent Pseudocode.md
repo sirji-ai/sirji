@@ -288,4 +288,5 @@ Follow these best practices when writing agent pseudocode:
 - **Structure Clearly:** Have a clear structure for the pseudocode to improve understanding and ease of editing.
 - **Define Terms Clearly:** Define terms clearly for easy reference later in the pseudocode. Use phrases like "Let's call this ..." to establish terminology.
 - **Break Large Problem into Small Steps:** Proceed incrementally when writing pseudo code. This allows LLM to perform small tasks sequentially instead of one complex task in one go. It is best to break your problem into several small steps.
+- **Ensure Use Case Alignment:** Ensure that each point in the agent pseudocode corresponds to one and only one of the pseudocode use cases mentioned above.
 - **Use Scratchpad to Remember LLM's Understanding** Wherever you want the LLM to remember its understanding of the step you should explicitly ask it to save it in the scratchpad.
