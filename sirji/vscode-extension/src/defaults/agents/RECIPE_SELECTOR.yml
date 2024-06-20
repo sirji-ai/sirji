@@ -1,8 +1,8 @@
 id: RECIPE_SELECTOR
 name: Recipe Selector Agent
 llm:
-  provider: openai
-  model: gpt-4o
+  provider: deepseek
+  model: deepseek-coder
 accessible_actions: ["FETCH_RECIPE_INDEX", "FETCH_RECIPE"]
 skills:
   - skill: Manage recipe selection and storage by fetching a recipe index, questioning the user to select a recipe, retrieving the chosen recipe, saving it to a designated folder.
