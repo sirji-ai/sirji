@@ -285,6 +285,7 @@ function closeSettings() {
 
 function saveSettings() {
   const openAIKey = document.getElementById('SIRJI_OPENAI_API_KEY').value.trim();
+  const deepSeekKey = document.getElementById('SIRJI_DEEPSEEK_API_KEY').value.trim();
 
   let isValid = true;
 
@@ -304,6 +305,7 @@ function saveSettings() {
 
     const settings = {
       SIRJI_OPENAI_API_KEY: openAIKey,
+      SIRJI_DEEPSEEK_API_KEY: deepSeekKey,
     };
 
     vscode.postMessage({ type: 'saveSettings', content: settings });
