@@ -5,11 +5,13 @@
 ### Features
 
 - Added an open-source test case agent.
+- Added `deepseek` as a new model provider for agents.
 
 ### Bug Fixes
 
 - Fixed the issue of jumping to the last entry while reading logs.
 - Constructed the path for opening the studio using the global storage API.
+- File editing actions should give the needle text respecting the number of lines in the source code.
 
 ## 0.0.28
 
