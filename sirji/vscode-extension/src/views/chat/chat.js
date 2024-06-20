@@ -464,9 +464,9 @@ function convertNumber(number) {
 
 function displayTokenUsed(data = {}) {
   console.log('display token used', data);
-  const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = data;
+  const { output_tokens = 0, total_completion_tokens_value = 0, input_tokens = 0, total_prompt_tokens_value = 0 } = data;
 
-  const totalTokensUsed = total_completion_tokens + total_prompt_tokens;
+  const totalTokensUsed = output_tokens + input_tokens;
 
   if (totalTokensUsed < 1000) {
     return;
@@ -488,13 +488,13 @@ function updateTokensUsed(totalTokensUsed) {
 
 function updateTooltipTokenValues(tokenValues) {
   console.log('updateTooltipTokenValues values:', tokenValues);
-  const { total_completion_tokens = 0, total_completion_tokens_value = 0, total_prompt_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
+  const { output_tokens = 0, total_completion_tokens_value = 0, input_tokens = 0, total_prompt_tokens_value = 0 } = tokenValues;
 
   const jPromptTokensUsed = document.getElementById('jPromptTokensUsed');
-  jPromptTokensUsed.textContent = `Prompt Tokens - ${total_prompt_tokens} | $${total_prompt_tokens_value.toFixed(2)}`;
+  jPromptTokensUsed.textContent = `Prompt Tokens - ${input_tokens} | $${total_prompt_tokens_value.toFixed(2)}`;
 
   const jCompletionTokensUsed = document.getElementById('jCompletionTokensUsed');
-  jCompletionTokensUsed.textContent = `Completion Tokens - ${total_completion_tokens} | $${total_completion_tokens_value.toFixed(2)}`;
+  jCompletionTokensUsed.textContent = `Completion Tokens - ${output_tokens} | $${total_completion_tokens_value.toFixed(2)}`;
 }
 
 const tabButtons = document.querySelectorAll('.tab-button');
@@ -685,15 +685,16 @@ function displayTokenUsesByAgent(data) {
 
   agents.forEach((agent) => {
     const agentData = data[agent];
-    const completionTokens = agentData.completion_tokens;
+    const completionTokens = agentData.output_tokens;
     const completionTokenValuationInDollar = agentData.completion_token_valuation_in_dollar;
-    const promptTokens = agentData.prompt_tokens;
+    const promptTokens = agentData.input_tokens;
     const promptTokenValuationInDollar = agentData.prompt_token_valuation_in_dollar;
     totalTokens += completionTokens + promptTokens;
     totalTokenValuationInDollar += completionTokenValuationInDollar + promptTokenValuationInDollar;
     const row = document.createElement('div');
+    let agentName = agent.replace(/_/g, ' ').toUpperCase();
     row.className = 'tokens-table-row';
-    row.innerHTML = `<div class='truncate-text'>${agent}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(
+    row.innerHTML = `<div class='truncate-text'>${agentName}</div><div class="flex-shrink">${convertNumber(completionTokens + promptTokens)} | $${(
       completionTokenValuationInDollar + promptTokenValuationInDollar
     ).toFixed(2)}</div>`;
     tokensTable.insertBefore(row, tokensTable.querySelector('.tokens-table-footer-row'));
