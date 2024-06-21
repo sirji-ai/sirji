@@ -103,6 +103,8 @@ class AgentRunner:
             os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_OPENAI_API_KEY')
         elif llm['provider'] == 'deepseek':
             os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_DEEPSEEK_API_KEY')
+        elif llm['provider'] == 'anthropic':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_ANTHROPIC_API_KEY')
         
         response, conversations, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, agent_output_index)
         

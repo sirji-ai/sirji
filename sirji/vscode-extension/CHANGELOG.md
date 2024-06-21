@@ -6,6 +6,7 @@
 
 - Added an open-source test case agent.
 - Added `deepseek` as a new model provider for agents.
+- Added `anthropic` as a new model provider for agents.
 
 ### Bug Fixes
 
