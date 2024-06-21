@@ -2,6 +2,7 @@ import os
 from .base import LLMProviderBase
 from .openai import OpenAIProvider
 from .deepseek import DeepSeekProvider
+from .anthropic import AnthropicProvider
 
 class LLMProviderFactory:
     @staticmethod
@@ -19,5 +20,7 @@ class LLMProviderFactory:
             return OpenAIProvider(api_key, model)
         elif provider_name == 'deepseek':
             return DeepSeekProvider(api_key, model)
+        elif provider_name == 'anthropic':
+            return AnthropicProvider(api_key, model)
         else:
             raise ValueError(f"Unsupported LLM provider: {provider_name}")
