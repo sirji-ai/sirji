@@ -15,6 +15,7 @@ class QuestionMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
+            "step": "Provide the step number here for the ongoing step if any.",
             "summary": "Empty",
             "body": textwrap.dedent("""
             {{Question}}""")})

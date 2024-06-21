@@ -1,7 +1,7 @@
 from .custom_exceptions import MessageParsingError, MessageValidationError
 from .action_enum import ActionEnum
 
-message_properties = ['FROM', 'TO', 'ACTION', 'SUMMARY', 'BODY']
+message_properties = ['FROM', 'TO', 'ACTION','STEP', 'SUMMARY', 'BODY']
 
 def parse(input_message):
     input_message = _discard_format_deviations(input_message)
@@ -41,7 +41,7 @@ def _validate_message(message):
         raise MessageValidationError("Message must start and end with ***")
     message = message[3:-3].strip()
     lines = message.split("\n")
-    if len(lines) < 5:
+    if len(lines) < 6:
         raise MessageValidationError(
             "Message does not meet the minimum length requirement")
     return lines

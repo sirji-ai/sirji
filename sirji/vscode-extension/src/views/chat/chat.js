@@ -47,15 +47,6 @@ document.getElementById('closeSettings').onclick = function () {
   closeSettings();
 };
 
-// // Planner modal
-// document.getElementById('progressCircle').addEventListener('click', () => {
-//   document.getElementById('plannerModal').style.display = 'flex';
-// });
-
-// document.getElementById('closePlanner').addEventListener('click', () => {
-//   document.getElementById('plannerModal').style.display = 'none';
-// });
-
 // IMP: Acquire the VS Code API
 const vscode = acquireVsCodeApi();
 
@@ -76,14 +67,6 @@ window.addEventListener('message', (event) => {
     case 'plannedSteps':
       totalStepsCompleted = 0;
       displayPlannedSteps(event.data.content);
-      break;
-
-    case 'plannedStepStart':
-      updateStepStatus(event.data.content, 'started');
-      break;
-
-    case 'plannedStepComplete':
-      updateStepStatus(event.data.content, 'completed');
       break;
 
     case 'solutionCompleted':
@@ -107,6 +90,10 @@ window.addEventListener('message', (event) => {
 
     case 'displayLogs':
       displayLogs(event.data.content);
+      break;
+
+    case 'displaySteps':
+      displayPlannedSteps(event.data.content.message);
       break;
 
     default:
@@ -322,81 +309,60 @@ function settingSaved(data) {
   }
 }
 
-function updateStepStatus(message, status) {
-  let stepNumber = message.match(/\d+/g);
-
-  if (!stepNumber) {
-    return;
-  }
-
-  if (stepNumber && stepNumber.length === 0) {
-    return;
-  }
-
-  if (stepsArray?.length === 0 || !stepsArray) {
-    return;
-  }
-
-  if (stepNumber.length === 1) {
-    console.log('Updating step:', stepNumber[0], stepsArray[0]);
-    stepsArray[stepNumber[0] - 1].status = status;
-    if (status === 'completed') {
-      for (let i = 0; i < stepNumber[0] - 1; i++) {
-        stepsArray[i].status = status;
-      }
-    }
-  }
-
-  let maxStepNumber = 0;
-  if (stepNumber.length === 2) {
-    maxStepNumber = Math.max(...stepNumber);
-    for (let i = 0; i < maxStepNumber - 1; i++) {
-      stepsArray[i].status = status;
-    }
-  }
-
-  if (status === 'completed') {
-    totalStepsCompleted = stepsArray.length;
-    setProgress(totalStepsCompleted, stepsArray.length);
-
-    toggleProgressTextColor();
-  }
-
-  totalStepsCompleted = stepsArray.filter((step) => step.status === 'completed').length;
-
-  displayPlannedSteps(stepsArray);
-}
-
 function displayPlannedSteps(steps) {
-  setProgress(totalStepsCompleted, steps.length);
-  // document.getElementById('progressCircle').style.visibility = 'visible';
-  stepsArray = steps;
   const listElement = document.getElementById('stepsList');
   listElement.innerHTML = '';
 
-  if (!steps) {
+  if (!steps || steps.length === 0) {
     return;
   }
 
-  if (steps.length === 0) {
-    return;
-  }
+  steps.forEach((header, headerIndex) => {
+    for (const fileName in header) {
+      if (header.hasOwnProperty(fileName)) {
+        const displayName = fileName.replace('.json', '');
 
-  steps.forEach((step, index) => {
-    step.status = step.status || '';
-    const listItem = document.createElement('li');
-    listItem.className = 'stepItem';
-    const stepDescription = step.description;
+        const headerItem = document.createElement('li');
+        headerItem.className = 'headerItem';
+        headerItem.innerHTML = `<strong>${displayName}</strong>`;
+        headerItem.style.listStyleType = 'none';
+        listElement.appendChild(headerItem);
 
-    if (step.status === 'started') {
-      listItem.innerHTML = `<div class="loader-wrapper"><div class="loader"></div></div><label>${stepDescription}</label>`;
-    } else {
-      listItem.innerHTML = `
-      <input type="checkbox" class="checkbox" id="checkbox-${index}" ${step.status === 'completed' ? 'checked' : ''}>
-      <label for="checkbox-${index}">${stepDescription}</label>
-      `;
+        header[fileName].forEach((stepObj, index) => {
+          const stepDescription = stepObj[`step_${index + 1}`];
+          const stepStatus = stepObj.status;
+
+          const listItem = document.createElement('li');
+          listItem.className = 'stepItem';
+
+          if (stepStatus === 'completed') {
+            listItem.innerHTML = `
+              <input type="checkbox" class="checkbox" id="checkbox-step_${index + 1}" checked>
+              <label for="checkbox-step_${index + 1}">${stepDescription}</label>
+            `;
+          } else if (stepStatus === 'in-progress') {
+            listItem.innerHTML = `
+              <div class="loader-wrapper">
+                <div class="loader"></div>
+              </div>
+              <label>${stepDescription}</label>
+            `;
+          } else {
+            listItem.innerHTML = `
+              <input type="checkbox" class="checkbox" id="checkbox-step_${index + 1}">
+              <label for="checkbox-step_${index + 1}">${stepDescription}</label>
+            `;
+          }
+
+          listElement.appendChild(listItem);
+        });
+
+        if (headerIndex < steps.length - 1) {
+          const br = document.createElement('br');
+          listElement.appendChild(br);
+        }
+      }
     }
-    listElement.appendChild(listItem);
   });
 }
 
@@ -505,10 +471,6 @@ tabButtons.forEach(function (button) {
     showTab(tabName);
   });
 });
-
-setTimeout(() => {
-  showTab('logs', 'tab', 'tab-button');
-}, 3000);
 
 function showTab(tabName, tabClassName = 'tab', tabButtonClassName = 'tab-button') {
   let i, tabcontent, tablinks;

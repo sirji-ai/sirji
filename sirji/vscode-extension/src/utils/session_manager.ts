@@ -38,6 +38,17 @@ export class SessionManager {
     return null;
   }
 
+  public getCurrentSeesionId(callStack: string): string | null {
+    const data = this.readSessionsFile();
+    const filteredSessions: Session[] = data.sessions.filter((session: Session) => session.callStack === callStack);
+    if (filteredSessions.length > 0) {
+      filteredSessions.sort((a: Session, b: Session) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      return filteredSessions[0].sessionId;
+    }
+
+    return null;
+  }
+
   public getSessionTimestampMillis(sessionId: string): number | null {
     const data = this.readSessionsFile();
     const session = data.sessions.find((session: Session) => session.sessionId === sessionId);

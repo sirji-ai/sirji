@@ -15,6 +15,7 @@ class ExecuteCommandMessage(BaseMessages):
     def sample(self):
         return self.generate({
             "from_agent_id": "{{Your Agent ID}}",
+            "step": "Provide the step number here for the ongoing step if any.",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
             {{command}}""")})

@@ -40,7 +40,8 @@ export class Facilitator {
   private inputFilePath: string = '';
   private tokenManager: TokenManager | undefined;
   private isDebugging: Boolean = false;
-  private stepsManager: StepManager | null = null;
+  private stepsFolderPath: string = '';
+  private stepsManager: StepManager | undefined;
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -111,14 +112,14 @@ export class Facilitator {
     let fileSummariesFolderPath = path.join(sirjiInstallationFolderPath, 'file_summaries');
     let fileSummariesIndexFilePath = path.join(fileSummariesFolderPath, 'index.json');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
-    let stepsFolderPath = path.join(runFolderPath, 'steps');
+    oThis.stepsFolderPath = path.join(runFolderPath, 'steps');
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
     fs.mkdirSync(oThis.agentOutputFolderPath, { recursive: true });
     fs.mkdirSync(studioFolderPath, { recursive: true });
     fs.mkdirSync(fileSummariesFolderPath, { recursive: true });
-    fs.mkdirSync(stepsFolderPath, { recursive: true });
+    fs.mkdirSync(oThis.stepsFolderPath, { recursive: true });
 
     fs.writeFileSync(agentOutputIndexFilePath, JSON.stringify({}), 'utf-8');
     fs.writeFileSync(fileSummariesIndexFilePath, JSON.stringify({}), 'utf-8');
@@ -126,7 +127,7 @@ export class Facilitator {
 
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
-    oThis.stepsManager = new StepManager(stepsFolderPath);
+    oThis.stepsManager = new StepManager(oThis.stepsFolderPath);
     oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
 
     if (!fs.existsSync(recipeFilePath)) {
@@ -340,6 +341,16 @@ export class Facilitator {
     fs.writeFileSync(filePath, content, options);
   }
 
+  private async requestSteps() {
+    const oThis = this;
+    const res = await oThis.stepsManager?.readStepsFile();
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'displaySteps',
+      content: { message: res }
+    });
+  }
+
   private async handleMessagesFromChatPanel(message: any) {
     const oThis = this;
 
@@ -368,6 +379,10 @@ export class Facilitator {
         await oThis.readLogs(message.content);
         break;
 
+      case 'requestSteps':
+        await oThis.requestSteps();
+        break;
+
       case 'userMessage':
         console.log('message.content--------', message.content);
 
@@ -392,6 +407,7 @@ export class Facilitator {
     let keepFacilitating: Boolean = true;
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
+      oThis.updateSteps(parsedMessage);
       oThis.lastMessageFrom = parsedMessage?.FROM;
       console.log('rawMessage-------', rawMessage);
       console.log('parsedMessage------', parsedMessage);
@@ -493,18 +509,23 @@ export class Facilitator {
 
           case ACTOR_ENUM.EXECUTOR:
             try {
-              // if (parsedMessage.ACTION === ACTION_ENUM.LOG_STEPS) {
-              //   let agentCallstack = oThis.stackManager.getStack();
-              //   console.log('agentCallstack------', agentCallstack);
-              //   this.stepsManager?.createStepsFile(agentCallstack, parsedMessage.BODY);
-              //   console.log("returning 'Done' from LOG_STEPS");
-              //   rawMessage = 'Done';
-              //   parsedMessage = 'Done';
-              //   oThis.writeToFile(inputFilePath, 'done');
-              //   return 'Done';
-              // }
               let agentCallstack = oThis.stackManager.getStack();
-              const executor = new Executor(parsedMessage, oThis.projectRootPath, oThis.agentOutputFolderPath, oThis.sirjiRunFolderPath, oThis.sirjiInstallationFolderPath, agentCallstack);
+
+              if (parsedMessage.ACTION === ACTION_ENUM.LOG_STEPS) {
+                setTimeout(() => {
+                  this.requestSteps();
+                }, 5000);
+              }
+
+              const executor = new Executor(
+                parsedMessage,
+                oThis.projectRootPath,
+                oThis.agentOutputFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.sirjiInstallationFolderPath,
+                agentCallstack,
+                oThis.stepsFolderPath
+              );
               const executorResp = await executor.perform();
 
               rawMessage = executorResp.rawMessage;
@@ -554,6 +575,7 @@ export class Facilitator {
             oThis.writeToFile(inputFilePath, rawMessage);
 
             if (parsedMessage.ACTION == ACTION_ENUM.RESPONSE) {
+              oThis.stepsManager?.updateAllStepsToCompleted(agentCallstack);
               oThis.stackManager.removeLastAgentId();
             }
             break;
@@ -585,7 +607,8 @@ export class Facilitator {
         parsedMessage.ACTION === 'STORE_IN_AGENT_OUTPUT' ||
         parsedMessage.ACTION === 'FETCH_RECIPE_INDEX' ||
         parsedMessage.ACTION === 'FETCH_RECIPE' ||
-        parsedMessage.ACTION === 'READ_AGENT_OUTPUT_FILES'
+        parsedMessage.ACTION === 'READ_AGENT_OUTPUT_FILES' ||
+        parsedMessage.ACTION === 'LOG_STEPS'
       ) {
         return;
       }
@@ -604,6 +627,28 @@ export class Facilitator {
         allowUserMessage: false
       }
     });
+  }
+
+  private updateSteps(parsedMessage: any) {
+    const oThis = this;
+
+    let agent_callstack = oThis.stackManager.getStack();
+    let stepNumber = parsedMessage.STEP;
+
+    if (!stepNumber || stepNumber === undefined || stepNumber === null) {
+      return;
+    }
+    stepNumber = Number(stepNumber.replace(/\D/g, ''));
+
+    if (!stepNumber || isNaN(stepNumber)) {
+      return;
+    }
+
+    this.stepsManager?.updateStepStatus(agent_callstack, stepNumber);
+
+    setTimeout(() => {
+      oThis.requestSteps();
+    }, 2000);
   }
 
   private toCoderRelayToChatPanel(parsedMessage: any) {

@@ -145,6 +145,7 @@ class GenericAgent():
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
                     ACTION: INVOKE_AGENT
+                    STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
                     {{Purpose of invocation.}}
@@ -158,6 +159,7 @@ class GenericAgent():
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
                     ACTION: INVOKE_AGENT_EXISTING_SESSION
+                    STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
                     {{Purpose of invocation.}}
@@ -220,11 +222,8 @@ class GenericAgent():
                         output_text += f"- {sub_task}\n"
                     output_text += "\n"
                 elif "pseudo_code" in skill and skill['pseudo_code']:
-                    output_text += "Skip the steps for the existing session\n"
-                    output_text += "First convert the points mentioned in Pseudo code to steps having at max 10 words each and log these steps. Log the steps in the following format:\n"
-                    output_text += "Step 1: <Step 1 description>\n"
-                    output_text += "Step 2: <Step 2 description>\n"
-                    output_text += "Log the execution of each steps in array using LOG_STEPS action in executor\n" 
+                    output_text += "Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using LOG_STEPS action.\n"
+                    output_text += "Then, execute the steps in the order they are logged.\n"
                     output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
                     output_text += "\n"
                                    
