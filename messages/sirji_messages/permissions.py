@@ -16,7 +16,8 @@ permissions_dict = {
         ActionEnum.INSERT_ABOVE,
         ActionEnum.INSERT_BELOW,
         ActionEnum.EXTRACT_DEPENDENCIES,
-        ActionEnum.STORE_IN_SCRATCH_PAD
+        ActionEnum.STORE_IN_SCRATCH_PAD,
+        ActionEnum.LOG_STEPS
     },
     (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
         ActionEnum.QUESTION

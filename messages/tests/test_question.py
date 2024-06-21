@@ -12,6 +12,7 @@ def test_question_message_sample():
     FROM: {{Your Agent ID}}
     TO: SIRJI_USER
     ACTION: QUESTION
+    STEP: "Provide the step number here for the ongoing step if any."
     SUMMARY: Empty
     BODY: 
     {{Question}}

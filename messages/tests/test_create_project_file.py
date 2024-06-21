@@ -11,6 +11,7 @@ def test_create_project_file_message_sample():
     FROM: {{Your Agent ID}}
     TO: EXECUTOR
     ACTION: CREATE_PROJECT_FILE
+    STEP: "Provide the step number here for the ongoing step if any."
     SUMMARY: {{{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     File path: {{file path}}

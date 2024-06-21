@@ -27,7 +27,7 @@ def allowed_response_templates(from_agent, to_agent, action_list):
         
         if (from_agent, to_agent) == (AgentEnum.ANY, AgentEnum.CALLER):
             print('Inside if statement')
-            response_template += f'\nResponse template:{message_class().generate({"from_agent_id": "{{Your Agent ID}}", "to_agent_id": "{{Agent ID of the invoker agent}}", "summary": "Empty", "body": "{{Task update. Whether the task was done successfully or not. Any other details which you might think are necessary for the agent which invoked you to know of.}}"})}'
+            response_template += f'\nResponse template:{message_class().generate({"from_agent_id": "{{Your Agent ID}}", "to_agent_id": "{{Agent ID of the invoker agent}}","step": "Provide the steps if any", "summary": "Empty", "body": "{{Task update. Whether the task was done successfully or not. Any other details which you might think are necessary for the agent which invoked you to know of.}}"})}'
         else:
             response_template += f'\nResponse template:{message_class().sample()}'
 

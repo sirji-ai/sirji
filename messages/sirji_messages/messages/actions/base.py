@@ -46,6 +46,7 @@ class BaseMessages(ABC):
             FROM: {{from_agent_id}}
             TO: {{to_agent_id}}
             ACTION: {self.action}
+            STEP: "Provide the step number here for the ongoing step if any."
             SUMMARY: {{summary}}
             BODY: {{body}}
             ***""")

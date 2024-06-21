@@ -7,6 +7,7 @@ def test_parse_valid_message():
     FROM: CODER
     TO: USER
     ACTION: INFORM
+    STEP: step1
     SUMMARY: Welcome
     BODY: Welcome to sirji-messages. Here's how you can start.
     ***"""
@@ -15,6 +16,7 @@ def test_parse_valid_message():
         'FROM': 'CODER',
         'TO': 'USER',
         'ACTION': 'INFORM',
+        'STEP': 'step1',
         'SUMMARY': 'Welcome',
         'BODY': "Welcome to sirji-messages. Here's how you can start."
     }
@@ -39,6 +41,7 @@ def test_parse_invalid_action():
     FROM: CODER
     TO: USER
     ACTION: INVALID_ACTION
+    STEP: step1
     SUMMARY: Welcome
     BODY: Welcome to sirji-messages. Here's how you can start.
     ***"""
@@ -52,6 +55,7 @@ def test_parse_invalid_format():
     FROM: CODER
     TO: USER
     ACTION: INFORM
+    STEP: step1
     SUMMARY: Welcome
     BODY: Welcome to sirji-messages. Here's how you can start.
     **"""

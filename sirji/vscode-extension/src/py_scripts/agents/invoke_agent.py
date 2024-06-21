@@ -47,6 +47,7 @@ class AgentRunner:
             message_str = message_class().generate({
             "from_agent_id": f"{last_message['TO']}",
             "to_agent_id": f"{last_message['FROM']}",
+            "step": "EMPTY",
             "summary": "EMPTY",
             "body": textwrap.dedent(f"""
             {contents}
