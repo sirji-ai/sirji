@@ -28,20 +28,22 @@ def test_base_message_generate():
     obj = {
         "from_agent_id": "AGENT_1",
         "to_agent_id": "AGENT_2",
+        "step": "Provide the step number here for the ongoing step if any.",
         "summary": "Test summary",
-        "body": "Test body"
+        "body": "Test body",
     }
     expected_output = textwrap.dedent("""
     ***
     FROM: AGENT_1
     TO: AGENT_2
     ACTION: TEST_ACTION
+    STEP: "Provide the step number here for the ongoing step if any."
     SUMMARY: Test summary
     BODY: Test body
     ***""")
     
-    generated_message = test_message.generate(obj)
-    assert generated_message.strip() == expected_output.strip()
+    generated_message = test_message.generate(obj).strip()
+    assert generated_message == expected_output.strip()
 
 def test_base_message_generate_with_missing_keys():
     test_message = TestMessage()

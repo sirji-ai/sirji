@@ -12,6 +12,7 @@ def test_train_using_search_term_message_sample():
     FROM: {{Your Agent ID}}
     TO: RESEARCHER
     ACTION: TRAIN_USING_SEARCH_TERM
+    STEP: "Provide the step number here for the ongoing step if any."
     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     Term: {{search term}}
