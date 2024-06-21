@@ -4,6 +4,7 @@
 
 ### Features
 
+- Steps taken by the agents, along with their current status, are now shown in the right panel UI.
 - Added an open-source test case agent.
 - Added `deepseek` as a new model provider for agents.
 - Added `anthropic` as a new model provider for agents.
