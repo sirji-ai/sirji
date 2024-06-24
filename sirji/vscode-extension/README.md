@@ -57,7 +57,11 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-Also, you will need an OpenAI API key to access the GPT-4o model.
+Also, you will need an [OpenAI](https://openai.com/) API key to access the GPT-4o model.
+
+Additionally, we support the following model providers. If your agent utilizes them, you will need their API keys as well.
+- [DeepSeek](https://www.deepseek.com/)
+- [Anthropic](https://www.anthropic.com/)
 
 ## Demo Video
 

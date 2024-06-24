@@ -34,6 +34,13 @@ By default, it utilizes:
 - OpenAI Chat Completions API
 - OpenAI Assistants API
 
+Additionally, it supports the following model providers:       
+- [DeepSeek](https://www.deepseek.com/)
+- [Anthropic](https://www.anthropic.com/)
+
+To use them in the agent configuration, use their lowercase names (e.g., for DeepSeek, use "deepseek").
+
+You will need to set the `SIRJI_MODEL_PROVIDER_API_KEY` environment variable with the API key of the respective provider you choose to use.
 ## Installation
 
 ### Setup Virtual Environment
