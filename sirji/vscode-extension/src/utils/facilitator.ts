@@ -204,7 +204,21 @@ export class Facilitator {
     const oThis = this;
 
     oThis.envVars = await oThis.secretManager?.retrieveSecret(Constants.ENV_VARS_KEY);
+
+    return oThis.envVars;
   }
+
+  private async readSecretKeys() {
+    const oThis = this;
+
+    const secretKeys = await oThis.retrieveSecret();
+
+    this.chatPanel?.webview.postMessage({
+      type: 'showSecretKeys',
+      content: secretKeys
+    });
+  }
+
 
   private async setSecretEnvVars(data: any) {
     const oThis = this;
@@ -394,6 +408,10 @@ export class Facilitator {
           FROM: ACTOR_ENUM.USER
         });
 
+        break;
+
+      case 'requestSecretKeys':
+        await oThis.readSecretKeys();
         break;
 
       default:
@@ -715,4 +733,4 @@ export class Facilitator {
     });
   }
 }
-async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {}
+async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) { }
