@@ -55,7 +55,7 @@ function activate(context: vscode.ExtensionContext) {
     const venvPath = path.join(sirjiInstallationFolderPath, 'venv');
 
     if (previousVersion && currentVersion !== previousVersion) {
-        vscode.window.showInformationMessage(`Extension updated from version ${previousVersion} to ${currentVersion}`);
+        vscode.window.showInformationMessage(`Sirji extension updated from version ${previousVersion} to ${currentVersion}`);
         removeVenv(venvPath);
     }
 
