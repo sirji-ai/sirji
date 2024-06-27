@@ -1,13 +1,41 @@
 import os
-
+import hashlib
 from sirji_tools.crawler import crawl_urls
 from sirji_tools.search import search_for
-from sirji_tools.logger import create_logger 
+from sirji_tools.logger import create_logger
 
 from sirji_messages import message_parse, MessageFactory, ActionEnum
 
 from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
+
+
+DEFAULT_SKIP_LIST = [
+    '__pycache__',
+    '.git',
+    '.github',
+    '.gitlab',
+    '.vscode',
+    '.idea',
+    'node_modules',
+    '.DS_Store',
+    'venv',
+    '.venv',
+    '.sass-cache',
+    'dist',
+    'out',
+    'build',
+    'logs',
+    '.npm',
+    'temp',
+    'tmp',
+    '.env',
+    '.env.test',
+    '.env.local',
+    '.env.development',
+    '.env.production',
+    '.env.staging'
+]
 
 
 class ResearchAgent:
@@ -28,6 +56,9 @@ class ResearchAgent:
 
         self.logger.info("Completed initializing researcher")
 
+        # Initialize SKIP_LIST
+        self.skip_list = set(DEFAULT_SKIP_LIST)
+
     def message(self, input_message):
         """Public method to process input messages and dispatch actions."""
         parsed_message = message_parse(input_message)
@@ -39,7 +70,9 @@ class ResearchAgent:
             return self._handle_train_using_url(parsed_message)
         elif action == ActionEnum.INFER.name:
             return self._handle_infer(parsed_message)
-        
+        elif action == ActionEnum.SYNC_CODEBASE.name:
+            return self._sync_codebase()
+
     def _get_project_folder(self):
         project_folder = os.environ.get("SIRJI_PROJECT")
         if project_folder is None:
@@ -111,3 +144,55 @@ class ResearchAgent:
                 response = self._embeddings_manager.index(folder_path)
                 # Optionally handle the response
         self.logger.info("Completed recursive indexing of the research folder")
+
+    def _sync_codebase(self):
+        """Sync codebase by reading .gitignore and indexing files."""
+        try:
+            project_root_path = self._get_project_folder()
+            self.logger.info(f"Starting sync for project: {project_root_path}")
+            self._read_gitignore(project_root_path)
+            self._read_directory(project_root_path)
+            self.logger.info("Completed syncing codebase")
+            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase completed successfully"), 0, 0
+        except Exception as e:
+            self.logger.error(f"Error syncing codebase: {e}")
+            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase failed"), 0, 0
+
+    def _read_gitignore(self, project_root_path):
+        """Read .gitignore file and update the skip_list."""
+        try:
+            gitignore_path = os.path.join(project_root_path, '.gitignore')
+            with open(gitignore_path, 'r') as gitignore_file:
+                entries = gitignore_file.readlines()
+                new_entries = [
+                    entry.strip() for entry in entries if entry.strip() and not entry.startswith('#')
+                ]
+                self.skip_list.update(new_entries)
+                self.logger.info(f"Updated SKIP_LIST from .gitignore: {self.skip_list}")
+        except FileNotFoundError:
+            self.logger.warning(f".gitignore file not found in {project_root_path}")
+        except Exception as e:
+            self.logger.error(f"Error reading .gitignore: {e}")
+
+    def _should_skip(self, name):
+        """Check if the file or directory should be skipped."""
+        return any(skip_item in name for skip_item in self.skip_list)
+
+    def _read_directory(self, project_root_path):
+        """Read directory and index files."""
+        for root, dirs, files in os.walk(project_root_path):
+            # Remove dirs that should be skipped
+            dirs[:] = [d for d in dirs if not self._should_skip(d)]
+            for file in files:
+                if not self._should_skip(file):
+                    file_path = os.path.join(root, file)
+                    self._index_file(file_path, project_root_path)
+
+    def _index_file(self, file_path, project_root_path):
+        """Index the individual file."""
+        relative_file_path = os.path.relpath(file_path, project_root_path)
+        hash_object = hashlib.md5(relative_file_path.encode())
+        file_hash = hash_object.hexdigest()
+        target_file_name = f"{file_hash}.md"
+        self.logger.info(f"Indexing file: {file_path} as {target_file_name}")
+        self._embeddings_manager.index(target_file_name)

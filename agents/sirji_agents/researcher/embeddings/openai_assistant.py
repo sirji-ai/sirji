@@ -1,11 +1,11 @@
 import os
 import json
+import hashlib
 from openai import OpenAI
 
 from sirji_tools.logger import create_logger
 
 from .base import BaseEmbeddings
-
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
@@ -55,23 +55,28 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             file_path = os.path.join(folder_path, filename)
             # Check if file is not already indexed
             if os.path.isfile(file_path) and not any(d['local_path'] == file_path for d in self.index_data):
-                with open(file_path, 'rb') as file_to_upload:
-                    # Upload file to OpenAI
-                    response = self._upload_file(file_to_upload)
-                    if response.status == 'processed':
-                        file_id = response.id
-                        # Associate file with assistant
-                        associate_response = self._associate_file(file_id)
-                        if not associate_response.id:
-                            self.logger.error(
-                                f"Failed to associate file {filename} with assistant.")
-                            continue
-                        self.index_data.append(
-                            {'local_path': file_path, 'file_id': file_id})
-                        self._update_index_file()
-                    else:
+                language_name = self._detect_language_from_extension(filename)
+
+                with open(file_path, 'r') as file_to_upload:
+                    content = file_to_upload.read()
+                    
+                formatted_content = self._format_file_content(file_path, content, language_name)
+                
+                response = self._upload_file(formatted_content, filename)
+                if response['status'] == 'processed':
+                    file_id = response['id']
+                    # Associate file with assistant
+                    associate_response = self._associate_file(file_id)
+                    if not associate_response['id']:
                         self.logger.error(
-                            f"Failed to upload file {filename}. Status Code: {response.status_code}")
+                            f"Failed to associate file {filename} with assistant.")
+                        continue
+                    self.index_data.append(
+                        {'local_path': file_path, 'file_id': file_id})
+                    self._update_index_file()
+                else:
+                    self.logger.error(
+                        f"Failed to upload file {filename}. Status Code: {response.get('status_code')}")
 
         self.logger.info(f"Completed indexing files in the folder: {folder_path}")
 
@@ -131,13 +136,13 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         with open(self.index_file_path, 'w') as index_file:
             json.dump(self.index_data, index_file, indent=4)
 
-    def _upload_file(self, file_to_upload):
-        self.logger.info("Uploading file to OpenAI")
+    def _upload_file(self, content, original_filename):
+        self.logger.info(f"Uploading file to OpenAI: {original_filename}")
         """
-        Upload file to OpenAI.
+        Upload file content to OpenAI.
         """
         return self.client.files.create(
-            file=file_to_upload,
+            file=(original_filename, content),
             purpose='assistants'
         )
 
@@ -148,3 +153,40 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         return self.client.beta.assistants.files.create(
             assistant_id=self.assistant_id, file_id=file_id)
+
+    def _detect_language_from_extension(self, filename):
+        """
+        Detect the programming language based on file extension.
+        """
+        extension_to_language = {
+            '.py': 'python',
+            '.js': 'javascript',
+            '.rb': 'ruby',
+            '.java': 'java',
+            '.c': 'c',
+            '.cpp': 'cpp',
+            '.cs': 'csharp',
+            '.php': 'php',
+            '.html': 'html',
+            '.css': 'css',
+            '.go': 'go',
+            '.swift': 'swift',
+            '.rs': 'rust',
+            '.ts': 'typescript',
+        }
+        _, ext = os.path.splitext(filename)
+        language = extension_to_language.get(ext, 'plain text')
+        self.logger.info(f"Detected language {language} for {filename}")
+        return language
+
+    def _format_file_content(self, file_path, content, language_name):
+        """
+        Format the file content along with metadata.
+        """
+        return (
+            f"File path: {file_path}\n\n"
+            f"File content:\n"
+            f"```{language_name}\n"
+            f"{content}\n"
+            f"```"
+        )
