@@ -11,6 +11,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self, init_payload={}):
         self.logger = create_logger("researcher.log", "debug")
+        print("Initializing OpenAI Assistant Embeddings")
         self.logger.info("Initializing OpenAI Assistant Embeddings")
 
         # Fetch OpenAI API key from environment variable
@@ -37,40 +38,52 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
         self.logger.info("Completed initializing OpenAI Assistant Embeddings")
 
-    def index(self, folder_path):
-        self.logger.info(f"Indexing files in the folder: {folder_path}")
+    def index(self, absolute_path, file_path):
+        self.logger.info(f"Indexing files in the folder: {file_path}")
 
+        print(f"Indexing files in the folder: {file_path}")
+
+        hash_object = hashlib.md5(file_path.encode())
+        file_hash = hash_object.hexdigest()
+        target_file_name = f"{file_hash}.md"
         """
         Index files in the specified folder.
         """
-        for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
-            # Check if file is not already indexed
-            if os.path.isfile(file_path) and not any(d['local_path'] == file_path for d in self.index_data):
-                language_name = self._detect_language_from_extension(filename)
 
-                with open(file_path, 'r') as file_to_upload:
-                    content = file_to_upload.read()
-                    
-                formatted_content = self._format_file_content(file_path, content, language_name)
+        print(target_file_name)
+
+        print(' os.path.isfile(file_path)', os.path.isfile(absolute_path))
+        # Check if file is not already indexed
+        if os.path.isfile(absolute_path) and not any(d['local_path'] == file_path for d in self.index_data):
+            print('in if')
+            language_name = self._detect_language_from_extension(file_path)
+            print('language_name', language_name)
+
+            with open(absolute_path, 'r') as file_to_upload:
+                content = file_to_upload.read()
                 
-                response = self._upload_file(formatted_content, filename)
-                if response['status'] == 'processed':
-                    file_id = response['id']
-                    # Associate file with assistant
-                    associate_response = self._associate_file(file_id)
-                    if not associate_response['id']:
-                        self.logger.error(
-                            f"Failed to associate file {filename} with assistant.")
-                        continue
-                    self.index_data.append(
-                        {'local_path': file_path, 'file_id': file_id})
-                    self._update_index_file()
-                else:
+            formatted_content = self._format_file_content(file_path, content, language_name)
+            print('formatted_content', formatted_content)
+            
+            response = self._upload_file(formatted_content, target_file_name)
+            print(response)
+            if response.status == 'processed':
+                file_id = response.id
+                # Associate file with assistant
+                associate_response = self._associate_file(file_id)
+                print('associate_response', associate_response)
+                if not associate_response.id:
                     self.logger.error(
-                        f"Failed to upload file {filename}. Status Code: {response.get('status_code')}")
+                        f"Failed to associate file {file_path} with assistant.")
+                    return
+                self.index_data.append(
+                    {'local_path': file_path, 'file_id': file_id})
+                # self._update_index_file()
+            else:
+                self.logger.error(
+                    f"Failed to upload file {file_path}. Status Code: {response.get('status_code')}")
 
-        self.logger.info(f"Completed indexing files in the folder: {folder_path}")
+        self.logger.info(f"Completed indexing files in the folder: {file_path}")
 
     def retrieve_context(self, problem_statement):
         """
@@ -135,6 +148,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         Detect the programming language based on file extension.
         """
+        print('filename', filename)
         extension_to_language = {
             '.py': 'python',
             '.js': 'javascript',
@@ -150,9 +164,12 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
             '.swift': 'swift',
             '.rs': 'rust',
             '.ts': 'typescript',
+            '.sh': 'bash',
         }
         _, ext = os.path.splitext(filename)
-        language = extension_to_language.get(ext, 'plain text')
+        print('ext', ext)
+        language = extension_to_language.get(ext, 'plaintext')
+        print('language', language)
         self.logger.info(f"Detected language {language} for {filename}")
         return language
 

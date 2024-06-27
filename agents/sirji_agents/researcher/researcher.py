@@ -75,7 +75,7 @@ class ResearchAgent:
                 self.embeddings_type, self.init_payload)
             
             if action == ActionEnum.SYNC_CODEBASE.name:
-                return self._sync_codebase()
+                return self._sync_codebase(parsed_message), 0, 0
 
             # if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
             #     return self._handle_train_using_search_term(parsed_message)
@@ -177,7 +177,7 @@ class ResearchAgent:
                 # Optionally handle the response
         self.logger.info("Completed recursive indexing of the research folder")
 
-    def _sync_codebase(self):
+    def _sync_codebase(self, parsed_message):
         """Sync codebase by reading .gitignore and indexing files."""
         try:
             project_root_path = self._get_project_folder()
@@ -185,13 +185,15 @@ class ResearchAgent:
             self._read_gitignore(project_root_path)
             self._read_directory(project_root_path)
             self.logger.info("Completed syncing codebase")
-            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase completed successfully"), 0, 0
+            contents = "Sync codebase completed successfully"
+            return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), contents)
         except Exception as e:
             self.logger.error(f"Error syncing codebase: {e}")
-            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase failed"), 0, 0
+            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase failed")
 
     def _read_gitignore(self, project_root_path):
         """Read .gitignore file and update the skip_list."""
+        print(f"Reading .gitignore file from {project_root_path}")
         try:
             gitignore_path = os.path.join(project_root_path, '.gitignore')
             with open(gitignore_path, 'r') as gitignore_file:
@@ -212,22 +214,22 @@ class ResearchAgent:
 
     def _read_directory(self, project_root_path):
         """Read directory and index files."""
+        print(f"Reading directory: {project_root_path}")
         for root, dirs, files in os.walk(project_root_path):
             # Remove dirs that should be skipped
             dirs[:] = [d for d in dirs if not self._should_skip(d)]
             for file in files:
                 if not self._should_skip(file):
                     file_path = os.path.join(root, file)
+                    print(f"Indexing file: {file_path}")
                     self._index_file(file_path, project_root_path)
 
     def _index_file(self, file_path, project_root_path):
         """Index the individual file."""
+        print(f"Indexing file: {file_path}")
         relative_file_path = os.path.relpath(file_path, project_root_path)
-        hash_object = hashlib.md5(relative_file_path.encode())
-        file_hash = hash_object.hexdigest()
-        target_file_name = f"{file_hash}.md"
-        self.logger.info(f"Indexing file: {file_path} as {target_file_name}")
-        self._embeddings_manager.index(target_file_name)
+        print(f"Relative file path: {relative_file_path}")
+        self._embeddings_manager.index(file_path, relative_file_path)
         
     def create_assistant(self, body):
         self.logger.info("Creating a new assistant instance")

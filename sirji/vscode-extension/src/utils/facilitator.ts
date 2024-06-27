@@ -542,6 +542,40 @@ export class Facilitator {
             }
             break;
 
+          case ACTOR_ENUM.RESEARCHER:
+              console.log('Researcher message', parsedMessage);
+              try {
+                await spawnAdapter(
+                  oThis.context,
+                  oThis.sirjiInstallationFolderPath,
+                  oThis.sirjiRunFolderPath,
+                  oThis.projectRootPath,
+                  path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py')
+                );
+              } catch (error) {
+                oThis.sendErrorToChatPanel(error);
+                keepFacilitating = false;
+              }
+  
+              const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'REASEARCHER.json');
+              console.log('researcherConversationFilePath-----', researcherConversationFilePath);
+  
+              let researcherConversationContent = JSON.parse(fs.readFileSync(researcherConversationFilePath, 'utf-8'));
+  
+              const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
+  
+              console.log('lastCoderMessage', lastResearcherMessage);
+  
+              rawMessage = lastResearcherMessage?.content;
+  
+              parsedMessage = lastResearcherMessage?.parsed_content;
+  
+              oThis.writeToFile(inputFilePath, rawMessage);
+
+              // Todo @vaibhav: Add token generation for researcher
+              // await oThis.tokenManager?.generateAggregateTokenForOrchestrator();
+              break;
+               
           default:
             let agent_id = parsedMessage.TO;
 
