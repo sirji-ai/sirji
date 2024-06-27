@@ -8,6 +8,7 @@ def test_action_enum_membership():
     assert ActionEnum['STORE_IN_AGENT_OUTPUT'] == ActionEnum.STORE_IN_AGENT_OUTPUT
     assert ActionEnum['READ_AGENT_OUTPUT_INDEX'] == ActionEnum.READ_AGENT_OUTPUT_INDEX
     assert ActionEnum['FETCH_RECIPE'] == ActionEnum.FETCH_RECIPE
+    assert ActionEnum['CREATE_ASSISTANT'] == ActionEnum.CREATE_ASSISTANT
     assert ActionEnum['FETCH_RECIPE_INDEX'] == ActionEnum.FETCH_RECIPE_INDEX
     assert ActionEnum['RUN_SERVER'] == ActionEnum.RUN_SERVER
     assert ActionEnum['CREATE_PROJECT_FILE'] == ActionEnum.CREATE_PROJECT_FILE

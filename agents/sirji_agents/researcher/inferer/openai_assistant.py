@@ -29,14 +29,16 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         # Initialize OpenAI client
         self.client = OpenAI(api_key=api_key)
 
+        # Ensure assistant_id is provided in init_payload
+        if 'assistant_id' not in self.init_payload:
+            raise ValueError("assistant_id must be provided in init_payload")
+
         # Reading the assistant ID from init_payload
         self.assistant_id = self.init_payload['assistant_id']
 
-        if 'thread_id' not in self.init_payload or not self.init_payload['thread_id']:
-            assistant = self.client.beta.assistants.retrieve(
-                self.assistant_id)
-            thread = self.client.beta.threads.create()
-            self.init_payload['thread_id'] = thread.id
+        # Create a new thread
+        thread = self.client.beta.threads.create()
+        self.thread_id = thread.id
 
         self.logger.info("Completed initializing OpenAI Assistant Inferer")
 
@@ -56,7 +58,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
 
         # Send the generated prompt to the assistant
         self.client.beta.threads.messages.create(
-            thread_id=self.init_payload['thread_id'],
+            thread_id=self.thread_id,
             role="user",
             content=prompt,
         )
@@ -88,7 +90,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         """
         # Start a run to fetch the assistant's response
         run = self.client.beta.threads.runs.create(
-            thread_id=self.init_payload['thread_id'],
+            thread_id=self.thread_id,
             assistant_id=self.assistant_id,
             model="gpt-4o",
             tools=[{"type": "retrieval"}]
@@ -101,12 +103,12 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         # Loop until the run status is 'completed'
         while run.status != "completed":
             run = self.client.beta.threads.runs.retrieve(
-                thread_id=self.init_payload['thread_id'], run_id=run.id)
+                thread_id=self.thread_id, run_id=run.id)
             
             time.sleep(1)  # Sleep to prevent overwhelming the API
 
         # Retrieve and return the last message content from the thread
         messages = self.client.beta.threads.messages.list(
-            thread_id=self.init_payload['thread_id'])
+            thread_id=self.thread_id)
         new_message = messages.data[0].content[0].text.value
         return new_message, run.usage.prompt_tokens, run.usage.completion_tokens

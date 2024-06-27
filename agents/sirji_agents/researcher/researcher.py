@@ -1,9 +1,13 @@
 import os
+import json
+import textwrap
+from openai import OpenAI
 import hashlib
+
+
 from sirji_tools.crawler import crawl_urls
 from sirji_tools.search import search_for
-from sirji_tools.logger import create_logger
-
+from sirji_tools.logger import create_logger 
 from sirji_messages import message_parse, MessageFactory, ActionEnum
 
 from .embeddings.factory import EmbeddingsFactory
@@ -44,13 +48,9 @@ class ResearchAgent:
         self.logger = create_logger("researcher.log", "debug")
         self.logger.info("Initializing researcher...")
 
-        self._embeddings_manager = EmbeddingsFactory.get_instance(
-            embeddings_type, init_payload)
-
-        self.init_payload = self._embeddings_manager.init_payload
-
-        self._inferer = InfererFactory.get_instance(
-            inferer_type, self.init_payload)
+        self.embeddings_type = embeddings_type
+        self.inferer_type = inferer_type
+        self.init_payload = init_payload
 
         self._research_folder = os.path.join(self._get_run_path(), "researcher")
 
@@ -64,15 +64,26 @@ class ResearchAgent:
         parsed_message = message_parse(input_message)
         action = parsed_message.get("ACTION")
 
-        if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
-            return self._handle_train_using_search_term(parsed_message)
-        elif action == ActionEnum.TRAIN_USING_URL.name:
-            return self._handle_train_using_url(parsed_message)
-        elif action == ActionEnum.INFER.name:
-            return self._handle_infer(parsed_message)
-        elif action == ActionEnum.SYNC_CODEBASE.name:
-            return self._sync_codebase()
+        if action == ActionEnum.CREATE_ASSISTANT.name:
+            return self._handle_create_assistant(parsed_message), 0, 0
+        else:
+            if 'assistant_id' not in self.init_payload:
+                error_response = "Error: Active assistant_id not found. Please create an assistant first."
+                return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), error_response), 0, 0
 
+            self._embeddings_manager = EmbeddingsFactory.get_instance(
+                self.embeddings_type, self.init_payload)
+            
+            if action == ActionEnum.SYNC_CODEBASE.name:
+                return self._sync_codebase()
+
+            # if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
+            #     return self._handle_train_using_search_term(parsed_message)
+            # elif action == ActionEnum.TRAIN_USING_URL.name:
+            #     return self._handle_train_using_url(parsed_message)
+            # elif action == ActionEnum.INFER.name:
+            #     return self._handle_infer(parsed_message)
+        
     def _get_project_folder(self):
         project_folder = os.environ.get("SIRJI_PROJECT")
         if project_folder is None:
@@ -87,32 +98,49 @@ class ResearchAgent:
                 "SIRJI_RUN_PATH is not set as an environment variable")
         return run_path
 
-    def _handle_train_using_search_term(self, parsed_message):
-        """Private method to handle training using a search term."""
-        self.logger.info(
-            f"Training using search term: {parsed_message.get('TERM')}")
-        self._search_and_index(parsed_message.get('TERM'))
+    # def _handle_train_using_search_term(self, parsed_message):
+    #     """Private method to handle training using a search term."""
+    #     self.logger.info(
+    #         f"Training using search term: {parsed_message.get('TERM')}")
+    #     self._search_and_index(parsed_message.get('TERM'))
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully"), 0, 0
+    #     return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using search term completed successfully"), 0, 0
 
-    def _handle_train_using_url(self, parsed_message):
-        """Private method to handle training using a specific URL."""
-        self.logger.info(f"Training using URL: {parsed_message.get('URL')}")
-        self._index([parsed_message.get('URL')])
+    # def _handle_train_using_url(self, parsed_message):
+    #     """Private method to handle training using a specific URL."""
+    #     self.logger.info(f"Training using URL: {parsed_message.get('URL')}")
+    #     self._index([parsed_message.get('URL')])
 
-        return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
+    #     return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
 
-    def _handle_infer(self, parsed_message):
-        """Private method to handle inference requests."""
-        self.logger.info(f"Infering: {parsed_message.get('DETAILS')}")
-        response, prompt_tokens, completion_tokens= self._infer(parsed_message.get('DETAILS'))
+    # def _handle_infer(self, parsed_message):
+    #     """Private method to handle inference requests."""
+    #     self.logger.info(f"Infering: {parsed_message.get('DETAILS')}")
+    #     response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('DETAILS'))
 
-        return self._generate_message(ActionEnum.RESPONSE, response), prompt_tokens, completion_tokens
+    #     return self._generate_message(ActionEnum.RESPONSE, response), prompt_tokens, completion_tokens
 
-    def _generate_message(self, action_enum, details):
+    def _handle_create_assistant(self, parsed_message):
+        """Private method to handle assistant creation requests."""
+        self.logger.info("Creating assistant")
+        self.create_assistant(parsed_message.get('BODY'))    
+        response = "Assistant created successfully"
+    
+        return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), response) 
+
+    def _generate_message(self, from_agent_id, to_agent_id, contents):
         """Generate standardized messages for responses based on action enum."""
-        message_class = MessageFactory[action_enum.name]
-        return message_class().generate({"details": details})
+        message_class = MessageFactory[ActionEnum.RESPONSE.name]
+        message_str = message_class().generate({
+        "from_agent_id": f"{from_agent_id}",
+        "to_agent_id": f"{to_agent_id}",
+        "step": "EMPTY",
+        "summary": "EMPTY",
+        "body": textwrap.dedent(f"""
+        {contents}
+        """)})
+
+        return message_str
 
     def _index(self, urls):
         """Index given URLs."""
@@ -130,6 +158,10 @@ class ResearchAgent:
         """Infer based on the given problem statement and context."""
         retrieved_context = self._embeddings_manager.retrieve_context(
             problem_statement)
+        
+        self._inferer = InfererFactory.get_instance(
+            self.inferer_type, self.init_payload)
+        
         return self._inferer.infer(retrieved_context, problem_statement)
 
     def __reindex(self):
@@ -196,3 +228,40 @@ class ResearchAgent:
         target_file_name = f"{file_hash}.md"
         self.logger.info(f"Indexing file: {file_path} as {target_file_name}")
         self._embeddings_manager.index(target_file_name)
+        
+    def create_assistant(self, body):
+        self.logger.info("Creating a new assistant instance")
+        """
+        Create a new assistant
+        """
+
+        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "OpenAI API key is not set as an environment variable")
+
+        # Initialize OpenAI client
+        client = OpenAI(api_key=api_key)
+
+        assistant = client.beta.assistants.create(
+            name="Research Assistant",
+            instructions=body,
+            tools=[{"type": "code_interpreter"}],
+            model="gpt-4-turbo",
+        )
+
+        self.logger.info("Completed creating a new assistant")
+        # Update payload
+        self.logger.info(f"New assistant created with ID: {assistant.id}")
+
+        # Store assistant details in a JSON file
+        assistant_details = {
+            "assistant_id": assistant.id,
+            "status": "created"
+        }
+
+        print(assistant_details)
+        assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
+        with open(assistant_details_path, 'w') as f:
+            json.dump(assistant_details, f, indent=4)

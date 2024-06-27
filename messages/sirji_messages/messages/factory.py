@@ -26,6 +26,7 @@ from .actions.store_in_scratch_pad import StoreInScratchPad
 from .actions.store_in_agent_output import StoreInAgentOutputMessage
 from .actions.log_steps import LogSteps
 from .actions.sync_codebase import SyncCodebase
+from .actions.create_assistant import CreateAssistantMessage
 
 
 class MetaMessageFactory(type):
@@ -68,6 +69,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.FETCH_RECIPE_INDEX: FetchRecipeIndexMessage,
         ActionEnum.STORE_IN_SCRATCH_PAD: StoreInScratchPad,
         ActionEnum.LOG_STEPS: LogSteps,
-        ActionEnum.SYNC_CODEBASE: SyncCodebase
+        ActionEnum.SYNC_CODEBASE: SyncCodebase,
+        ActionEnum.CREATE_ASSISTANT: CreateAssistantMessage
     }
 

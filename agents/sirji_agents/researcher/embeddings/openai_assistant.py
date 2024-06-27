@@ -26,17 +26,9 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         # Existing initialization logic
         self.init_payload = init_payload
 
-        # Check for assistant_id in the payload
-        if 'assistant_id' in self.init_payload:
-            self.assistant_id = self.init_payload['assistant_id']
-            self.logger.info(f"Using existing assistant ID: {self.assistant_id}")
-        else:
-            self.assistant_id = self._create_assistant()
-            # Update payload
-            self.init_payload['assistant_id'] = self.assistant_id
-
-            # Provide a way to output this updated init_payload
-            self.logger.info(f"New assistant created with ID: {self.assistant_id}")
+        # Ensure assistant_id is provided in init_payload
+        if 'assistant_id' not in self.init_payload:
+            raise ValueError("assistant_id must be provided in init_payload")
 
         self.index_file_path = os.path.join(self._get_run_path(), 'researcher', 'file_index.json')
 
@@ -102,21 +94,6 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                 "SIRJI_RUN_PATH is not set as an environment variable")
         return run_id
     
-    def _create_assistant(self):
-        self.logger.info("Creating a new assistant instance")
-        """
-        Create a new assistant
-        """
-        assistant = self.client.beta.assistants.create(
-            name="Research Assistant",
-            instructions="As a research assistant, your task is to address problem statements programmatically. In your response, include code examples, GitHub URLs, relevant external URLs based on your trained knowledge. Also, if knowledge on additional terms is needed, mention them in your response. Avoid providing fabricated information if uncertain.",
-            tools=[{"type": "retrieval"}],
-            model="gpt-4o",
-        )
-
-        self.logger.info("Completed creating a new assistant")
-        return assistant.id
-
     def _load_or_initialize_index_file(self):
         self.logger.info("Initializing the index file")
         """
@@ -152,7 +129,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         Associate file with assistant.
         """
         return self.client.beta.assistants.files.create(
-            assistant_id=self.assistant_id, file_id=file_id)
+               assistant_id=self.init_payload['assistant_id'], file_id=file_id)
 
     def _detect_language_from_extension(self, filename):
         """
