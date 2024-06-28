@@ -15,7 +15,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         self.logger.info("Initializing OpenAI Assistant Embeddings")
 
         # Fetch OpenAI API key from environment variable
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
 
         if api_key is None:
             raise ValueError(

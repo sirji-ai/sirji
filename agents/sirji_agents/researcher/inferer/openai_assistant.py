@@ -20,7 +20,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         self.init_payload = init_payload
 
         # Fetch OpenAI API key from an environment variable
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
 
         if api_key is None:
             raise ValueError(

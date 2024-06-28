@@ -43,13 +43,11 @@ DEFAULT_SKIP_LIST = [
 
 
 class ResearchAgent:
-    def __init__(self, embeddings_type, inferer_type, init_payload={}):
+    def __init__(self, init_payload={}):
         """Initialize Researcher with specific embeddings and inferer types."""
         self.logger = create_logger("researcher.log", "debug")
         self.logger.info("Initializing researcher...")
 
-        self.embeddings_type = embeddings_type
-        self.inferer_type = inferer_type
         self.init_payload = init_payload
 
         self._research_folder = os.path.join(self._get_run_path(), "researcher")
@@ -71,8 +69,7 @@ class ResearchAgent:
                 error_response = "Error: Active assistant_id not found. Please create an assistant first."
                 return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), error_response), 0, 0
 
-            self._embeddings_manager = EmbeddingsFactory.get_instance(
-                self.embeddings_type, self.init_payload)
+            self._embeddings_manager = EmbeddingsFactory.get_instance(self.init_payload)
             
             if action == ActionEnum.SYNC_CODEBASE.name:
                 return self._sync_codebase(parsed_message), 0, 0
@@ -159,8 +156,7 @@ class ResearchAgent:
         retrieved_context = self._embeddings_manager.retrieve_context(
             problem_statement)
         
-        self._inferer = InfererFactory.get_instance(
-            self.inferer_type, self.init_payload)
+        self._inferer = InfererFactory.get_instance(self.init_payload)
         
         return self._inferer.infer(retrieved_context, problem_statement)
 
@@ -189,7 +185,8 @@ class ResearchAgent:
             return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), contents)
         except Exception as e:
             self.logger.error(f"Error syncing codebase: {e}")
-            return self._generate_message(ActionEnum.SYNC_CODEBASE, "Sync codebase failed")
+            contents = f"Error syncing codebase: {e}"
+            return  self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), contents)
 
     def _read_gitignore(self, project_root_path):
         """Read .gitignore file and update the skip_list."""
@@ -237,7 +234,7 @@ class ResearchAgent:
         Create a new assistant
         """
 
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
 
         if api_key is None:
             raise ValueError(
@@ -249,17 +246,29 @@ class ResearchAgent:
         assistant = client.beta.assistants.create(
             name="Research Assistant",
             instructions=body,
-            tools=[{"type": "code_interpreter"}],
-            model="gpt-4-turbo",
+            tools=[{"type": "file_search"}],
+            model=os.environ.get("SIRJI_MODEL")
         )
 
         self.logger.info("Completed creating a new assistant")
         # Update payload
         self.logger.info(f"New assistant created with ID: {assistant.id}")
 
+        run_id = os.environ.get("SIRJI_RUN_PATH")
+        if run_id is not None:
+         run_id = run_id.split("/")[-1]
+     
+        vector_store = client.beta.vector_stores.create(name=f"research-assistant-vector-store-{run_id}")
+
+        assistant = client.beta.assistants.update(
+        assistant_id=assistant.id,
+        tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
+        )
+
         # Store assistant details in a JSON file
         assistant_details = {
             "assistant_id": assistant.id,
+            "vector_store_id": vector_store.id,
             "status": "created"
         }
 

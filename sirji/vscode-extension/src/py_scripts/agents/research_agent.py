@@ -1,6 +1,8 @@
 import argparse
 import os
 import json
+import yaml
+
 from sirji_messages import message_parse
 from sirji_agents import ResearchAgent
 
@@ -53,7 +55,7 @@ class ResearchAgentRunner:
         # Appending the input message to the conversations
         conversations.append({"role": "user", "content": message_str, "parsed_content": message_parse(message_str)})
 
-        researcher = ResearchAgent('openai_assistant', 'openai_assistant', init_payload)
+        researcher = ResearchAgent(init_payload)
 
         response, prompt_tokens, completion_tokens = researcher.message(message_str)
 
@@ -63,8 +65,15 @@ class ResearchAgentRunner:
         conversations.append({"role": "assistant", "content": response, "parsed_content": message_parse(response)})
 
         return response, prompt_tokens, completion_tokens
+    
+
+    def read_file(self, input_file_path):
+        with open(input_file_path, 'r') as file:
+            contents = file.read()
+        return contents
         
     def main(self, agent_id):
+        sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
 
         print(f"Running Research Agent with agent_id: {agent_id}")
@@ -72,6 +81,24 @@ class ResearchAgentRunner:
 
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
+
+        installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
+        reasearcher_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
+        config_file_contents = self.read_file(reasearcher_config_path)
+        config = yaml.safe_load(config_file_contents)
+
+        llm = config['llm']    
+
+        # Set SIRJI_MODEL_PROVIDER env var to llm.provider
+        os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
+        # Set SIRJI_MODEL env var to llm.model
+        os.environ['SIRJI_MODEL'] = llm['model']
+        if llm['provider'] == 'openai':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_OPENAI_API_KEY')
+        elif llm['provider'] == 'deepseek':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_DEEPSEEK_API_KEY')
+        elif llm['provider'] == 'anthropic':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_ANTHROPIC_API_KEY')
 
         conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt =  self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)

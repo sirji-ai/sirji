@@ -1,0 +1,5 @@
+id: RESEARCHER
+name: Researcher
+llm:
+  provider: openai
+  model: gpt-4o
