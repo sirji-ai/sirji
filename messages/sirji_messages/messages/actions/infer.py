@@ -18,7 +18,7 @@ class InferMessage(BaseMessages):
             "step": "Provide the step number here for the ongoing step if any.",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
             "body": textwrap.dedent("""
-            {{Infer query}}""")})
+            {{query}}""")})
 
     def description(self):
         return "Ask questions on the trained content"
