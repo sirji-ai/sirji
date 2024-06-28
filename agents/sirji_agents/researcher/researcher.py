@@ -73,13 +73,14 @@ class ResearchAgent:
             
             if action == ActionEnum.SYNC_CODEBASE.name:
                 return self._sync_codebase(parsed_message), 0, 0
+            elif action == ActionEnum.INFER.name:
+                return self._handle_infer(parsed_message)
 
             # if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
             #     return self._handle_train_using_search_term(parsed_message)
             # elif action == ActionEnum.TRAIN_USING_URL.name:
             #     return self._handle_train_using_url(parsed_message)
-            # elif action == ActionEnum.INFER.name:
-            #     return self._handle_infer(parsed_message)
+           
         
     def _get_project_folder(self):
         project_folder = os.environ.get("SIRJI_PROJECT")
@@ -110,12 +111,16 @@ class ResearchAgent:
 
     #     return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
 
-    # def _handle_infer(self, parsed_message):
-    #     """Private method to handle inference requests."""
-    #     self.logger.info(f"Infering: {parsed_message.get('DETAILS')}")
-    #     response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('DETAILS'))
+    def _handle_infer(self, parsed_message):
+        """Private method to handle inference requests."""
+        self.logger.info(f"Infering: {parsed_message.get('BODY')}")
+        response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('BODY'))
 
-    #     return self._generate_message(ActionEnum.RESPONSE, response), prompt_tokens, completion_tokens
+        print(f"Response: {response}")
+        print(f"Prompt tokens: {prompt_tokens}")
+        print(f"Completion tokens: {completion_tokens}")
+
+        return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), response), prompt_tokens, completion_tokens
 
     def _handle_create_assistant(self, parsed_message):
         """Private method to handle assistant creation requests."""
@@ -153,12 +158,10 @@ class ResearchAgent:
 
     def _infer(self, problem_statement):
         """Infer based on the given problem statement and context."""
-        retrieved_context = self._embeddings_manager.retrieve_context(
-            problem_statement)
-        
+
         self._inferer = InfererFactory.get_instance(self.init_payload)
         
-        return self._inferer.infer(retrieved_context, problem_statement)
+        return self._inferer.infer(problem_statement)
 
     def __reindex(self):
         """Re-index the research folder recursively. Note: This is treated exceptionally private."""
