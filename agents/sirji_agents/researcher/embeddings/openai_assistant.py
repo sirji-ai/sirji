@@ -7,12 +7,16 @@ from sirji_tools.logger import create_logger
 
 from .base import BaseEmbeddings
 
+BATCH_SIZE = 10
+MAX_RETRIES = 2
+
 class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
     def __init__(self, init_payload={}):
         self.logger = create_logger("researcher.log", "debug")
         print("Initializing OpenAI Assistant Embeddings")
         self.logger.info("Initializing OpenAI Assistant Embeddings")
+        self.uploaded_files_info = []
 
         # Fetch OpenAI API key from environment variable
         api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
@@ -41,49 +45,75 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
     def index(self, absolute_path, file_path):
         self.logger.info(f"Indexing files in the folder: {file_path}")
 
-        print(f"Indexing files in the folder: {file_path}")
+        # print(f"Indexing files in the folder: {file_path}")
 
-        hash_object = hashlib.md5(file_path.encode())
-        file_hash = hash_object.hexdigest()
-        target_file_name = f"{file_hash}.md"
-        """
-        Index files in the specified folder.
-        """
+        # hash_object = hashlib.md5(file_path.encode())
+        # file_hash = hash_object.hexdigest()
+        # target_file_name = f"{file_hash}.md"
+        # """
+        # Index files in the specified folder.
+        # """
 
-        print(target_file_name)
+        # print(target_file_name)
 
-        print(' os.path.isfile(file_path)', os.path.isfile(absolute_path))
-        # Check if file is not already indexed
-        if os.path.isfile(absolute_path) and not any(d['local_path'] == file_path for d in self.index_data):
-            print('in if')
-            language_name = self._detect_language_from_extension(file_path)
-            print('language_name', language_name)
+        # print(' os.path.isfile(file_path)', os.path.isfile(absolute_path))
+        # # Check if file is not already indexed
+        # if os.path.isfile(absolute_path) and not any(d['local_path'] == file_path for d in self.index_data):
+        #     print('in if')
+        #     language_name = self._detect_language_from_extension(file_path)
+        #     print('language_name', language_name)
 
-            with open(absolute_path, 'r') as file_to_upload:
-                content = file_to_upload.read()
+        #     with open(absolute_path, 'r') as file_to_upload:
+        #         content = file_to_upload.read()
                 
-            formatted_content = self._format_file_content(file_path, content, language_name)
-            print('formatted_content', formatted_content)
+        #     formatted_content = self._format_file_content(file_path, content, language_name)
+        #     print('formatted_content', formatted_content)
             
-            response = self._upload_file(formatted_content, target_file_name)
-            print(response)
-            if response.status == 'processed':
-                file_id = response.id
-                # Associate file with assistant
-                associate_response = self._associate_file(file_id)
-                print('associate_response', associate_response)
-                if not associate_response.id:
-                    self.logger.error(
-                        f"Failed to associate file {file_path} with assistant.")
-                    return
-                self.index_data.append(
-                    {'local_path': file_path, 'file_id': file_id})
-                # self._update_index_file()
-            else:
-                self.logger.error(
-                    f"Failed to upload file {file_path}. Status Code: {response.get('status_code')}")
+        #     self.file_streams.append((target_file_name, formatted_content))
 
         self.logger.info(f"Completed indexing files in the folder: {file_path}")
+    
+    def upload_batches(self, file_streams):
+        total_files = len(file_streams)
+
+        for i in range(0, total_files, BATCH_SIZE):
+            batch = file_streams[i:i + BATCH_SIZE]
+            retry_count = 0
+
+            while retry_count <= MAX_RETRIES:
+                try:
+                    uploaded_files = self._upload_file(batch)
+
+                    list_batches_files = self._list_uploaded_files(uploaded_files.id)
+
+                    # Collect file ID info for each uploaded file
+                    for uploaded_file in list_batches_files.data:
+                        file_info = {
+                            'file_id': uploaded_file.id,
+                            'created_at': uploaded_file.created_at,
+                            'status': uploaded_file.status,
+                        }
+
+                        vector_store_file = self.client.files.retrieve(uploaded_file.id)
+
+                        file_info['file_name'] = vector_store_file.filename
+
+                        self.uploaded_files_info.append(file_info)
+
+                        print("assistant_id", self.init_payload['assistant_id'])
+                
+                    self.logger.info(f"Successfully uploaded batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}")
+                    break
+                except Exception as e:
+                    print(f"Failed to upload batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}, attempt {retry_count + 1}: {e}")
+                    self.logger.error(f"Failed to upload batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}, attempt {retry_count + 1}: {e}")
+                    retry_count += 1
+                    if retry_count > MAX_RETRIES:
+                        self.logger.error(f"Giving up on batch {i//BATCH_SIZE + 1} after {MAX_RETRIES + 1} attempts")
+
+        print("self.uploaded_files_info", self.uploaded_files_info)
+
+        return self.uploaded_files_info
 
     def retrieve_context(self, problem_statement):
         """
@@ -125,15 +155,23 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         with open(self.index_file_path, 'w') as index_file:
             json.dump(self.index_data, index_file, indent=4)
+        
+    def _list_uploaded_files(self, batch_id):
+        self.logger.info("Listing uploaded files")
+        return self.client.beta.vector_stores.file_batches.list_files(
+            vector_store_id= self.init_payload['vector_store_id'],
+            batch_id=batch_id
+        )
 
-    def _upload_file(self, content, original_filename):
-        self.logger.info(f"Uploading file to OpenAI: {original_filename}")
+    def _upload_file(self, batch):
+        self.logger.info(f"Uploading file to OpenAI")
+       
         """
         Upload file content to OpenAI.
         """
-        return self.client.files.create(
-            file=(original_filename, content),
-            purpose='assistants'
+        return self.client.beta.vector_stores.file_batches.upload_and_poll(
+        vector_store_id= self.init_payload['vector_store_id'],
+        files=batch
         )
 
     def _associate_file(self, file_id):
@@ -144,43 +182,3 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         return self.client.beta.assistants.files.create(
                assistant_id=self.init_payload['assistant_id'], file_id=file_id)
 
-    def _detect_language_from_extension(self, filename):
-        """
-        Detect the programming language based on file extension.
-        """
-        print('filename', filename)
-        extension_to_language = {
-            '.py': 'python',
-            '.js': 'javascript',
-            '.rb': 'ruby',
-            '.java': 'java',
-            '.c': 'c',
-            '.cpp': 'cpp',
-            '.cs': 'csharp',
-            '.php': 'php',
-            '.html': 'html',
-            '.css': 'css',
-            '.go': 'go',
-            '.swift': 'swift',
-            '.rs': 'rust',
-            '.ts': 'typescript',
-            '.sh': 'bash',
-        }
-        _, ext = os.path.splitext(filename)
-        print('ext', ext)
-        language = extension_to_language.get(ext, 'plaintext')
-        print('language', language)
-        self.logger.info(f"Detected language {language} for {filename}")
-        return language
-
-    def _format_file_content(self, file_path, content, language_name):
-        """
-        Format the file content along with metadata.
-        """
-        return (
-            f"File path: {file_path}\n\n"
-            f"File content:\n"
-            f"```{language_name}\n"
-            f"{content}\n"
-            f"```"
-        )

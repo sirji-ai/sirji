@@ -19,7 +19,7 @@ class SyncCodebase(BaseMessages):
             "body": ""})
 
     def description(self):
-        return "Sync the codebase with the latest changes"
+        return "Sync the project with the latest changes"
     
     def instructions(self):
-        return [ "The command is used to sync the codebase with the latest changes.",]
+        return [ "The command is used to sync the project with the latest changes."]
