@@ -557,7 +557,7 @@ export class Facilitator {
                 keepFacilitating = false;
               }
   
-              const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'REASEARCHER.json');
+              const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'RESEARCHER.json');
               console.log('researcherConversationFilePath-----', researcherConversationFilePath);
   
               let researcherConversationContent = JSON.parse(fs.readFileSync(researcherConversationFilePath, 'utf-8'));

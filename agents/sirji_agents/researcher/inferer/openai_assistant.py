@@ -56,21 +56,37 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         #     content=problem_statement,
         # )
 
-        thread = self.client.beta.threads.create(
-        messages=[
-            {
-            "role": "user",
-            "content": problem_statement    
-            }
-        ]
-        )
+        try:
+            thread = self.client.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": problem_statement
+                    }
+                ]
+            )
+            self.thread_id = thread.id
+            self.logger.info("Completed inferring using OpenAI Assistant Inferer")
+            
+            # Fetch and return the assistant's response
 
-        self.thread_id = thread.id
+            response = self._fetch_response()
+        except Exception as e:
+            self.logger.error("An error occurred during inference: %s", str(e))
+            response = 'An error occurred during inference', 0, 0
+        finally:
+            if self.thread_id:
+                try:
+                    deleteResponse = self.client.beta.threads.delete(thread_id=self.thread_id)
+                    self.logger.info("Thread deleted successfully: %s", deleteResponse)
+                    print('deleteResponse', deleteResponse)
+                except Exception as delete_e:
+                    self.logger.error("Failed to delete thread: %s", str(delete_e))
+                print('self.thread_id', self.thread_id)
+        
+        return response
 
-        self.logger.info("Completed inferring using OpenAI Assistant Inferer")
 
-        # Fetch and return the assistant's response
-        return self._fetch_response()
 
     def generate_prompt(self, retrieved_context, problem_statement):
         """
