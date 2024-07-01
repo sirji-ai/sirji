@@ -62,7 +62,19 @@ class ResearchAgent:
 
         self.assistant_uploaded_file_path = os.path.join(self._get_run_path(), "assistant_uploaded_files.json")
 
+        self.assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
+
         self.assistant_uploaded_files = self._load_assistant_uploaded_files()
+
+        # Fetch OpenAI API key from environment variable
+        api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "OpenAI API key is not set as an environment variable")
+
+        # Initialize OpenAI client
+        self.client = OpenAI(api_key=api_key)
 
     def message(self, input_message):
         """Public method to process input messages and dispatch actions."""
@@ -344,6 +356,10 @@ class ResearchAgent:
         if api_key is None:
             raise ValueError(
                 "OpenAI API key is not set as an environment variable")
+        
+        if  self._check_if_assistant_exist():
+            self.logger.info("Assistant exist so returning")
+            return
 
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key)
@@ -379,10 +395,75 @@ class ResearchAgent:
         assistant_details = {
             "assistant_id": assistant.id,
             "vector_store_id": vector_store.id,
-            "status": "created"
+            "status": "active"
         }
 
         print(assistant_details)
         assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
         with open(assistant_details_path, 'w') as f:
             json.dump(assistant_details, f, indent=4)
+
+    def _check_if_assistant_exist(self):
+        """Check if assistant exists."""
+        
+        if os.path.exists(self.assistant_details_path):
+            with open(self.assistant_details_path, 'r') as f:
+                assistant_details = json.load(f)
+                return assistant_details['status'] == 'created'
+        else:
+            return False
+        
+    def _sync_file(self, file_path):
+        """Sync file with the assistant."""
+
+        print("syncing file with assistant", file_path)
+
+        if not self._check_if_assistant_exist():
+            self.logger.info("Assistant does not exist")
+            return "Assistant does not exist"
+
+        self.logger.info("Syncing file with assistant")
+
+        for file in self.assistant_uploaded_files:
+            if file['local_path'] == file_path:   
+                file_id = file['file_id']
+                self._embeddings_manager.delete_file_from_vector_store(file_id)
+                self.logger.info(f"Deleted {file_id} file from vector store")
+                self._embeddings_manager.delete_file_from_assistant(file_id)
+                self.logger.info(f"Deleted {file_id} file from assistant", file)
+                file_to_remove = file
+                self.assistant_uploaded_files = [file for file in self.assistant_uploaded_files if file != file_to_remove]
+                with open(self.assistant_uploaded_file_path, 'w') as f:
+                    json.dump(self.assistant_uploaded_files, f, indent=4)
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                    content = file.read()
+                    language_name = self._detect_language_from_extension(file_path)
+                    formatted_content = self._format_file_content(file_path, content, language_name)
+                    hash_object = hashlib.md5(file_path.encode())
+                    file_hash = hash_object.hexdigest()
+                    target_file_name = f"{file_hash}.md"
+                    self.file_streams = [(target_file_name, formatted_content)]
+                    uploaded_files =  self._embeddings_manager._upload_file(self.file_streams)
+                    list_batches_files = self._embeddings_manager._list_uploaded_files(uploaded_files.id)
+                    for uploaded_file in list_batches_files.data:
+                        file_info = {
+                            'file_id': uploaded_file.id,
+                            'created_at': uploaded_file.created_at,
+                            'status': uploaded_file.status,
+                        }
+                        vector_store_file = self.client.files.retrieve(uploaded_file.id)
+                        self.assistant_uploaded_files.append({
+                                'local_path': file_path,
+                                'file_id': uploaded_file.id,
+                                'md_file_id': vector_store_file.filename
+                        })
+                    with open(self.assistant_uploaded_file_path, 'w') as f:
+                        json.dump(self.assistant_uploaded_files, f, indent=4)
+                    return "Synced file with assistant"
+                    break 
+            
+                   
+        self.logger.info("Completed syncing file with assistant")
+        return "File not found in assistant uploaded files"
+    
+            

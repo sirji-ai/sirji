@@ -181,4 +181,27 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         """
         return self.client.beta.assistants.files.create(
                assistant_id=self.init_payload['assistant_id'], file_id=file_id)
+    
+    def delete_file_from_vector_store(self, file_id):
+        self.logger.info(f"Deleting {file_id} file from vector store")
+        """
+        Delete file from vector store.
+        """
+        self.client.beta.vector_stores.files.delete(
+                vector_store_id= self.init_payload['vector_store_id'], file_id=file_id
+            )
+       
+        print("res delete_file_from_vector_store")
+
+    
+    def delete_file_from_assistant(self, file_id):
+        self.logger.info(f"Deleting {file_id} file")
+        """
+        Delete file.
+        """
+        self.client.files.delete(file_id)
+
+        print("res delete_file_from_assistant")
+    
+
 

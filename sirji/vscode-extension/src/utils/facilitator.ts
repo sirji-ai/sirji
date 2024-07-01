@@ -528,6 +528,54 @@ export class Facilitator {
               );
               const executorResp = await executor.perform();
 
+              if (
+                parsedMessage.ACTION === ACTION_ENUM.INSERT_ABOVE ||
+                parsedMessage.ACTION === ACTION_ENUM.INSERT_BELOW ||
+                parsedMessage.ACTION === ACTION_ENUM.FIND_AND_REPLACE ||
+                parsedMessage.ACTION === ACTION_ENUM.CREATE_PROJECT_FILE
+              ) {
+                switch (parsedMessage.ACTION) {
+                  case ACTION_ENUM.INSERT_ABOVE:
+                    let filePath = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
+                    filePath = path.join(oThis.projectRootPath, filePath);
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                      '--file_path',
+                      filePath
+                    ]);
+                    break;
+                  case ACTION_ENUM.INSERT_BELOW:
+                    let filePathBelow = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
+                    filePathBelow = path.join(oThis.projectRootPath, filePathBelow);
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                      '--file_path',
+                      filePathBelow
+                    ]);
+                    break;
+
+                  case ACTION_ENUM.FIND_AND_REPLACE:
+                    let filePathFindAndReplace = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
+                    filePathFindAndReplace = path.join(oThis.projectRootPath, filePathFindAndReplace);
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                      '--file_path',
+                      filePathFindAndReplace
+                    ]);
+                    break;
+
+                  case ACTION_ENUM.CREATE_PROJECT_FILE:
+                    const [filePathPart, fileContent] = parsedMessage.BODY.split('---');
+                    const createFilePath = filePathPart.replace('File path:', '').trim();
+                    let filePathCreate = path.join(oThis.projectRootPath, createFilePath);
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                      '--file_path',
+                      filePathCreate
+                    ]);
+                    break;
+
+                  default:
+                    break;
+                }
+              }
+
               rawMessage = executorResp.rawMessage;
               parsedMessage = executorResp.parsedMessage;
               oThis.writeToFile(inputFilePath, rawMessage);
@@ -543,39 +591,35 @@ export class Facilitator {
             break;
 
           case ACTOR_ENUM.RESEARCHER:
-              console.log('Researcher message', parsedMessage);
-              try {
-                await spawnAdapter(
-                  oThis.context,
-                  oThis.sirjiInstallationFolderPath,
-                  oThis.sirjiRunFolderPath,
-                  oThis.projectRootPath,
-                  path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py')
-                );
-              } catch (error) {
-                oThis.sendErrorToChatPanel(error);
-                keepFacilitating = false;
-              }
-  
-              const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'RESEARCHER.json');
-              console.log('researcherConversationFilePath-----', researcherConversationFilePath);
-  
-              let researcherConversationContent = JSON.parse(fs.readFileSync(researcherConversationFilePath, 'utf-8'));
-  
-              const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
-  
-              console.log('lastCoderMessage', lastResearcherMessage);
-  
-              rawMessage = lastResearcherMessage?.content;
-  
-              parsedMessage = lastResearcherMessage?.parsed_content;
-  
-              oThis.writeToFile(inputFilePath, rawMessage);
+            console.log('Researcher message', parsedMessage);
+            try {
+              await spawnAdapter(
+                oThis.context,
+                oThis.sirjiInstallationFolderPath,
+                oThis.sirjiRunFolderPath,
+                oThis.projectRootPath,
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py')
+              );
+            } catch (error) {
+              oThis.sendErrorToChatPanel(error);
+              keepFacilitating = false;
+            }
 
-              // Todo @vaibhav: Add token generation for researcher
-              // await oThis.tokenManager?.generateAggregateTokenForOrchestrator();
-              break;
-               
+            const researcherConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', 'RESEARCHER.json');
+            console.log('researcherConversationFilePath-----', researcherConversationFilePath);
+
+            let researcherConversationContent = JSON.parse(fs.readFileSync(researcherConversationFilePath, 'utf-8'));
+
+            const lastResearcherMessage: any = researcherConversationContent.conversations[researcherConversationContent.conversations.length - 1];
+
+            console.log('lastCoderMessage', lastResearcherMessage);
+
+            rawMessage = lastResearcherMessage?.content;
+
+            parsedMessage = lastResearcherMessage?.parsed_content;
+
+            oThis.writeToFile(inputFilePath, rawMessage);
+
           default:
             let agent_id = parsedMessage.TO;
 
