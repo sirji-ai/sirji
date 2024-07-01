@@ -3,7 +3,7 @@ import json
 import textwrap
 from openai import OpenAI
 import hashlib
-
+from datetime import datetime
 
 from sirji_tools.crawler import crawl_urls
 from sirji_tools.search import search_for
@@ -348,8 +348,13 @@ class ResearchAgent:
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key)
 
+        project_folder = os.environ.get("SIRJI_PROJECT")
+
+        project_name = project_folder.split("/")[-1]
+        assistant_name = f"Research Assistant - {project_name} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
         assistant = client.beta.assistants.create(
-            name="Research Assistant",
+            name=assistant_name,
             instructions=body,
             tools=[{"type": "file_search"}],
             model=os.environ.get("SIRJI_MODEL")
