@@ -118,8 +118,6 @@ class ResearchAgentRunner:
 
         self.write_conversations_to_file(conversation_file_path, conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt, 'gpt-4o')
 
-
-
 if __name__ == "__main__":
     agent_runner = ResearchAgentRunner()
     agent_runner.main('RESEARCHER')

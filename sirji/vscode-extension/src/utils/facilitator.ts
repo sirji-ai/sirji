@@ -485,11 +485,34 @@ export class Facilitator {
             parsedMessage = lastOrchestratorMessage?.parsed_content;
 
             oThis.writeToFile(inputFilePath, rawMessage);
-            await oThis.tokenManager?.generateAggregateTokenForOrchestrator();
+            await oThis.tokenManager?.generateAggregateTokenForAgent(ACTOR_ENUM.ORCHESTRATOR);
             break;
 
           case ACTOR_ENUM.USER:
             if (parsedMessage.ACTION === ACTION_ENUM.SOLUTION_COMPLETE) {
+              try {
+                oThis.chatPanel?.webview.postMessage({
+                  type: 'botMessage',
+                  content: { message: 'The assistant cleanup is in progress. Please wait...', allowUserMessage: false }
+                });
+            
+                await spawnAdapter(
+                  oThis.context,
+                  oThis.sirjiInstallationFolderPath,
+                  oThis.sirjiRunFolderPath,
+                  oThis.projectRootPath,
+                  path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
+                );
+              } catch (error) {
+                oThis.sendErrorToChatPanel(error);
+                keepFacilitating = false;
+              }
+
+              oThis.chatPanel?.webview.postMessage({
+                type: 'botMessage',
+                content: { message: 'The cleanup is complete.', allowUserMessage: false }
+              });
+
               keepFacilitating = false;
               oThis.chatPanel?.webview.postMessage({
                 type: 'solutionCompleted',
@@ -620,6 +643,9 @@ export class Facilitator {
 
             oThis.writeToFile(inputFilePath, rawMessage);
 
+            await oThis.tokenManager?.generateAggregateTokenForAgent(ACTOR_ENUM.RESEARCHER);
+            break;
+              
           default:
             let agent_id = parsedMessage.TO;
 
