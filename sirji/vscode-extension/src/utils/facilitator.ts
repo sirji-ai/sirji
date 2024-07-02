@@ -538,7 +538,7 @@ export class Facilitator {
                   case ACTION_ENUM.INSERT_ABOVE:
                     let filePath = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
                     filePath = path.join(oThis.projectRootPath, filePath);
-                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'sync_file.py'), [
                       '--file_path',
                       filePath
                     ]);
@@ -546,7 +546,7 @@ export class Facilitator {
                   case ACTION_ENUM.INSERT_BELOW:
                     let filePathBelow = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
                     filePathBelow = path.join(oThis.projectRootPath, filePathBelow);
-                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'sync_file.py'), [
                       '--file_path',
                       filePathBelow
                     ]);
@@ -555,7 +555,7 @@ export class Facilitator {
                   case ACTION_ENUM.FIND_AND_REPLACE:
                     let filePathFindAndReplace = parsedMessage.BODY.split('FILE_PATH:')[1].split('---')[0].trim();
                     filePathFindAndReplace = path.join(oThis.projectRootPath, filePathFindAndReplace);
-                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'sync_file.py'), [
                       '--file_path',
                       filePathFindAndReplace
                     ]);
@@ -565,7 +565,7 @@ export class Facilitator {
                     const [filePathPart, fileContent] = parsedMessage.BODY.split('---');
                     const createFilePath = filePathPart.replace('File path:', '').trim();
                     let filePathCreate = path.join(oThis.projectRootPath, createFilePath);
-                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'sync_file.py'), [
+                    await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'sync_file.py'), [
                       '--file_path',
                       filePathCreate
                     ]);

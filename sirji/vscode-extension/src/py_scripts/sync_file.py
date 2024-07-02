@@ -7,14 +7,29 @@ import yaml;
 from sirji_agents import ResearchAgent;
 
 class SyncFile:
+  
+  def _get_run_path(self):
+    run_id = os.environ.get("SIRJI_RUN_PATH")
+    if run_id is None:
+        raise ValueError(
+            "SIRJI_RUN_PATH is not set as an environment variable")
+    return run_id 
+    
 
-  def read_assistant_details(self, file_path):
+  def read_assistant_details(self):
     assistant_details_path = os.path.join(self._get_run_path(), 'assistant_details.json')
     if os.path.exists(assistant_details_path):
         with open(assistant_details_path, 'r') as file:
             return json.load(file)
     else:
         return {}
+    
+  def read_file(self, file_path):
+        print('---------')
+        print(file_path)
+        with open(file_path, 'r') as file:
+            contents = file.read()
+        return contents 
 
   def main(self, file_path):
 
