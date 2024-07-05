@@ -44,10 +44,10 @@ class CleanupHelper:
             for file_details in assistant_uploaded_files_details:
                 self.cleanup_file(file_details['file_id'])
 
-    def main(self, agent_id):
+    def main(self):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
-        reasearcher_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
+        reasearcher_config_path = os.path.join(installed_agent_folder, f'RESEARCHER.yml')
         config_file_contents = self.read_file(reasearcher_config_path)
         config = yaml.safe_load(config_file_contents)
 
@@ -83,4 +83,4 @@ class CleanupHelper:
         
 if __name__ == "__main__":
     runner = CleanupHelper()
-    runner.main('RESEARCHER')
+    runner.main()
