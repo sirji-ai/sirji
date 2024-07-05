@@ -67,6 +67,19 @@ export class Facilitator {
     return oThis.chatPanel;
   }
 
+  public getChatPanel() {
+    const oThis = this;
+    return oThis.chatPanel;
+  }
+
+  public revealChatPanel() {
+    const oThis = this;
+    if (oThis.chatPanel) {
+      oThis.chatPanel.reveal(vscode.ViewColumn.One);
+    }
+  }
+
+
   private async selectProjectFolder(): Promise<void> {
     const oThis = this;
 
@@ -313,6 +326,14 @@ export class Facilitator {
         content: { message: "Please configure your environment by simply tapping on the settings icon. Let's get you all set up and ready to go!", allowUserMessage: false }
       });
     } else {
+
+      try {
+      console.log('Cleaning up existing runs...');
+      await oThis.cleanupExistingRun();
+      } catch (error) {
+        console.error('Error cleaning up existing runs:', error);
+      } 
+
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
         content: { message: 'I am all setup!', allowUserMessage: false }
@@ -808,15 +829,84 @@ export class Facilitator {
     };
   }
 
-  private sendErrorToChatPanel(error: any) {
+  private async sendErrorToChatPanel(error: any) {
     const oThis = this;
 
-    const detailedErrorMessage = `An error occurred during the execution of the Python script: : ${error}`;
+    const errorLogFilePath = path.join(oThis.sirjiRunFolderPath, 'error.log');
+    fs.writeFileSync(errorLogFilePath, error, 'utf-8');
+
+    oThis.chatPanel?.webview.postMessage({
+      type: 'botMessage',
+      content: { message: 'An error occurred during the execution of the Python script. Working on cleanup. Please wait...', allowUserMessage: false }
+    });
+
+    await oThis.cleanup();
+
+    const detailedErrorMessage = `Cleanup done.\nPlease check the error log file at: ${errorLogFilePath}`;
 
     oThis.chatPanel?.webview.postMessage({
       type: 'botMessage',
       content: { message: detailedErrorMessage, allowUserMessage: true }
     });
   }
+
+  public async cleanup(runPath: string = this.sirjiRunFolderPath) {
+    console.log('Performing cleanup tasks...');
+    const oThis = this;
+
+    try {
+      await spawnAdapter(
+        oThis.context,
+        oThis.sirjiInstallationFolderPath,
+        runPath,
+        oThis.projectRootPath,
+        path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
+      );
+      console.log('Cleanup tasks completed.');
+    } catch (error) {
+      console.error('Error executing cleanup script:', error);
+    }
+  }
+
+  public async cleanupExistingRun() {
+    const oThis = this;
+
+    console.log('Cleaning up existing run...');
+
+    const sessionFolderPath = path.join(oThis.sirjiInstallationFolderPath, Constants.SESSIONS);
+    const allRuns = fs.readdirSync(sessionFolderPath);
+
+    allRuns.sort((a, b) => {
+      const aTimestamp = parseInt(a.split('_')[0]);
+      const bTimestamp = parseInt(b.split('_')[0]);
+
+      return bTimestamp - aTimestamp;
+    });
+
+    let runsWithActiveAssistantDetails = [];
+
+    for (let i = 0; i < allRuns.length; i++) {
+      const runPath = path.join(sessionFolderPath, allRuns[i]);
+      const assistantDetailsFilePath = path.join(runPath, 'assistant_details.json');
+      if (fs.existsSync(assistantDetailsFilePath)) {
+        const assistantDetails = JSON.parse(fs.readFileSync(assistantDetailsFilePath, 'utf-8'));
+        if (assistantDetails.status === 'active') {
+          runsWithActiveAssistantDetails.push(allRuns[i]);
+        }
+      }
+    }
+    
+    console.log('Existing runs with active assistant:', runsWithActiveAssistantDetails);
+    
+    for (let i = 0; i < runsWithActiveAssistantDetails.length; i++) {
+      const runPath = path.join(sessionFolderPath, runsWithActiveAssistantDetails[i]);
+      console.log('Cleaning up run:', runsWithActiveAssistantDetails[i]);
+      await oThis.cleanup(runPath);
+      console.log('Cleanup completed for run:', runPath);
+    }
+    
+    console.log('Existing runs cleanup completed.');     
+  }
 }
+
 async function getResponseFromExecutor(parsedMessage: any, oThis: any, rawMessage: string, keepFacilitating: Boolean) {}

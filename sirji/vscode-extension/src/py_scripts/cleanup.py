@@ -35,14 +35,14 @@ class CleanupHelper:
         cleanup_instance.delete_file(file_path)
 
     def cleanup_vector_store(self, vector_store_id):
-        cleanup_instance = CleanupFactory.get_instance()
-        cleanup_instance.delete_vector_store(vector_store_id)
-
         assistant_uploaded_files_details = self.read_run_file('assistant_uploaded_files.json')
 
         if assistant_uploaded_files_details:
             for file_details in assistant_uploaded_files_details:
                 self.cleanup_file(file_details['file_id'])
+
+        cleanup_instance = CleanupFactory.get_instance()
+        cleanup_instance.delete_vector_store(vector_store_id)
 
     def main(self):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
@@ -59,19 +59,18 @@ class CleanupHelper:
         os.environ['SIRJI_MODEL'] = llm['model']
         if llm['provider'] == 'openai':
             os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_OPENAI_API_KEY')
-        elif llm['provider'] == 'deepseek':
-            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_DEEPSEEK_API_KEY')
-        elif llm['provider'] == 'anthropic':
-            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_ANTHROPIC_API_KEY')
+        else:
+            errorMsg = f"Unsupported provider: {llm['provider']}"
+            raise ValueError(errorMsg)
 
         # Read init_payload from assistant_details.json
         assistant_details = self.read_run_file('assistant_details.json')
 
         if assistant_details and assistant_details.get('status') == 'active':
-            if assistant_details.get('assistant_id'):
-                self.cleanup_assistant(assistant_details.get('assistant_id'))
             if assistant_details.get('vector_store_id'):
                 self.cleanup_vector_store(assistant_details.get('vector_store_id'))
+            if assistant_details.get('assistant_id'):
+                self.cleanup_assistant(assistant_details.get('assistant_id'))
             # Update the status in assistant_details.json to 'deleted'
             assistant_details['status'] = 'deleted'
             assistant_details_path = os.path.join(self._get_run_path(), 'assistant_details.json')
