@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { randomBytes } from 'crypto';
 import path from 'path';
-import os from 'os';
 import * as fs from 'fs';
 
 import { renderView } from './render_view';
@@ -11,7 +10,6 @@ import { SecretStorage } from './secret_storage';
 import { Constants, ACTOR_ENUM, ACTION_ENUM } from './constants';
 
 import { Executor } from './executor/executor';
-import { readDependencies } from './executor/extract_file_dependencies';
 
 import { AgentStackManager } from './agent_stack_manager';
 import { SessionManager } from './session_manager';
@@ -27,10 +25,6 @@ export class Facilitator {
   private secretManager: SecretStorage | undefined;
   private envVars: any = undefined;
   private historyManager: MaintainHistory | undefined;
-  private isPlannerTabShown: Boolean = false;
-  private isResearcherTabShown: Boolean = false;
-  private isCoderTabShown: Boolean = false;
-  private isFirstUserMessage: Boolean = true;
   private stackManager: AgentStackManager = new AgentStackManager();
   private sessionManager: SessionManager | null = null;
   private agentOutputFolderPath: string = '';
