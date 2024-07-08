@@ -4,6 +4,7 @@ import textwrap
 from openai import OpenAI
 import hashlib
 from datetime import datetime
+import re
 
 from sirji_tools.crawler import crawl_urls
 from sirji_tools.search import search_for
@@ -39,6 +40,41 @@ DEFAULT_SKIP_LIST = [
     '.env.development',
     '.env.production',
     '.env.staging'
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.gif',
+    '.svg',
+    '.ico',
+    '.woff',
+    '.woff2',
+    '.eot',
+    '.ttf',
+    '.otf',
+    '.mp4',
+    '.webm',
+    '.ogg',
+    '.mp3',
+    '.wav',
+    '.flac',
+    '.aac',
+    '.zip',
+    '.rar',
+    '.tar',
+    '.gz',
+    '.7z',
+    '.pdf',
+    '.doc',
+    '.docx',
+    '.xls',
+    '.xlsx',
+    '.ppt',
+    '.pptx',
+    '.csv',
+    '.json',
+    '.xml',
+    '.yaml',
+    '.yml',
 ]
 
 
@@ -137,9 +173,38 @@ class ResearchAgent:
 
     #     return self._generate_message(ActionEnum.TRAINING_OUTPUT, "Training using url completed successfully"), 0, 0
 
+    def get_file_content(self, folder, path):
+        # Construct the full path
+        project_path = os.environ.get("SIRJI_PROJECT")
+        full_path = os.path.join(project_path, path)
+        print("full_path", full_path)
+        # Read and return the file content
+        with open(full_path, 'r') as file:
+            return file.read()
+
+    def replace_sirji_tags(self, text):
+        # Find all <sirji> tags in the text
+        print("text", text)
+        # Ensure we properly handle escape sequences in the pattern
+        pattern = re.compile(r'<sirji folder="([^"]+)" path="([^"]+)"></sirji>')
+        print("pattern", pattern)
+        matches = pattern.findall(text)
+        
+        print("matches", matches)
+        
+        # Replace each <sirji> tag with the file content
+        for folder, path in matches:
+            file_content = self.get_file_content(folder, path)
+            print("file_content", file_content)
+            sirji_tag = f'<sirji folder="{folder}" path="{path}"></sirji>'
+            text = text.replace(sirji_tag, file_content)
+        
+        return text
+
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
         self.logger.info(f"Infering: {parsed_message.get('BODY')}")
+        print(f"Infering: {parsed_message.get('BODY')}")
         response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('BODY'))
 
         print(f"Response: {response}")
@@ -186,7 +251,13 @@ class ResearchAgent:
         """Infer based on the given problem statement and context."""
 
         self._inferer = InfererFactory.get_instance(self.init_payload)
-        
+
+        self.logger.info(f"Problem statement before replacing tags: {problem_statement}")
+
+        problem_statement =  self.replace_sirji_tags(problem_statement)
+
+        self.logger.info(f"Infering problem_statement after replacing tags: {problem_statement}")
+    
         return self._inferer.infer(problem_statement)
 
     def __reindex(self):
@@ -240,7 +311,7 @@ class ResearchAgent:
             
             # Prepare file data and write to JSON
             file_data = [{
-                'local_path': file_path,
+                'local_path': os.path.abspath(file_path),
                 'file_id': uploaded_file['file_id'],
                 'md_file_id': uploaded_file['file_name']
             } for file_path, uploaded_file in zip(self.file_paths, uploaded_files)]
@@ -409,7 +480,7 @@ class ResearchAgent:
         if os.path.exists(self.assistant_details_path):
             with open(self.assistant_details_path, 'r') as f:
                 assistant_details = json.load(f)
-                return assistant_details['status'] == 'created'
+                return assistant_details['status'] == 'active'
         else:
             return False
         
@@ -427,6 +498,7 @@ class ResearchAgent:
         for file in self.assistant_uploaded_files:
             if file['local_path'] == file_path:   
                 file_id = file['file_id']
+                self._embeddings_manager = EmbeddingsFactory.get_instance(self.init_payload)
                 self._embeddings_manager.delete_file_from_vector_store(file_id)
                 self.logger.info(f"Deleted {file_id} file from vector store")
                 self._embeddings_manager.delete_file_from_assistant(file_id)

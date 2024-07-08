@@ -7,7 +7,7 @@ from sirji_tools.logger import create_logger
 
 from .base import BaseEmbeddings
 
-BATCH_SIZE = 10
+BATCH_SIZE = 50
 MAX_RETRIES = 2
 
 class OpenAIAssistantEmbeddings(BaseEmbeddings):

@@ -7,6 +7,8 @@ import yaml;
 from sirji_agents import ResearchAgent;
 
 class SyncFile:
+  def __init__(self):
+      self.assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
   
   def _get_run_path(self):
     run_id = os.environ.get("SIRJI_RUN_PATH")
@@ -24,6 +26,16 @@ class SyncFile:
     else:
         return {}
     
+  def _check_if_assistant_exist(self):
+        """Check if assistant exists."""
+        
+        if os.path.exists(self.assistant_details_path):
+            with open(self.assistant_details_path, 'r') as f:
+                assistant_details = json.load(f)
+                return assistant_details['status'] == 'active'
+        else:
+            return False
+    
   def read_file(self, file_path):
         print('---------')
         print(file_path)
@@ -32,6 +44,9 @@ class SyncFile:
         return contents 
 
   def main(self, file_path):
+    
+    if not self._check_if_assistant_exist():
+        return "Assistant does not exist."
 
     sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
    
