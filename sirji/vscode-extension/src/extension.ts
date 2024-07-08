@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Facilitator } from './utils/facilitator';
 import path from 'path';
 let facilitatorInstance: Facilitator | undefined = undefined;
+import * as fs from 'fs';
 
 function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand('sirji.chat', async function () {
@@ -30,6 +31,32 @@ function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposable);
   context.subscriptions.push(openStudio);
+
+  const currentVersion = vscode.extensions.getExtension('TrueSparrow.sirji')!.packageJSON.version;
+    const previousVersion = context.globalState.get('extensionVersion');
+
+    console.log('Current version:', currentVersion);
+    console.log('Previous version:', previousVersion);
+
+    let rootPath = context?.globalStorageUri.path || '';
+    let sirjiInstallationFolderPath = path.join(rootPath, 'Sirji');
+
+    const venvPath = path.join(sirjiInstallationFolderPath, 'venv');
+
+    if (previousVersion && currentVersion !== previousVersion) {
+        vscode.window.showInformationMessage(`Sirji extension updated from version ${previousVersion} to ${currentVersion}`);
+        removeVenv(venvPath);
+    }
+
+    // Store the current version in global state
+    context.globalState.update('extensionVersion', currentVersion);
+
+}
+
+function removeVenv(venvPath: string) {
+  if (fs.existsSync(venvPath)) {
+    fs.rmdirSync(venvPath, { recursive: true });
+  }
 }
 
 /**
