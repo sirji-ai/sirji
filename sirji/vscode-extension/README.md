@@ -27,25 +27,9 @@
 
 Sirji is a framework designed to build and run custom AI agents for your everyday development tasks.
 
-Sirji has two main product components: Sirji Studio and Sirji VS Code Extension.
+An agent in the Sirji framework is a modular AI component designed to perform specific task based on custom pseudocode. [Here](./docs/How%20to%20Write%20an%20Agent.md) is a guide for writing your own custom agent.
 
-### Sirji Studio
-
-We have built the framework that allows the developer community to build custom agents simply by writing pseudocode in plain English.
-
-Custom agents help capture and convey the developer's code writing style and domain knowledge to Sirji. They performs a specific task based on a custom pseudocode. The community can create a custom agent either by modifying an existing agent or by writing an entirely new agent with a different pseudocode.
-
-### Sirji VS Code Extension
-
-We have build and released the [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=TrueSparrow.sirji) on the Visual Studio Marketplace.
-
-This extension has the following features implemented:
-- Interactive chat interface allows user to submit their problem statements and give feedback to Sirji.
-- Messaging protocol implements the allowed response templates for messages exchanged between various agents.
-- Orchestrator enables requirement gathering, recipe selection, recipe execution by invoking agents
-- Executor makes these functionalities accessible to the agents: file system access, search, find & replace, insert text in project files, install packages, execute commands, run code, run test cases.
-- Agent Sessions provide the ability to invoke an agent with a fresh LLM conversation or continue on an existing LLM conversation.
-- Logs and Token Usage Summary are displayed alongside the interactive chat interface.
+[Here](./docs/Sirji%20Studio.md) is a guide to organize and share your custom agents.
 
 ## Installation
 
@@ -57,7 +41,7 @@ Make sure you have installed all of the following prerequisites on your machine:
 - Python (>= 3.10) - Make sure `python --version` runs without error.
 - tee command - Make sure `which tee` runs without error.
 
-Also, you will need an OpenAI API key to access the GPT-4o model.
+For LLM inference, you would need an API key from at least one of OpenAI, Anthropic or DeepSeek.
 
 ## Demo Video
 
@@ -69,6 +53,9 @@ Here's a three-minute demo. We tasked Sirji with creating a new API and its test
 Watch on YouTube: <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank">https://www.youtube.com/watch?v=NA7uPIvcvmg</a>
 
 <a href="https://www.youtube.com/watch?v=NA7uPIvcvmg" target="_blank"><img src="https://github.com/sirji-ai/sirji/assets/7627517/8156bdd5-7324-47e4-a375-df0d29e095c9" alt="Custom Agents for Creating a New API and Test Cases in an Existing Node.js Repository"></a>
+
+**Note:
+Sirji is still rough on the edges. We are also working on better documentation (particularly for Sirji Studio). So we suggest if you want to try Sirji, please let us give you a walkthrough. You can book a call with us [here](https://calendly.com/nishith-true-sparrow/30min).**
 
 ## Architecture
 

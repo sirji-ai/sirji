@@ -31,6 +31,6 @@ def test_store_in_agent_output_message_instructions():
     message = StoreInAgentOutputMessage()
     instructions = message.instructions()
     
-    assert instructions == [
-        "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."
-    ]
+    assert instructions == [ 
+        "Make sure the body of the message contains the file path, file contents and file content description."
+        "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]

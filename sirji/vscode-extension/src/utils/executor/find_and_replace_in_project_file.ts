@@ -2,7 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
 
-export const findAndReplaceInProjectFile = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+const escapeRegExp = (string: string) => {
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+};
+
+export const findAndReplaceInProjectFile = async (body: string, projectRootPath: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<any> => {
   let searchText, replacement, filePath;
 
   try {
@@ -47,7 +51,7 @@ export const findAndReplaceInProjectFile = async (body: string, projectRootPath:
       }
 
       await editor.edit((editBuilder) => {
-        const regex = new RegExp(searchText, 'g');
+        const regex = new RegExp(escapeRegExp(searchText), 'g');
         text = text.replace(regex, replacement);
         editBuilder.replace(allText, text);
       });

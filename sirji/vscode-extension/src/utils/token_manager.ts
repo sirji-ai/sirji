@@ -43,6 +43,17 @@ export class TokenManager {
     this.addTokensToAggregateTokens('ORCHESTRATOR', input_tokens, output_tokens, llm_model);
   }
 
+  public generateAggregateTokenForAgent(agent_name: string) {
+    console.log('TokenManager: generateAggregateTokenForAgent:', agent_name);
+    const agentFilePath = path.join(this.conversationFolderPath, `${agent_name}.json`);
+    const agentFileContent = this.readFile(agentFilePath);
+    if (!Object.keys(agentFileContent).length) {
+      return;
+    }
+    const { input_tokens, output_tokens, llm_model } = agentFileContent;
+    this.addTokensToAggregateTokens(agent_name, input_tokens, output_tokens, llm_model);
+  }
+
   public async addTokensToAggregateTokens(key: string, input_tokens: number, output_tokens: number, llm_model: string) {
     if (!this.aggregateTokens[key]) {
       this.aggregateTokens[key] = {

@@ -1,19 +1,12 @@
 import argparse
 import os
 import json
+import yaml
+
 from sirji_messages import message_parse
 from sirji_agents import ResearchAgent
 
 class ResearchAgentRunner:
-    def get_workplace_file_path(self, filename):
-        return os.path.join(self._get_run_path(), filename)
-    
-    def _get_project_folder(self):
-        project_folder = os.environ.get("SIRJI_PROJECT")
-        if project_folder is None:
-            raise ValueError(
-                "SIRJI_PROJECT is not set as an environment variable")
-        return project_folder
     
     def _get_run_path(self):
         run_id = os.environ.get("SIRJI_RUN_PATH")
@@ -22,62 +15,109 @@ class ResearchAgentRunner:
                 "SIRJI_RUN_PATH is not set as an environment variable")
         return run_id 
     
+
     def read_or_initialize_conversation_file(self, file_path):
         if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
             with open(file_path, 'w') as file:
-                json.dump({"conversations": [], "init_payload": {}, "prompt_tokens": 0, "completion_tokens": 0}, file, indent=4)
-                return [], {}, 0, 0
+                json.dump({"conversations": [], "input_tokens": 0, "output_tokens": 0, "max_input_tokens_for_a_prompt": 0, "max_output_tokens_for_a_prompt": 0}, file, indent=4)
+                return [], 0, 0, 0, 0
         else:
             with open(file_path, 'r') as file:
                 contents = json.load(file)
-                return contents["conversations"], contents["init_payload"], contents["prompt_tokens"], contents["completion_tokens"]
+                return contents["conversations"], contents["input_tokens"], contents["output_tokens"], contents["max_input_tokens_for_a_prompt"], contents["max_output_tokens_for_a_prompt"]
 
-    def write_conversations_to_file(self, file_path, conversations, init_payload, prompt_tokens, completion_tokens):
+    def read_assistant_details(self):
+        assistant_details_path = os.path.join(self._get_run_path(), 'assistant_details.json')
+        if os.path.exists(assistant_details_path):
+            with open(assistant_details_path, 'r') as file:
+                return json.load(file)
+        else:
+            return {}
+
+    def write_conversations_to_file(self, file_path, conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt, llm_model):
         with open(file_path, 'w') as file:
-            json.dump({"conversations": conversations, "init_payload": init_payload, "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}, file, indent=4)
+            json.dump({"conversations": conversations, "input_tokens": input_tokens, "output_tokens": output_tokens, "max_input_tokens_for_a_prompt": max_input_tokens_for_a_prompt, "max_output_tokens_for_a_prompt": max_output_tokens_for_a_prompt, "llm_model": llm_model}, file, indent=4)
+            file.flush()
+            os.fsync(file.fileno())  # Ensure all internal buffers associated with the file are written to disk
 
     def process_input_file(self, input_file_path, conversations):
+        if not os.path.exists(input_file_path):
+            with open(input_file_path, 'w') as file:
+                json.dump({}, file, indent=4)
+        
         with open(input_file_path, 'r') as file:
             contents = file.read()
-        return contents
+            message_str = contents
+
+        return message_str
 
     def process_message(self, message_str, conversations, init_payload):
         # Appending the input message to the conversations
         conversations.append({"role": "user", "content": message_str, "parsed_content": message_parse(message_str)})
 
-        researcher = ResearchAgent('openai_assistant', 'openai_assistant', init_payload)
+        researcher = ResearchAgent(init_payload)
 
         response, prompt_tokens, completion_tokens = researcher.message(message_str)
 
-        updated_init_payload = researcher.init_payload
-
-        # Updating the init_payload in place, preserving the reference
-        init_payload.update(updated_init_payload)
+        print(f"Response: {response}")
 
         # Appending the response to the conversations
         conversations.append({"role": "assistant", "content": response, "parsed_content": message_parse(response)})
 
         return response, prompt_tokens, completion_tokens
+    
+
+    def read_file(self, input_file_path):
+        with open(input_file_path, 'r') as file:
+            contents = file.read()
+        return contents
         
-    def main(self, input_file, conversation_file):
-        input_file_path = self.get_workplace_file_path(input_file)
-        conversation_file_path = self.get_workplace_file_path(conversation_file)
+    def main(self, agent_id):
+        sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
+        sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
 
-        conversations, init_payload, prompt_tokens, completion_tokens = self.read_or_initialize_conversation_file(conversation_file_path)
+        print(f"Running Research Agent with agent_id: {agent_id}")
+        print(f"Using SIRJI_RUN_PATH: {sirji_run_path}")
 
+        input_file_path = os.path.join(sirji_run_path, 'input.txt')
+        conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
+
+        installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
+        reasearcher_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
+        config_file_contents = self.read_file(reasearcher_config_path)
+        config = yaml.safe_load(config_file_contents)
+
+        llm = config['llm']    
+
+        # Set SIRJI_MODEL_PROVIDER env var to llm.provider
+        os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
+        # Set SIRJI_MODEL env var to llm.model
+        os.environ['SIRJI_MODEL'] = llm['model']
+        if llm['provider'] == 'openai':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_OPENAI_API_KEY')
+        elif llm['provider'] == 'deepseek':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_DEEPSEEK_API_KEY')
+        elif llm['provider'] == 'anthropic':
+            os.environ['SIRJI_MODEL_PROVIDER_API_KEY'] = os.environ.get('SIRJI_ANTHROPIC_API_KEY')
+
+        conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt =  self.read_or_initialize_conversation_file(conversation_file_path)
         message_str = self.process_input_file(input_file_path, conversations)
+
+        # Read init_payload from assistant_details.json
+        assistant_details = self.read_assistant_details()
+
+        init_payload = assistant_details
 
         response, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, init_payload)
 
-        prompt_tokens += prompt_tokens_consumed
-        completion_tokens += completion_tokens_consumed
-        self.write_conversations_to_file(conversation_file_path, conversations, init_payload, prompt_tokens, completion_tokens)
+        input_tokens += prompt_tokens_consumed
+        output_tokens += completion_tokens_consumed
+
+        max_input_tokens_for_a_prompt = max(max_input_tokens_for_a_prompt, prompt_tokens_consumed)
+        max_output_tokens_for_a_prompt = max(max_output_tokens_for_a_prompt, completion_tokens_consumed)
+
+        self.write_conversations_to_file(conversation_file_path, conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt, 'gpt-4o')
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process interactions.")
-    parser.add_argument("--input", required=True, help="Input file name")
-    parser.add_argument("--conversation", required=True, help="Conversation file name")
-    
-    args = parser.parse_args()
     agent_runner = ResearchAgentRunner()
-    agent_runner.main(args.input, args.conversation)
+    agent_runner.main('RESEARCHER')

@@ -27,5 +27,7 @@ class StoreInAgentOutputMessage(BaseMessages):
         return "Create a file in the Agent Output Folder and register it to the Agent Output Index file"
     
     def instructions(self):
-        return [ "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]
+        return [ 
+            "Make sure the body of the message contains the file path, file contents and file content description."
+            "The file path must be in the following format: '{{Your Agent ID}}/{{file name}}'."]
 
