@@ -1,8 +1,8 @@
-# How to Write Agent Pseudocode
+# How to Write an Agent
 
 ## Introduction
 
-An agent in the Sirji framework is a modular AI component designed to perform specific tasks based on custom pseudocode.
+An agent in the Sirji framework is a modular AI component designed to perform specific task based on custom pseudocode.
 
 Think of the custom agent as a new team member. You need to provide it with your understanding of the existing architecture, design patterns, and code conventions used in the repository where you plan to use the custom agent to solve a problem. This understanding is conveyed through the agent's pseudocode.
 

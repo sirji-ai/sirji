@@ -28,7 +28,6 @@
 `sirji-agents` is a PyPI package that implements the following components of the Sirji AI agentic framework:
 - **Orchestrator**: The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
 - **Generic Agent**: Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
-- **Research Agent**: Utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
 By default, it utilizes:
 - OpenAI Chat Completions API
@@ -158,63 +157,6 @@ history = []
 message_str = "***\nFROM: ORCHESTRATOR\nTO: CODER\nACTION: INVOKE_AGENT\nSUMMARY: Implement the epic & user stories using the architecture components.\nBODY:\nPImplement the epic & user stories using the architecture components.\n***"
 
 response_message, history, prompt_tokens, completion_tokens = agent.message(message_str, history)
-```
-
-### Research Agent
-
-The Research Agent utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
-
-### Initialization
-
-```python
-from sirji_agents import ResearchAgent
-
-# Initialize Researcher without assistant ID
-researcher = ResearchAgent('openai_assistant', 'openai_assistant')
-
-# init_payload fetched from researcher object should be persisted
-init_payload = researcher.init_payload
-
-# Initialize Researcher with assistant ID
-researcher = ResearchAgent('openai_assistant', 'openai_assistant', init_payload)
-```
-
-Some example message handling usages are given below.
-
-#### Train using URL
-
-```python
-from sirji_messages import MessageFactory, ActionEnum
-
-message_class = MessageFactory[ActionEnum.TRAIN_USING_URL.name]
-
-body = {
-    "URL": "https://www.w3schools.com/python/python_json.asp"
-}
-
-message_str = message_class().generate({
-            "from_agent_id": "Id of the agent, who is invoking the action",
-            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
-            "body": body
-        })
-
-researcher.message(message_str)
-```
-
-#### Infer
-
-```python
-from sirji_messages import MessageFactory, ActionEnum
-
-message_class = MessageFactory[ActionEnum.INFER.name]
-infer_query = "What is the capital of India?"
-message_str = message_class().generate({
-            "from_agent_id": "Id of the agent, who is invoking the action",
-            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
-            "body": infer_query
-        })  
-        
-response, total_tokens = researcher.message(message_str)
 ```
 
 ## For Contributors
