@@ -8,7 +8,7 @@
 - Added an open-source test case agent.
 - Added `deepseek` as a new model provider for agents.
 - Added `anthropic` as a new model provider for agents.
-- Added `CREATE_ASSISTANT`, `INFER` and `SYNC_CODEBASE` actions to support infer from assistant capability.
+- Added OpenAI Assistants API integration by allowing agents to create, sync, and infer from a RAG (Retrieval-Augmented Generation) assistant. Added `CREATE_ASSISTANT`, `INFER` and `SYNC_CODEBASE` actions in the messaging protocol for the same.
 
 ### Bug Fixes
 
