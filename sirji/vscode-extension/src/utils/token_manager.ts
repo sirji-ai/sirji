@@ -20,12 +20,12 @@ export class TokenManager {
     this.aggregateTokenFilePath = aggregateTokenFilePath;
   }
 
-  private readFile(orchestratorFilePath: string) {
+  private readFile(jsonFilePath: string) {
     try {
-      if (!fs.existsSync(orchestratorFilePath)) {
+      if (!fs.existsSync(jsonFilePath)) {
         return {};
       }
-      const fileContents = fs.readFileSync(orchestratorFilePath, 'utf8');
+      const fileContents = fs.readFileSync(jsonFilePath, 'utf8');
       return JSON.parse(fileContents);
     } catch (error) {
       console.error('Error reading the orchestrator file:', error);
@@ -43,15 +43,15 @@ export class TokenManager {
     this.addTokensToAggregateTokens('ORCHESTRATOR', input_tokens, output_tokens, llm_model);
   }
 
-  public generateAggregateTokenForAgent(agent_name: string) {
-    console.log('TokenManager: generateAggregateTokenForAgent:', agent_name);
-    const agentFilePath = path.join(this.conversationFolderPath, `${agent_name}.json`);
-    const agentFileContent = this.readFile(agentFilePath);
+  public generateAggregateTokenForAgent(callstack_dot_session_id: string) {
+    console.log('TokenManager: generateAggregateTokenForAgent:', callstack_dot_session_id);
+    const agentConversationFilePath = path.join(this.conversationFolderPath, `${callstack_dot_session_id}.json`);
+    const agentFileContent = this.readFile(agentConversationFilePath);
     if (!Object.keys(agentFileContent).length) {
       return;
     }
     const { input_tokens, output_tokens, llm_model } = agentFileContent;
-    this.addTokensToAggregateTokens(agent_name, input_tokens, output_tokens, llm_model);
+    this.addTokensToAggregateTokens(callstack_dot_session_id, input_tokens, output_tokens, llm_model);
   }
 
   public async addTokensToAggregateTokens(key: string, input_tokens: number, output_tokens: number, llm_model: string) {
@@ -126,6 +126,7 @@ export class TokenManager {
       this.finalAggregateTokens = {};
       Object.keys(data).forEach((key) => {
         const splittedKey = key.split('.');
+        // TODO Daksh
         const newKey = splittedKey[0];
         if (!this.finalAggregateTokens[newKey]) {
           this.finalAggregateTokens[newKey] = {
@@ -151,6 +152,7 @@ export class TokenManager {
   }
 
   public async getTokenUsedInConversation() {
+    // TODO Daksh
     try {
       if (!fs.existsSync(this.aggregateTokenFilePath)) {
         return {};
