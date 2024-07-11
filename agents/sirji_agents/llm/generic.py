@@ -6,6 +6,7 @@ import json
 from sirji_tools.logger import create_logger
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
 from .model_providers.factory import LLMProviderFactory
+from ..decorators import retry_on_exception
 
 class GenericAgent():
     def __init__(self, config, agent_output_folder_index, file_summaries=None):
@@ -76,6 +77,7 @@ class GenericAgent():
                         
         return response_message, prompt_tokens, completion_tokens
     
+    @retry_on_exception()
     def __call_llm(self, conversation):
         history = []
 

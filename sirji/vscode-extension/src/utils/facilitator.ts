@@ -37,6 +37,7 @@ export class Facilitator {
   private stepsFolderPath: string = '';
   private stepsManager: StepManager | undefined;
   private aggregateTokenFilePath: string = '';
+  private asyncMessagesFolder: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -120,6 +121,9 @@ export class Facilitator {
     let fileSummariesIndexFilePath = path.join(fileSummariesFolderPath, 'index.json');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
     oThis.stepsFolderPath = path.join(runFolderPath, 'steps');
+    oThis.asyncMessagesFolder = path.join(runFolderPath, 'async_messages');
+
+    console.log('oThis.asyncMessagesFolder------', oThis.asyncMessagesFolder);
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
@@ -417,10 +421,54 @@ export class Facilitator {
     }
   }
 
+  
+  private processMessages = () => {
+    const oThis = this;
+    try {
+        console.log('Processing async messages...');
+        if (!fs.existsSync(oThis.asyncMessagesFolder)) {
+            return;
+        }
+
+        const files = fs.readdirSync(oThis.asyncMessagesFolder);
+
+        const jsonFiles = files
+            .filter(file => file.startsWith('notification_') && file.endsWith('.json'))
+            .sort((a, b) => {
+                const timestampA = a.match(/notification_(.*)\.json/)?.[1];
+                const timestampB = b.match(/notification_(.*)\.json/)?.[1];
+                return timestampA && timestampB ? timestampA.localeCompare(timestampB) : 0;
+            });
+
+        for (const file of jsonFiles) {
+            const filePath = path.join(oThis.asyncMessagesFolder, file);
+            try {
+                const content = fs.readFileSync(filePath, 'utf-8');
+                const message = JSON.parse(content);
+
+                console.log(`Message: ${message.content.message}`);
+                oThis.chatPanel?.webview.postMessage({
+                    type: 'botMessage',
+                    content: message.content
+                });
+
+                fs.unlinkSync(filePath);
+            } catch (err) {
+                console.error(`Error processing file ${file}:`, err);
+            }
+        }
+    } catch (err) {
+        console.error('Error reading async_messages folder:', err);
+    }
+};
+
   async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
+
+    setInterval(oThis.processMessages, 5000);
+
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
       oThis.updateSteps(parsedMessage);
