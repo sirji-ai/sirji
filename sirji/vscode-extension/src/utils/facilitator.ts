@@ -36,6 +36,7 @@ export class Facilitator {
   private isDebugging: Boolean = false;
   private stepsFolderPath: string = '';
   private stepsManager: StepManager | undefined;
+  private aggregateTokenFilePath: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -72,7 +73,6 @@ export class Facilitator {
       oThis.chatPanel.reveal(vscode.ViewColumn.One);
     }
   }
-
 
   private async selectProjectFolder(): Promise<void> {
     const oThis = this;
@@ -135,7 +135,9 @@ export class Facilitator {
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
     oThis.stepsManager = new StepManager(oThis.stepsFolderPath);
-    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
+    oThis.aggregateTokenFilePath = path.join(runFolderPath, 'aggregate_tokens.json');
+
+    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, oThis.aggregateTokenFilePath);
 
     if (!fs.existsSync(recipeFilePath)) {
       // Copy all the files from defaults folder to the studio folder
@@ -276,7 +278,7 @@ export class Facilitator {
   private async getTokenUsedAgentWise() {
     const oThis = this;
 
-    const tokenUsedInTheConversation = await oThis.tokenManager?.getTokenUsedInConversation();
+    const tokenUsedInTheConversation = await oThis.tokenManager?.readFile(oThis.aggregateTokenFilePath);
 
     console.log('tokenUsedInTheConversation------', tokenUsedInTheConversation);
 
@@ -320,13 +322,12 @@ export class Facilitator {
         content: { message: "Please configure your environment by simply tapping on the settings icon. Let's get you all set up and ready to go!", allowUserMessage: false }
       });
     } else {
-
       try {
-      console.log('Cleaning up existing runs...');
-      await oThis.cleanupExistingRun();
+        console.log('Cleaning up existing runs...');
+        await oThis.cleanupExistingRun();
       } catch (error) {
         console.error('Error cleaning up existing runs:', error);
-      } 
+      }
 
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
@@ -510,14 +511,8 @@ export class Facilitator {
                   type: 'botMessage',
                   content: { message: 'The assistant cleanup is in progress. Please wait...', allowUserMessage: false }
                 });
-            
-                await spawnAdapter(
-                  oThis.context,
-                  oThis.sirjiInstallationFolderPath,
-                  oThis.sirjiRunFolderPath,
-                  oThis.projectRootPath,
-                  path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
-                );
+
+                await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'cleanup.py'));
               } catch (error) {
                 oThis.sendErrorToChatPanel(error);
                 keepFacilitating = false;
@@ -660,7 +655,7 @@ export class Facilitator {
 
             await oThis.tokenManager?.generateAggregateTokenForAgent(ACTOR_ENUM.RESEARCHER);
             break;
-              
+
           default:
             let agent_id = parsedMessage.TO;
 
@@ -849,13 +844,7 @@ export class Facilitator {
     const oThis = this;
 
     try {
-      await spawnAdapter(
-        oThis.context,
-        oThis.sirjiInstallationFolderPath,
-        runPath,
-        oThis.projectRootPath,
-        path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
-      );
+      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, runPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'cleanup.py'));
       console.log('Cleanup tasks completed.');
     } catch (error) {
       console.error('Error executing cleanup script:', error);
@@ -889,17 +878,17 @@ export class Facilitator {
         }
       }
     }
-    
+
     console.log('Existing runs with active assistant:', runsWithActiveAssistantDetails);
-    
+
     for (let i = 0; i < runsWithActiveAssistantDetails.length; i++) {
       const runPath = path.join(sessionFolderPath, runsWithActiveAssistantDetails[i]);
       console.log('Cleaning up run:', runsWithActiveAssistantDetails[i]);
       await oThis.cleanup(runPath);
       console.log('Cleanup completed for run:', runPath);
     }
-    
-    console.log('Existing runs cleanup completed.');     
+
+    console.log('Existing runs cleanup completed.');
   }
 }
 

@@ -20,7 +20,7 @@ export class TokenManager {
     this.aggregateTokenFilePath = aggregateTokenFilePath;
   }
 
-  private readFile(jsonFilePath: string) {
+  public readFile(jsonFilePath: string) {
     try {
       if (!fs.existsSync(jsonFilePath)) {
         return {};
@@ -93,7 +93,6 @@ export class TokenManager {
         const parsedContent = JSON.parse(fileContents);
         const { input_tokens, output_tokens, llm_model } = parsedContent;
 
-
         if (typeof input_tokens !== 'number' || typeof output_tokens !== 'number') {
           console.error('Error: input_tokens and output_tokens should be numbers.', { input_tokens, output_tokens });
           return;
@@ -126,8 +125,7 @@ export class TokenManager {
       this.finalAggregateTokens = {};
       Object.keys(data).forEach((key) => {
         const splittedKey = key.split('.');
-        // TODO Daksh
-        const newKey = splittedKey[0];
+        const newKey = splittedKey.length > 1 ? splittedKey[splittedKey.length - 1] : splittedKey[0];
         if (!this.finalAggregateTokens[newKey]) {
           this.finalAggregateTokens[newKey] = {
             input_tokens: 0,
@@ -151,22 +149,8 @@ export class TokenManager {
     }
   }
 
-  public async getTokenUsedInConversation() {
-    // TODO Daksh
-    try {
-      if (!fs.existsSync(this.aggregateTokenFilePath)) {
-        return {};
-      }
-      const fileContents = fs.readFileSync(this.aggregateTokenFilePath, 'utf8');
-      return JSON.parse(fileContents);
-    } catch (error) {
-      console.error('Error reading the aggregate token file:', error);
-      return {};
-    }
-  }
-
   public async getAggregateTokensUsedInConversation() {
-    const aggregateTokens = await this.getTokenUsedInConversation();
+    const aggregateTokens = await this.readFile(this.aggregateTokenFilePath);
 
     let input_tokens = 0;
     let output_tokens = 0;
@@ -179,7 +163,6 @@ export class TokenManager {
       total_prompt_tokens_value += aggregateTokens[key].prompt_token_valuation_in_dollar;
       completion_tokens_value += aggregateTokens[key].completion_token_valuation_in_dollar;
     });
-
 
     return {
       input_tokens: input_tokens,
