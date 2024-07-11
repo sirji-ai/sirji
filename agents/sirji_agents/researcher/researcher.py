@@ -14,8 +14,7 @@ from sirji_messages import message_parse, MessageFactory, ActionEnum
 from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
 
-
-DEFAULT_SKIP_LIST = [
+GITIGNORE_SKIP_LIST = [
     '__pycache__',
     '.git',
     '.github',
@@ -34,12 +33,15 @@ DEFAULT_SKIP_LIST = [
     '.npm',
     'temp',
     'tmp',
+]
+
+EXTENSION_SKIP_LIST = [
     '.env',
     '.env.test',
     '.env.local',
     '.env.development',
     '.env.production',
-    '.env.staging'
+    '.env.staging',
     '.png',
     '.jpg',
     '.jpeg',
@@ -79,9 +81,9 @@ DEFAULT_SKIP_LIST = [
     ".svg",
     ".lock",
     ".keep",
-    "bundle",
+    'bundle',
+    '.haml',
 ]
-
 
 class ResearchAgent:
     def __init__(self, init_payload={}):
@@ -95,8 +97,9 @@ class ResearchAgent:
 
         self.logger.info("Completed initializing researcher")
 
-        # Initialize SKIP_LIST
-        self.skip_list = set(DEFAULT_SKIP_LIST)
+        # Initialize skip lists
+        self.gitignore_skip_list = set(GITIGNORE_SKIP_LIST)
+        self.extension_skip_list = set(EXTENSION_SKIP_LIST)
 
         # Initialize file_streams
         self.file_streams = []
@@ -305,6 +308,10 @@ class ResearchAgent:
             # Process the files read from directory
             self._process_files()
 
+            for file_path in self.file_paths:
+                self.logger.info(f"Uploading Files List {file_path}")
+
+
             if not self.file_streams:
                 self.logger.info("No files to sync")
                 return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), "No files to sync")
@@ -341,16 +348,31 @@ class ResearchAgent:
                 new_entries = [
                     entry.strip() for entry in entries if entry.strip() and not entry.startswith('#')
                 ]
-                self.skip_list.update(new_entries)
-                self.logger.info(f"Updated SKIP_LIST from .gitignore: {self.skip_list}")
+                self.gitignore_skip_list.update(new_entries)
+                self.logger.info(f"Updated GITIGNORE_SKIP_LIST from .gitignore: {self.gitignore_skip_list}")
         except FileNotFoundError:
             self.logger.warning(f".gitignore file not found in {project_root_path}")
         except Exception as e:
             self.logger.error(f"Error reading .gitignore: {e}")
 
-    def _should_skip(self, name):
-        """Check if the file or directory should be skipped."""
-        return any(skip_item in name for skip_item in self.skip_list)
+    def _should_skip_dir(self, name):
+        """Check if the directory should be skipped based on gitignore skip list."""
+        # print(f"Checking if directory {name} should be skipped", self.gitignore_skip_list)
+        return any(skip_item in name for skip_item in self.gitignore_skip_list)
+    
+    def _should_skip_file(self, name):
+        """Check if the file should be skipped based on both gitignore and extension skip lists."""
+        
+        # Check for gitignore_skip_list items in filename
+        for skip_item in self.gitignore_skip_list:
+            if name.endswith(skip_item) or skip_item in name:
+                return True
+        
+        # Check for extension match
+        for skip_item in self.extension_skip_list:
+            if name.endswith(skip_item):
+                return True
+        return False
 
     def _read_directory(self, project_root_path):
         """Read directory and index files."""
@@ -358,9 +380,9 @@ class ResearchAgent:
         self.file_paths = []
         for root, dirs, files in os.walk(project_root_path):
             # Remove dirs that should be skipped
-            dirs[:] = [d for d in dirs if not self._should_skip(d)]
+            dirs[:] = [d for d in dirs if not self._should_skip_dir(d)]
             for file in files:
-                if not self._should_skip(file):
+                if not self._should_skip_file(file):
                     file_path = os.path.join(root, file)
                     self.file_paths.append(file_path)
 
