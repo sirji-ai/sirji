@@ -75,6 +75,11 @@ DEFAULT_SKIP_LIST = [
     '.xml',
     '.yaml',
     '.yml',
+    ".asm",
+    ".svg",
+    ".lock",
+    ".keep",
+    "bundle",
 ]
 
 

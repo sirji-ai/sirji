@@ -82,6 +82,11 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
 
             while retry_count <= MAX_RETRIES:
                 try:
+                    print("files in batch", batch)
+                    self.logger.info(f"Uploading batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}")
+                    for file in batch:
+                        print(f"Uploading file {file[0]}")
+                        self.logger.info(f"Uploading file {file[0]}")
                     uploaded_files = self._upload_file(batch)
 
                     list_batches_files = self._list_uploaded_files(uploaded_files.id)
@@ -107,6 +112,10 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                 except Exception as e:
                     print(f"Failed to upload batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}, attempt {retry_count + 1}: {e}")
                     self.logger.error(f"Failed to upload batch {i//BATCH_SIZE + 1} of {total_files//BATCH_SIZE + 1}, attempt {retry_count + 1}: {e}")
+                    # print every files in every batch that failed to upload
+                    for file in batch:
+                        print(f"Failed to upload file {file[0]}")
+                        
                     retry_count += 1
                     if retry_count > MAX_RETRIES:
                         self.logger.error(f"Giving up on batch {i//BATCH_SIZE + 1} after {MAX_RETRIES + 1} attempts")
