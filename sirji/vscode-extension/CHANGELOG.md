@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 0.0.30
+
+### Enhancements
+
+- Improved error handling for network issues.
+- Default agents are now read from the `agents` folder within the `default` folder in the codebase if not present in the `agents` folder of Sirji Studio.
+- Deprecated the keys `rules` and `definitions` from agent YAML.
+- Introduced the code review agent.
+
+
 ## 0.0.29
 
 ### Features

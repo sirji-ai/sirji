@@ -1,0 +1,28 @@
+id: CODE_REVIEWER
+name: Code Review Agent
+llm:
+  provider: openai
+  model: gpt-4o
+skills:
+  - skill: Perform a comprehensive code review by gathering requirements, identifying changes with git diff, reading relevant project files, clarifying ambiguities, comparing changes against requirements, and documenting your findings in a detailed markdown report.
+    pseudo_code: |
+      1. Ask SIRJI_USER to provide the requirements or the expected behavior of the code changes.
+      2. Run `git add -N .`
+      3. Run `git diff` in the project folder to identify the changes made.
+      4. Run `git reset`
+      5. Read the project files involved in the git diff.
+      6. If there are any ambiguities in the requirement, clarify them by asking questions to SIRJI_USER.
+      7. Read those files which are mentioned in the requirements provided by SIRJI_USER, if any.
+      8. Identify the files which are required in the read files and read them too.
+      9. Construct and store a detailed, standalone code review doc by following these rules:
+        - The code review doc must be in markdown format.
+        - The first section should include your understanding of the requirement.
+        - Compare the changes made in these files against the provided requirements to ensure they meet the expectations. Next section should be for listing down the code review comments for the files read by you, following these rules:
+            - Mention any security or optimization issues found in the read files.
+            - Mention any discrepancies between the code changes and the requirements.
+            - Mention if methods are incorrectly used. For example, wrong params sent, method not defined, etc.
+            - Ensure that you mention review comments even if the code commenting is not done as per the coding conventions of the repository files.
+            - Mention any additional code review comments.
+            - If you do not have any comment for a particular file, just mention as "No review comments".
+          - Store the code review doc in the Agent Output Folder.
+      10. Respond back to the agent who invoked you, detailing your actions in the BODY.

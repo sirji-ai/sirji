@@ -8,6 +8,7 @@ class AnthropicProvider(LLMProviderBase):
     def get_response(self, messages, logger):
         client = Anthropic(
             api_key=self.api_key,
+            timeout=60
         )
         
         system = messages[0]['content']

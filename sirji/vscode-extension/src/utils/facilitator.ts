@@ -36,6 +36,8 @@ export class Facilitator {
   private isDebugging: Boolean = false;
   private stepsFolderPath: string = '';
   private stepsManager: StepManager | undefined;
+  private aggregateTokenFilePath: string = '';
+  private asyncMessagesFolder: string = '';
 
   public constructor(context: vscode.ExtensionContext) {
     const oThis = this;
@@ -72,7 +74,6 @@ export class Facilitator {
       oThis.chatPanel.reveal(vscode.ViewColumn.One);
     }
   }
-
 
   private async selectProjectFolder(): Promise<void> {
     const oThis = this;
@@ -120,6 +121,9 @@ export class Facilitator {
     let fileSummariesIndexFilePath = path.join(fileSummariesFolderPath, 'index.json');
     let agentOutputIndexFilePath = path.join(oThis.agentOutputFolderPath, 'index.json');
     oThis.stepsFolderPath = path.join(runFolderPath, 'steps');
+    oThis.asyncMessagesFolder = path.join(runFolderPath, 'async_messages');
+
+    console.log('oThis.asyncMessagesFolder------', oThis.asyncMessagesFolder);
 
     fs.mkdirSync(runFolderPath, { recursive: true });
     fs.mkdirSync(conversationFolderPath, { recursive: true });
@@ -135,7 +139,9 @@ export class Facilitator {
     fs.writeFileSync(agentSessionsFilePath, JSON.stringify({ sessions: [] }, null, 4), 'utf-8');
     oThis.sessionManager = new SessionManager(agentSessionsFilePath);
     oThis.stepsManager = new StepManager(oThis.stepsFolderPath);
-    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, path.join(runFolderPath, 'aggregate_tokens.json'));
+    oThis.aggregateTokenFilePath = path.join(runFolderPath, 'aggregate_tokens.json');
+
+    oThis.tokenManager = new TokenManager(agentSessionsFilePath, conversationFolderPath, oThis.aggregateTokenFilePath);
 
     if (!fs.existsSync(recipeFilePath)) {
       // Copy all the files from defaults folder to the studio folder
@@ -276,7 +282,7 @@ export class Facilitator {
   private async getTokenUsedAgentWise() {
     const oThis = this;
 
-    const tokenUsedInTheConversation = await oThis.tokenManager?.getTokenUsedInConversation();
+    const tokenUsedInTheConversation = await oThis.tokenManager?.readFile(oThis.aggregateTokenFilePath);
 
     console.log('tokenUsedInTheConversation------', tokenUsedInTheConversation);
 
@@ -320,13 +326,12 @@ export class Facilitator {
         content: { message: "Please configure your environment by simply tapping on the settings icon. Let's get you all set up and ready to go!", allowUserMessage: false }
       });
     } else {
-
       try {
-      console.log('Cleaning up existing runs...');
-      await oThis.cleanupExistingRun();
+        console.log('Cleaning up existing runs...');
+        await oThis.cleanupExistingRun();
       } catch (error) {
         console.error('Error cleaning up existing runs:', error);
-      } 
+      }
 
       oThis.chatPanel?.webview.postMessage({
         type: 'botMessage',
@@ -416,10 +421,54 @@ export class Facilitator {
     }
   }
 
+  
+  private processMessages = () => {
+    const oThis = this;
+    try {
+        console.log('Processing async messages...');
+        if (!fs.existsSync(oThis.asyncMessagesFolder)) {
+            return;
+        }
+
+        const files = fs.readdirSync(oThis.asyncMessagesFolder);
+
+        const jsonFiles = files
+            .filter(file => file.startsWith('notification_') && file.endsWith('.json'))
+            .sort((a, b) => {
+                const timestampA = a.match(/notification_(.*)\.json/)?.[1];
+                const timestampB = b.match(/notification_(.*)\.json/)?.[1];
+                return timestampA && timestampB ? timestampA.localeCompare(timestampB) : 0;
+            });
+
+        for (const file of jsonFiles) {
+            const filePath = path.join(oThis.asyncMessagesFolder, file);
+            try {
+                const content = fs.readFileSync(filePath, 'utf-8');
+                const message = JSON.parse(content);
+
+                console.log(`Message: ${message.content.message}`);
+                oThis.chatPanel?.webview.postMessage({
+                    type: 'botMessage',
+                    content: message.content
+                });
+
+                fs.unlinkSync(filePath);
+            } catch (err) {
+                console.error(`Error processing file ${file}:`, err);
+            }
+        }
+    } catch (err) {
+        console.error('Error reading async_messages folder:', err);
+    }
+};
+
   async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
+
+    setInterval(oThis.processMessages, 5000);
+
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
       oThis.updateSteps(parsedMessage);
@@ -510,14 +559,8 @@ export class Facilitator {
                   type: 'botMessage',
                   content: { message: 'The assistant cleanup is in progress. Please wait...', allowUserMessage: false }
                 });
-            
-                await spawnAdapter(
-                  oThis.context,
-                  oThis.sirjiInstallationFolderPath,
-                  oThis.sirjiRunFolderPath,
-                  oThis.projectRootPath,
-                  path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
-                );
+
+                await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, oThis.sirjiRunFolderPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'cleanup.py'));
               } catch (error) {
                 oThis.sendErrorToChatPanel(error);
                 keepFacilitating = false;
@@ -660,7 +703,7 @@ export class Facilitator {
 
             await oThis.tokenManager?.generateAggregateTokenForAgent(ACTOR_ENUM.RESEARCHER);
             break;
-              
+
           default:
             let agent_id = parsedMessage.TO;
 
@@ -849,13 +892,7 @@ export class Facilitator {
     const oThis = this;
 
     try {
-      await spawnAdapter(
-        oThis.context,
-        oThis.sirjiInstallationFolderPath,
-        runPath,
-        oThis.projectRootPath,
-        path.join(__dirname, '..', 'py_scripts', 'cleanup.py')
-      );
+      await spawnAdapter(oThis.context, oThis.sirjiInstallationFolderPath, runPath, oThis.projectRootPath, path.join(__dirname, '..', 'py_scripts', 'cleanup.py'));
       console.log('Cleanup tasks completed.');
     } catch (error) {
       console.error('Error executing cleanup script:', error);
@@ -889,17 +926,17 @@ export class Facilitator {
         }
       }
     }
-    
+
     console.log('Existing runs with active assistant:', runsWithActiveAssistantDetails);
-    
+
     for (let i = 0; i < runsWithActiveAssistantDetails.length; i++) {
       const runPath = path.join(sessionFolderPath, runsWithActiveAssistantDetails[i]);
       console.log('Cleaning up run:', runsWithActiveAssistantDetails[i]);
       await oThis.cleanup(runPath);
       console.log('Cleanup completed for run:', runPath);
     }
-    
-    console.log('Existing runs cleanup completed.');     
+
+    console.log('Existing runs cleanup completed.');
   }
 }
 

@@ -6,7 +6,7 @@ class OpenAIProvider(LLMProviderBase):
         super().__init__(api_key, model)
 
     def get_response(self, messages, logger):
-        client = OpenAI(api_key=self.api_key)
+        client = OpenAI(api_key=self.api_key, timeout=60)
         
         chat_completion = client.chat.completions.create(
             messages=messages,

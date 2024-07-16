@@ -4,11 +4,15 @@
     "description": "Recipe for creating a new project from scratch."
   },
   "node_js_create_api.json": {
-    "name": "Write New API and Test Cases",
-    "description": "Recipe for writing a new API and test cases in an existing Node.js Project."
+    "name": "Write New API",
+    "description": "Recipe for writing a new API in an existing Node.js Project."
   },
   "node_js_create_test_case.json": {
     "name": "Write New Test Case",
     "description": "Recipe for writing a new test case in an existing Node.js Project."
+  },
+  "review_code.json": {
+    "name": "Review Code",
+    "Description": "Recipe for reviewign the code changes as per the requirement."
   }
 }

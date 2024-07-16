@@ -1,15 +1,11 @@
 id: NODE_JS_TEST_CASE_MASTER
-
 name: Node.js test case coder
-
 llm:
   provider: openai
   model: gpt-4o
-
 sub_agents:
   - id: NODE_JS_TEST_CASE_PLANNER
   - id: NODE_JS_CODE_WRITER
-
 skills:
   - skill: Coordinate the invocation of agents to create an implementation guide for writing test cases and execute each step of the guide.
     pseudo_code: |

@@ -7,6 +7,7 @@ from sirji_tools.logger import o_logger as logger
 
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict
 from .model_providers.factory import LLMProviderFactory
+from ..decorators import retry_on_exception
 
 class Orchestrator():
     def __init__(self, agent_output_folder_index):
@@ -72,6 +73,7 @@ class Orchestrator():
             
         return response_message, prompt_tokens, completion_tokens
     
+    @retry_on_exception(logger=logger)
     def __call_llm(self, conversation):
         history = []
 

@@ -6,7 +6,7 @@ from sirji_tools.logger import create_logger
 
 # Assuming .base contains your ResearcherInfererBase
 from .base import ResearcherInfererBase
-
+from ...decorators import retry_on_exception
 
 class OpenAIAssistantInferer(ResearcherInfererBase):
     def __init__(self, init_payload):
@@ -27,7 +27,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
                 "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=api_key, timeout=60)
 
         # Ensure assistant_id is provided in init_payload
         if 'assistant_id' not in self.init_payload:
@@ -56,20 +56,10 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         #     content=problem_statement,
         # )
 
-        try:
-            thread = self.client.beta.threads.create(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": problem_statement
-                    }
-                ]
-            )
-            self.thread_id = thread.id
-            self.logger.info("Completed inferring using OpenAI Assistant Inferer")
-            
-            # Fetch and return the assistant's response
+        self.thread_id = None
 
+        try:
+            self.thread_id = self.create_thread(problem_statement)
             response = self._fetch_response()
         except Exception as e:
             self.logger.error("An error occurred during inference: %s", str(e))
@@ -85,6 +75,30 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
                 print('self.thread_id', self.thread_id)
         
         return response
+    
+
+    @retry_on_exception()
+    def create_thread(self, problem_statement):
+        self.logger.info("Creating a thread using OpenAI Assistant Inferer")
+
+        """
+        Creates a thread with the initial problem statement or query.
+
+        :param problem_statement: The initial problem statement or query.
+        :return: The thread ID of the created thread.
+        """
+
+        thread = self.client.beta.threads.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": problem_statement
+                }
+            ]
+        )
+
+        self.logger.info("Completed creating a thread using OpenAI Assistant Inferer")
+        return thread.id
 
 
 
@@ -100,6 +114,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         # Customize this method to combine problem_statement and retrieved_context into a coherent prompt.
         return problem_statement
 
+    @retry_on_exception()
     def _fetch_response(self):
         self.logger.info("Fetching response using OpenAI Assistant Inferer")
 
