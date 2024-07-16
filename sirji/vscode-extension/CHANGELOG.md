@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 0.0.30
+
+### Enhancements
+
+- Improved error handling for network issues.
+- Default agents are now read from the `agents` folder within the `default` folder in the codebase if not present in the `agents` folder of Sirji Studio.
+- Deprecated the keys `rules` and `definitions` from agent YAML.
+- Introduced the code review agent.
+
+
 ## 0.0.29
 
 ### Features
@@ -9,11 +19,6 @@
 - Added `deepseek` as a new model provider for agents.
 - Added `anthropic` as a new model provider for agents.
 - Added OpenAI Assistants API integration by allowing agents to create, sync, and infer from a RAG (Retrieval-Augmented Generation) assistant. Added `CREATE_ASSISTANT`, `INFER` and `SYNC_CODEBASE` actions in the messaging protocol for the same.
-
-### Enhancements
-
-- Improved error handling for network issues.
-- Default agents are now read from the `agents` folder within the `default` folder in the codebase if not present in the `agents` folder of Sirji Studio.
 
 ### Bug Fixes
 
