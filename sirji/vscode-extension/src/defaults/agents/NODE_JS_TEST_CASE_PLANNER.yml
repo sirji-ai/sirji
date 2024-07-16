@@ -3,7 +3,6 @@ name: Node.js API test planner
 llm:
   provider: openai
   model: gpt-4o
-
 skills:
   - skill: Analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
     pseudo_code: |

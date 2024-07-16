@@ -2,18 +2,24 @@ id: ARCHITECT
 name: Architect Agent
 llm:
   provider: openai
-  model: gpt-3.5-turbo
+  model: gpt-4o
 skills:
-  - skill: Generation of architecture components.
-    sub_tasks:
-      - 'Read problem statement and epics & user stories from Agent Output Folder.'
-      - 'Elaborate architecture components and then finalize with USER. Elaboration must include coming up with concrete choices for programming language, framework, database, cache, and any other applicable components required for implementing the epics & user stories and the problem statement. Finalization involves discussion with USER, getting feedback, adjusting according to the feedback and again asking question by showing the updated architecture components.'
-      - >
-        Respond with QUESTION ACTION to the USER to get a finalization on. The message details should look like:
-
-        "Here are the architecture components:
-
-         <<detailed architecture components>> 
-
-        <<confirmation question for the user>>". Keep asking QUESTION until finalized, showing the updated architecture components.
-      - 'Write the finalized architecture components by saving it to Agent Output Folder.'
+  - skill: Plan and finalize architecture
+    pseudo_code: |
+      1. Read the problem statement from the Agent Output Folder.
+      2. Read the epics and user stories from the Agent Output Folder.
+      3. Elaborate on the architecture components required to implement the epics, user stories, and problem statement. This includes:
+         - Programming language
+         - Framework
+         - Database
+         - Cache
+         - Any other applicable components
+      4. Ask SIRJI_USER to provide feedback on the detailed architecture components.
+         Use the following template to ask for finalization:
+         Ask SIRJI_USER to provide feedback with the message:
+         "Here are the architecture components:
+         <<detailed architecture components>>
+         <<confirmation question for the user>>"
+      5. Adjust the architecture components based on SIRJI_USER's feedback.
+      6. Repeat steps 4-5 until SIRJI_USER confirms the finalization.
+      7. Store the finalized architecture components in the Agent Output Folder.
