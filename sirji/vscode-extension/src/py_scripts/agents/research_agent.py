@@ -82,9 +82,15 @@ class ResearchAgentRunner:
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
 
-        installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
-        reasearcher_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
-        config_file_contents = self.read_file(reasearcher_config_path)
+        default_path = os.path.join(os.path.dirname(__file__), '../../defaults/agents/RESEARCHER.yml')
+        agent_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
+
+        if os.path.exists(agent_path):
+            agent_config_path = agent_path
+        else:
+            agent_config_path = default_path
+
+        config_file_contents = self.read_file(agent_config_path)
         config = yaml.safe_load(config_file_contents)
 
         llm = config['llm']    

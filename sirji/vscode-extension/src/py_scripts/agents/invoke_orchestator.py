@@ -82,9 +82,16 @@ class AgentRunner:
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
 
-        installed_agent_folder = os.path.join(sirji_installation_dir, 'studio', 'agents')
-        orchestrator_config_path = os.path.join(installed_agent_folder, f'{agent_id}.yml')
-        config_file_contents = self.read_file(orchestrator_config_path)
+        default_path = os.path.join(os.path.dirname(__file__), '../../defaults/agents/ORCHESTRATOR.yml')
+        agent_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
+
+        if os.path.exists(agent_path):
+            agent_config_path = agent_path
+        else:
+            agent_config_path = default_path
+
+        config_file_contents = self.read_file(agent_config_path)
+        
         config = yaml.safe_load(config_file_contents)
 
         conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt =  self.read_or_initialize_conversation_file(conversation_file_path)
