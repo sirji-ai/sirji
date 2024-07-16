@@ -1,5 +1,5 @@
-sirji-messages==0.0.29
-sirji-tools==0.0.15
+sirji-messages==0.0.30
+sirji-tools==0.0.16
 openai==1.35.7
 anthropic==0.29.0
 requests==2.31.0
