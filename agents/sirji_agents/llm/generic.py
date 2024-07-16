@@ -192,23 +192,6 @@ class GenericAgent():
     
     def __format_skills(self):
         output_text = ""
-        
-        # Check if 'definitions' exists in the config and is not empty
-        if "definitions" in self.config and self.config["definitions"]:
-            output_text += "The definitions to be used for executing sub-tasks of your skills:\n"
-
-            for key, value in self.config["definitions"].items():
-                output_text += f"- {key}: {value}\n"
-        
-            output_text += "\n"
-        
-        # Check if 'rules' exists in the config and is not empty
-        if "rules" in self.config and self.config["rules"]:
-            output_text += "The rules that must be followed for executing sub-tasks of your skills:\n"
-            for rule in self.config["rules"]:
-                output_text += f"- {rule}\n"
-        
-            output_text += "\n"
 
         output_text += "Here are your skills details:\n\n"
         
@@ -217,17 +200,9 @@ class GenericAgent():
             for skill in self.config["skills"]:
                 output_text += f"Skill: {skill['skill']}\n"
 
-                if "sub_tasks" in skill and skill["sub_tasks"]:
-                    output_text += "Subtasks:\n"
-                    for sub_task in skill["sub_tasks"]:
-                        output_text += f"- {sub_task}\n"
-                    output_text += "\n"
-                elif "pseudo_code" in skill and skill['pseudo_code']:
-                    output_text += "Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using LOG_STEPS action.\n"
-                    output_text += "Then, execute the steps in the order they are logged.\n"
-                    output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
-                    output_text += "\n"
-                                   
+                output_text += "Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using LOG_STEPS action.\n"
+                output_text += "Then, execute the steps in the order they are logged.\n"
+                output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
+                output_text += "\n"
 
         return output_text
-

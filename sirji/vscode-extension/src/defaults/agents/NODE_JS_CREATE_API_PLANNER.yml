@@ -3,7 +3,6 @@ name: Node.js create API planner
 llm:
   provider: openai
   model: gpt-4o
-
 skills:
   - skill: Manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
     pseudo_code: |

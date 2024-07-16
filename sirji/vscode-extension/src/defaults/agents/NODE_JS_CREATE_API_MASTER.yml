@@ -1,15 +1,11 @@
 id: NODE_JS_CREATE_API_MASTER
-
 name: Node.js create API coder
-
 llm:
   provider: openai
   model: gpt-4o
-
 sub_agents:
   - id: NODE_JS_CREATE_API_PLANNER
   - id: NODE_JS_CODE_WRITER
-
 skills:
   - skill: Coordinate the invocation of agents to create an implementation guide for creating new Node.js API and execute each step of the guide.
     pseudo_code: |
