@@ -4,25 +4,37 @@ llm:
   provider: openai
   model: gpt-4o
 skills:
-  - skill: Perform a comprehensive code review by gathering requirements, identifying changes with git diff, reading relevant project files, clarifying ambiguities, comparing changes against requirements, and documenting your findings in a detailed markdown report.
+  - skill: Evaluate code changes, identify issues, and document findings in a structured manner.
     pseudo_code: |
-      1. Ask SIRJI_USER to provide the requirements or the expected behavior of the code changes.
+      1. Ask the SIRJI_USER to provide the requirements or the expected behavior of the code changes.
       2. Run `git add -N .`
       3. Run `git diff` in the project folder to identify the changes made.
-      4. Run `git reset`
-      5. Read the project files involved in the git diff.
-      6. If there are any ambiguities in the requirement, clarify them by asking questions to SIRJI_USER.
-      7. Read those files which are mentioned in the requirements provided by SIRJI_USER, if any.
-      8. Identify the files which are required in the read files and read them too.
-      9. Construct and store a detailed, standalone code review doc by following these rules:
-        - The code review doc must be in markdown format.
-        - The first section should include your understanding of the requirement.
-        - Compare the changes made in these files against the provided requirements to ensure they meet the expectations. Next section should be for listing down the code review comments for the files read by you, following these rules:
-            - Mention any security or optimization issues found in the read files.
-            - Mention any discrepancies between the code changes and the requirements.
-            - Mention if methods are incorrectly used. For example, wrong params sent, method not defined, etc.
-            - Ensure that you mention review comments even if the code commenting is not done as per the coding conventions of the repository files.
-            - Mention any additional code review comments.
-            - If you do not have any comment for a particular file, just mention as "No review comments".
-          - Store the code review doc in the Agent Output Folder.
-      10. Respond back to the agent who invoked you, detailing your actions in the BODY.
+      4. Run `git reset`.
+      5. Read the project files involved in the git diff. Let's call these files "diff files".
+      6. Read the files mentioned in the requirements provided by the SIRJI_USER, if any, and if not already read. Let's call these files "reference files".
+      7. Identify the files which are required by the diff files and reference files. Read them too, if not already read. Let's call these files "required files".
+      8. Declare an array to store the issues found. Loop over the diff files and reference files, and for each file in each iteration, evaluate the following questions and push the current file path with the necessary changes related to the questions found to the issues found array:
+        - Are there any discrepancies or typos in what is defined and its usage in the current file? Pay close attention to:
+          - Variables
+          - Functions
+          - Classes
+          - Methods
+        - Is there any import/require statement missing in the current file?
+        - For every file required in the file, check if the file exists as per the project folder structure.
+        - Is there any security vulnerability in the current file?
+        - Is there any optimization that can be made in the current file?
+        - Is there any discrepancy between the code changes and the requirements?
+        - Are there any additional changes needed?
+        - Are the comments in the code clear and helpful?
+        - Are there any obsolete or commented out code that should be removed?
+        - Is the code adhering to the project's coding standards and conventions?
+        - Is the code modular and reusable?
+        - Does the code have proper error handling and logging?
+        - Is the documentation updated to reflect the changes made?
+        - Are there any potential performance bottlenecks introduced by the changes?
+      9. Using the issues found array, construct and store a detailed, standalone issues found document by following these rules:
+        - The issues found document must be in markdown format.
+        - The first section should include your understanding of the requirements.
+        - The next section should list all the issues found, grouped by file path. Do not include any other comments or information aside from the issues found. It should contain only the issues identified in the code.
+      10. Store the issues found document in the Agent Output Folder.
+      11. Respond back to the agent who invoked you, detailing your actions in the BODY.
