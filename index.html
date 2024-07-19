@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.4.0">
 <title data-rh="true">Overview | Sirji Docs</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://docs.sirji.ai/img/social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://docs.sirji.ai/img/social-card.jpg"><meta data-rh="true" property="og:url" content="https://docs.sirji.ai/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Overview | Sirji Docs"><meta data-rh="true" name="description" content="Sirji is a framework that enables developers to create and run custom AI agents for their everyday development tasks."><meta data-rh="true" property="og:description" content="Sirji is a framework that enables developers to create and run custom AI agents for their everyday development tasks."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.sirji.ai/"><link data-rh="true" rel="alternate" href="https://docs.sirji.ai/" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.sirji.ai/" hreflang="x-default"><script data-rh="true">function insertBanner(){var n=document.createElement("div");n.id="__docusaurus-base-url-issue-banner-container";n.innerHTML='\n<div id="__docusaurus-base-url-issue-banner" style="border: thick solid red; background-color: rgb(255, 230, 179); margin: 20px; padding: 20px; font-size: 20px;">\n   <p style="font-weight: bold; font-size: 30px;">Your Docusaurus site did not load properly.</p>\n   <p>A very common reason is a wrong site <a href="https://docusaurus.io/docs/docusaurus.config.js/#baseUrl" style="font-weight: bold;">baseUrl configuration</a>.</p>\n   <p>Current configured baseUrl = <span style="font-weight: bold; color: red;">/</span>  (default value)</p>\n   <p>We suggest trying baseUrl = <span id="__docusaurus-base-url-issue-banner-suggestion-container" style="font-weight: bold; color: green;"></span></p>\n</div>\n',document.body.prepend(n);var e=document.getElementById("__docusaurus-base-url-issue-banner-suggestion-container"),s=window.location.pathname,o="/"===s.substr(-1)?s:s+"/";e.innerHTML=o}document.addEventListener("DOMContentLoaded",(function(){void 0===window.docusaurus&&insertBanner()}))</script><link rel="stylesheet" href="/assets/css/styles.62a3de07.css">
-<script src="/assets/js/runtime~main.1986c660.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.b38fbc69.js" defer="defer"></script>
 <script src="/assets/js/main.6fb1cc96.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -16,13 +16,17 @@
 <p>Pseudocode is written in plain English. It reflects a developer&#x27;s understanding of the repository&#x27;s architecture, design patterns, and conventions. Pseudocode helps Sirji execute tasks as instructed.</p>
 <p>For more information on creating custom agents, visit <a href="/category/custom-agents">here</a>.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="who-is-sirji-for">Who is Sirji for?<a class="hash-link" aria-label="Direct link to Who is Sirji for?" title="Direct link to Who is Sirji for?" href="/#who-is-sirji-for">​</a></h2>
-<p>Sirji is not for those who want help without explaining their problem-solving approach by writing custom agents.</p>
-<p>Sirji is for developers who understand their repository well and can write custom agents for their needs.</p>
+<p>Sirji is greatly beneficial for teams having existing repositories and problems that are similar in nature.</p>
+<p>For instance:</p>
+<ol>
+<li>If a team frequently adds new APIs to one or more backend repositories with a similar framework, a custom agent can handle this task across different repositories.</li>
+<li>If a team frequently adds test cases for multiple backend APIs, a custom agent can handle this task accross different APIs.</li>
+</ol>
+<p>So Sirji is for teams that understand their repository well and can write custom agents for their specific use cases.</p>
 <p>For example, writing a new API in a backend repository with a predefined framework requires listing the steps needed to update different files (example: validation, configs, service, formatters, etc). This pseudocode can be reused for similar tasks, saving development time.</p>
-<p>Organizations can benefit from Sirji if they have projects with similar problems. For instance, if an organization frequently adds new APIs to multiple backend repositories with a similar framework, a custom agent can handle this task across different repositories.</p>
+<p>Sirji is unlike GitHub Copilot that works right out of the box but generates code that doesn’t follow your coding conventions and lacks domain context. Instead, Sirji is for teams that are willing to put in the initial effort of explaining their problem-solving approach and writing a custom agent.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="how-have-we-used-sirji">How have we used Sirji?<a class="hash-link" aria-label="Direct link to How have we used Sirji?" title="Direct link to How have we used Sirji?" href="/#how-have-we-used-sirji">​</a></h2>
-<p>We used Sirji to develop in an existing repository with backend REST APIs in Node.js, using the Express framework, Sequelize as the ORM, PostgreSQL as the data store, and Redis as the caching layer.</p>
-<p>We wrote custom agents for tasks, including:</p>
+<p>We used Sirji to develop in an existing repository with backend REST APIs in Node.js. We wrote custom agents for tasks, including:</p>
 <ul>
 <li>Generating sequence diagrams, DBML files, and OpenAPI specs for backend APIs.</li>
 <li>Writing new APIs in Node.js backend repositories.</li>
