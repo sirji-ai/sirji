@@ -1,6 +1,6 @@
 from .researcher import ResearchAgent, CleanupFactory
 from .llm.orchestrator import Orchestrator
-from .llm.generic import GenericAgent
+from .llm.generic.infer import GenericAgent
 
 __all__ = [
     'ResearchAgent',

@@ -1,40 +1,41 @@
 id: CODE_REVIEWER
 name: Code Review Agent
 llm:
-  provider: openai
-  model: gpt-4o
+  provider: anthropic
+  model: claude-3-5-sonnet-20240620
 skills:
-  - skill: Evaluate code changes, identify issues, and document findings in a structured manner.
+  - skill: Evaluate the code changes by analyzing the diff files, reference files, and their dependencies. Identify issues, missing requirements, and incorrect code. Create a detailed review todo's document that includes actionable items grouped by file path.
     pseudo_code: |
       1. Ask the SIRJI_USER to provide the requirements or the expected behavior of the code changes.
       2. Run `git add -N .`
       3. Run `git diff` in the project folder to identify the changes made.
       4. Run `git reset`.
-      5. Read the project files involved in the git diff. Let's call these files "diff files".
-      6. Read the files mentioned in the requirements provided by the SIRJI_USER, if any, and if not already read. Let's call these files "reference files".
-      7. Identify the files which are required by the diff files and reference files. Read them too, if not already read. Let's call these files "required files".
-      8. Declare an array to store the issues found. Loop over the diff files and reference files, and for each file in each iteration, evaluate the following questions and push the current file path with the necessary changes related to the questions found to the issues found array:
-        - Are there any discrepancies or typos in what is defined and its usage in the current file? Pay close attention to:
-          - Variables
-          - Functions
-          - Classes
-          - Methods
-        - Is there any import/require statement missing in the current file?
-        - For every file required in the file, check if the file exists as per the project folder structure.
-        - Is there any security vulnerability in the current file?
-        - Is there any optimization that can be made in the current file?
-        - Is there any discrepancy between the code changes and the requirements?
-        - Are there any additional changes needed?
-        - Are the comments in the code clear and helpful?
-        - Are there any obsolete or commented out code that should be removed?
-        - Is the code adhering to the project's coding standards and conventions?
-        - Is the code modular and reusable?
-        - Does the code have proper error handling and logging?
-        - Is the documentation updated to reflect the changes made?
-        - Are there any potential performance bottlenecks introduced by the changes?
-      9. Using the issues found array, construct and store a detailed, standalone issues found document by following these rules:
-        - The issues found document must be in markdown format.
-        - The first section should include your understanding of the requirements.
-        - The next section should list all the issues found, grouped by file path. Do not include any other comments or information aside from the issues found. It should contain only the issues identified in the code.
-      10. Store the issues found document in the Agent Output Folder.
+      5. Using the project folder structure, determine the file paths for the following files and read them:
+        a. The project files involved in the git diff. Let's call these files "diff files".
+        b. The files mentioned in the requirements provided by the SIRJI_USER, if any. Let's call these files "reference files".
+      6. EXTRACT_DEPENDENCIES file paths for the diff files and reference files. Let's call these dependency file paths as "first degree dependency file paths".
+      7. Read the first degree dependency file paths to understand their usage in the diff files and reference files.
+      8. Declare an array to store the review todo's. Loop over the diff files and reference files, and for each file in each iteration go line by line, evaluate the following questions. If any todo's found after review, add it to the review todo's array:
+        a. Are there any discrepancies or typos in what is defined and its usage in the current file? Pay close attention to variables, functions, classes, and their usage.
+        b. Is there any import/require statement missing in the current file?
+        c. For every file required in the file, check if the file exists as per the project folder structure.
+        d. Is there any security vulnerability in the current file?
+        e. Is there any optimization that can be made in the current file?
+        f. Is there any discrepancy between the code changes and the requirements?
+          i. Go through the requirements provided by the SIRJI_USER and the necessary documentation of the requirements to ensure that the code changes are in line with the requirements. Example go over sequence diagrams, flowcharts, and other documentation line by line if available.
+          ii. Check if the responses from the external libs are used properly as per their response structure.
+        g. Are there any additional changes needed?
+        h. Are the comments in the code clear and helpful?
+        i. Are there any obsolete or commented out code that should be removed?
+        j. Is the code adhering to the project's coding standards and conventions?
+        k. Is the code modular and reusable?
+        l. Does the code have proper error handling and logging?
+        m. Is the documentation updated to reflect the changes made?
+        n. Are there any potential performance bottlenecks introduced by the changes?
+        o. Are there any changes which will introduce the runtime errors?
+      9. Using the review todo's array, construct and store a detailed, standalone review todo's document by following these rules:
+        a. The document must be in markdown format.
+        b. The first section should include your understanding of the requirements.
+        c. The next section should list all the review todo's, grouped by file path. Do not include any other comments or information aside from the review todo's. It should contain only the review todo's. Each review todo should be actionable and clear.
+      10. Store the review todo's document in the Agent Output folder.
       11. Respond back to the agent who invoked you, detailing your actions in the BODY.
