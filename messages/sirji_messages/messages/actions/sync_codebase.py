@@ -1,13 +1,12 @@
-import textwrap
+import textwrap;
 
-from sirji_messages import AgentEnum, ActionEnum
-from .base import BaseMessages
+from sirji_messages import AgentEnum, ActionEnum;
+from .base import BaseMessages;
 
-
-class InferMessage(BaseMessages):
+class SyncCodebase(BaseMessages):
 
     def __init__(self):
-        self.action = ActionEnum.INFER.name
+        self.action = ActionEnum.SYNC_CODEBASE.name
         self.to_agent = AgentEnum.RESEARCHER.name
 
         super().__init__()
@@ -17,11 +16,10 @@ class InferMessage(BaseMessages):
             "from_agent_id": "{{Your Agent ID}}",
             "step": "Provide the step number here for the ongoing step if any.",
             "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
-            "body": textwrap.dedent("""
-            {{query}}""")})
+            "body": ""})
 
     def description(self):
-        return "Ask questions on the trained content"
+        return "Sync the project with the latest changes"
     
     def instructions(self):
-        return []
+        return [ "The command is used to sync the project with the latest changes."]

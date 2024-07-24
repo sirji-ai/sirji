@@ -10,5 +10,5 @@ skills:
       1. FETCH_RECIPE_INDEX using EXECUTOR
       2. QUESTION SIRJI_USER by showing the recipe index, and ask them to select one recipe from the available recipes in the index.
       3. FETCH_RECIPE using EXECUTOR by providing the file path of selected recipe.
-      4. Store the selected recipe in Agent Output Folder.
+      4. Store the selected recipe in Agent Output Folder with file name as 'selected_recipe.txt'
       5. Respond back to the agent who invoked you, detailing your actions in the BODY.

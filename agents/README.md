@@ -28,7 +28,6 @@
 `sirji-agents` is a PyPI package that implements the following components of the Sirji AI agentic framework:
 - **Orchestrator**: The Orchestrator is the central component in the Sirji framework, responsible for managing the flow and execution of tasks across different agents.
 - **Generic Agent**: Run time composable class providing the agent functionality as per the pseudo code provided in the agent.yml file.
-- **Research Agent**: Utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
 
 By default, it utilizes:
 - OpenAI Chat Completions API
@@ -69,7 +68,6 @@ Ensure that the following environment variables are set:
 export SIRJI_PROJECT="Absolute folder path for Sirji to use as its project folder."
 export SIRJI_INSTALLATION_DIR='Absolute path of the Sirji installation directory.'
 export SIRJI_RUN_PATH='Folder path containing run related logs, etc.'
-export SIRJI_OPENAI_API_KEY='OpenAI API key for Chat Completions API and Assistants API'
 export SIRJI_MODEL_PROVIDER='Model Provider to be used for LLM inference. Defaults to "openai".'
 export SIRJI_MODEL='Model to be used for LLM inference. Defaults to "gpt-4o".'
 export SIRJI_MODEL_PROVIDER_API_KEY='API key to be used for LLM inference.'
@@ -123,18 +121,11 @@ config = {
   "skills": [
     {
       "skill": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components.",
-      "sub_tasks": [
-        "Read problem statement, epics & user stories and architecture components from agent output folder.",
-        "Write concrete code and not just conceptualize or outline or simulate it.",
-        "Follow secure software development practices while generating code.",
-        "Ensure that you don't create any file/folder outside of project folder, i.e. './'",
-        "Install programming language-specific packages or libraries in local folders, utilizing tools such as venv for installing Python dependencies and package.json for managing Node.js dependencies.",
-        "Verify whether a system-level command is already installed to avoid triggering the installation of packages that are already in place.",
-        "Always execute the code and evaluate the response output. If the response has errors, solve them before moving ahead."
-      ]
+      "pseudo_code": "1. Read the problem statement from the Agent Output Folder.\n2. Read the epics & user stories from the Agent Output Folder.\n3. Read the architecture components from the Agent Output Folder.\n4. Write concrete code implementing the epics & user stories and the problem statement, following these rules:\n   - Ensure that the code follows secure software development practices.\n   - The code files should be created inside the project folder.\n5. Install necessary packages or libraries in local folders.\n   - Check if the programming language-specific packages or libraries are already installed.\n   - If not installed, install using tools like venv for Python or package.json for Node.js.\n6. Verify system-level command installations.\n   - Confirm if required system-level commands are already installed by checking versions to avoid redundant installations.\n7. Execute the written code and evaluate the output.\n   - Run the code to check for any errors.\n   - If errors are found, solve them before proceeding.\n8. If the code requires a server, ensure to start or restart the server.\n   - Run commands compatible with SIRJI_OS.\n   - Use the command `npm start` or the relevant command to start the server."
     }
   ]
 }
+
 
 agent_output_folder_index = {
   "SIRJI/problem.txt": {
@@ -159,63 +150,6 @@ history = []
 message_str = "***\nFROM: ORCHESTRATOR\nTO: CODER\nACTION: INVOKE_AGENT\nSUMMARY: Implement the epic & user stories using the architecture components.\nBODY:\nPImplement the epic & user stories using the architecture components.\n***"
 
 response_message, history, prompt_tokens, completion_tokens = agent.message(message_str, history)
-```
-
-### Research Agent
-
-The Research Agent utilizes RAG (Retrieval-Augmented Generation) and gets trained on URLs and search terms.
-
-### Initialization
-
-```python
-from sirji_agents import ResearchAgent
-
-# Initialize Researcher without assistant ID
-researcher = ResearchAgent('openai_assistant', 'openai_assistant')
-
-# init_payload fetched from researcher object should be persisted
-init_payload = researcher.init_payload
-
-# Initialize Researcher with assistant ID
-researcher = ResearchAgent('openai_assistant', 'openai_assistant', init_payload)
-```
-
-Some example message handling usages are given below.
-
-#### Train using URL
-
-```python
-from sirji_messages import MessageFactory, ActionEnum
-
-message_class = MessageFactory[ActionEnum.TRAIN_USING_URL.name]
-
-body = {
-    "URL": "https://www.w3schools.com/python/python_json.asp"
-}
-
-message_str = message_class().generate({
-            "from_agent_id": "Id of the agent, who is invoking the action",
-            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
-            "body": body
-        })
-
-researcher.message(message_str)
-```
-
-#### Infer
-
-```python
-from sirji_messages import MessageFactory, ActionEnum
-
-message_class = MessageFactory[ActionEnum.INFER.name]
-infer_query = "What is the capital of India?"
-message_str = message_class().generate({
-            "from_agent_id": "Id of the agent, who is invoking the action",
-            "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
-            "body": infer_query
-        })  
-        
-response, total_tokens = researcher.message(message_str)
 ```
 
 ## For Contributors

@@ -6,7 +6,7 @@ from sirji_tools.logger import create_logger
 
 # Assuming .base contains your ResearcherInfererBase
 from .base import ResearcherInfererBase
-
+from ...decorators import retry_on_exception
 
 class OpenAIAssistantInferer(ResearcherInfererBase):
     def __init__(self, init_payload):
@@ -20,27 +20,25 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         self.init_payload = init_payload
 
         # Fetch OpenAI API key from an environment variable
-        api_key = os.environ.get("SIRJI_OPENAI_API_KEY")
+        api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
 
         if api_key is None:
             raise ValueError(
                 "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=api_key, timeout=60)
+
+        # Ensure assistant_id is provided in init_payload
+        if 'assistant_id' not in self.init_payload:
+            raise ValueError("assistant_id must be provided in init_payload")
 
         # Reading the assistant ID from init_payload
         self.assistant_id = self.init_payload['assistant_id']
 
-        if 'thread_id' not in self.init_payload or not self.init_payload['thread_id']:
-            assistant = self.client.beta.assistants.retrieve(
-                self.assistant_id)
-            thread = self.client.beta.threads.create()
-            self.init_payload['thread_id'] = thread.id
-
         self.logger.info("Completed initializing OpenAI Assistant Inferer")
 
-    def infer(self, retrieved_context, problem_statement):
+    def infer(self, problem_statement):
         self.logger.info("Started inferring using OpenAI Assistant Inferer")
 
         """
@@ -51,20 +49,58 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         :return: A tuple containing the model's response based on the combined information of the problem statement & the retrieved context, the number of prompt tokens used in the run, and the number of completion tokens used in the run.
         """
 
-        # Generate a prompt to send to the assistant
-        prompt = self.generate_prompt(retrieved_context, problem_statement)
-
         # Send the generated prompt to the assistant
-        self.client.beta.threads.messages.create(
-            thread_id=self.init_payload['thread_id'],
-            role="user",
-            content=prompt,
+        # self.client.beta.threads.messages.create(
+        #     thread_id=self.thread_id,
+        #     role="user",
+        #     content=problem_statement,
+        # )
+
+        self.thread_id = None
+
+        try:
+            self.thread_id = self.create_thread(problem_statement)
+            response = self._fetch_response()
+        except Exception as e:
+            self.logger.error("An error occurred during inference: %s", str(e))
+            response = 'An error occurred during inference', 0, 0
+        finally:
+            if self.thread_id:
+                try:
+                    deleteResponse = self.client.beta.threads.delete(thread_id=self.thread_id)
+                    self.logger.info("Thread deleted successfully: %s", deleteResponse)
+                    print('deleteResponse', deleteResponse)
+                except Exception as delete_e:
+                    self.logger.error("Failed to delete thread: %s", str(delete_e))
+                print('self.thread_id', self.thread_id)
+        
+        return response
+    
+
+    @retry_on_exception()
+    def create_thread(self, problem_statement):
+        self.logger.info("Creating a thread using OpenAI Assistant Inferer")
+
+        """
+        Creates a thread with the initial problem statement or query.
+
+        :param problem_statement: The initial problem statement or query.
+        :return: The thread ID of the created thread.
+        """
+
+        thread = self.client.beta.threads.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": problem_statement
+                }
+            ]
         )
 
-        self.logger.info("Completed inferring using OpenAI Assistant Inferer")
+        self.logger.info("Completed creating a thread using OpenAI Assistant Inferer")
+        return thread.id
 
-        # Fetch and return the assistant's response
-        return self._fetch_response()
+
 
     def generate_prompt(self, retrieved_context, problem_statement):
         """
@@ -78,6 +114,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         # Customize this method to combine problem_statement and retrieved_context into a coherent prompt.
         return problem_statement
 
+    @retry_on_exception()
     def _fetch_response(self):
         self.logger.info("Fetching response using OpenAI Assistant Inferer")
 
@@ -86,27 +123,24 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
 
         :return: A tuple containing the text of the assistant's latest message, the number of prompt tokens used in the run, and the number of completion tokens used in the run.
         """
-        # Start a run to fetch the assistant's response
-        run = self.client.beta.threads.runs.create(
-            thread_id=self.init_payload['thread_id'],
-            assistant_id=self.assistant_id,
-            model="gpt-4o",
-            tools=[{"type": "retrieval"}]
+        
+        run = self.client.beta.threads.runs.create_and_poll(
+            thread_id=self.thread_id, assistant_id=self.assistant_id
         )
 
-        self.logger.info(
-            "Completed fetching response using OpenAI Assistant Inferer")
-        
 
-        # Loop until the run status is 'completed'
-        while run.status != "completed":
-            run = self.client.beta.threads.runs.retrieve(
-                thread_id=self.init_payload['thread_id'], run_id=run.id)
-            
-            time.sleep(1)  # Sleep to prevent overwhelming the API
+        messages = list(self.client.beta.threads.messages.list(thread_id=self.thread_id, run_id=run.id))
 
-        # Retrieve and return the last message content from the thread
-        messages = self.client.beta.threads.messages.list(
-            thread_id=self.init_payload['thread_id'])
-        new_message = messages.data[0].content[0].text.value
-        return new_message, run.usage.prompt_tokens, run.usage.completion_tokens
+        message_content = messages[0].content[0].text
+        annotations = message_content.annotations
+        citations = []
+        for index, annotation in enumerate(annotations):
+            message_content.value = message_content.value.replace(annotation.text, f"[{index}]")
+            if file_citation := getattr(annotation, "file_citation", None):
+                cited_file = self.client.files.retrieve(file_citation.file_id)
+                citations.append(f"[{index}] {cited_file.filename}")
+
+        print(message_content.value)
+        print("\n".join(citations))
+
+        return message_content.value, run.usage.prompt_tokens, run.usage.completion_tokens

@@ -20,12 +20,12 @@ export class TokenManager {
     this.aggregateTokenFilePath = aggregateTokenFilePath;
   }
 
-  private readFile(orchestratorFilePath: string) {
+  public readFile(jsonFilePath: string) {
     try {
-      if (!fs.existsSync(orchestratorFilePath)) {
+      if (!fs.existsSync(jsonFilePath)) {
         return {};
       }
-      const fileContents = fs.readFileSync(orchestratorFilePath, 'utf8');
+      const fileContents = fs.readFileSync(jsonFilePath, 'utf8');
       return JSON.parse(fileContents);
     } catch (error) {
       console.error('Error reading the orchestrator file:', error);
@@ -41,6 +41,17 @@ export class TokenManager {
     }
     const { input_tokens, output_tokens, llm_model } = orchestratorFileContent;
     this.addTokensToAggregateTokens('ORCHESTRATOR', input_tokens, output_tokens, llm_model);
+  }
+
+  public generateAggregateTokenForAgent(callstack_dot_session_id: string) {
+    console.log('TokenManager: generateAggregateTokenForAgent:', callstack_dot_session_id);
+    const agentConversationFilePath = path.join(this.conversationFolderPath, `${callstack_dot_session_id}.json`);
+    const agentFileContent = this.readFile(agentConversationFilePath);
+    if (!Object.keys(agentFileContent).length) {
+      return;
+    }
+    const { input_tokens, output_tokens, llm_model } = agentFileContent;
+    this.addTokensToAggregateTokens(callstack_dot_session_id, input_tokens, output_tokens, llm_model);
   }
 
   public async addTokensToAggregateTokens(key: string, input_tokens: number, output_tokens: number, llm_model: string) {
@@ -82,7 +93,6 @@ export class TokenManager {
         const parsedContent = JSON.parse(fileContents);
         const { input_tokens, output_tokens, llm_model } = parsedContent;
 
-
         if (typeof input_tokens !== 'number' || typeof output_tokens !== 'number') {
           console.error('Error: input_tokens and output_tokens should be numbers.', { input_tokens, output_tokens });
           return;
@@ -115,7 +125,7 @@ export class TokenManager {
       this.finalAggregateTokens = {};
       Object.keys(data).forEach((key) => {
         const splittedKey = key.split('.');
-        const newKey = splittedKey[0];
+        const newKey = splittedKey.length > 1 ? splittedKey[splittedKey.length - 1] : splittedKey[0];
         if (!this.finalAggregateTokens[newKey]) {
           this.finalAggregateTokens[newKey] = {
             input_tokens: 0,
@@ -139,21 +149,8 @@ export class TokenManager {
     }
   }
 
-  public async getTokenUsedInConversation() {
-    try {
-      if (!fs.existsSync(this.aggregateTokenFilePath)) {
-        return {};
-      }
-      const fileContents = fs.readFileSync(this.aggregateTokenFilePath, 'utf8');
-      return JSON.parse(fileContents);
-    } catch (error) {
-      console.error('Error reading the aggregate token file:', error);
-      return {};
-    }
-  }
-
   public async getAggregateTokensUsedInConversation() {
-    const aggregateTokens = await this.getTokenUsedInConversation();
+    const aggregateTokens = await this.readFile(this.aggregateTokenFilePath);
 
     let input_tokens = 0;
     let output_tokens = 0;
@@ -166,7 +163,6 @@ export class TokenManager {
       total_prompt_tokens_value += aggregateTokens[key].prompt_token_valuation_in_dollar;
       completion_tokens_value += aggregateTokens[key].completion_token_valuation_in_dollar;
     });
-
 
     return {
       input_tokens: input_tokens,

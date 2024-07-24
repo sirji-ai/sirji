@@ -15,7 +15,7 @@ def test_infer_message_sample():
     STEP: "Provide the step number here for the ongoing step if any."
     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
-    {{Infer query}}
+    {{query}}
     ***""")
     
     assert sample_message.strip() == expected_output.strip()

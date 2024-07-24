@@ -69,8 +69,17 @@ class AgentRunner:
         input_file_path = os.path.join(sirji_run_path, 'input.txt')
         conversation_file_path = os.path.join(sirji_run_path, 'conversations', f'{agent_callstack}.{agent_session_id}.json')
         agent_output_index_path = os.path.join(sirji_run_path, 'agent_output', 'index.json')
-        
-        agent_config_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
+
+        if agent_id == 'RECIPE_SELECTOR':
+                default_path = os.path.join(os.path.dirname(__file__), '../../defaults/agents/RECIPE_SELECTOR.yml')
+                agent_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
+
+                if os.path.exists(agent_path):
+                    agent_config_path = agent_path
+                else:
+                    agent_config_path = default_path
+        else:
+                agent_config_path = os.path.join(sirji_installation_dir, 'studio', 'agents', f'{agent_id}.yml')
 
         file_summaries_folder_path = os.path.join(sirji_installation_dir, 'file_summaries')
         file_summaries_file_path = os.path.join(file_summaries_folder_path, 'index.json')
