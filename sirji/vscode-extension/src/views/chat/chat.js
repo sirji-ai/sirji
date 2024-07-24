@@ -40,9 +40,14 @@ document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 document.getElementById('saveSettings').onclick = function () {
   saveSettings();
 };
+
 document.getElementById('openSettings').onclick = function () {
+  vscode.postMessage({
+    type: 'requestSecretKeys',
+  });
   openSettings();
 };
+
 document.getElementById('closeSettings').onclick = function () {
   closeSettings();
 };
@@ -94,6 +99,10 @@ window.addEventListener('message', (event) => {
 
     case 'displaySteps':
       displayPlannedSteps(event.data.content.message);
+      break;
+
+    case 'showSecretKeys':
+      displaySecretKeys(event.data.content);
       break;
 
     default:
@@ -266,6 +275,90 @@ function openSettings() {
   //  vscode.postMessage({ type: 'requestEnvVariables' });
 }
 
+const jOpenAISecretKeyMaskedEl = document.getElementById('SIRJI_OPENAI_API_MASKED_KEY');
+const jOpenAISecretKeyEl = document.getElementById('SIRJI_OPENAI_API_KEY');
+
+const jDeepSeekSecretKeyMaskedEl = document.getElementById('SIRJI_DEEPSEEK_API_MASKED_KEY');
+const jDeepSeekSecretKeyEl = document.getElementById('SIRJI_DEEPSEEK_API_KEY');
+
+const jAnthropicSecretKeyMaskedEl = document.getElementById('SIRJI_ANTHROPIC_API_MASKED_KEY');
+const jAnthropicSecretKeyEl = document.getElementById('SIRJI_ANTHROPIC_API_KEY');
+
+function displaySecretKeys(secretsData) {
+  const parsedSecretsData = JSON.parse(secretsData);
+  const { SIRJI_OPENAI_API_KEY, SIRJI_DEEPSEEK_API_KEY, SIRJI_ANTHROPIC_API_KEY } = parsedSecretsData;
+  console.log('settings', { secretsData });
+
+  if (SIRJI_OPENAI_API_KEY) {
+    jOpenAISecretKeyMaskedEl.value = `${maskString(SIRJI_OPENAI_API_KEY)}`;
+    jOpenAISecretKeyEl.value = SIRJI_OPENAI_API_KEY;
+  }
+
+  if (SIRJI_DEEPSEEK_API_KEY) {
+    jDeepSeekSecretKeyMaskedEl.value = `${maskString(SIRJI_DEEPSEEK_API_KEY)}`;
+    jDeepSeekSecretKeyEl.value = SIRJI_DEEPSEEK_API_KEY;
+  }
+
+  if (SIRJI_ANTHROPIC_API_KEY) {
+    jAnthropicSecretKeyMaskedEl.value = `${maskString(SIRJI_ANTHROPIC_API_KEY)}`;
+    jAnthropicSecretKeyEl.value = SIRJI_ANTHROPIC_API_KEY;
+  }
+
+  // ----- jOpenAISecretKeyMaskedEl;
+  jOpenAISecretKeyMaskedEl.addEventListener('focus', () => {
+    jOpenAISecretKeyMaskedEl.value = jOpenAISecretKeyEl.value;
+  });
+
+  jOpenAISecretKeyMaskedEl.addEventListener('blur', () => {
+    jOpenAISecretKeyMaskedEl.value = `${maskString(jOpenAISecretKeyEl.value)}`;
+  });
+
+  jOpenAISecretKeyMaskedEl.addEventListener('input', (e) => {
+    jOpenAISecretKeyEl.value = e.target.value;
+  });
+
+  // --------- jDeepSeekSecretKeyMaskedEl
+
+  jDeepSeekSecretKeyMaskedEl.addEventListener('focus', () => {
+    jDeepSeekSecretKeyMaskedEl.value = jDeepSeekSecretKeyEl.value;
+  });
+
+  jDeepSeekSecretKeyMaskedEl.addEventListener('blur', () => {
+    jDeepSeekSecretKeyMaskedEl.value = `${maskString(jDeepSeekSecretKeyEl.value)}`;
+  });
+
+  jDeepSeekSecretKeyMaskedEl.addEventListener('input', (e) => {
+    jDeepSeekSecretKeyEl.value = e.target.value;
+  });
+
+  // --------- jAnthropicSecretKeyMaskedEl
+
+  jAnthropicSecretKeyMaskedEl.addEventListener('focus', () => {
+    jAnthropicSecretKeyMaskedEl.value = jAnthropicSecretKeyEl.value;
+  });
+
+  jAnthropicSecretKeyMaskedEl.addEventListener('blur', () => {
+    jAnthropicSecretKeyMaskedEl.value = maskString(jAnthropicSecretKeyEl.value);
+  });
+
+  jAnthropicSecretKeyMaskedEl.addEventListener('input', (e) => {
+    jAnthropicSecretKeyEl.value = e.target.value;
+  });
+
+  //----
+}
+
+function maskString(inputString) {
+  if (inputString.length <= 0) {
+    return inputString;
+  }
+
+  const maskedPart = inputString.slice(0, 15).replace(/./g, '*');
+  const lastFourDigits = inputString.slice(-4);
+
+  return maskedPart + lastFourDigits;
+}
+
 function closeSettings() {
   document.getElementById('settingsModal').style.display = 'none';
 }
@@ -294,7 +387,7 @@ function saveSettings() {
     const settings = {
       SIRJI_OPENAI_API_KEY: openAIKey,
       SIRJI_DEEPSEEK_API_KEY: deepSeekKey,
-      SIRJI_ANTHROPIC_API_KEY: anthropicKey
+      SIRJI_ANTHROPIC_API_KEY: anthropicKey,
     };
 
     vscode.postMessage({ type: 'saveSettings', content: settings });
