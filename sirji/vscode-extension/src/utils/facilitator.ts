@@ -482,12 +482,42 @@ export class Facilitator {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
+    oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
 
     setInterval(oThis.processMessages, 5000);
 
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
-      oThis.updateSteps(parsedMessage);
+      let updateStepsRes = oThis.updateSteps(parsedMessage);
+
+      if (updateStepsRes && Object.keys(updateStepsRes).length > 0 && updateStepsRes?.shouldDiscard) {
+        if (updateStepsRes?.isError) {
+          let newParsedMessage = {
+            FROM: parsedMessage.TO,
+            TO: parsedMessage.FROM,
+            ACTION: ACTION_ENUM.RESPONSE,
+            STEP: 'Empty',
+            SUMMARY: 'Empty',
+            BODY: '\n' + updateStepsRes?.errorMessage
+          };
+
+          let newRawMessage = `***
+            FROM: ${newParsedMessage.FROM}
+            TO: ${newParsedMessage.TO}
+            ACTION: ${newParsedMessage.ACTION}
+            STEP: ${newParsedMessage.STEP},
+            SUMMARY: ${newParsedMessage.SUMMARY}
+            BODY: \n${newParsedMessage.BODY}
+            ***`;
+
+          rawMessage = newRawMessage;
+          parsedMessage = newParsedMessage;
+
+          oThis.writeToFile(oThis.inputFilePath, newRawMessage);
+          return;
+        }
+      }
+
       oThis.lastMessageFrom = parsedMessage?.FROM;
       console.log('rawMessage-------', rawMessage);
       console.log('parsedMessage------', parsedMessage);
@@ -807,26 +837,26 @@ export class Facilitator {
     });
   }
 
-  private updateSteps(parsedMessage: any) {
+  private updateSteps(parsedMessage: any): any {
     const oThis = this;
 
     let agent_callstack = oThis.stackManager.getStack();
     let stepNumber = parsedMessage.STEP;
 
     if (!stepNumber || stepNumber === undefined || stepNumber === null) {
-      return;
+      return {};
     }
     stepNumber = Number(stepNumber.replace(/\D/g, ''));
 
     if (!stepNumber || isNaN(stepNumber)) {
-      return;
+      return {};
     }
-
-    this.stepsManager?.updateStepStatus(agent_callstack, stepNumber);
 
     setTimeout(() => {
       oThis.requestSteps();
     }, 2000);
+
+    return this.stepsManager?.updateStepStatus(agent_callstack, stepNumber);
   }
 
   private toCoderRelayToChatPanel(parsedMessage: any) {

@@ -86,29 +86,45 @@ export class StepManager {
     }
   }
 
-  public updateStepStatus(fileName: string, stepNumber: number): string | object {
+  public updateStepStatus(fileName: string, stepNumber: number): object {
     try {
       const filePath = path.join(this.filePath, fileName + '.json');
       if (!fs.existsSync(filePath)) {
-        return 'Error: File does not exist.';
+        return { isError: true, shouldDiscard: false, errorMessage: 'Error: File does not exist.' };
       }
 
       const fileData = fs.readFileSync(filePath, 'utf8');
       const parsedData = JSON.parse(fileData);
 
       if (!parsedData || !parsedData[fileName + '.json']) {
-        return 'Error: Invalid file format.';
+        return { isError: true, shouldDiscard: false, errorMessage: 'Error: Invalid file format.' };
       }
 
       const steps = parsedData[fileName + '.json'];
 
       if (stepNumber <= 0 || stepNumber > steps.length) {
-        return 'Error: Invalid step number.';
+        return { isError: true, shouldDiscard: false, errorMessage: 'Error: Invalid step number.' };
+      }
+
+      let lastCompletedStep = -1;
+      for (let i = 0; i < steps.length; i++) {
+        const stepObj = steps[i];
+        const stepKey = Object.keys(stepObj)[0];
+        if (stepObj.status === 'completed') {
+          lastCompletedStep = i;
+        }
+      }
+
+      if (lastCompletedStep !== -1 && stepNumber - lastCompletedStep >= 2) {
+        return {
+          isError: true,
+          shouldDiscard: true,
+          errorMessage: `Error: you have skipped the pseudocode step > ${lastCompletedStep} the last executed step was ${lastCompletedStep}. Please make sure you don't skip any step. I am discarding your last message`
+        };
       }
 
       for (let i = 0; i < steps.length; i++) {
         const stepObj = steps[i];
-        const stepKey = Object.keys(stepObj)[0];
         if (i < stepNumber - 1) {
           stepObj.status = 'completed';
         } else if (i === stepNumber - 1) {
@@ -119,10 +135,10 @@ export class StepManager {
       }
 
       fs.writeFileSync(filePath, JSON.stringify(parsedData, null, 4), 'utf8');
-      return 'Done';
+      return { isError: false, shouldDiscard: false, errorMessage: 'Done' };
     } catch (error) {
       console.error('Error updating the steps file:', error);
-      return error || 'Error: An unexpected error occurred.';
+      return { isError: true, shouldDiscard: false, errorMessage: `Error: An unexpected error occurred. ${error}` };
     }
   }
 
