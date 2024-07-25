@@ -488,10 +488,17 @@ export class Facilitator {
 
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
+      // Todo: Do not call updateSteps if action == 'LOG_STEPS'
       let updateStepsRes = oThis.updateSteps(parsedMessage);
+
+      console.log('parsedMessage +------+', parsedMessage);
+
+      console.log('updateStepsRes------', updateStepsRes);
 
       if (updateStepsRes && Object.keys(updateStepsRes).length > 0 && updateStepsRes?.shouldDiscard) {
         if (updateStepsRes?.isError) {
+          console.log('updateStepsRes------', updateStepsRes);
+
           let newParsedMessage = {
             FROM: parsedMessage.TO,
             TO: parsedMessage.FROM,
@@ -510,11 +517,17 @@ export class Facilitator {
             BODY: \n${newParsedMessage.BODY}
             ***`;
 
+          console.log('newRawMessage------', newRawMessage);
+          console.log('newParsedMessage------', newParsedMessage);
+
           rawMessage = newRawMessage;
           parsedMessage = newParsedMessage;
 
+          console.log('oThis.inputFilePath', oThis.inputFilePath);
+
           oThis.writeToFile(oThis.inputFilePath, newRawMessage);
-          return;
+          console.log('Continuing with the next message...');
+          continue;
         }
       }
 

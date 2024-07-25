@@ -1,6 +1,18 @@
 import * as fs from 'fs';
 import path from 'path';
 
+
+interface Step {
+  status: string;
+  [key: string]: any;
+}
+
+interface ValidationResponse {
+  isError: boolean;
+  shouldDiscard: boolean;
+  errorMessage: string;
+}
+
 export class StepManager {
   private filePath: string;
 
@@ -86,54 +98,90 @@ export class StepManager {
     }
   }
 
-  public updateStepStatus(fileName: string, stepNumber: number): object {
+  // Method to validate the step number against the current in-progress step
+  private validateStepNumber(stepNumber: number, steps: Step[]): ValidationResponse {
+    // Find the index of the step that is currently in-progress
+    console.log('Starting validation:', stepNumber, steps);
+    let inProgressStepNumber = -1;
+    for (let i = 0; i < steps.length; i++) {
+      if (steps[i].status === 'in-progress') {
+        inProgressStepNumber = i + 1;
+        break;
+      }
+    }
+
+    console.log('inProgressStepIndex:', inProgressStepNumber);
+    console.log('stepNumber:', stepNumber);
+
+    // Check if the new step number is skipping more than one step from the in-progress step
+    if (inProgressStepNumber !== -1 && stepNumber - inProgressStepNumber > 1 ) {
+      return {
+        isError: true,
+        shouldDiscard: true,
+        errorMessage: `Error: You skipped some of the pseudo code steps. The highest executed step number as per my record is ${inProgressStepNumber}. Please make sure you do not skip any steps. I am discarding your last message.`
+      };
+    }
+
+    // No validation errors, return successful response
+    return {
+      isError: false,
+      shouldDiscard: false,
+      errorMessage: ''
+    };
+  }
+
+  // Method to update the status of the steps in the specified JSON file
+  public updateStepStatus(fileName: string, stepNumber: number): ValidationResponse {
+    const oThis = this;
+    console.log('Updating step status:', fileName, stepNumber);
+
+    const completeFileName = fileName + '.json';
     try {
-      const filePath = path.join(this.filePath, fileName + '.json');
+      const filePath = path.join(oThis.filePath, completeFileName);
+      
+      // Check if the file exists
       if (!fs.existsSync(filePath)) {
         return { isError: true, shouldDiscard: false, errorMessage: 'Error: File does not exist.' };
       }
 
+      // Read the file content and parse it as JSON
       const fileData = fs.readFileSync(filePath, 'utf8');
-      const parsedData = JSON.parse(fileData);
+      const parsedData: { [key: string]: Step[] } = JSON.parse(fileData);
 
-      if (!parsedData || !parsedData[fileName + '.json']) {
+      // Validate the structure of the parsed data
+      if (!parsedData || !parsedData[completeFileName]) {
         return { isError: true, shouldDiscard: false, errorMessage: 'Error: Invalid file format.' };
       }
 
-      const steps = parsedData[fileName + '.json'];
+      const steps = parsedData[completeFileName];
 
+      // Validate the provided step number
       if (stepNumber <= 0 || stepNumber > steps.length) {
         return { isError: true, shouldDiscard: false, errorMessage: 'Error: Invalid step number.' };
       }
 
-      let lastCompletedStep = -1;
-      for (let i = 0; i < steps.length; i++) {
-        const stepObj = steps[i];
-        const stepKey = Object.keys(stepObj)[0];
-        if (stepObj.status === 'completed') {
-          lastCompletedStep = i;
-        }
+      // Validate the step number against the current in-progress step
+      console.log('Validating step number:', stepNumber, steps);
+      const validationResponse = oThis.validateStepNumber(stepNumber, steps);
+
+      console.log('Validation response:', validationResponse);
+      if (validationResponse.isError) {
+        return validationResponse;
       }
 
-      if (lastCompletedStep !== -1 && stepNumber - lastCompletedStep >= 2) {
-        return {
-          isError: true,
-          shouldDiscard: true,
-          errorMessage: `Error: you have skipped the pseudocode step > ${lastCompletedStep} the last executed step was ${lastCompletedStep}. Please make sure you don't skip any step. I am discarding your last message`
-        };
-      }
-
+      // Update the status of each step based on the provided step number
       for (let i = 0; i < steps.length; i++) {
         const stepObj = steps[i];
         if (i < stepNumber - 1) {
-          stepObj.status = 'completed';
+            stepObj.status = 'completed';
         } else if (i === stepNumber - 1) {
-          stepObj.status = 'in-progress';
+            stepObj.status = 'in-progress';
         } else {
-          stepObj.status = '';
+            stepObj.status = '';
         }
       }
 
+      // Write the updated steps back to the file
       fs.writeFileSync(filePath, JSON.stringify(parsedData, null, 4), 'utf8');
       return { isError: false, shouldDiscard: false, errorMessage: 'Done' };
     } catch (error) {
@@ -141,7 +189,7 @@ export class StepManager {
       return { isError: true, shouldDiscard: false, errorMessage: `Error: An unexpected error occurred. ${error}` };
     }
   }
-
+  
   public updateAllStepsToCompleted(fileName: string): any {
     try {
       const filePath = path.join(this.filePath, fileName + '.json');
