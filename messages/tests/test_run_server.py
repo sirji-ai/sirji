@@ -11,7 +11,7 @@ def test_run_server_message_sample():
     FROM: {{Your Agent ID}}
     TO: EXECUTOR
     ACTION: RUN_SERVER
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     {{command}}

@@ -17,6 +17,7 @@ permissions_dict = {
         ActionEnum.INSERT_BELOW,
         ActionEnum.EXTRACT_DEPENDENCIES,
         ActionEnum.STORE_IN_SCRATCH_PAD,
+        ActionEnum.DO_NOTHING,
         ActionEnum.LOG_STEPS,
         ActionEnum.INFER,
         ActionEnum.CREATE_ASSISTANT,

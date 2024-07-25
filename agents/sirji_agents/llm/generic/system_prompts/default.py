@@ -48,7 +48,8 @@ class DefaultSystemPrompt:
             - Upon being invoked, identify which of your skills match the requirements of the task.
             - Execute the sub-tasks associated with each of these matching skills.
             - Do not respond with two actions in the same response. Respond with one action at a time.
-            - Always use STORE_IN_AGENT_OUTPUT and READ_AGENT_OUTPUT_FILES to write and read files to and from the agent output folder.                                             
+            - Always use STORE_IN_AGENT_OUTPUT and READ_AGENT_OUTPUT_FILES to write and read files to and from the agent output folder. 
+            - If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.                                                                       
             """)
 
         formatted_skills = self.__format_skills()

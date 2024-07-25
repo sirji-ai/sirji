@@ -22,7 +22,8 @@ class AnthropicSystemPrompt:
         instructions = textwrap.dedent(f"""
             You must follow these instructions:
             1. Convert all points in your pseudo code into plain English steps with a maximum of 10 words each. Log these steps using the LOG_STEPS action.
-            2. After logging the steps, follow your pseudo code step by step to the best of your ability. Following each pseudo code step in the specified order is mandatory. Dont miss to follow any of these steps.""")
+            2. After logging the steps, follow your pseudo code step by step to the best of your ability. Following each pseudo code step in the specified order is mandatory. Dont miss to follow any of these steps.
+            3. If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.""")
                     
         pseudo_code = "\nYour pseudo code which you must follow:\n" + self.config['skills'][0]['pseudo_code']
         

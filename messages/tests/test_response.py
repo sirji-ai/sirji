@@ -11,7 +11,7 @@ def test_response_message_sample():
     FROM: {{Agent Id of the agent sending the response}}
     TO: {{Your Agent ID}}
     ACTION: RESPONSE
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: Empty
     BODY: 
     {{Response}}
