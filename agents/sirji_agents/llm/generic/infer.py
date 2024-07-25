@@ -4,7 +4,7 @@ from ..model_providers.factory import LLMProviderFactory
 from .system_prompts.factory import SystemPromptsFactory
 from ...decorators import retry_on_exception
 
-class GenericAgent():
+class GenericAgentInfer():
     def __init__(self, config, agent_output_folder_index, file_summaries=None):
         # Initialize the logger as an instance variable
         self.logger = create_logger(f"{config['id']}.log", 'debug')
