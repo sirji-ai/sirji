@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sirji-agents',
-    version='0.0.46',
+    version='0.0.47',
     author='Sirji',
     description='Orchestrator, Generic Agent, and Research Agent components of the Sirji AI agentic framework.',
     license='MIT',

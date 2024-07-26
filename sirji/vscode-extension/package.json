@@ -2,7 +2,7 @@
   "name": "sirji",
   "displayName": "Sirji",
   "description": "Sirji is an AI Software Development Agent.",
-  "version": "0.0.30-beta.5",
+  "version": "0.0.30",
   "publisher": "TrueSparrow",
   "icon": "out/assets/sirji.png",
   "repository": {
