@@ -41,7 +41,7 @@ def _validate_message(message):
         raise MessageValidationError("Message must start and end with ***")
     message = message[3:-3].strip()
     lines = message.split("\n")
-    if len(lines) < 6:
+    if len(lines) < max(len(message_properties), 2):
         raise MessageValidationError(
             "Message does not meet the minimum length requirement")
     return lines

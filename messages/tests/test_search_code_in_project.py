@@ -13,7 +13,7 @@ def test_search_code_in_project_message_sample():
     FROM: {{Your Agent ID}}
     TO: EXECUTOR
     ACTION: SEARCH_CODE_IN_PROJECT
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     Search Term: {{Search term}}

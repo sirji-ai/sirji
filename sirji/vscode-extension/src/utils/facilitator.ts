@@ -217,6 +217,19 @@ export class Facilitator {
     const oThis = this;
 
     oThis.envVars = await oThis.secretManager?.retrieveSecret(Constants.ENV_VARS_KEY);
+
+    return oThis.envVars;
+  }
+
+  private async readSecretKeys() {
+    const oThis = this;
+
+    const secretKeys = await oThis.retrieveSecret();
+
+    this.chatPanel?.webview.postMessage({
+      type: 'showSecretKeys',
+      content: secretKeys
+    });
   }
 
   private async setSecretEnvVars(data: any) {
@@ -416,62 +429,108 @@ export class Facilitator {
 
         break;
 
+      case 'requestSecretKeys':
+        await oThis.readSecretKeys();
+        break;
+
       default:
         vscode.window.showErrorMessage(`Unknown message received from chat panel: ${message}`);
     }
   }
 
-  
   private processMessages = () => {
     const oThis = this;
     try {
-        console.log('Processing async messages...');
-        if (!fs.existsSync(oThis.asyncMessagesFolder)) {
-            return;
+      console.log('Processing async messages...');
+      if (!fs.existsSync(oThis.asyncMessagesFolder)) {
+        return;
+      }
+
+      const files = fs.readdirSync(oThis.asyncMessagesFolder);
+
+      const jsonFiles = files
+        .filter((file) => file.startsWith('notification_') && file.endsWith('.json'))
+        .sort((a, b) => {
+          const timestampA = a.match(/notification_(.*)\.json/)?.[1];
+          const timestampB = b.match(/notification_(.*)\.json/)?.[1];
+          return timestampA && timestampB ? timestampA.localeCompare(timestampB) : 0;
+        });
+
+      for (const file of jsonFiles) {
+        const filePath = path.join(oThis.asyncMessagesFolder, file);
+        try {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const message = JSON.parse(content);
+
+          console.log(`Message: ${message.content.message}`);
+          oThis.chatPanel?.webview.postMessage({
+            type: 'botMessage',
+            content: message.content
+          });
+
+          fs.unlinkSync(filePath);
+        } catch (err) {
+          console.error(`Error processing file ${file}:`, err);
         }
-
-        const files = fs.readdirSync(oThis.asyncMessagesFolder);
-
-        const jsonFiles = files
-            .filter(file => file.startsWith('notification_') && file.endsWith('.json'))
-            .sort((a, b) => {
-                const timestampA = a.match(/notification_(.*)\.json/)?.[1];
-                const timestampB = b.match(/notification_(.*)\.json/)?.[1];
-                return timestampA && timestampB ? timestampA.localeCompare(timestampB) : 0;
-            });
-
-        for (const file of jsonFiles) {
-            const filePath = path.join(oThis.asyncMessagesFolder, file);
-            try {
-                const content = fs.readFileSync(filePath, 'utf-8');
-                const message = JSON.parse(content);
-
-                console.log(`Message: ${message.content.message}`);
-                oThis.chatPanel?.webview.postMessage({
-                    type: 'botMessage',
-                    content: message.content
-                });
-
-                fs.unlinkSync(filePath);
-            } catch (err) {
-                console.error(`Error processing file ${file}:`, err);
-            }
-        }
+      }
     } catch (err) {
-        console.error('Error reading async_messages folder:', err);
+      console.error('Error reading async_messages folder:', err);
     }
-};
+  };
 
   async initFacilitation(rawMessage: string, parsedMessage: any) {
     const oThis = this;
 
     let keepFacilitating: Boolean = true;
+    oThis.inputFilePath = path.join(oThis.sirjiRunFolderPath, 'input.txt');
 
     setInterval(oThis.processMessages, 5000);
 
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
-      oThis.updateSteps(parsedMessage);
+      // Todo: Do not call updateSteps if action == 'LOG_STEPS'
+      let updateStepsRes = oThis.updateSteps(parsedMessage);
+
+      console.log('parsedMessage +------+', parsedMessage);
+
+      console.log('updateStepsRes------', updateStepsRes);
+
+      if (updateStepsRes && Object.keys(updateStepsRes).length > 0 && updateStepsRes?.shouldDiscard) {
+        if (updateStepsRes?.isError) {
+          console.log('updateStepsRes------', updateStepsRes);
+
+          let newParsedMessage = {
+            FROM: parsedMessage.TO,
+            TO: parsedMessage.FROM,
+            ACTION: ACTION_ENUM.RESPONSE,
+            STEP: 'Empty',
+            SUMMARY: 'Empty',
+            BODY: '\n' + updateStepsRes?.errorMessage
+          };
+
+          let newRawMessage = `***
+            FROM: ${newParsedMessage.FROM}
+            TO: ${newParsedMessage.TO}
+            ACTION: ${newParsedMessage.ACTION}
+            STEP: ${newParsedMessage.STEP},
+            SUMMARY: ${newParsedMessage.SUMMARY}
+            BODY: \n${newParsedMessage.BODY}
+            ***`;
+
+          console.log('newRawMessage------', newRawMessage);
+          console.log('newParsedMessage------', newParsedMessage);
+
+          rawMessage = newRawMessage;
+          parsedMessage = newParsedMessage;
+
+          console.log('oThis.inputFilePath', oThis.inputFilePath);
+
+          oThis.writeToFile(oThis.inputFilePath, newRawMessage);
+          console.log('Continuing with the next message...');
+          continue;
+        }
+      }
+
       oThis.lastMessageFrom = parsedMessage?.FROM;
       console.log('rawMessage-------', rawMessage);
       console.log('parsedMessage------', parsedMessage);
@@ -791,26 +850,26 @@ export class Facilitator {
     });
   }
 
-  private updateSteps(parsedMessage: any) {
+  private updateSteps(parsedMessage: any): any {
     const oThis = this;
 
     let agent_callstack = oThis.stackManager.getStack();
     let stepNumber = parsedMessage.STEP;
 
     if (!stepNumber || stepNumber === undefined || stepNumber === null) {
-      return;
+      return {};
     }
     stepNumber = Number(stepNumber.replace(/\D/g, ''));
 
     if (!stepNumber || isNaN(stepNumber)) {
-      return;
+      return {};
     }
-
-    this.stepsManager?.updateStepStatus(agent_callstack, stepNumber);
 
     setTimeout(() => {
       oThis.requestSteps();
     }, 2000);
+
+    return this.stepsManager?.updateStepStatus(agent_callstack, stepNumber);
   }
 
   private toCoderRelayToChatPanel(parsedMessage: any) {

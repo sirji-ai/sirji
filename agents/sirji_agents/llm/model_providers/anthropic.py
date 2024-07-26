@@ -8,6 +8,7 @@ class AnthropicProvider(LLMProviderBase):
     def get_response(self, messages, logger):
         client = Anthropic(
             api_key=self.api_key,
+            default_headers= {"anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"}, # anthropic-beta header is required to use the 8k max tokens length
             timeout=60
         )
         
@@ -18,7 +19,7 @@ class AnthropicProvider(LLMProviderBase):
             messages=messages[1:],
             model=self.model,
             temperature=0,
-            max_tokens=4095,
+            max_tokens=8192,
         )
 
         response_message = message.content[0].text

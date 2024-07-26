@@ -37,7 +37,7 @@ def test_base_message_generate():
     FROM: AGENT_1
     TO: AGENT_2
     ACTION: TEST_ACTION
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: Test summary
     BODY: Test body
     ***""")

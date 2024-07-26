@@ -20,7 +20,7 @@ class ExtractDependenciesMessage(BaseMessages):
             {{Array of file paths}}""")})
 
     def description(self):
-        return "Extract Dependencies of The Specified Files"
+        return "Extract files Paths of the dependencies (files which are imported/required) from the given files."
     
     def instructions(self):
         return [ "The file path must be relative to the project root."]

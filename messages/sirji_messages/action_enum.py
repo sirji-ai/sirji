@@ -34,6 +34,7 @@ class ActionEnum(Enum):
     SEARCH_FILE_IN_PROJECT = auto()
     SEARCH_CODE_IN_PROJECT = auto()
     STORE_IN_SCRATCH_PAD = auto()
+    DO_NOTHING = auto()
     STORE_IN_AGENT_OUTPUT = auto()
     LOG_STEPS = auto()
     SYNC_CODEBASE = auto()

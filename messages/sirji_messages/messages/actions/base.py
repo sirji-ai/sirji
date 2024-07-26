@@ -37,7 +37,7 @@ class BaseMessages(ABC):
                 obj["from_agent_id"] = self.from_agent
         except AttributeError:
             pass
-            
+        
         return self.template().format(**obj)
     
     def template(self):
@@ -46,7 +46,7 @@ class BaseMessages(ABC):
             FROM: {{from_agent_id}}
             TO: {{to_agent_id}}
             ACTION: {self.action}
-            STEP: "Provide the step number here for the ongoing step if any."
+            STEP: {{step}}
             SUMMARY: {{summary}}
             BODY: {{body}}
             ***""")

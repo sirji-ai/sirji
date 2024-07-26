@@ -12,7 +12,7 @@ def test_extract_dependencies_message_sample():
     FROM: {{Your Agent ID}}
     TO: EXECUTOR
     ACTION: EXTRACT_DEPENDENCIES
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: {{{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     {{Array of file paths}}
@@ -22,7 +22,7 @@ def test_extract_dependencies_message_sample():
 
 def test_extract_dependencies_message_description():
     message = ExtractDependenciesMessage()
-    assert message.description() == "Extract Dependencies of The Specified Files"
+    assert message.description() == "Extract files Paths of the dependencies (files which are imported/required) from the given files."
 
 def test_extract_dependencies_message_instructions():
     message = ExtractDependenciesMessage()
