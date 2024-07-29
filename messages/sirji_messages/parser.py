@@ -1,4 +1,4 @@
-from .custom_exceptions import MessageParsingError, MessageValidationError
+from .custom_exceptions import  MessageIncorrectFormatError, MessageMultipleActionError, MessageUnRecognizedActionError, MessageMissingPropertyError, MessageLengthConstraintError
 from .action_enum import ActionEnum
 
 message_properties = ['FROM', 'TO', 'ACTION','STEP', 'SUMMARY', 'BODY']
@@ -11,10 +11,10 @@ def parse(input_message):
     # Check if the message has all the required properties.
     for prop in message_properties:
         if prop not in parsed_message:
-            raise MessageParsingError(f"Message does not contain {prop} property")
+            raise MessageMissingPropertyError(f"Message does not contain {prop} property")
            
     if parsed_message['ACTION'] not in ActionEnum.__members__:
-        raise MessageValidationError(f"Action {parsed_message['ACTION']} is not recognized")
+        raise MessageUnRecognizedActionError(f"Action {parsed_message['ACTION']} is not recognized")
 
     return parsed_message
 
@@ -38,11 +38,13 @@ def _discard_format_deviations(input_message):
 def _validate_message(message):
     message = message.strip()
     if not (message.startswith("***") and message.endswith("***")):
-        raise MessageValidationError("Message must start and end with ***")
+        raise MessageIncorrectFormatError("Message must start and end with ***")
+    if message.count("ACTION") > 1:
+        raise MessageMultipleActionError("Message contains more than one ACTION keyword")
     message = message[3:-3].strip()
     lines = message.split("\n")
     if len(lines) < max(len(message_properties), 2):
-        raise MessageValidationError(
+        raise MessageLengthConstraintError(
             "Message does not meet the minimum length requirement")
     return lines
 
