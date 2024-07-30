@@ -2,7 +2,7 @@ import json
 import os
 import textwrap
 
-from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
+from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict
 
 class AnthropicSystemPrompt:
     def __init__(self, config, agent_output_folder_index):
