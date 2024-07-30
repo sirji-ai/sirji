@@ -65,7 +65,7 @@ Let's go step by step in understanding the architecture.
 
 An Agent in the Sirji framework is a modular AI component that performs a specific task based on a custom pseudo code.
 
-An agent defines its skills in an agent.yml file. This file lists the skills of the agent and the pseudo code to follow for each skill. It also specifies the LLM provider and model to be used for inference. Additionally, it lists the sub-agents that can be invoked from within the agent to complete certain parts of the task.
+An agent defines its skill and pseudo code to follow for working on that skill in an agent.yml file. It also specifies the LLM provider and model to be used for inference. Additionally, it lists the sub-agents that can be invoked from within the agent to complete certain parts of the task.
 
 ### Recipe (recipe.json)
 
@@ -73,9 +73,8 @@ A Recipe is a file that lists prescribed tasks and tips for solving a particular
 
 ### Orchestrator
 
-The Orchestrator is the central component in the Sirji framework, responsible for following:
-- Gathering requirement from the user.
-- Showing list of available recipes to the user and asking for their choice.
+The Orchestrator is the central component in the Sirji framework and is responsible for the following:
+- Showing the list of available recipes to the user and asking them for their choice.
 - Reading the selected recipe and managing the flow & execution of prescribed tasks from the selected recipe.
 
 ### Agent Sessions
@@ -95,7 +94,7 @@ The Agent Output Index is an index file for the Agent Output Folder that keeps t
 
 ### PyPI Packages
 
-We have published following 3 PyPI packages, implementing different responsibilities. These packages are invoked by Python Adapter Scripts, which are spawned by the extension.
+We have published the following 3 PyPI packages, implementing different responsibilities. These packages are invoked by Python Adapter Scripts, which are spawned by the extension.
 
 #### sirji-agents <a href="https://pypi.org/project/sirji-agents/"><img src="https://img.shields.io/pypi/v/sirji-agents.svg" alt="Sirji Agents on PyPI" height="15"></a>
 
@@ -122,16 +121,6 @@ We have published following 3 PyPI packages, implementing different responsibili
 
 ### Architecture Diagram
 ![Sirji - Architecture Diagram](https://github.com/sirji-ai/sirji/assets/7627517/0edd8cfe-1d49-4119-8960-1a3f2bf1f73f)
-
-## Roadmap
-We are calling our next release the ‘Core’ Release (ONGOING).
-
-Here is the link to the ‘Core’ release’s roadmap: https://github.com/orgs/sirji-ai/projects/5
-
-This is a significant release focused on the following key areas:
-- **User accounts**: Users will be required to create an account with Sirji. They can either bring their own LLM key or subscribe to a free but rate-limited Developer plan.
-- **Improve reliability**: The first version of the VS Code extension improved usability, but after using it ourselves for a while, we identified several issues and limitations ranging from incomplete solutions to a lack of web debugging capabilities. We are addressing these issues to make Sirji more reliable in solving software problems.
-- **Custom agents and recipes**: We are developing the framework to enable users to create and use custom agents and recipes (instructions on how the agents interact). This involves enhancing the orchestration functionality and refactoring existing base agents.
 
 ## Contributing
 
