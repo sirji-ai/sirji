@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
+import { getFilePath } from './helper';
 
 const escapeRegExp = (string: string) => {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
@@ -30,7 +31,15 @@ export const findAndReplaceInProjectFile = async (body: string, projectRootPath:
     return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path}} ---. Your response must conform strictly to FIND_AND_REPLACE Response Template with all the keys present in the BODY`;
   }
 
-  filePath = path.join(projectRootPath, filePath);
+  console.log('File Path - projectRootPath', projectRootPath);
+
+  console.log('File Path - projectRootPath', filePath);
+
+  try {
+    filePath = getFilePath(filePath, projectRootPath);
+  } catch (error) {
+    return error;
+  }
 
   console.log(`Searching for files with pattern: ${searchText} in folder: ${filePath} and replacing with: ${replacement}`);
 

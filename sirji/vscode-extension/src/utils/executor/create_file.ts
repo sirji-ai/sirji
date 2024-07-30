@@ -1,18 +1,24 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { getFilePath } from './helper';
 
 export function sanitizePath(filePath: string): string {
   return filePath.replace(/^['"]|['"]$/g, '');
 }
 
-export async function createFile(rootPath: string, isProjectRoot: boolean, body: string): Promise<string> {
+export async function createFile(rootPath: string, isProjectRoot: boolean, body: string): Promise<any> {
   try {
     const [filePathPart, fileContent] = body.split('---');
     const filePath = filePathPart.replace('File path:', '').trim();
     const sanitizedFilePath = sanitizePath(filePath);
 
-    const fullPath = path.isAbsolute(sanitizedFilePath) ? sanitizedFilePath : path.join(rootPath, sanitizedFilePath);
+    let fullPath = '';
+    try {
+      fullPath = getFilePath(sanitizedFilePath, rootPath);
+    } catch (error) {
+      return error;
+    }
     const uri = vscode.Uri.file(fullPath);
 
     if (isProjectRoot) {

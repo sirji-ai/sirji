@@ -71,7 +71,7 @@ message_str = message_class().generate({
             "to_agent_id": "CODER",
             "summary": "Empty",
             "body": "Done."})
-            
+
 print(f"Generated RESPONSE message:\n{message_str}")
 ```
 
@@ -79,7 +79,7 @@ print(f"Generated RESPONSE message:\n{message_str}")
 
 Parse structured message strings into Python dictionaries for easy access to the message components.
 
-````python
+```python
 from sirji_messages import message_parse
 
 # Example message string to parse
@@ -94,7 +94,7 @@ BODY: Welcome to sirji-messages. Here's how you can start.
 # Parsing the message
 message = message_parse(message_str)
 print(message)
-````
+```
 
 ### Allowed Response Templates
 
@@ -113,15 +113,15 @@ print(response_templates_str)
 Efficiently manage parsing and validation errors with custom exceptions for improved error handling and debugging.
 
 ```python
-from sirji_messages import MessageParsingError, MessageValidationError, message_parse
+from sirji_messages import  MessageIncorrectFormatError, MessageMultipleActionError, MessageUnRecognizedActionError, MessageMissingPropertyError, MessageLengthConstraintError, message_parse
 
 try:
     # Attempt parsing an incorrectly formatted message
     message_parse("INCORRECT_FORMAT")
 except MessageParsingError as e:
     print(f"Parsing Error: {e}")
-except MessageValidationError as e:
-    print(f"Validation Error: {e}")
+except MessageIncorrectFormatError as e:
+    print(f"Incorrect Format Error: {e}")
 ```
 
 ### Enums for Agents and Actions
