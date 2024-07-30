@@ -2,7 +2,7 @@ import json
 import os
 import textwrap
 
-from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
+from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict
 
 class AnthropicSystemPrompt:
     def __init__(self, config, agent_output_folder_index):
@@ -69,7 +69,7 @@ class AnthropicSystemPrompt:
                     ***
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
-                    ACTION: INVOKE_AGENT
+                    ACTION: {ActionEnum.INVOKE_AGENT.name}
                     STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
@@ -83,7 +83,7 @@ class AnthropicSystemPrompt:
                     ***
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
-                    ACTION: INVOKE_AGENT_EXISTING_SESSION
+                    ACTION: {ActionEnum.INVOKE_AGENT_EXISTING_SESSION.name}
                     STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
@@ -99,7 +99,7 @@ class AnthropicSystemPrompt:
                 action_list.add(ActionEnum[action])
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
 
-        allowed_response_templates_str += "For updating in project folder use either FIND_AND_REPLACE, INSERT_ABOVE or INSERT_BELOW actions. Ensure you provide the exact matching string in find from file, with the exact number of lines and proper indentation for insert and replace actions.\n"
+        allowed_response_templates_str += f"""For updating in project folder use either {ActionEnum.FIND_AND_REPLACE.name}, {ActionEnum.INSERT_ABOVE.name} or {ActionEnum.INSERT_BELOW.name} actions. Ensure you provide the exact matching string in find from file, with the exact number of lines and proper indentation for insert and replace actions.\n"""
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER, permissions_dict[(AgentEnum.ANY, AgentEnum.CALLER)]) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
