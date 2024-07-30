@@ -3,23 +3,22 @@ name: Coding Agent
 llm:
   provider: openai
   model: gpt-4o
-skills:
-  - skill: "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components."
-    pseudo_code: |
-      1. Read the problem statement from the Agent Output Folder.
-      2. Read the epics & user stories from the Agent Output Folder.
-      3. Read the architecture components from the Agent Output Folder.
-      4. Write concrete code implementing the epics & user stories and the problem statement, following these rules:
-        - Ensure that the code follows secure software development practices.
-        - The code files should be created inside the project folder.
-      5. Install necessary packages or libraries in local folders.
-        - Check if the programming language-specific packages or libraries are already installed.
-        - If not installed, install using tools like venv for Python or package.json for Node.js.
-      6. Verify system-level command installations.
-        - Confirm if required system-level commands are already installed by checking versions to avoid redundant installations.
-      7. Execute the written code and evaluate the output.
-        - Run the code to check for any errors.
-        - If errors are found, solve them before proceeding.
-      8. If the code requires a server, ensure to start or restart the server.
-        - Run commands compatible with SIRJI_OS.
-        - Use the command `npm start` or the relevant command to start the server.
+skill: "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components."
+pseudo_code: |
+  1. Read the problem statement from the Agent Output Folder.
+  2. Read the epics & user stories from the Agent Output Folder.
+  3. Read the architecture components from the Agent Output Folder.
+  4. Write concrete code implementing the epics & user stories and the problem statement, following these rules:
+    - Ensure that the code follows secure software development practices.
+    - The code files should be created inside the project folder.
+  5. Install necessary packages or libraries in local folders.
+    - Check if the programming language-specific packages or libraries are already installed.
+    - If not installed, install using tools like venv for Python or package.json for Node.js.
+  6. Verify system-level command installations.
+    - Confirm if required system-level commands are already installed by checking versions to avoid redundant installations.
+  7. Execute the written code and evaluate the output.
+    - Run the code to check for any errors.
+    - If errors are found, solve them before proceeding.
+  8. If the code requires a server, ensure to start or restart the server.
+    - Run commands compatible with SIRJI_OS.
+    - Use the command `npm start` or the relevant command to start the server.

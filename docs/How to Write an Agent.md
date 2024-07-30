@@ -32,9 +32,8 @@ This YML file has these mandatory fields:
    - **model**: Specifies the model to be used for inference. Possible values: gpt-4o, deepseek-coder, etc.
 - **sub_agents**: Optional list of sub_agent objects each having these keys:
    - **id**: ID of the sub agent.
-- **skills**: Array of skill objects, each having these keys:
-   - **skill**: Specifies the skill of the agent.
-   - **pseudo_code**: Specifies the point-wise pseudo-code which the agent follows to work on the task.
+- **skill**: Specifies the skill of the agent.
+- **pseudo_code**: Specifies the point-wise pseudo-code which the agent follows to work on the task.
 
 ## Pseudocode Use Cases
 

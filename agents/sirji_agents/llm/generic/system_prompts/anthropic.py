@@ -17,7 +17,7 @@ class AnthropicSystemPrompt:
             Your Agent ID: {self.config['id']}
             Your OS (referred as SIRJI_OS later): {os.name}
 
-            You are an expert having skill: {self.config['skills'][0]['skill']}""")
+            You are an expert having skill: {self.config['skill']}""")
         
         instructions = textwrap.dedent(f"""
             You must follow these instructions:
@@ -25,7 +25,7 @@ class AnthropicSystemPrompt:
             2. After logging the steps, follow your pseudo code step by step to the best of your ability. Following each pseudo code step in the specified order is mandatory. Dont miss to follow any of these steps.
             3. If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.""")
                     
-        pseudo_code = "\nYour pseudo code which you must follow:\n" + self.config['skills'][0]['pseudo_code']
+        pseudo_code = "\nYour pseudo code which you must follow:\n" + self.config['pseudo_code']
         
         response_specifications = textwrap.dedent(f"""
             Your response must adhere rigorously to the following rules, without exception, to avoid critical system failures:

@@ -114,13 +114,13 @@ class DefaultSystemPrompt:
         output_text += "Here are your skills details:\n\n"
         
         # Check if 'skills' exists in the config and is not empty
-        if "skills" in self.config and self.config["skills"]:
-            for skill in self.config["skills"]:
-                output_text += f"Skill: {skill['skill']}\n"
+        if "skill" in self.config and self.config["skill"]:
+            
+            output_text += f"Skill: {self.config['skill']}\n"
 
-                output_text += f"Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using {ActionEnum.LOG_STEPS.name} action.\n"
-                output_text += "Then, execute the steps in the order they are logged.\n"
-                output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
-                output_text += "\n"
+            output_text += f"Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using {ActionEnum.LOG_STEPS.name} action.\n"
+            output_text += "Then, execute the steps in the order they are logged.\n"
+            output_text += f"Pseudo code which you must follow:\n{self.config['pseudo_code']}"
+            output_text += "\n"
 
         return output_text
