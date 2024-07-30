@@ -50,6 +50,8 @@ class GenericAgentInfer():
 
         while(True):
             response_message, current_prompt_tokens, current_completion_tokens = self.__call_llm(conversation)
+
+            self.logger.info(f"Completions API Raw Response: \n{response_message}\n")
             
             prompt_tokens += current_prompt_tokens
             completion_tokens += current_completion_tokens
