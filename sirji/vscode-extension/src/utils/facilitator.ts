@@ -783,6 +783,7 @@ export class Facilitator {
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
+              break; 
             }
 
             const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);

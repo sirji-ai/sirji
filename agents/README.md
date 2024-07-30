@@ -118,12 +118,8 @@ config = {
     "provider": "openai",
     "model": "gpt-4o"
   },
-  "skills": [
-    {
-      "skill": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components.",
-      "pseudo_code": "1. Read the problem statement from the Agent Output Folder.\n2. Read the epics & user stories from the Agent Output Folder.\n3. Read the architecture components from the Agent Output Folder.\n4. Write concrete code implementing the epics & user stories and the problem statement, following these rules:\n   - Ensure that the code follows secure software development practices.\n   - The code files should be created inside the project folder.\n5. Install necessary packages or libraries in local folders.\n   - Check if the programming language-specific packages or libraries are already installed.\n   - If not installed, install using tools like venv for Python or package.json for Node.js.\n6. Verify system-level command installations.\n   - Confirm if required system-level commands are already installed by checking versions to avoid redundant installations.\n7. Execute the written code and evaluate the output.\n   - Run the code to check for any errors.\n   - If errors are found, solve them before proceeding.\n8. If the code requires a server, ensure to start or restart the server.\n   - Run commands compatible with SIRJI_OS.\n   - Use the command `npm start` or the relevant command to start the server."
-    }
-  ]
+  "skill": "Developing end-to-end working code for the epic & user stories, making use of the finalized architecture components.",
+  "pseudo_code": "1. Read the problem statement from the Agent Output Folder.\n2. Read the epics & user stories from the Agent Output Folder.\n3. Read the architecture components from the Agent Output Folder.\n4. Write concrete code implementing the epics & user stories and the problem statement, following these rules:\n   - Ensure that the code follows secure software development practices.\n   - The code files should be created inside the project folder.\n5. Install necessary packages or libraries in local folders.\n   - Check if the programming language-specific packages or libraries are already installed.\n   - If not installed, install using tools like venv for Python or package.json for Node.js.\n6. Verify system-level command installations.\n   - Confirm if required system-level commands are already installed by checking versions to avoid redundant installations.\n7. Execute the written code and evaluate the output.\n   - Run the code to check for any errors.\n   - If errors are found, solve them before proceeding.\n8. If the code requires a server, ensure to start or restart the server.\n   - Run commands compatible with SIRJI_OS.\n   - Use the command `npm start` or the relevant command to start the server."
 }
 
 

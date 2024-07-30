@@ -3,15 +3,14 @@ name: Product Manager Agent
 llm:
   provider: openai
   model: gpt-3.5-turbo
-skills:
-  - skill: Ask the user to provide the problem statement, then generate and confirm the epics and user stories based on their input. Store these details.
-    pseudo_code: |
-      1. Ask SIRJI_USER to provide the problem statement.
-      2. Store the provided problem statement in the Agent Output Folder.
-      3. Elaborate on the problem statement to include detailed screen elements and interactions, ensuring a modern and neat UI for any user story. Save this elaboration in the scratchpad.
-      4. Get the epics and user stories finalized from SIRJI_USER by asking the following question:
-         REPEAT:
-         - Ask SIRJI_USER: "Here are the detailed epics and user stories based on your problem statement:\n\n<<detailed epics and user stories>>\n\nDo you confirm these epics and user stories? If you have any feedback, please provide it."
-         - If SIRJI_USER provides feedback, update the epics and user stories accordingly and ask again.
-         UNTIL SIRJI_USER confirms the epics and user stories.
-      5. Store the finalized epics and user stories in the Agent Output Folder.
+skill: Ask the user to provide the problem statement, then generate and confirm the epics and user stories based on their input. Store these details.
+pseudo_code: |
+  1. Ask SIRJI_USER to provide the problem statement.
+  2. Store the provided problem statement in the Agent Output Folder.
+  3. Elaborate on the problem statement to include detailed screen elements and interactions, ensuring a modern and neat UI for any user story. Save this elaboration in the scratchpad.
+  4. Get the epics and user stories finalized from SIRJI_USER by asking the following question:
+      REPEAT:
+      - Ask SIRJI_USER: "Here are the detailed epics and user stories based on your problem statement:\n\n<<detailed epics and user stories>>\n\nDo you confirm these epics and user stories? If you have any feedback, please provide it."
+      - If SIRJI_USER provides feedback, update the epics and user stories accordingly and ask again.
+      UNTIL SIRJI_USER confirms the epics and user stories.
+  5. Store the finalized epics and user stories in the Agent Output Folder.

@@ -3,8 +3,9 @@ import os
 import json
 import yaml
 import textwrap
-from sirji_messages import MessageFactory, ActionEnum, AgentEnum
+from sirji_messages import MessageFactory, ActionEnum, AgentEnum, message_parse
 from sirji_agents import GenericAgent
+from sirji_tools.logger import create_logger
 
 class AgentRunner:    
     def _get_project_folder(self):
@@ -40,22 +41,30 @@ class AgentRunner:
         with open(input_file_path, 'r') as file:
             contents = file.read()
 
-        if len(conversations) > 1 and conversations[-1]['parsed_content']['TO'] in [AgentEnum.SIRJI_USER.name, AgentEnum.ORCHESTRATOR.name]:
-            last_message = conversations[-1]['parsed_content']
-            
-            message_class = MessageFactory[ActionEnum.RESPONSE.name]
-            message_str = message_class().generate({
-            "from_agent_id": f"{last_message['TO']}",
-            "to_agent_id": f"{last_message['FROM']}",
-            "step": "EMPTY",
-            "summary": "EMPTY",
-            "body": textwrap.dedent(f"""
-            {contents}
-            """)})
-        else:
-            message_str = contents
+        self.logger.info(f"Input file contents: {contents}")
+        try:
+            parsed_content = message_parse(contents)
+        except Exception as e:
+            parsed_content = None
 
-        return message_str
+        if not (parsed_content and parsed_content['ACTION'] == ActionEnum.RESPONSE.name):
+            if (len(conversations) > 1 and
+                conversations[-1]['parsed_content']['TO'] in [AgentEnum.SIRJI_USER.name, AgentEnum.ORCHESTRATOR.name]):
+                
+                last_message = conversations[-1]['parsed_content']
+                self.logger.info(f"Last message: {last_message}")
+
+                message_class = MessageFactory[ActionEnum.RESPONSE.name]
+                contents = message_class().generate({
+                    "from_agent_id": last_message['TO'],
+                    "to_agent_id": last_message['FROM'],
+                    "step": "EMPTY",
+                    "summary": "EMPTY",
+                    "body": textwrap.dedent(f"""{contents}""")
+                })
+
+        self.logger.info(f"Message string: {contents}")
+        return contents
 
     def process_message(self, message_str, conversations, config, agent_output_index, file_summaries):
         agent = GenericAgent(config, agent_output_index, file_summaries)
@@ -97,9 +106,6 @@ class AgentRunner:
                 with open(file_summaries_path, 'r') as file:
                     file_summaries = file.read()
 
-        conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt =  self.read_or_initialize_conversation_file(conversation_file_path)
-        message_str = self.process_input_file(input_file_path, conversations)
-
         config_file_contents = self.read_file(agent_config_path)
         # config = json.loads(config_file_contents)
         config = yaml.safe_load(config_file_contents)
@@ -108,7 +114,12 @@ class AgentRunner:
         agent_output_index = json.loads(agent_output_index_contents)
 
         llm = config['llm']
-        
+
+        self.logger = create_logger(f"{config['id']}.log", 'debug')
+
+        conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt =  self.read_or_initialize_conversation_file(conversation_file_path)
+        message_str = self.process_input_file(input_file_path, conversations)
+
         # Set SIRJI_MODEL_PROVIDER env var to llm.provider
         os.environ['SIRJI_MODEL_PROVIDER'] = llm['provider']
         # Set SIRJI_MODEL env var to llm.model
