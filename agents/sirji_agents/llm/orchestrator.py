@@ -2,7 +2,6 @@ import textwrap
 import os
 import json
 
-# TODO - log file should be dynamically created based on agent ID
 from sirji_tools.logger import o_logger as logger
 
 from sirji_messages import message_parse, MessageParsingError, MessageValidationError, ActionEnum, AgentEnum, allowed_response_templates, permissions_dict

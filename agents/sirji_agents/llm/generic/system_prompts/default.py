@@ -2,7 +2,7 @@ import json
 import os
 import textwrap
 
-from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict, ActionEnum
+from sirji_messages import ActionEnum, AgentEnum, allowed_response_templates, permissions_dict
 
 class DefaultSystemPrompt:
     def __init__(self, config, agent_output_folder_index):
@@ -48,7 +48,7 @@ class DefaultSystemPrompt:
             - Upon being invoked, identify which of your skills match the requirements of the task.
             - Execute the sub-tasks associated with each of these matching skills.
             - Do not respond with two actions in the same response. Respond with one action at a time.
-            - Always use STORE_IN_AGENT_OUTPUT and READ_AGENT_OUTPUT_FILES to write and read files to and from the agent output folder. 
+            - Always use {ActionEnum.STORE_IN_AGENT_OUTPUT.name} and {ActionEnum.READ_AGENT_OUTPUT_FILES.name} to write and read files to and from the agent output folder. 
             - If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.                                                                       
             """)
 
@@ -69,7 +69,7 @@ class DefaultSystemPrompt:
                     ***
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
-                    ACTION: INVOKE_AGENT
+                    ACTION: {ActionEnum.INVOKE_AGENT.name}
                     STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
@@ -83,7 +83,7 @@ class DefaultSystemPrompt:
                     ***
                     FROM: {{Your Agent ID}}
                     TO: {sub_agent['id']}
-                    ACTION: INVOKE_AGENT_EXISTING_SESSION
+                    ACTION: {ActionEnum.INVOKE_AGENT_EXISTING_SESSION.name}
                     STEP: "provide the step number here for the ongoing step if any."
                     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
                     BODY:
@@ -99,7 +99,7 @@ class DefaultSystemPrompt:
                 action_list.add(ActionEnum[action])
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
 
-        allowed_response_templates_str += "For updating in project folder use either FIND_AND_REPLACE, INSERT_ABOVE or INSERT_BELOW actions. Ensure you provide the exact matching string in find from file, with the exact number of lines and proper indentation for insert and replace actions.\n"
+        allowed_response_templates_str += textwrap.dedent(f"""For updating in project folder use either {ActionEnum.FIND_AND_REPLACE.name}, {ActionEnum.INSERT_ABOVE.name} or {ActionEnum.INSERT_BELOW.name} actions. Ensure you provide the exact matching string in find from file, with the exact number of lines and proper indentation for insert and replace actions.""") + '\n'
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER, permissions_dict[(AgentEnum.ANY, AgentEnum.CALLER)]) + '\n'
     
         current_agent_output_index = f"Current contents of Agent Output Index:\n{json.dumps(self.agent_output_folder_index, indent=4)}"
@@ -118,7 +118,7 @@ class DefaultSystemPrompt:
             for skill in self.config["skills"]:
                 output_text += f"Skill: {skill['skill']}\n"
 
-                output_text += "Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using LOG_STEPS action.\n"
+                output_text += f"Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using {ActionEnum.LOG_STEPS.name} action.\n"
                 output_text += "Then, execute the steps in the order they are logged.\n"
                 output_text += f"Pseudo code which you must follow:\n{skill['pseudo_code']}"
                 output_text += "\n"
