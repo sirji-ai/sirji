@@ -488,7 +488,6 @@ export class Facilitator {
 
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
-      // Todo: Do not call updateSteps if action == 'LOG_STEPS'
 
       if (parsedMessage?.ACTION !== ACTION_ENUM.LOG_STEPS) {
         let updateStepsRes = oThis.updateSteps(parsedMessage);
