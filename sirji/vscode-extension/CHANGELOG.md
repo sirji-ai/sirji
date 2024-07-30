@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.0.31
+
+- Added support for file absolute path in addition to already existing relative file support in executor actions.
+- `skills` in the agent YML converted to a single value instead of an array of objects.
+- Added specific exceptions for various message related errors.
+
 ## 0.0.30
 
 ### Enhancements
