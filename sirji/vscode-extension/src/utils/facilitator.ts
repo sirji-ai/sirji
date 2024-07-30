@@ -489,26 +489,28 @@ export class Facilitator {
     while (keepFacilitating) {
       oThis.displayParsedMessageSummaryToChatPanel(parsedMessage);
       // Todo: Do not call updateSteps if action == 'LOG_STEPS'
-      let updateStepsRes = oThis.updateSteps(parsedMessage);
 
-      console.log('parsedMessage +------+', parsedMessage);
+      if (parsedMessage?.ACTION !== ACTION_ENUM.LOG_STEPS) {
+        let updateStepsRes = oThis.updateSteps(parsedMessage);
 
-      console.log('updateStepsRes------', updateStepsRes);
+        console.log('parsedMessage +------+', parsedMessage);
 
-      if (updateStepsRes && Object.keys(updateStepsRes).length > 0 && updateStepsRes?.shouldDiscard) {
-        if (updateStepsRes?.isError) {
-          console.log('updateStepsRes------', updateStepsRes);
+        console.log('updateStepsRes------', updateStepsRes);
 
-          let newParsedMessage = {
-            FROM: parsedMessage.TO,
-            TO: parsedMessage.FROM,
-            ACTION: ACTION_ENUM.RESPONSE,
-            STEP: 'Empty',
-            SUMMARY: 'Empty',
-            BODY: '\n' + updateStepsRes?.errorMessage
-          };
+        if (updateStepsRes && Object.keys(updateStepsRes).length > 0 && updateStepsRes?.shouldDiscard) {
+          if (updateStepsRes?.isError) {
+            console.log('updateStepsRes------', updateStepsRes);
 
-          let newRawMessage = `***
+            let newParsedMessage = {
+              FROM: parsedMessage.TO,
+              TO: parsedMessage.FROM,
+              ACTION: ACTION_ENUM.RESPONSE,
+              STEP: 'Empty',
+              SUMMARY: 'Empty',
+              BODY: '\n' + updateStepsRes?.errorMessage
+            };
+
+            let newRawMessage = `***
             FROM: ${newParsedMessage.FROM}
             TO: ${newParsedMessage.TO}
             ACTION: ${newParsedMessage.ACTION}
@@ -517,17 +519,18 @@ export class Facilitator {
             BODY: \n${newParsedMessage.BODY}
             ***`;
 
-          console.log('newRawMessage------', newRawMessage);
-          console.log('newParsedMessage------', newParsedMessage);
+            console.log('newRawMessage------', newRawMessage);
+            console.log('newParsedMessage------', newParsedMessage);
 
-          rawMessage = newRawMessage;
-          parsedMessage = newParsedMessage;
+            rawMessage = newRawMessage;
+            parsedMessage = newParsedMessage;
 
-          console.log('oThis.inputFilePath', oThis.inputFilePath);
+            console.log('oThis.inputFilePath', oThis.inputFilePath);
 
-          oThis.writeToFile(oThis.inputFilePath, newRawMessage);
-          console.log('Continuing with the next message...');
-          continue;
+            oThis.writeToFile(oThis.inputFilePath, newRawMessage);
+            console.log('Continuing with the next message...');
+            continue;
+          }
         }
       }
 
