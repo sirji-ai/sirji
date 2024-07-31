@@ -13,6 +13,7 @@ from sirji_messages import message_parse, MessageFactory, ActionEnum
 
 from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
+from ..decorators import retry_on_exception
 
 GITIGNORE_SKIP_LIST = [
     '__pycache__',
@@ -118,7 +119,7 @@ class ResearchAgent:
                 "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=api_key, timeout=60)
 
     def message(self, input_message):
         """Public method to process input messages and dispatch actions."""
@@ -443,6 +444,7 @@ class ResearchAgent:
         self.logger.info("Indexing processed files")
         return self._embeddings_manager.upload_batches(self.file_streams)
         
+    @retry_on_exception()
     def create_assistant(self, body):
         self.logger.info("Creating a new assistant instance")
         """
@@ -460,7 +462,7 @@ class ResearchAgent:
             return
 
         # Initialize OpenAI client
-        client = OpenAI(api_key=api_key)
+        client = OpenAI(api_key=api_key, timeout=60)
 
         project_folder = os.environ.get("SIRJI_PROJECT")
 

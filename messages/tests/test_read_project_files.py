@@ -12,7 +12,7 @@ def test_read_project_files_message_sample():
     FROM: {{Your Agent ID}}
     TO: EXECUTOR
     ACTION: READ_PROJECT_FILES
-    STEP: "Provide the step number here for the ongoing step if any."
+    STEP: Provide the step number here for the ongoing step if any.
     SUMMARY: {{Display a concise summary to the user, describing the action using the present continuous tense.}}
     BODY: 
     File paths: {{Array of file paths}}

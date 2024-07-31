@@ -4,8 +4,8 @@ import hashlib
 from openai import OpenAI
 
 from sirji_tools.logger import create_logger
-
 from .base import BaseEmbeddings
+from ...decorators import retry_on_exception
 
 BATCH_SIZE = 50
 MAX_RETRIES = 2
@@ -26,7 +26,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                 "OpenAI API key is not set as an environment variable")
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=api_key, timeout=60)
 
         # Existing initialization logic
         self.init_payload = init_payload
@@ -159,13 +159,15 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         with open(self.index_file_path, 'w') as index_file:
             json.dump(self.index_data, index_file, indent=4)
         
+    @retry_on_exception()
     def _list_uploaded_files(self, batch_id):
         self.logger.info("Listing uploaded files")
         return self.client.beta.vector_stores.file_batches.list_files(
             vector_store_id= self.init_payload['vector_store_id'],
             batch_id=batch_id
         )
-
+    
+    @retry_on_exception()
     def _upload_file(self, batch):
         self.logger.info(f"Uploading file to OpenAI")
        
@@ -177,6 +179,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         files=batch
         )
 
+    @retry_on_exception()
     def _associate_file(self, file_id):
         self.logger.info(f"Associating {file_id} file with assistant")
         """
@@ -185,6 +188,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
         return self.client.beta.assistants.files.create(
                assistant_id=self.init_payload['assistant_id'], file_id=file_id)
     
+    @retry_on_exception()
     def delete_file_from_vector_store(self, file_id):
         self.logger.info(f"Deleting {file_id} file from vector store")
         """
@@ -196,7 +200,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
        
         print("res delete_file_from_vector_store")
 
-    
+    @retry_on_exception()
     def delete_file_from_assistant(self, file_id):
         self.logger.info(f"Deleting {file_id} file")
         """

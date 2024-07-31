@@ -1,5 +1,23 @@
 # ChangeLog
 
+## 0.0.31
+
+- Added support for file absolute path in addition to already existing relative file support in executor actions.
+- `skills` in the agent YML converted to a single value instead of an array of objects.
+- Added specific exceptions for various message related errors.
+
+## 0.0.30
+
+### Enhancements
+
+- Improved error handling for network issues.
+- Default agents are now read from the `agents` folder within the `default` folder in the codebase if not present in the `agents` folder of Sirji Studio.
+- Deprecated the keys `rules` and `definitions` from agent YAML.
+- Introduced the code review agent.
+- Implemented Factory Design Pattern for system prompt to have model provider specific details.
+- Ability to nudge the agent programmatically to bring it on track in case it skips over some pseudo code steps.
+- New messaging protocol action DO_NOTHING introduced to make intentional skipping of steps possible.
+
 ## 0.0.29
 
 ### Features

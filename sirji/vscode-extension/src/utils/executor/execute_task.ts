@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { getFilePath } from './helper';
 
 let currentTaskExecution: any = null;
 
@@ -27,8 +28,19 @@ export async function executeTask(command: string, projectRootPath: string): Pro
   return new Promise(async (resolve, reject) => {
     const tempFileName = `output_${Date.now()}.txt`;
 
-    const tempFileRelativePath = path.join(projectRootPath, tempFileName);
-    const tempFilePath = path.join(projectRootPath, tempFileRelativePath);
+    let tempFileRelativePath = '';
+    try {
+      tempFileRelativePath = getFilePath(tempFileName, projectRootPath);
+    } catch (error) {
+      return error;
+    }
+
+    let tempFilePath = '';
+    try {
+      tempFilePath = getFilePath(tempFileRelativePath, projectRootPath);
+    } catch (error) {
+      return error;
+    }
 
     let tempFileContent = '';
 

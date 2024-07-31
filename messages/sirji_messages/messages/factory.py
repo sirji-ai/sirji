@@ -23,6 +23,7 @@ from .actions.fetch_recipe_index import FetchRecipeIndexMessage
 from .actions.insert_above import InsertAbove
 from .actions.insert_below import InsertBelow
 from .actions.store_in_scratch_pad import StoreInScratchPad
+from .actions.do_nothing import DoNothing
 from .actions.store_in_agent_output import StoreInAgentOutputMessage
 from .actions.log_steps import LogSteps
 from .actions.sync_codebase import SyncCodebase
@@ -68,6 +69,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.FETCH_RECIPE: FetchRecipeMessage,
         ActionEnum.FETCH_RECIPE_INDEX: FetchRecipeIndexMessage,
         ActionEnum.STORE_IN_SCRATCH_PAD: StoreInScratchPad,
+        ActionEnum.DO_NOTHING: DoNothing,
         ActionEnum.LOG_STEPS: LogSteps,
         ActionEnum.SYNC_CODEBASE: SyncCodebase,
         ActionEnum.CREATE_ASSISTANT: CreateAssistantMessage

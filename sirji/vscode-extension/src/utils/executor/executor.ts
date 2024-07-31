@@ -85,6 +85,8 @@ export class Executor {
         return await searchCodeInProject(oThis.parsedMessage.BODY, oThis.projectRootPath);
       case ACTION_ENUM.STORE_IN_SCRATCH_PAD:
         return 'Done';
+      case ACTION_ENUM.DO_NOTHING:
+        return 'OK';
       case ACTION_ENUM.LOG_STEPS:
         console.log('LOG_STEPS', oThis.parsedMessage.BODY, oThis.agentStack);
         return await oThis.stepManager.createStepsFile(oThis.agentStack, oThis.parsedMessage.BODY);

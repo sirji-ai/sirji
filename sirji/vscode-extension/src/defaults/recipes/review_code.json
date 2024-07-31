@@ -1,0 +1,9 @@
+{
+  "prescribed_tasks": [
+    {
+      "task": "Perform a comprehensive code review by gathering requirements, identifying changes with git diff, reading relevant project files, clarifying ambiguities, comparing changes against requirements, and documenting your findings in a detailed markdown report.",
+      "agent": "CODE_REVIEWER"
+    }
+  ],
+  "tips": []
+}

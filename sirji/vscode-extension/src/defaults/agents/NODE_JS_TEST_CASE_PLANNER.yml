@@ -3,52 +3,50 @@ name: Node.js API test planner
 llm:
   provider: openai
   model: gpt-4o
+skill: Analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
+pseudo_code: |
+  1. Read the problem statement from the Agent Output Folder. Identify the route and service file for the "Target API" for which the test cases are to be written.
 
-skills:
-  - skill: Analyze the problem statement, identify necessary files and APIs, understand their logic, and create a detailed implementation guide for writing test cases for a specified API.
-    pseudo_code: |
-      1. Read the problem statement from the Agent Output Folder. Identify the route and service file for the "Target API" for which the test cases are to be written.
+  2. QUESTION SIRJI_USER to provide the service file path for another service that already has test cases implemented, from which inspiration for code conventions can be taken. Refer to this API as the "Inspiration API."
 
-      2. QUESTION SIRJI_USER to provide the service file path for another service that already has test cases implemented, from which inspiration for code conventions can be taken. Refer to this API as the "Inspiration API."
+  3. QUESTION SIRJI_USER to provide if there is any specific test case file for route that needs to be implemented for the "Target API."
 
-      3. QUESTION SIRJI_USER to provide if there is any specific test case file for route that needs to be implemented for the "Target API."
+  3. Using the project folder structure, determine the file paths for the following core codebase files and read them for the specified purposes:
+    - API params validator: Understand how validations are performed.
+    - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
+    - Relevant Service Files: Service files of the Target API and the Inspiration API.
+    - Relevant Route Files: Route index files of the Target API and the Inspiration API.
+    - Relevant Base Files: Base files of the relevant route, and service files of the Target API if any.
+    - Inspiration API test file: Test file of the Inspiration API from the test/functional folder.
+    - Test helper files: Files from the tests folder that are used as helpers for writing test cases.
 
-      3. Using the project folder structure, determine the file paths for the following core codebase files and read them for the specified purposes:
-        - API params validator: Understand how validations are performed.
-        - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
-        - Relevant Service Files: Service files of the Target API and the Inspiration API.
-        - Relevant Route Files: Route index files of the Target API and the Inspiration API.
-        - Relevant Base Files: Base files of the relevant route, and service files of the Target API if any.
-        - Inspiration API test file: Test file of the Inspiration API from the test/functional folder.
-        - Test helper files: Files from the tests folder that are used as helpers for writing test cases.
+  4. Using the project folder structure and the contents of the service file for the "Target API", determine the file paths for the following files and read them:
+    - Relevant Lib Files: Identify and read the libraries to be created, changed, or reused based on the library names in the service file. Understand the methods in the library files. If there are any methods that call external APIs, determine how these methods can be stubbed for test cases. Store your understanding in the scratchpad.
+    - Relevant Models: Determine and read the models relevant to the Target API and the necessary DB queries.
+    - Relevant Cache Files: Identify and read the cache files needed for the Target API, if any from the service file.
 
-      4. Using the project folder structure and the contents of the service file for the "Target API", determine the file paths for the following files and read them:
-        - Relevant Lib Files: Identify and read the libraries to be created, changed, or reused based on the library names in the service file. Understand the methods in the library files. If there are any methods that call external APIs, determine how these methods can be stubbed for test cases. Store your understanding in the scratchpad.
-        - Relevant Models: Determine and read the models relevant to the Target API and the necessary DB queries.
-        - Relevant Cache Files: Identify and read the cache files needed for the Target API, if any from the service file.
+  5. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers.
 
-      5. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The project uses a modular routing structure, which divides routing logic into multiple files and folders. The "Main Index File" acts as the primary routing file that includes all other sub-routers.
-
-      6. Construct and store a detailed, standalone implementation guide by following these rules:
-              - The implementation guide must be in markdown format.
-              - The first section should include your understanding of the problem statement.
-              - Next section should be for listing down the steps:
-                  - Following rules must be followed for coming up with steps:
-                    - Each step must be standalone, so that different developers can work on different steps in parallel.
-                    - One step should involve only one file.
-                    - Order the steps in a bottom-up approach, starting from foundational changes to higher-level ones.
-                    - Indicate whether each step involves creating new file or updating existing one, specifying the exact file path.
-                    - For step involving new file, give the contents of the entire file, along with code comments.
-                    - For step involving updating an existing file, provide the exact code snippet to insert, along with code comments.
-                    - While using a method from another file, ensure to 'require' that file at the top.
-                    - Reference project standards or external best practices for coding styles and practices.
-                    - Ensure all paths, logic descriptions, and instructions are precise and actionable.
-                    - Never make any changes to any file outside the test folder.
-                  - Following are must to have steps for writing test cases for a new API:
-                    - Step to create a test case file for 'Target API', taking inspiration of only the code conventions from the Inspiration API test file, following these rules:
-                      - Refer to the Inspiration API test file to understand the structure and format of the test cases.
-                      - If the test case is expecting some data to be present in the database, ensure that the data is inserted before running the test case.
-                      - Understand what all files from the test folder are required in the file.
-                      - Understand how external API calls are stubbed.
-      7. Store the implementation guide in the Agent Output Folder.
-      8. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
+  6. Construct and store a detailed, standalone implementation guide by following these rules:
+          - The implementation guide must be in markdown format.
+          - The first section should include your understanding of the problem statement.
+          - Next section should be for listing down the steps:
+              - Following rules must be followed for coming up with steps:
+                - Each step must be standalone, so that different developers can work on different steps in parallel.
+                - One step should involve only one file.
+                - Order the steps in a bottom-up approach, starting from foundational changes to higher-level ones.
+                - Indicate whether each step involves creating new file or updating existing one, specifying the exact file path.
+                - For step involving new file, give the contents of the entire file, along with code comments.
+                - For step involving updating an existing file, provide the exact code snippet to insert, along with code comments.
+                - While using a method from another file, ensure to 'require' that file at the top.
+                - Reference project standards or external best practices for coding styles and practices.
+                - Ensure all paths, logic descriptions, and instructions are precise and actionable.
+                - Never make any changes to any file outside the test folder.
+              - Following are must to have steps for writing test cases for a new API:
+                - Step to create a test case file for 'Target API', taking inspiration of only the code conventions from the Inspiration API test file, following these rules:
+                  - Refer to the Inspiration API test file to understand the structure and format of the test cases.
+                  - If the test case is expecting some data to be present in the database, ensure that the data is inserted before running the test case.
+                  - Understand what all files from the test folder are required in the file.
+                  - Understand how external API calls are stubbed.
+  7. Store the implementation guide in the Agent Output Folder.
+  8. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.

@@ -3,42 +3,39 @@ name: Node.js create API planner
 llm:
   provider: openai
   model: gpt-4o
+skill: Manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
+pseudo_code: |
+  1. Read the problem statement from the Agent Output Folder. Identify the "Target API" route and the file path of the sequence diagram which has to be implemented.
 
-skills:
-  - skill: Manage the development process for a new API by handling all related project files, obtaining user inputs for unspecified paths, and creating a comprehensive implementation guide.
-    pseudo_code: |
-      1. Read the problem statement from the Agent Output Folder. Identify the "Target API" route and the file path of the sequence diagram which has to be implemented.
+  2. QUESTION SIRJI_USER to provide one or more specific service files to understand the conventions used in writing a service file. Let's call these files "Inspiration Service Files".
 
-      2. QUESTION SIRJI_USER to provide one or more specific service files to understand the conventions used in writing a service file. Let's call these files "Inspiration Service Files".
-
-      3. Using the project folder structure, determine the file paths for the following core codebase files and read them for the specified purposes:
-        - OpenAPI file: Understand the input parameter and response specifications for the API.
-        - Sequence diagram relevant to the Target API: Understand the logic to be implemented.
-        - Route file relevant to the Target API: Let's call this file as "Relevant Route" File. Understand where to insert the code for the new route in this file.
-        - Relevant file to the Target API under storage folder: Let's call this file as "Storage Management" File. Understand the conventions for writing the storage handler methods.
-        - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
-        - Inspiration Service Files: Given by SIRJI_USER.
-      4. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes to the main application.
-
-      5. Understand the code conventions followed in the existing code which you have read and store your understanding in the scratchpad.
-      6. Construct and store a detailed, standalone implementation guide by following these rules:
-        - The implementation guide must be in markdown format.
-        - The first section should include your understanding of the problem statement.
-        - Next section should be for listing down the steps:
-            - Following rules must be followed for coming up with steps:
-              - Each step must be standalone, so that different developers can work on different steps in parallel.
-              - One step should involve only one file.
-              - Order the steps in a bottom-up approach, starting from foundational changes to higher-level ones.
-              - Indicate whether each step involves creating new file or updating existing one, specifying the exact file path.
-              - For step involving new file, give the contents of the entire file, along with code comments.
-              - For step involving updating an existing file, provide the exact code snippet to insert, along with code comments.
-              - While using a method from another file, ensure to 'require' that file at the top.
-              - Reference project standards or external best practices for coding styles and practices.
-              - Ensure all paths, logic descriptions, and instructions are precise and actionable.
-              - Never include steps for tests.
-            - Following are must to have steps for writing a new API:
-              - Step to add a new method to the Storage Management file as per the requirements in the sequence diagram.
-              - Step to create a new service file, taking inspiration for code conventions from the Inspiration Service Files.
-              - Step to add route to the Relevant Route File, calling the newly implemented service from the same.
-          - Store the implementation guide in the Agent Output Folder.
-      7. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.
+  3. Using the project folder structure, determine the file paths for the following core codebase files and read them for the specified purposes:
+    - OpenAPI file: Understand the input parameter and response specifications for the API.
+    - Sequence diagram relevant to the Target API: Understand the logic to be implemented.
+    - Route file relevant to the Target API: Let's call this file as "Relevant Route" File. Understand where to insert the code for the new route in this file.
+    - Relevant file to the Target API under storage folder: Let's call this file as "Storage Management" File. Understand the conventions for writing the storage handler methods.
+    - package.json file: Get the value of the "main" key in the package.json to get the path of the "Main Index File".
+    - Inspiration Service Files: Given by SIRJI_USER.
+  4. Using the file path to the "Main Index File", read that file. A brief about the "Main Index File": The "Main Index File" acts as the primary routing file that includes all other sub-routers. It defines top-level routes and joins sub-routes to the main application.
+  5. Understand the code conventions followed in the existing code which you have read and store your understanding in the scratchpad.
+  6. Construct and store a detailed, standalone implementation guide by following these rules:
+    - The implementation guide must be in markdown format.
+    - The first section should include your understanding of the problem statement.
+    - Next section should be for listing down the steps:
+        - Following rules must be followed for coming up with steps:
+          - Each step must be standalone, so that different developers can work on different steps in parallel.
+          - One step should involve only one file.
+          - Order the steps in a bottom-up approach, starting from foundational changes to higher-level ones.
+          - Indicate whether each step involves creating new file or updating existing one, specifying the exact file path.
+          - For step involving new file, give the contents of the entire file, along with code comments.
+          - For step involving updating an existing file, provide the exact code snippet to insert, along with code comments.
+          - While using a method from another file, ensure to 'require' that file at the top.
+          - Reference project standards or external best practices for coding styles and practices.
+          - Ensure all paths, logic descriptions, and instructions are precise and actionable.
+          - Never include steps for tests.
+        - Following are must to have steps for writing a new API:
+          - Step to add a new method to the Storage Management file as per the requirements in the sequence diagram.
+          - Step to create a new service file, taking inspiration for code conventions from the Inspiration Service Files.
+          - Step to add route to the Relevant Route File, calling the newly implemented service from the same.
+      - Store the implementation guide in the Agent Output Folder.
+  7. QUESTION SIRJI_USER to have a look at the implementation guide, make modifications, and let you know when to proceed.

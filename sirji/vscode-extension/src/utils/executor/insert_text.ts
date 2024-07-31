@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import path from 'path';
+import { getFilePath } from './helper';
 
 function delay(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
@@ -40,7 +41,7 @@ async function insertCode(document: vscode.TextDocument, editor: vscode.TextEdit
   });
 }
 
-export const insertText = async (body: string, projectRootPath: string, insertPosition: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<string> => {
+export const insertText = async (body: string, projectRootPath: string, insertPosition: string, globPattern?: string, exclude: string = '**/node_modules/**'): Promise<any> => {
   let searchText, textToInsert, filePath;
 
   if (insertPosition.toLowerCase() === 'below') {
@@ -75,7 +76,11 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
     return `The error in parsing the BODY: ${error}. Either the FILE_PATH key is missing or not in the correct format. The correct format is FILE_PATH: {{File path without any special characaters}} ---. Your response must conform strictly to Response Template with all the keys present in the BODY`;
   }
 
-  filePath = path.join(projectRootPath, filePath);
+  try {
+    filePath = getFilePath(filePath, projectRootPath);
+  } catch (error) {
+    return error;
+  }
 
   console.log(`Inserting text into file: ${filePath} based on search text: '${searchText}' with replacement: '${textToInsert}' and insert position: '${insertPosition}'`);
 
@@ -99,7 +104,7 @@ export const insertText = async (body: string, projectRootPath: string, insertPo
 
     for (let i = 0; i < lines.length; i++) {
       const block = lines.slice(i, i + normalizedSearchText.split('\n').length).join('\n');
-      
+
       if (normalizeIndentation(block).includes(normalizedSearchText)) {
         console.log('Block found:', block);
         startIndex = text.indexOf(block);

@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as mimetype from 'mime-types';
 import { sanitizePath } from './create_file';
+import { getFilePath } from './helper';
 
 const SKIP_LIST = ['__pycache__', '.git', '.github', '.gitlab', '.vscode', '.idea', 'node_modules', '.DS_Store', 'venv', '.venv', '.sass-cache', 'dist', 'out', 'build', 'logs', '.npm', 'temp', 'tmp'];
 
@@ -32,7 +33,7 @@ function isPathInsideRoot(rootPath: string, targetPath: string): boolean {
   return resolvedTarget.startsWith(resolvedRoot);
 }
 
-export async function readContent(projectRootPath: string, body: string, isDirectory: boolean): Promise<string> {
+export async function readContent(projectRootPath: string, body: string, isDirectory: boolean): Promise<any> {
   async function shouldSkip(name: string): Promise<boolean> {
     return SKIP_LIST.includes(name);
   }
@@ -107,7 +108,12 @@ export async function readContent(projectRootPath: string, body: string, isDirec
 
   for (const inputPath of inputPaths) {
     try {
-      const fullPath = path.isAbsolute(inputPath) ? inputPath : path.join(projectRootPath, inputPath);
+      let fullPath = '';
+      try {
+        fullPath = getFilePath(inputPath, projectRootPath);
+      } catch (error) {
+        return error;
+      }
 
       if (!isPathInsideRoot(projectRootPath, fullPath)) {
         throw new Error(`Path '${inputPath}' is not within the project root.`);
