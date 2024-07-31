@@ -75,6 +75,7 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
     
     def upload_batches(self, file_streams):
         total_files = len(file_streams)
+        self.logger.info(f"Uploading {total_files} files in batches of {BATCH_SIZE} to OpenAI")
 
         for i in range(0, total_files, BATCH_SIZE):
             batch = file_streams[i:i + BATCH_SIZE]
@@ -112,7 +113,34 @@ class OpenAIAssistantEmbeddings(BaseEmbeddings):
                         
                     retry_count += 1
                     if retry_count > MAX_RETRIES:
-                        self.logger.error(f"Giving up on batch {i//BATCH_SIZE + 1} after {MAX_RETRIES + 1} attempts")
+                       
+                        for file in batch:
+                            try:
+                                self.logger.info(f"Trying with up on batch {i//BATCH_SIZE + 1} after {MAX_RETRIES + 1} attempts for file {file}")
+                                uploaded_files = self._upload_file([file])
+
+                                list_batches_files = self._list_uploaded_files(uploaded_files.id)
+
+                                # Collect file ID info for each uploaded file
+                                for uploaded_file in list_batches_files.data:
+                                    file_info = {
+                                        'file_id': uploaded_file.id,
+                                        'created_at': uploaded_file.created_at,
+                                        'status': uploaded_file.status,
+                                    }
+
+                                    vector_store_file = self.client.files.retrieve(uploaded_file.id)
+
+                                    file_info['file_name'] = vector_store_file.filename
+
+                                    self.uploaded_files_info.append(file_info)
+
+                                    print("assistant_id", self.init_payload['assistant_id'])
+                            except Exception as e:
+                                print(f"Failed to upload file {file}, attempt {retry_count + 1}: {e}")
+                                self.logger.error(f"Failed to upload file {file}, attempt {retry_count + 1}: {e}")
+
+                        self.logger.error(f"Trying with up on batch {i//BATCH_SIZE + 1} after {MAX_RETRIES + 1} attempts")
 
         print("self.uploaded_files_info", self.uploaded_files_info)
 

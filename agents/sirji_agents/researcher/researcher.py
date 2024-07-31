@@ -82,8 +82,7 @@ EXTENSION_SKIP_LIST = [
     ".svg",
     ".lock",
     ".keep",
-    'bundle',
-    '.haml',
+    'bundle'
 ]
 
 class ResearchAgent:
