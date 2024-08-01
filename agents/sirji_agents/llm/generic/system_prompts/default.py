@@ -99,6 +99,9 @@ class DefaultSystemPrompt:
                 action_list.add(ActionEnum[action])
         allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.EXECUTOR, action_list) + '\n'
 
+        action_list_researcher = permissions_dict[(AgentEnum.ANY, AgentEnum.RESEARCHER)]
+        allowed_response_templates_str += '\n' +  allowed_response_templates(AgentEnum.ANY, AgentEnum.RESEARCHER, action_list_researcher) + '\n'
+
         allowed_response_templates_str += textwrap.dedent(f"""For updating in project folder use either {ActionEnum.FIND_AND_REPLACE.name}, {ActionEnum.INSERT_ABOVE.name} or {ActionEnum.INSERT_BELOW.name} actions. Ensure you provide the exact matching string in find from file, with the exact number of lines and proper indentation for insert and replace actions.""") + '\n'
         allowed_response_templates_str += '\n' + allowed_response_templates(AgentEnum.ANY, AgentEnum.CALLER, permissions_dict[(AgentEnum.ANY, AgentEnum.CALLER)]) + '\n'
     

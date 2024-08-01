@@ -28,6 +28,7 @@ from .actions.store_in_agent_output import StoreInAgentOutputMessage
 from .actions.log_steps import LogSteps
 from .actions.sync_codebase import SyncCodebase
 from .actions.create_assistant import CreateAssistantMessage
+from .actions.infer_in_existing_thread import InferInExistingThread
 
 
 class MetaMessageFactory(type):
@@ -72,6 +73,7 @@ class MessageFactory(metaclass=MetaMessageFactory):
         ActionEnum.DO_NOTHING: DoNothing,
         ActionEnum.LOG_STEPS: LogSteps,
         ActionEnum.SYNC_CODEBASE: SyncCodebase,
-        ActionEnum.CREATE_ASSISTANT: CreateAssistantMessage
+        ActionEnum.CREATE_ASSISTANT: CreateAssistantMessage,
+        ActionEnum.INFER_IN_EXISTING_THREAD: InferInExistingThread
     }
 

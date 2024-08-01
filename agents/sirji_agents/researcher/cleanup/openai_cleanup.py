@@ -52,3 +52,13 @@ class OpenAICleanup(CleanupBase):
         except Exception as e:
             print(e)
             self.logger.error(e)
+
+    @retry_on_exception()
+    def delete_thread(self, thread_id):
+        try:
+            response = self.client.beta.threads.delete(thread_id = thread_id)
+            print(response)
+            self.logger.info(response)
+        except Exception as e:
+            print(e)
+            self.logger.error(e)

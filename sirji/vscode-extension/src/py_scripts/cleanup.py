@@ -30,6 +30,10 @@ class CleanupHelper:
         cleanup_instance = CleanupFactory.get_instance()
         cleanup_instance.delete_assistant(assistant_id)
 
+    def cleanup_thread(self, thread_id):
+        cleanup_instance = CleanupFactory.get_instance()
+        cleanup_instance.delete_thread(thread_id)
+
     def cleanup_file(self, file_path):
         cleanup_instance = CleanupFactory.get_instance()
         cleanup_instance.delete_file(file_path)
@@ -75,6 +79,12 @@ class CleanupHelper:
         if assistant_details and assistant_details.get('status') == 'active':
             if assistant_details.get('vector_store_id'):
                 self.cleanup_vector_store(assistant_details.get('vector_store_id'))
+            if assistant_details.get('thread_ids_map'):
+                thread_ids_array =  assistant_details.get('thread_ids_map').values()
+                flattended_thread_ids_array = sum(thread_ids_array, [])
+                for thread_id in flattended_thread_ids_array:
+                    self.cleanup_thread(thread_id)
+                
             if assistant_details.get('assistant_id'):
                 self.cleanup_assistant(assistant_details.get('assistant_id'))
             # Update the status in assistant_details.json to 'deleted'

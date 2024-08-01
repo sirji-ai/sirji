@@ -138,6 +138,8 @@ class ResearchAgent:
                 return self._sync_codebase(parsed_message), 0, 0
             elif action == ActionEnum.INFER.name:
                 return self._handle_infer(parsed_message)
+            elif action == ActionEnum.INFER_IN_EXISTING_THREAD.name:
+                return self._handle_infer_in_existing_thread(parsed_message)
 
             # if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
             #     return self._handle_train_using_search_term(parsed_message)
@@ -208,6 +210,28 @@ class ResearchAgent:
             text = text.replace(sirji_tag, file_content)
         
         return text
+    
+    def _handle_infer_in_existing_thread(self, parsed_message):
+        """Private method to handle inference requests in an existing thread."""
+        self.logger.info(f"Infering in existing thread: {parsed_message.get('BODY')}")
+         
+        complete_session_id = self.init_payload.get("complete_session_id")
+
+
+        if complete_session_id is None:
+            return "Error: No active thread found", 0, 0
+        
+        thread_id  = self.init_payload.get("thread_ids_map").get(complete_session_id)[-1]
+
+        if thread_id is None:
+            return "Error: There is no existing thread found.", 0, 0
+        
+        
+        self.init_payload['thread_id'] = thread_id
+
+        response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('BODY'))
+        
+        return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), response), prompt_tokens, completion_tokens
 
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
@@ -494,10 +518,12 @@ class ResearchAgent:
         assistant_details = {
             "assistant_id": assistant.id,
             "vector_store_id": vector_store.id,
+            "thread_ids_map": {},
             "status": "active"
         }
 
         print(assistant_details)
+        self.logger.info("Assistant details: %s", assistant_details)
         assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
         with open(assistant_details_path, 'w') as f:
             json.dump(assistant_details, f, indent=4)
