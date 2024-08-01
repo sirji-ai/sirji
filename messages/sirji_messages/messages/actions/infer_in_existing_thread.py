@@ -22,7 +22,7 @@ class InferInExistingThread(BaseMessages):
             {{query}}""")})
 
   def description(self):
-        return "Infer using existing thread"
+        return "Infer the assistant in an existing thread"
     
   def instructions(self):
         return []

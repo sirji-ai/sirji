@@ -21,7 +21,7 @@ class InferMessage(BaseMessages):
             {{query}}""")})
 
     def description(self):
-        return "Ask questions on the trained content"
+        return "Ask query to the assistant in a fresh thread"
     
     def instructions(self):
         return []
