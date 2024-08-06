@@ -19,7 +19,7 @@ class FindAndReplace(BaseMessages):
               "summary": "{{Display a concise summary to the user, describing the action using the present continuous tense.}}",
               "body": textwrap.dedent("""
                 FILE_PATH:
-                {{File path}}                        
+                {{File path}}
                 --- 
                 FIND:
                 {{Code to Find}}    

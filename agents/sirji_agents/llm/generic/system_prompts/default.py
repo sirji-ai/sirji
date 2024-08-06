@@ -49,7 +49,8 @@ class DefaultSystemPrompt:
             - Execute the sub-tasks associated with each of these matching skills.
             - Do not respond with two actions in the same response. Respond with one action at a time.
             - Always use {ActionEnum.STORE_IN_AGENT_OUTPUT.name} and {ActionEnum.READ_AGENT_OUTPUT_FILES.name} to write and read files to and from the agent output folder. 
-            - If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.                                                                       
+            - If any step is not applicable or cannot be followed, use the DO_NOTHING action to skip it.   
+            - On getting error multiple times, that you have skipped a step you need to consult with the SIRJI_USER.                                                                     
             """)
 
         formatted_skills = self.__format_skills()
@@ -121,7 +122,7 @@ class DefaultSystemPrompt:
             
             output_text += f"Skill: {self.config['skill']}\n"
 
-            output_text += f"Make sure to first convert all the points mentioned in Pseudo code in plain english to steps having at max 10 words each and log these steps using {ActionEnum.LOG_STEPS.name} action.\n"
+            output_text += f"Make sure to first convert all the points mentioned in Pseudo code to plain english steps having at max 10 words each. Ensure to have one and only one plain english step for each pseudo code point. Log these plain english steps using {ActionEnum.LOG_STEPS.name} action.\n"
             output_text += "Then, execute the steps in the order they are logged.\n"
             output_text += f"Pseudo code which you must follow:\n{self.config['pseudo_code']}"
             output_text += "\n"

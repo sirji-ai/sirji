@@ -91,7 +91,7 @@ export class Executor {
         console.log('LOG_STEPS', oThis.parsedMessage.BODY, oThis.agentStack);
         return await oThis.stepManager.createStepsFile(oThis.agentStack, oThis.parsedMessage.BODY);
       default:
-        return `Invalid message ACTION: ${action} sent to executor. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors.`;
+        return `Invalid message "ACTION": ${action} sent to executor. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors.`;
     }
   }
 
