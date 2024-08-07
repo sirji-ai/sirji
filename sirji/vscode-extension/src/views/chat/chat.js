@@ -426,7 +426,10 @@ function displayPlannedSteps(steps) {
         listElement.appendChild(headerItem);
 
         header[fileName].forEach((stepObj, index) => {
-          const stepDescription = stepObj[`step_${index + 1}`];
+          const stepKey = `step_${index + 1}`;
+          const numberedKey = `${index + 1}`;
+
+          const stepDescription = stepObj[stepKey] || stepObj[numberedKey] || '';
           const stepStatus = stepObj.status;
 
           const listItem = document.createElement('li');
