@@ -1,6 +1,7 @@
 import path from 'path';
 
 export const getFilePath = (filePath: string, projectRootPath: string): string => {
+  filePath = filePath.replace(/"/g, '');
   if (path.isAbsolute(filePath)) {
     if (filePath.includes(projectRootPath)) {
       return filePath;
