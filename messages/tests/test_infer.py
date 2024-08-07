@@ -22,7 +22,7 @@ def test_infer_message_sample():
 
 def test_infer_message_description():
     message = InferMessage()
-    assert message.description() == "Ask questions on the trained content"
+    assert message.description() == "Ask query to the assistant in a fresh thread"
 
 def test_infer_message_instructions():
     message = InferMessage()
