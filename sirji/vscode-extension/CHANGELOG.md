@@ -2,9 +2,13 @@
 
 ## 0.0.31
 
+### Enhancements
+
 - Added support for file absolute path in addition to already existing relative file support in executor actions.
+- Added tolerance for file path coming in double quotes from LLM.
 - `skills` in the agent YML converted to a single value instead of an array of objects.
 - Added specific exceptions for various message related errors.
+- Added ability to infer assistant in existing thread. INFER_IN_EXISTING_THREAD action added for the same.
 
 ## 0.0.30
 
