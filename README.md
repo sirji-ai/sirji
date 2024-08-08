@@ -11,6 +11,9 @@
 </p>
 
 <p align="center">
+  <a href="https://docs.sirji.ai/">
+    <img alt="Documentation" src="https://img.shields.io/badge/docs-website-blue.svg">
+  </a>
   <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
   <img alt="GitHub Open Issues" src="https://img.shields.io/github/issues/sirji-ai/sirji">
