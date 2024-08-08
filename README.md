@@ -11,10 +11,17 @@
 </p>
 
 <p align="center">
+  <a href="https://docs.sirji.ai/">
+    <img alt="Documentation" src="https://img.shields.io/badge/docs-website-blue.svg">
+  </a>
   <img alt="GitHub License" src="https://img.shields.io/github/license/sirji-ai/sirji">
   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/sirji-ai/sirji">
+</p>
+
+<p align="center">
   <img alt="GitHub Open Issues" src="https://img.shields.io/github/issues/sirji-ai/sirji">
   <img alt="GitHub Closed Issues" src="https://img.shields.io/github/issues-closed/sirji-ai/sirji">
+  <img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/sirji-ai/sirji">
 </p>
 
 <p align="center">
@@ -25,11 +32,11 @@
 
 ## Sirji
 
-Sirji is a framework designed to build and run custom AI agents for your everyday development tasks.
+Sirji is a framework for creating and running custom AI agents to help developers with their daily tasks.
 
-An agent in the Sirji framework is a modular AI component designed to perform specific task based on custom pseudocode. [Here](./docs/How%20to%20Write%20an%20Agent.md) is a guide for writing your own custom agent.
+Implemented as a VS Code extension, Sirji offers an interactive chat interface within the IDE, utilizing features like the Editor, Terminal, and Project Explorer.
 
-[Here](./docs/Sirji%20Studio.md) is a guide to organize and share your custom agents.
+Sirji is an open-source project. Check out the [documentation](https://docs.sirji.ai/).
 
 ## Installation
 

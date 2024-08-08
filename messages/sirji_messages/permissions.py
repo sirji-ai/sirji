@@ -18,10 +18,7 @@ permissions_dict = {
         ActionEnum.EXTRACT_DEPENDENCIES,
         ActionEnum.STORE_IN_SCRATCH_PAD,
         ActionEnum.DO_NOTHING,
-        ActionEnum.LOG_STEPS,
-        ActionEnum.INFER,
-        ActionEnum.CREATE_ASSISTANT,
-        ActionEnum.SYNC_CODEBASE
+        ActionEnum.LOG_STEPS
     },
     (AgentEnum.ANY, AgentEnum.SIRJI_USER): {
         ActionEnum.QUESTION
@@ -35,6 +32,12 @@ permissions_dict = {
     (AgentEnum.ORCHESTRATOR, AgentEnum.ANY): {
         ActionEnum.INVOKE_AGENT,
         ActionEnum.INVOKE_AGENT_EXISTING_SESSION
+    },
+    (AgentEnum.ANY, AgentEnum.RESEARCHER): {
+        ActionEnum.INFER,
+        ActionEnum.CREATE_ASSISTANT,
+        ActionEnum.SYNC_CODEBASE,
+        ActionEnum.INFER_IN_EXISTING_THREAD
     }
 }
 

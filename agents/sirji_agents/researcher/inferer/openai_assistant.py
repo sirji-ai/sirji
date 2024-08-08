@@ -1,3 +1,4 @@
+import json
 import os
 import time
 from openai import OpenAI
@@ -18,6 +19,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         """
 
         self.init_payload = init_payload
+        self.thread_id = self.init_payload.get('thread_id', None)
 
         # Fetch OpenAI API key from an environment variable
         api_key = os.environ.get("SIRJI_MODEL_PROVIDER_API_KEY")
@@ -37,6 +39,7 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         self.assistant_id = self.init_payload['assistant_id']
 
         self.logger.info("Completed initializing OpenAI Assistant Inferer")
+        self.assistant_details_path  = os.path.join(self._get_run_path(), "assistant_details.json")
 
     def infer(self, problem_statement):
         self.logger.info("Started inferring using OpenAI Assistant Inferer")
@@ -56,26 +59,49 @@ class OpenAIAssistantInferer(ResearcherInfererBase):
         #     content=problem_statement,
         # )
 
-        self.thread_id = None
 
         try:
-            self.thread_id = self.create_thread(problem_statement)
+            if not self.thread_id:
+                self.thread_id = self.create_thread(problem_statement)
+                if self.thread_id:
+                    try:
+                        self.logger.info("File path: %s", self.assistant_details_path)
+                        with open(self.assistant_details_path, 'r') as file:
+                            assistant_details = json.load(file)
+                            self.logger.info("Loaded assistant_details: %s", assistant_details)
+
+                        with open(self.assistant_details_path, 'w') as file:
+                            
+                            thread_ids_map = assistant_details.get('thread_ids_map')
+                            complete_session_id = self.init_payload.get('complete_session_id')
+                            
+                            thread_ids = thread_ids_map.get(complete_session_id, None)
+                            if thread_ids is None:
+                                thread_ids_map[complete_session_id] = []
+                            
+                            thread_ids_map[complete_session_id].append(self.thread_id)
+ 
+                            self.logger.info("Saving thread_id: %s", self.thread_id)
+                            self.logger.info("Saving assistant_details: %s", assistant_details)
+                            json.dump(assistant_details, file, indent=4)
+                    except Exception as save_e:
+                        self.logger.error("Failed to save thread_id: %s", str(save_e))
+                print('self.thread_id', self.thread_id)
+
             response = self._fetch_response()
         except Exception as e:
             self.logger.error("An error occurred during inference: %s", str(e))
             response = 'An error occurred during inference', 0, 0
-        finally:
-            if self.thread_id:
-                try:
-                    deleteResponse = self.client.beta.threads.delete(thread_id=self.thread_id)
-                    self.logger.info("Thread deleted successfully: %s", deleteResponse)
-                    print('deleteResponse', deleteResponse)
-                except Exception as delete_e:
-                    self.logger.error("Failed to delete thread: %s", str(delete_e))
-                print('self.thread_id', self.thread_id)
-        
+
         return response
     
+    def _get_run_path(self):
+        run_path = os.environ.get("SIRJI_RUN_PATH")
+        if run_path is None:
+            raise ValueError(
+                "SIRJI_RUN_PATH is not set as an environment variable")
+        return run_path
+
 
     @retry_on_exception()
     def create_thread(self, problem_statement):

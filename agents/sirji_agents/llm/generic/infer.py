@@ -68,19 +68,19 @@ class GenericAgentInfer():
                         raise e
                     self.logger.info(f"Requesting LLM to resend the message in correct format.\n")
                     conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                    conversation.append({"role": "user", "content": "Error obtained in processing your last response. Your response must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your response must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors."})
+                    conversation.append({"role": "user", "content": "Error obtained in processing your last message. Your last message has been discarded. The message must conform strictly to one of the allowed Response Templates, as it will be processed programmatically and only these templates are recognized. Your message must be enclosed within '***' at the beginning and end, without any additional text above or below these markers. Not conforming above rules will lead to response processing errors."})
                 if isinstance(e, MessageMissingPropertyError):
                     conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                    conversation.append({"role": "user", "content": "Error obtained in processing your last response. your response is missing some required properties. Please refer to the allowed response templates and provide the missing properties."})
+                    conversation.append({"role": "user", "content": "Error obtained in processing your last message. Your last message has been discarded. The message is missing some required properties. Please refer to the allowed response templates and provide the missing properties."})
                 if isinstance(e, MessageUnRecognizedActionError):
                     conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                    conversation.append({"role": "user", "content": "Error obtained in processing your last response. Your response contains an unrecognized action. Please refer to the allowed response templates and provide a valid action."})
+                    conversation.append({"role": "user", "content": "Error obtained in processing your last message. Your last message has been discarded. The message contains an unrecognized action. Please refer to the allowed response templates and provide a valid action."})
                 if isinstance(e, MessageLengthConstraintError):
                     conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                    conversation.append({"role": "user", "content": "Error obtained in processing your last response. Your response does not have all the required properties."})
+                    conversation.append({"role": "user", "content": "Error obtained in processing your last message. Your last message has been discarded. The message does not have all the required properties."})
                 if isinstance(e, MessageMultipleActionError):
                     conversation.append({"role": "assistant", "content": response_message, "parsed_content": {}})
-                    conversation.append({"role": "user", "content": "Error obtained in processing your last response. Your response contains more than one ACTION keyword."})
+                    conversation.append({"role": "user", "content": "Error obtained in processing your last message. Your last message has been discarded. The message contains more than one 'ACTION' keyword. Send only one 'ACTION' at a time."})
             except Exception as e:
                 self.logger.info(f"Generic error while parsing message. Error: {e}\n")
                 raise e

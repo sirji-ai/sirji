@@ -735,12 +735,15 @@ export class Facilitator {
           case ACTOR_ENUM.RESEARCHER:
             console.log('Researcher message', parsedMessage);
             try {
+              let agentCallstack = oThis.stackManager.getStack();
+              let sessionId = oThis.sessionManager?.reuseSession(agentCallstack);
               await spawnAdapter(
                 oThis.context,
                 oThis.sirjiInstallationFolderPath,
                 oThis.sirjiRunFolderPath,
                 oThis.projectRootPath,
-                path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py')
+                path.join(__dirname, '..', 'py_scripts', 'agents', 'research_agent.py'),
+                ['--agent_callstack', agentCallstack, '--agent_session_id', sessionId ?? '']
               );
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
@@ -783,7 +786,7 @@ export class Facilitator {
             } catch (error) {
               oThis.sendErrorToChatPanel(error);
               keepFacilitating = false;
-              break; 
+              break;
             }
 
             const agentConversationFilePath = path.join(oThis.sirjiRunFolderPath, 'conversations', `${agentCallstack}.${sessionId}.json`);

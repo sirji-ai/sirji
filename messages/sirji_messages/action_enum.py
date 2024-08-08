@@ -38,3 +38,4 @@ class ActionEnum(Enum):
     STORE_IN_AGENT_OUTPUT = auto()
     LOG_STEPS = auto()
     SYNC_CODEBASE = auto()
+    INFER_IN_EXISTING_THREAD = auto()

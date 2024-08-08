@@ -15,8 +15,7 @@ from .embeddings.factory import EmbeddingsFactory
 from .inferer.factory import InfererFactory
 from ..decorators import retry_on_exception
 
-
-DEFAULT_SKIP_LIST = [
+GITIGNORE_SKIP_LIST = [
     '__pycache__',
     '.git',
     '.github',
@@ -35,12 +34,15 @@ DEFAULT_SKIP_LIST = [
     '.npm',
     'temp',
     'tmp',
+]
+
+EXTENSION_SKIP_LIST = [
     '.env',
     '.env.test',
     '.env.local',
     '.env.development',
     '.env.production',
-    '.env.staging'
+    '.env.staging',
     '.png',
     '.jpg',
     '.jpeg',
@@ -76,8 +78,12 @@ DEFAULT_SKIP_LIST = [
     '.xml',
     '.yaml',
     '.yml',
+    ".asm",
+    ".svg",
+    ".lock",
+    ".keep",
+    'bundle'
 ]
-
 
 class ResearchAgent:
     def __init__(self, init_payload={}):
@@ -91,8 +97,9 @@ class ResearchAgent:
 
         self.logger.info("Completed initializing researcher")
 
-        # Initialize SKIP_LIST
-        self.skip_list = set(DEFAULT_SKIP_LIST)
+        # Initialize skip lists
+        self.gitignore_skip_list = set(GITIGNORE_SKIP_LIST)
+        self.extension_skip_list = set(EXTENSION_SKIP_LIST)
 
         # Initialize file_streams
         self.file_streams = []
@@ -131,6 +138,8 @@ class ResearchAgent:
                 return self._sync_codebase(parsed_message), 0, 0
             elif action == ActionEnum.INFER.name:
                 return self._handle_infer(parsed_message)
+            elif action == ActionEnum.INFER_IN_EXISTING_THREAD.name:
+                return self._handle_infer_in_existing_thread(parsed_message)
 
             # if action == ActionEnum.TRAIN_USING_SEARCH_TERM.name:
             #     return self._handle_train_using_search_term(parsed_message)
@@ -201,6 +210,33 @@ class ResearchAgent:
             text = text.replace(sirji_tag, file_content)
         
         return text
+    
+    def _handle_infer_in_existing_thread(self, parsed_message):
+        """Private method to handle inference requests in an existing thread."""
+        self.logger.info(f"Infering in existing thread: {parsed_message.get('BODY')}")
+         
+        complete_session_id = self.init_payload.get("complete_session_id")
+
+
+        if complete_session_id is None:
+            return "Error: No active thread found", 0, 0
+        
+        thread_ids = self.init_payload.get("thread_ids_map").get(complete_session_id)
+
+        if thread_ids is None:
+            return "Error: No existing assistant thread found. Please use INFER in fresh session before using INFER_IN_EXISTING_SESSION", 0, 0
+        
+        thread_id  = thread_ids[-1]
+
+        if thread_id is None:
+            return "Error: No existing assistant thread found. Please use INFER in fresh session before using INFER_IN_EXISTING_SESSION ", 0, 0
+        
+        
+        self.init_payload['thread_id'] = thread_id
+
+        response, prompt_tokens, completion_tokens = self._infer(parsed_message.get('BODY'))
+        
+        return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), response), prompt_tokens, completion_tokens
 
     def _handle_infer(self, parsed_message):
         """Private method to handle inference requests."""
@@ -301,6 +337,10 @@ class ResearchAgent:
             # Process the files read from directory
             self._process_files()
 
+            for file_path in self.file_paths:
+                self.logger.info(f"Uploading Files List {file_path}")
+
+
             if not self.file_streams:
                 self.logger.info("No files to sync")
                 return self._generate_message(parsed_message.get('TO'), parsed_message.get('FROM'), "No files to sync")
@@ -337,16 +377,31 @@ class ResearchAgent:
                 new_entries = [
                     entry.strip() for entry in entries if entry.strip() and not entry.startswith('#')
                 ]
-                self.skip_list.update(new_entries)
-                self.logger.info(f"Updated SKIP_LIST from .gitignore: {self.skip_list}")
+                self.gitignore_skip_list.update(new_entries)
+                self.logger.info(f"Updated GITIGNORE_SKIP_LIST from .gitignore: {self.gitignore_skip_list}")
         except FileNotFoundError:
             self.logger.warning(f".gitignore file not found in {project_root_path}")
         except Exception as e:
             self.logger.error(f"Error reading .gitignore: {e}")
 
-    def _should_skip(self, name):
-        """Check if the file or directory should be skipped."""
-        return any(skip_item in name for skip_item in self.skip_list)
+    def _should_skip_dir(self, name):
+        """Check if the directory should be skipped based on gitignore skip list."""
+        # print(f"Checking if directory {name} should be skipped", self.gitignore_skip_list)
+        return any(skip_item in name for skip_item in self.gitignore_skip_list)
+    
+    def _should_skip_file(self, name):
+        """Check if the file should be skipped based on both gitignore and extension skip lists."""
+        
+        # Check for gitignore_skip_list items in filename
+        for skip_item in self.gitignore_skip_list:
+            if name.endswith(skip_item) or skip_item in name:
+                return True
+        
+        # Check for extension match
+        for skip_item in self.extension_skip_list:
+            if name.endswith(skip_item):
+                return True
+        return False
 
     def _read_directory(self, project_root_path):
         """Read directory and index files."""
@@ -354,9 +409,9 @@ class ResearchAgent:
         self.file_paths = []
         for root, dirs, files in os.walk(project_root_path):
             # Remove dirs that should be skipped
-            dirs[:] = [d for d in dirs if not self._should_skip(d)]
+            dirs[:] = [d for d in dirs if not self._should_skip_dir(d)]
             for file in files:
-                if not self._should_skip(file):
+                if not self._should_skip_file(file):
                     file_path = os.path.join(root, file)
                     self.file_paths.append(file_path)
 
@@ -468,10 +523,12 @@ class ResearchAgent:
         assistant_details = {
             "assistant_id": assistant.id,
             "vector_store_id": vector_store.id,
+            "thread_ids_map": {},
             "status": "active"
         }
 
         print(assistant_details)
+        self.logger.info("Assistant details: %s", assistant_details)
         assistant_details_path = os.path.join(self._get_run_path(), "assistant_details.json")
         with open(assistant_details_path, 'w') as f:
             json.dump(assistant_details, f, indent=4)

@@ -39,7 +39,7 @@ def _validate_message(message):
     message = message.strip()
     if not (message.startswith("***") and message.endswith("***")):
         raise MessageIncorrectFormatError("Message must start and end with ***")
-    if message.count("ACTION") > 1:
+    if message.count("ACTION:") > 1:
         raise MessageMultipleActionError("Message contains more than one ACTION keyword")
     message = message[3:-3].strip()
     lines = message.split("\n")

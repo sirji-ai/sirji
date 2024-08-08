@@ -72,7 +72,7 @@ class ResearchAgentRunner:
             contents = file.read()
         return contents
         
-    def main(self, agent_id):
+    def main(self, agent_id, agent_session_id, agent_callstack):
         sirji_installation_dir = os.environ.get("SIRJI_INSTALLATION_DIR")
         sirji_run_path = os.environ.get("SIRJI_RUN_PATH")
 
@@ -113,7 +113,8 @@ class ResearchAgentRunner:
         assistant_details = self.read_assistant_details()
 
         init_payload = assistant_details
-
+        init_payload['complete_session_id'] = agent_callstack + '.' + agent_session_id
+       
         response, prompt_tokens_consumed, completion_tokens_consumed = self.process_message(message_str, conversations, init_payload)
 
         input_tokens += prompt_tokens_consumed
@@ -125,5 +126,12 @@ class ResearchAgentRunner:
         self.write_conversations_to_file(conversation_file_path, conversations, input_tokens, output_tokens, max_input_tokens_for_a_prompt, max_output_tokens_for_a_prompt, 'gpt-4o')
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process interactions.")
+    parser.add_argument("--agent_session_id", required=True, help="Agent Session Id")
+    parser.add_argument("--agent_callstack", required=True, help="Agent Call Stack")
+
+
+    args = parser.parse_args()
     agent_runner = ResearchAgentRunner()
-    agent_runner.main('RESEARCHER')
+    agent_runner.main('RESEARCHER',args.agent_session_id, args.agent_callstack)
+    
