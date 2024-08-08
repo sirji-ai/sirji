@@ -118,7 +118,7 @@ export class StepManager {
       return {
         isError: true,
         shouldDiscard: true,
-        errorMessage: `Error: You skipped some of the pseudo code steps. The highest executed step number as per my record is ${inProgressStepNumber}. Please make sure you do not skip any steps. I am discarding your last message.`
+        errorMessage: `Error: You skipped some of the pseudo code steps. The highest executed step number as per my record is ${inProgressStepNumber}. Please make sure you do not skip any steps. I am discarding your last message. Resume with the correct step number.`
       };
     }
 

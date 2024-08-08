@@ -221,10 +221,15 @@ class ResearchAgent:
         if complete_session_id is None:
             return "Error: No active thread found", 0, 0
         
-        thread_id  = self.init_payload.get("thread_ids_map").get(complete_session_id)[-1]
+        thread_ids = self.init_payload.get("thread_ids_map").get(complete_session_id)
+
+        if thread_ids is None:
+            return "Error: No existing assistant thread found. Please use INFER in fresh session before using INFER_IN_EXISTING_SESSION", 0, 0
+        
+        thread_id  = thread_ids[-1]
 
         if thread_id is None:
-            return "Error: There is no existing thread found.", 0, 0
+            return "Error: No existing assistant thread found. Please use INFER in fresh session before using INFER_IN_EXISTING_SESSION ", 0, 0
         
         
         self.init_payload['thread_id'] = thread_id
