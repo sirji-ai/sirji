@@ -14,5 +14,10 @@
   "review_code.json": {
     "name": "Review Code",
     "Description": "Recipe for reviewign the code changes as per the requirement."
+  },
+  "execute_task.json":{
+    "name": "Execute Task",
+    "Description": "Recipe for executing the task."
   }
+
 }

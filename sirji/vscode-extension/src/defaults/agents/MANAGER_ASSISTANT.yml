@@ -1,0 +1,9 @@
+id: MANAGER_ASSISTANT
+name: Task manager
+
+llm:
+  provider: anthropic
+  model: claude-3-5-sonnet-20240620
+skill: Manage the tasks and assign them to the executor.
+pseudo_code: |
+     1. while True, keep invoking the TASK_EXECUTOR agent in a fresh session.

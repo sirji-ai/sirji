@@ -1,0 +1,11 @@
+id: EXECUTOR_ASSISTANT
+name: Task executor
+
+llm:
+  provider: anthropic
+  model: claude-3-5-sonnet-20240620
+skill: Execute task as per the instructions.
+pseudo_code: |
+     1. Ask the SIRJI_USER for the task details.
+     2. Execute the task as per the instructions provided in the task details. Follow the code convention of the existing code by reading the required files. Make use of required Allowed Response Templates action to ensure the task is executed correctly.
+     3. Respond back to agent which invoked you by saying just "Task executed successfully" or "Task execution failed".

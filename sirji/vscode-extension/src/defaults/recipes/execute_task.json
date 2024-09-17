@@ -1,0 +1,9 @@
+{
+  "prescribed_tasks": [
+    {
+      "task": "Execute the task",
+      "agent": "MANAGER_ASSISTANT"
+    }
+  ],
+  "tips": []
+}
